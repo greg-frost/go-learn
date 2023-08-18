@@ -1,0 +1,84 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+)
+
+// Тип "уровень лога"
+type LogLevel int
+
+// Уровни лога
+const (
+	LogLevelInfo LogLevel = iota + 1
+	LogLevelWarning
+	LogLevelError
+)
+
+// Структура "расширенный логгер"
+type LogExtended struct {
+	*log.Logger
+	logLevel LogLevel
+}
+
+// Установка уровня лога
+func (l *LogExtended) SetLogLevel(lvl LogLevel) {
+	if !lvl.IsValid() {
+		return
+	}
+	l.logLevel = lvl
+}
+
+// Проверка валидности уровня лога
+func (l LogLevel) IsValid() bool {
+	switch l {
+	case LogLevelInfo, LogLevelWarning, LogLevelError:
+		return true
+	default:
+		return false
+	}
+}
+
+// Печать информации
+func (l *LogExtended) Infoln(msg string) {
+	l.println(LogLevelInfo, "INFO ", msg)
+}
+
+// Печать предупреждения
+func (l *LogExtended) Warnln(msg string) {
+	l.println(LogLevelWarning, "WARN ", msg)
+}
+
+// Печать ошибки
+func (l *LogExtended) Errorln(msg string) {
+	l.println(LogLevelError, "ERR ", msg)
+}
+
+// Печать лога
+func (l *LogExtended) println(srcLogLvl LogLevel, prefix, msg string) {
+	if srcLogLvl < l.logLevel {
+		return
+	}
+
+	l.Logger.Println(prefix + msg)
+}
+
+// Конструктор расширенного логгера
+func NewLogExtended() *LogExtended {
+	return &LogExtended{
+		Logger:   log.New(os.Stderr, "", log.LstdFlags),
+		logLevel: LogLevelError,
+	}
+}
+
+func main() {
+	fmt.Println(" \n[ ЛОГГЕР ]\n ")
+
+	logger := NewLogExtended()
+	logger.SetLogLevel(LogLevelWarning)
+	logger.Infoln("Не должно напечататься")
+	logger.Warnln("Hello")
+	logger.Errorln("World")
+	logger.Println("Debug")
+}
