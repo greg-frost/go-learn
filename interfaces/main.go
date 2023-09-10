@@ -4,6 +4,9 @@ import (
 	"fmt"
 )
 
+// Канарейка
+var _ Logic = LogicProvider{}
+
 // Интерфейс "логика"
 type Logic interface {
 	Process(data string) string
@@ -37,18 +40,23 @@ func (c Client) Program() {
 	fmt.Println(c.L.Process("Yoroshiku!"))
 }
 
+// Конструктор
+func NewClient(firstName, lastName string, age int, isMarried bool) Client {
+	return Client{
+		L: LogicProvider{
+			firstName: firstName,
+			lastName:  lastName,
+			age:       age,
+			isMerried: isMarried,
+		},
+	}
+}
+
 func main() {
 	fmt.Println(" \n[ ИНТЕРФЕЙС ]\n ")
 
-	c := Client{
-		L: LogicProvider{
-			"Eikichi",
-			"Onidzuka",
-			22,
-			false,
-		},
-	}
-
 	fmt.Println("Приветствие:")
+
+	c := NewClient("Eikichi", "Onidzuka", 22, false)
 	c.Program()
 }
