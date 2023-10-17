@@ -6,33 +6,33 @@ import (
 	"net/http"
 )
 
+const (
+	text = "Go, Baby, Go!"
+	html = `
+		<doctype html>
+		<html>
+			<head>
+				<title>Go Server</title>
+			</head>
+			<body>
+				<h1>Go Server</h1>
+				<p>Go, Baby, Go!</p>
+			</body>
+		</html>
+	`
+)
+
 // TXT-ответ
 func textResponse(res http.ResponseWriter, req *http.Request) {
-	fmt.Fprint(res, "Go, Baby, Go!")
+	res.WriteHeader(http.StatusOK)
+	fmt.Fprint(res, text)
 }
 
 // HTML-ответ
 func htmlResponse(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set(
-		"Content-Type",
-		"text/html",
-	)
-
-	io.WriteString(
-		res,
-		`
-			<doctype html>
-			<html>
-				<head>
-					<title>Go Server</title>
-				</head>
-				<body>
-					<h1>Go Server</h1>
-					<p>Go, Baby, Go!</p>
-				</body>
-			</html>
-		`,
-	)
+	res.WriteHeader(http.StatusOK)
+	res.Header().Set("Content-Type", "text/html")
+	io.WriteString(res, html)
 }
 
 func main() {
