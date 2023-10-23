@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -65,6 +66,14 @@ func handleSignals(cancel context.CancelFunc) {
 }
 
 func main() {
+	fmt.Println(" \n[ КОНТЕКСТ ]\n ")
+
+	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("(на localhost:8080)")
+	fmt.Println("или отмены (Ctrl+C)")
+
+	fmt.Println()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	go handleSignals(cancel)
 
