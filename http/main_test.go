@@ -19,10 +19,10 @@ func TestTextResponse(t *testing.T) {
 	gotCode, gotRes := rec.Code, rec.Body.String()
 
 	if wantCode != gotCode {
-		t.Errorf("Want code = %d, got code = %d", wantCode, gotCode)
+		t.Errorf("Ожидается код = %d, получен код = %d", wantCode, gotCode)
 	}
 	if wantRes != gotRes {
-		t.Errorf("Want body = %q, got body = %q", wantRes, gotRes)
+		t.Errorf("Ожидается = %q, получено = %q", wantRes, gotRes)
 	}
 }
 
@@ -38,9 +38,9 @@ func TestHtmlResponse(t *testing.T) {
 	gotCode, gotRes := rec.Code, rec.Body.Bytes()
 
 	if wantCode != gotCode {
-		t.Errorf("Want code = %d, got code = %d", wantCode, gotCode)
+		t.Errorf("Ожидается код = %d, получен код = %d", wantCode, gotCode)
 	}
 	if !reflect.DeepEqual(wantRes, gotRes) {
-		t.Errorf("Want: %v Got: %v", string(wantRes), string(gotRes))
+		t.Errorf("Ожидается: %v Получено: %v", string(wantRes), string(gotRes))
 	}
 }
