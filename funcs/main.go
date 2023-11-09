@@ -65,6 +65,23 @@ func fibValue(n int) int {
 	return fibValue(n-1) + fibValue(n-2)
 }
 
+var memo = map[int]int{}
+
+// Значение Фибоначчи (с мемоизацией)
+func fibValueMemo(n int) int {
+	if n <= 1 {
+		return n
+	}
+
+	if v, ok := memo[n]; ok {
+		return v
+	}
+
+	memo[n] = fibValueMemo(n-1) + fibValueMemo(n-2)
+
+	return memo[n]
+}
+
 // Замыкание Фибоначчи
 func fibClosure() func() int {
 	prev := 0
@@ -216,6 +233,7 @@ func main() {
 
 	fmt.Println("Ряд Фибоначчи", fibRow(res))
 	fmt.Println("Число Фибоначчи", fibValue(res))
+	fmt.Println("Число Фибоначчи (мемо.)", fibValueMemo(res))
 	fmt.Println("Замыкание Фибоначчи:")
 	f := fibClosure()
 
