@@ -35,9 +35,13 @@ func (ll *LinkedList) String() string {
 func main() {
 	fmt.Println(" \n[ СПИСКИ ]\n ")
 
+	/* Библиотечный список */
+
 	var l list.List
 
-	/* Библиотечный список */
+	fmt.Println("Библиотечный")
+	fmt.Println("------------")
+	fmt.Println()
 
 	l.PushBack(3)
 	l.PushBack(4)
@@ -46,14 +50,14 @@ func main() {
 	l.PushFront(1)
 	l.PushFront(0)
 
-	fmt.Println("Прямой порядок:")
+	fmt.Println("Вперед:")
 	for e := l.Front(); e != nil; e = e.Next() {
 		fmt.Print(e.Value, " ")
 	}
 
 	fmt.Println(" \n ")
 
-	fmt.Println("Обратный порядок:")
+	fmt.Println("Назад:")
 	for e := l.Back(); e != nil; e = e.Prev() {
 		fmt.Print(e.Value, " ")
 	}
@@ -62,7 +66,9 @@ func main() {
 
 	/* Собственный список */
 
-	fmt.Println("Собственный список:")
+	fmt.Println("Собственный")
+	fmt.Println("-----------")
+	fmt.Println()
 
 	var ll *LinkedList
 
