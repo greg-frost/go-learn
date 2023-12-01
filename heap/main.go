@@ -5,7 +5,33 @@ import (
 	"fmt"
 )
 
-/* Моя */
+/* Библиотечная */
+
+type IntHeap []int
+
+func (h IntHeap) Len() int {
+	return len(h)
+}
+func (h IntHeap) Less(i, j int) bool {
+	return h[i] < h[j]
+}
+func (h IntHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+
+func (h *IntHeap) Push(x any) {
+	*h = append(*h, x.(int))
+}
+
+func (h *IntHeap) Pop() any {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+/* Собственная */
 
 type Heap []int
 
@@ -45,116 +71,89 @@ func (h *Heap) PopMax() (int, bool) {
 	return v, true
 }
 
-/* Стандартная */
-
-type IntHeap []int
-
-func (h IntHeap) Len() int {
-	return len(h)
-}
-func (h IntHeap) Less(i, j int) bool {
-	return h[i] < h[j]
-}
-func (h IntHeap) Swap(i, j int) {
-	h[i], h[j] = h[j], h[i]
-}
-
-func (h *IntHeap) Push(x any) {
-	*h = append(*h, x.(int))
-}
-
-func (h *IntHeap) Pop() any {
-	old := *h
-	n := len(old)
-	x := old[n-1]
-	*h = old[0 : n-1]
-	return x
-}
-
 func main() {
 	fmt.Println(" \n[ КУЧА ]\n ")
 
-	/* Моя */
+	/* Библиотечная куча */
 
-	fmt.Println("Моя")
-	fmt.Println("---")
+	fmt.Println("Библиотечная")
+	fmt.Println("------------")
 	fmt.Println()
 
-	h1 := Heap{}
-
-	// Добавление
-
-	fmt.Println("Push: 3")
-	h1.Push(3)
-
-	fmt.Println("Push: 5")
-	h1.Push(5)
-
-	fmt.Println("Push: 1")
-	h1.Push(1)
-
-	// Состояние
-	fmt.Println()
-	fmt.Println("Heap:", h1)
-	fmt.Println()
-
-	// Извлечение
-
-	v, ok := h1.PopMin()
-	fmt.Println("Min:", v, ok)
-
-	v, ok = h1.PopMax()
-	fmt.Println("Max:", v, ok)
-
-	v, ok = h1.PopMin()
-	fmt.Println("Min:", v, ok)
-
-	v, ok = h1.PopMax()
-	fmt.Println("Max:", v, ok)
-
-	// Состояние
-	fmt.Println()
-	fmt.Println("Heap:", h1)
-	fmt.Println()
-
-	/* Стандартная */
-
-	fmt.Println("Стандартная")
-	fmt.Println("-----------")
-	fmt.Println()
-
-	h2 := &IntHeap{}
-	heap.Init(h2)
+	h1 := &IntHeap{}
+	heap.Init(h1)
 
 	// Добавление
 
 	fmt.Println("Push: 10")
-	heap.Push(h2, 10)
+	heap.Push(h1, 10)
 
 	fmt.Println("Push: 5")
-	heap.Push(h2, 5)
+	heap.Push(h1, 5)
 
 	fmt.Println("Push: 15")
-	heap.Push(h2, 15)
+	heap.Push(h1, 15)
 
 	// Состояние
 	fmt.Println()
-	fmt.Println("Heap:", *h2)
+	fmt.Println("Heap:", *h1)
 	fmt.Println()
 
 	// Извлечение
 
-	v = heap.Pop(h2).(int)
+	v := heap.Pop(h1).(int)
 	fmt.Println("Min:", v)
 
-	v = heap.Pop(h2).(int)
+	v = heap.Pop(h1).(int)
 	fmt.Println("Min:", v)
 
-	v = heap.Pop(h2).(int)
+	v = heap.Pop(h1).(int)
 	fmt.Println("Min:", v)
 
 	// Состояние
 	fmt.Println()
-	fmt.Println("Heap:", *h2)
+	fmt.Println("Heap:", *h1)
+	fmt.Println()
 
+	/* Собственная куча */
+
+	fmt.Println("Собственная")
+	fmt.Println("-----------")
+	fmt.Println()
+
+	h2 := Heap{}
+
+	// Добавление
+
+	fmt.Println("Push: 3")
+	h2.Push(3)
+
+	fmt.Println("Push: 5")
+	h2.Push(5)
+
+	fmt.Println("Push: 1")
+	h2.Push(1)
+
+	// Состояние
+	fmt.Println()
+	fmt.Println("Heap:", h2)
+	fmt.Println()
+
+	// Извлечение
+
+	v, ok := h2.PopMin()
+	fmt.Println("Min:", v, ok)
+
+	v, ok = h2.PopMax()
+	fmt.Println("Max:", v, ok)
+
+	v, ok = h2.PopMin()
+	fmt.Println("Min:", v, ok)
+
+	v, ok = h2.PopMax()
+	fmt.Println("Max:", v, ok)
+
+	// Состояние
+	fmt.Println()
+	fmt.Println("Heap:", h2)
 }
