@@ -73,7 +73,8 @@ func main() {
 		Active: true,
 	}
 	copy(d.Label[:], "Unsafe")
-	fmt.Println("Инфо:", d, unsafe.Alignof(d), unsafe.Alignof(d.Value), unsafe.Alignof(d.Label), unsafe.Alignof(d.Active))
+	fmt.Println("Инфо:", d, unsafe.Alignof(d), unsafe.Alignof(d.Value),
+		unsafe.Alignof(d.Label), unsafe.Alignof(d.Active))
 
 	/* Из байтов в данные */
 
