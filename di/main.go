@@ -3,17 +3,16 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"strconv"
 )
 
-/*
 // Функция логирования
-func LogOutput(message string) {
-	fmt.Println(message)
+func LogLog(message string) {
+	log.Println(message)
 }
-*/
 
 // Другая функция логирования
 func LogPrint(message string) {
@@ -25,7 +24,11 @@ type DataStore interface {
 	NameById(userID string) (string, bool)
 }
 
-/*
+// Абстрактная фабрика хранилища
+func NewDataStore() DataStore {
+	return NewSimpleDataStore()
+}
+
 // Структура "простое хранилище данных"
 type SimpleDataStore struct {
 	userData map[string]string
@@ -47,7 +50,6 @@ func NewSimpleDataStore() SimpleDataStore {
 		},
 	}
 }
-*/
 
 // Структура "сложное хранилище данных"
 type ComplexDataStore struct {
@@ -72,11 +74,6 @@ func NewComplexDataStore() ComplexDataStore {
 	}
 }
 
-// Абстрактная фабрика хранилища
-func NewDataStore() ComplexDataStore {
-	return NewComplexDataStore()
-}
-
 // Интерфейс "логгер"
 type Logger interface {
 	Log(message string)
@@ -96,7 +93,11 @@ type Logic interface {
 	SayGoodbye(userID string) (string, error)
 }
 
-/*
+// Абстрактная фабрика логики
+func NewLogic(lg Logger, ds DataStore) Logic {
+	return NewSimpleLogic(lg, ds)
+}
+
 // Структура "простая логика"
 type SimpleLogic struct {
 	lg Logger
@@ -132,7 +133,6 @@ func NewSimpleLogic(lg Logger, ds DataStore) SimpleLogic {
 		ds: ds,
 	}
 }
-*/
 
 // Структура "сложная логика"
 type ComplexLogic struct {
@@ -168,11 +168,6 @@ func NewComplexLogic(lg Logger, ds DataStore) ComplexLogic {
 		lg: lg,
 		ds: ds,
 	}
-}
-
-// Абстрактная фабрика логики
-func NewLogic(lg Logger, ds DataStore) ComplexLogic {
-	return NewComplexLogic(lg, ds)
 }
 
 // Структура "контроллер"
@@ -218,18 +213,27 @@ func NewController(lg Logger, lc Logic) Controller {
 func main() {
 	fmt.Println(" \n[ ВНЕДРЕНИЕ ЗАВИСИМОСТИ ]\n ")
 
-	lg := LoggerAdapter(LogPrint)
-	ds := NewDataStore()
-	lc := NewLogic(lg, ds)
-	c := NewController(lg, lc)
+	/* Простое */
+
+	simpleLogger := LoggerAdapter(LogPrint)
+	simpleDataStore := NewSimpleDataStore()
+	simpleLogic := NewSimpleLogic(simpleLogger, simpleDataStore)
+	simpleController := NewController(simpleLogger, simpleLogic)
+
+	/* Сложное */
+
+	complexLogger := LoggerAdapter(LogLog)
+	complexDataStore := NewComplexDataStore()
+	complexLogic := NewComplexLogic(complexLogger, complexDataStore)
+	complexController := NewController(complexLogger, complexLogic)
 
 	fmt.Println("Ожидаю обновлений...")
 	fmt.Println("(на localhost:8080)")
 
-	http.HandleFunc("/hi", c.SayHello)
-	http.HandleFunc("/hello", c.SayHello)
-	http.HandleFunc("/goodbye", c.SayGoodbye)
-	http.HandleFunc("/bye", c.SayGoodbye)
+	http.HandleFunc("/hi", simpleController.SayHello)
+	http.HandleFunc("/bye", simpleController.SayGoodbye)
+	http.HandleFunc("/hello", complexController.SayHello)
+	http.HandleFunc("/goodbye", complexController.SayGoodbye)
 
 	http.ListenAndServe(":8080", nil)
 }
