@@ -5,15 +5,18 @@ import (
 	"net/http"
 )
 
+// Структура "Сайт"
 type Site struct {
 	URL string
 }
 
+// Структура "Результат"
 type Result struct {
 	URL    string
 	Status int
 }
 
+// Получение HTTP статуса ответа
 func crawl(worker int, jobs <-chan Site, results chan<- Result) {
 	for site := range jobs {
 		fmt.Printf("Воркер #%d: %s\n", worker, site.URL)
@@ -31,15 +34,19 @@ func crawl(worker int, jobs <-chan Site, results chan<- Result) {
 func main() {
 	fmt.Println(" \n[ ВОРКЕРЫ ]\n ")
 
+	// Число воркеров
 	const workers = 3
 
+	// Каналы заданий и результатов
 	jobs := make(chan Site, workers)
 	results := make(chan Result, workers)
 
+	// Запуск воркеров
 	for w := 1; w <= workers; w++ {
 		go crawl(w, jobs, results)
 	}
 
+	// Список заданий
 	urls := []string{
 		"https://yandex.com",
 		"https://google.com",
@@ -48,11 +55,13 @@ func main() {
 		"https://go.dev/blogs",
 	}
 
+	// Раздача заданий
 	for _, url := range urls {
 		jobs <- Site{URL: url}
 	}
 	close(jobs)
 
+	// Получение результатов
 	for r := 1; r <= len(urls); r++ {
 		result := <-results
 		fmt.Println("Ответ:", result)
