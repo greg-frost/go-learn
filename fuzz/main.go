@@ -6,6 +6,7 @@ import (
 	"unicode/utf8"
 )
 
+// Переворачивание строки
 func Reverse(s string) (string, error) {
 	if !utf8.ValidString(s) {
 		return s, errors.New("неверная UTF-8 строка")
@@ -20,9 +21,14 @@ func Reverse(s string) (string, error) {
 func main() {
 	fmt.Println(" \n[ FUZZING ]\n ")
 
+	// Пример
 	text := "The quick brown fox jumped over the lazy dog"
+
+	// Два переворота
 	rev, _ := Reverse(text)
 	revrev, _ := Reverse(rev)
+
+	// Вывод
 	fmt.Printf("Оригинал: %q\n", text)
 	fmt.Printf("Перевернуто 1: %q\n", rev)
 	fmt.Printf("Перевернуто 2: %q\n", revrev)

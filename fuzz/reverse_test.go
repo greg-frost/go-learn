@@ -5,6 +5,7 @@ import (
 	"unicode/utf8"
 )
 
+// Обычный тест
 func TestReverse(t *testing.T) {
 	tests := []struct {
 		in, want string
@@ -22,6 +23,7 @@ func TestReverse(t *testing.T) {
 	}
 }
 
+// Фаззинг-тест (генерация случайных данных)
 func FuzzReverse(f *testing.F) {
 	tests := []string{"Hello, world", " ", "!12345"}
 	for _, tt := range tests {
