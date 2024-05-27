@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-// Структура "Альбом"
+// Структура "альбом"
 type album struct {
 	ID     string  `json:"id"`
 	Title  string  `json:"title"`
@@ -65,5 +66,9 @@ func main() {
 	router.POST("/albums", postAlbum)
 
 	// Запуск сервера
-	router.Run("localhost:8080")
+	fmt.Println()
+	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("(на http://localhost:8080)")
+	fmt.Println()
+	log.Fatal(router.Run("localhost:8080"))
 }
