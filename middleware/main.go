@@ -24,11 +24,12 @@ func myMiddleware(next http.HandlerFunc) http.HandlerFunc {
 func main() {
 	fmt.Println(" \n[ ПОСРЕДНИК ]\n ")
 
-	fmt.Println("Ожидаю обновлений...")
-	fmt.Println("(на localhost:8080)")
-
-	fmt.Println()
-
+	// Обработчик
 	http.HandleFunc("/", myMiddleware(myHandler))
-	http.ListenAndServe(":8080", nil)
+
+	// Запуск сервера
+	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("(на http://localhost:8080)")
+	fmt.Println()
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
