@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Структура "Альбом"
+// Структура "альбом"
 type album struct {
 	ID     string  `json:"id"`
 	Title  string  `json:"title"`
@@ -75,6 +75,6 @@ func main() {
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
-	fmt.Println("(на localhost:8080)")
+	fmt.Println("(на http://localhost:8080)")
 	log.Fatal(http.ListenAndServe("localhost:8080", router))
 }
