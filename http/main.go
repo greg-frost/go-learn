@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -38,11 +39,9 @@ func htmlResponse(res http.ResponseWriter, req *http.Request) {
 func main() {
 	fmt.Println(" \n[ HTTP ]\n ")
 
-	/* Настройка обработчиков */
-
+	// Обработчики
 	http.HandleFunc("/", textResponse)
 	http.HandleFunc("/html/", htmlResponse)
-
 	http.Handle(
 		"/files/",
 		http.StripPrefix(
@@ -51,10 +50,8 @@ func main() {
 		),
 	)
 
-	/* Запуск сервера */
-
+	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
-	fmt.Println("(на localhost:8080)")
-
-	http.ListenAndServe("localhost:8080", nil)
+	fmt.Println("(на http://localhost:8080)")
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
