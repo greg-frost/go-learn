@@ -23,6 +23,12 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	// Пинг
+	err = db.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println("Успешное подключение")
 
 	// Очистка
