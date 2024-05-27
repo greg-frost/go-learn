@@ -21,7 +21,7 @@ var templates = template.Must(template.ParseFiles(
 // Регулярное выражение для проверки пути
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 
-// Структура "Страница"
+// Структура "страница"
 type Page struct {
 	Title string
 	Body  []byte
@@ -104,6 +104,6 @@ func main() {
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
-	fmt.Println("(на localhost:8080)")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("(на http://localhost:8080)")
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
