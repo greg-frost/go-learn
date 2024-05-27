@@ -51,7 +51,29 @@ func (this ByAge) Swap(i, j int) {
 func main() {
 	fmt.Println(" \n[ СОРТИРОВКА ]\n ")
 
-	/* Сортировка */
+	/* Простая сортировка */
+
+	fmt.Println("Простая сортировка")
+	fmt.Println("------------------")
+	fmt.Println()
+
+	nums := []int{3, 1, 7, 4, 2, 6, 5, 10, 8, 9}
+
+	fmt.Println("До сортировки:")
+	fmt.Println(nums)
+	fmt.Println()
+
+	sort.Ints(nums)
+
+	fmt.Println("После сортировки:")
+	fmt.Println(nums)
+
+	/* Сложная сортировка */
+
+	fmt.Println()
+	fmt.Println("Сложная сортировка")
+	fmt.Println("------------------")
+	fmt.Println()
 
 	var people = []Person{
 		{"Charles", "Bukowski", 27},
@@ -61,7 +83,6 @@ func main() {
 
 	fmt.Println("До сортировки:")
 	fmt.Println(people)
-
 	fmt.Println()
 
 	/* По имени */
@@ -69,7 +90,6 @@ func main() {
 	fmt.Println("Сортировка по имени:")
 	sort.Sort(ByName(people))
 	fmt.Println(people)
-
 	fmt.Println()
 
 	/* По фамилии */
@@ -79,7 +99,6 @@ func main() {
 		return people[i].lastName < people[j].lastName
 	})
 	fmt.Println(people)
-
 	fmt.Println()
 
 	/* По возрасту */
