@@ -227,13 +227,14 @@ func main() {
 	complexLogic := NewComplexLogic(complexLogger, complexDataStore)
 	complexController := NewController(complexLogger, complexLogic)
 
-	fmt.Println("Ожидаю обновлений...")
-	fmt.Println("(на localhost:8080)")
-
+	// Обработчики
 	http.HandleFunc("/hi", simpleController.SayHello)
 	http.HandleFunc("/bye", simpleController.SayGoodbye)
 	http.HandleFunc("/hello", complexController.SayHello)
 	http.HandleFunc("/goodbye", complexController.SayGoodbye)
 
-	http.ListenAndServe(":8080", nil)
+	// Запуск сервера
+	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("(на http://localhost:8080)")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
