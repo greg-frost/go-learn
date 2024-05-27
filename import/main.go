@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"golearn/import/math"
-	"golearn/import/slice"
+	"golearn/test/math"
+	"golearn/test/slice"
 )
 
 func main() {
