@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -44,10 +45,10 @@ func doSlowThings() string {
 func main() {
 	fmt.Println(" \n[ ПРОТИВОДАВЛЕНИЕ ]\n ")
 
-	/* Настройка обработчиков */
-
+	// Новый объект
 	pg := NewPG(5)
 
+	// Настройка обработчика
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		err := pg.Process(func() {
 			w.Write([]byte(doSlowThings()))
@@ -58,10 +59,8 @@ func main() {
 		}
 	})
 
-	/* Запуск сервера */
-
+	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
-	fmt.Println("(на localhost:8080)")
-
-	http.ListenAndServe("localhost:8080", nil)
+	fmt.Println("(на http://localhost:8080)")
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
