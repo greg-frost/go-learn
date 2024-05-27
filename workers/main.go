@@ -5,18 +5,18 @@ import (
 	"net/http"
 )
 
-// Структура "Сайт"
+// Структура "сайт"
 type Site struct {
 	URL string
 }
 
-// Структура "Результат"
+// Структура "результат"
 type Result struct {
 	URL    string
 	Status int
 }
 
-// Получение HTTP статуса ответа
+// Получение HTTP-статуса ответа
 func crawl(worker int, jobs <-chan Site, results chan<- Result) {
 	for site := range jobs {
 		fmt.Printf("Воркер #%d: %s\n", worker, site.URL)
