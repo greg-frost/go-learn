@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -34,8 +35,16 @@ func channelIncrement() {
 	<-busy
 }
 
+// Atomic-счетчик
+var acounter atomic.Uint64
+
+// Инкремент через atomic
+func atomicIncrement() {
+	acounter.Add(1)
+}
+
 func main() {
-	fmt.Println(" \n[ СОСТОЯНИЕ ГОНКИ ]\n ")
+	fmt.Println(" \n[ ГОНКА ДАННЫХ ]\n ")
 
 	times := 1000
 
@@ -46,30 +55,34 @@ func main() {
 	}
 
 	time.Sleep(time.Millisecond * 50)
-
-	fmt.Println("Есть гонка: ", counter)
+	fmt.Println("Гонка:  ", counter)
 
 	/* Мьютекс */
 
 	counter = 0
-
 	for i := 0; i < times; i++ {
 		go mutexIncrement()
 	}
 
 	time.Sleep(time.Millisecond * 50)
+	fmt.Println("Mutex:  ", counter)
 
-	fmt.Println("С мьютексом:", counter)
+	/* Atomic */
+
+	for i := 0; i < times; i++ {
+		go atomicIncrement()
+	}
+
+	time.Sleep(time.Millisecond * 50)
+	fmt.Println("Atomic: ", acounter.Load())
 
 	/* Канал */
 
 	counter = 0
-
 	for i := 0; i < times; i++ {
 		go channelIncrement()
 	}
 
 	time.Sleep(time.Millisecond * 50)
-
-	fmt.Println("Через канал:", counter)
+	fmt.Println("Channel:", counter)
 }
