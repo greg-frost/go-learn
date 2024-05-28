@@ -10,12 +10,16 @@ import (
 func main() {
 	fmt.Println(" \n[ URL ]\n ")
 
+	// Пример
 	s := "postgres://user:pass@host.com:5432/path?key=value#anchor"
 
+	// Парсинг URL
 	u, err := url.Parse(s)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	/* Компоненты URL */
 
 	fmt.Println("Схема (протокол):", u.Scheme)
 
