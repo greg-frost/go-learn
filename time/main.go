@@ -53,4 +53,35 @@ func main() {
 	fmt.Println()
 	fmt.Println("+ интервал:", then.Add(diff))
 	fmt.Println("- интервал:", then.Add(-diff))
+
+	// Unix
+	fmt.Println()
+	fmt.Println("UNIX, с:", now.Unix())
+	fmt.Println("UNIX, мс:", now.UnixMilli())
+	fmt.Println("UNIX, нс:", now.UnixNano())
+
+	/* Форматирование */
+
+	fmt.Println()
+	fmt.Println("Форматирование:")
+
+	fmt.Println(now.Format(time.RFC3339))
+	then, _ = time.Parse(time.RFC3339, "1987-08-21T12:23:34+00:00")
+	fmt.Println(then)
+
+	fmt.Println(now.Format("3:04PM"))
+	fmt.Println(now.Format("Mon Jan _2 15:04:05 2006"))
+	fmt.Println(now.Format("2006-01-02T15:04:05.999999-07:00"))
+
+	short, _ := time.Parse("3 04 PM", "8 41 PM")
+	fmt.Println(short)
+
+	fmt.Printf("%d-%02d-%02dT%02d:%02d:%02d-00:00\n",
+		now.Year(), now.Month(), now.Day(),
+		now.Hour(), now.Minute(), now.Second())
+
+	_, err := time.Parse("Mon Jan _2 15:04:05 2006", "8:41PM")
+	if err != nil {
+		fmt.Println("Ошибка парсинга даты")
+	}
 }
