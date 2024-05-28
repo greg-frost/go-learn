@@ -2,10 +2,12 @@ package main
 
 import (
 	"crypto/sha1"
+	"crypto/sha256"
 	"fmt"
 	"hash/adler32"
 	"hash/crc32"
 	"io/ioutil"
+	"os"
 )
 
 // Хэш содержимого файла
@@ -26,7 +28,6 @@ func main() {
 
 	msg := []byte("Secret message")
 	fmt.Println("Исходный текст:", string(msg))
-
 	fmt.Println()
 
 	/* CRC32 */
@@ -36,23 +37,31 @@ func main() {
 	crcHash.Write(msg)
 	crcVal := crcHash.Sum32()
 	fmt.Println(crcVal)
-
 	fmt.Println()
 
 	/* Adler32 */
 
 	fmt.Println("Adler32:")
-	adlerHash1, _ := getFileHash("hello.go")
-	adlerHash2, _ := getFileHash("http.go")
+	path := os.Getenv("GOPATH") + "/src/golearn/"
+	adlerHash1, _ := getFileHash(path + "crypt/main.go")
+	adlerHash2, _ := getFileHash(path + "hello/main.go")
 	fmt.Println(adlerHash1, adlerHash2, adlerHash1 == adlerHash2)
-
 	fmt.Println()
 
 	/* SHA1 */
 
 	fmt.Println("SHA1:")
-	shaHash := sha1.New()
-	shaHash.Write(msg)
-	shaVal := shaHash.Sum([]byte{})
-	fmt.Println(shaVal)
+	sha1Hash := sha1.New()
+	sha1Hash.Write(msg)
+	sha1Val := sha1Hash.Sum(nil)
+	fmt.Println(sha1Val)
+	fmt.Println()
+
+	/* SHA256 */
+
+	fmt.Println("SHA256:")
+	sha256Hash := sha256.New()
+	sha256Hash.Write(msg)
+	sha256Val := sha256Hash.Sum(nil)
+	fmt.Println(sha256Val)
 }
