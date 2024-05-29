@@ -37,17 +37,27 @@ func htmlResponse(res http.ResponseWriter, req *http.Request) {
 	io.WriteString(res, html)
 }
 
+// Список заголовков
+func headersResponse(res http.ResponseWriter, req *http.Request) {
+	for name, headers := range req.Header {
+		for _, h := range headers {
+			fmt.Fprintf(res, "%v: %v\n", name, h)
+		}
+	}
+}
+
 func main() {
 	fmt.Println(" \n[ HTTP-СЕРВЕР ]\n ")
 
 	// Обработчики
 	http.HandleFunc("/", textResponse)
 	http.HandleFunc("/html/", htmlResponse)
+	http.HandleFunc("/headers/", headersResponse)
 	http.Handle(
 		"/files/",
 		http.StripPrefix(
 			"/files/",
-			http.FileServer(http.Dir(os.Getenv("GOPATH")+"/src/golearn/test")),
+			http.FileServer(http.Dir(os.Getenv("GOPATH")+"/src/golearn/server")),
 		),
 	)
 
