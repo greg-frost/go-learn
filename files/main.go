@@ -76,7 +76,7 @@ func containsTest(s string) bool {
 }
 
 func main() {
-	fmt.Println(" \n[ ФАЙЛЫ ]\n ")
+	fmt.Println(" \n[ ФАЙЛЫ И ПАПКИ ]\n ")
 
 	path := os.Getenv("GOPATH") + "/src/golearn/"
 	filename := "hello/main.go"
@@ -134,6 +134,7 @@ func main() {
 	file, err = os.Create(path + filename)
 	check(err)
 
+	file.Write(bs)
 	file.WriteString(str2)
 	fmt.Println("Файл создан и записан!")
 	fmt.Println()
@@ -141,6 +142,10 @@ func main() {
 	file.Sync()
 
 	// Второй способ
+	os.WriteFile(path+filename, bs, 0644)
+	check(err)
+
+	// Третий способ (дозапись)
 	w := bufio.NewWriter(file)
 	_, err = w.WriteString("\n" + str2)
 	check(err)
