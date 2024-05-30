@@ -1,13 +1,22 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+// Проверка
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 // Копирование файла
 func copyFile(src, dst string) error {
@@ -38,10 +47,7 @@ func printDir(path string, predicate func(string) bool) {
 
 	walk = func(path string) {
 		files, err := ioutil.ReadDir(path)
-		if err != nil {
-			fmt.Println("ОШИБКА: Невозможно получить содержимое каталога", err)
-			return
-		}
+		check(err)
 
 		for _, f := range files {
 			filename := filepath.Join(path, f.Name())
@@ -75,43 +81,46 @@ func main() {
 	path := os.Getenv("GOPATH") + "/src/golearn/"
 	filename := "hello/main.go"
 
-	/* Первый способ чтения файла */
+	/* Чтение файла */
 
+	// Первый способ
 	file, err := os.Open(path + filename)
-	if err != nil {
-		fmt.Println("ОШИБКА: Невозможно открыть файл", filename)
-		return
-	}
+	check(err)
 	defer file.Close()
 
 	stat, err := file.Stat()
-	if err != nil {
-		fmt.Println("ОШИБКА: Невозможно получить статистику файла", filename)
-		return
-	}
+	check(err)
 
 	bs := make([]byte, stat.Size())
 	_, err = file.Read(bs)
-	if err != nil {
-		fmt.Println("ОШИБКА: Невозможно прочитать файл", filename)
-		return
-	}
+	check(err)
 
 	str1 := string(bs)
-	fmt.Print("Файл ", filename, ":")
-	fmt.Println(" \n ")
-	fmt.Println(str1)
+	fmt.Printf("Файл %s:\n\n", filename)
+	fmt.Printf("\"\"\"\n%s\"\"\"\n\n", str1)
 
-	/* Второй способ чтения файла */
-
+	// Второй способ
 	bs, err = ioutil.ReadFile(path + filename)
-	if err != nil {
-		fmt.Println("ОШИБКА: Невозможно открыть файл", filename)
-		return
-	}
-
+	check(err)
 	str2 := string(bs)
-	if str1 == str2 {
+
+	// Третий способ
+	bs, err = os.ReadFile(path + filename)
+	check(err)
+	str3 := string(bs)
+
+	// Четвертый способ
+	_, err = file.Seek(0, io.SeekStart)
+	check(err)
+
+	r := bufio.NewReader(file)
+	bs, err = r.Peek(int(stat.Size()))
+	check(err)
+	str4 := string(bs)
+
+	/* Сравнение файлов */
+
+	if str1 == str2 && str2 == str3 && str3 == str4 {
 		fmt.Println("Файлы идентичны!")
 	} else {
 		fmt.Println("Файлы отличаются...")
@@ -119,58 +128,58 @@ func main() {
 
 	/* Создание файла */
 
+	// Первый способ
 	filename += ".txt"
 	filenameOld := filename + ".old"
 	file, err = os.Create(path + filename)
-	if err != nil {
-		fmt.Println("ОШИБКА: Невозможно создать файл", filename)
-		return
-	}
+	check(err)
+
+	file.WriteString(str2)
+	fmt.Println("Файл создан и записан!")
+	fmt.Println()
+
+	file.Sync()
+
+	// Второй способ
+	w := bufio.NewWriter(file)
+	_, err = w.WriteString("\n" + str2)
+	check(err)
+
+	w.Flush()
+
+	// Очистка
 	defer os.Remove(path + filenameOld)
 	defer os.Remove(path + filename)
 	defer copyFile(path+filename, path+filenameOld)
 	defer file.Close()
 
-	file.WriteString(str2)
-	fmt.Println("Файл создан и записан!")
-
-	fmt.Println()
-
 	/* Чтение каталога */
 
 	dir, err := os.Open(path)
-	if err != nil {
-		fmt.Println("ОШИБКА: Невозможно открыть текущий каталог")
-		return
-	}
+	check(err)
 	defer dir.Close()
 
 	fileInfos, err := dir.Readdir(-1)
-	if err != nil {
-		fmt.Println("ОШИБКА: Невозможно прочитать текущий каталог")
-		return
-	}
+	check(err)
 
 	fmt.Println("Содержимое текущего каталога:")
 	fmt.Println()
-	for _, fi := range fileInfos {
-		fmt.Println(fi.Name())
+	for _, fi := range fileInfos[:10] {
+		fmt.Printf("%s [%s, %d, %t]\n", fi.Name(), fi.ModTime(), fi.Size(), fi.IsDir())
 	}
-
+	fmt.Println("...")
 	fmt.Println()
 
-	/* Рекурсивный обход каталога */
-
-	recPath := "C:/Go/Lang/src/unicode/"
-
-	fmt.Printf("Полное содержимое каталога \"%s\":\n\n", recPath)
+	// Рекурсивный обход
+	recPath := path + "test"
+	fmt.Printf("Все файлы каталога \"%s\":\n\n", recPath)
 	filepath.Walk(recPath, func(path string, info os.FileInfo, err error) error {
 		fmt.Println(path)
 		return nil
 	})
-
 	fmt.Println()
 
-	fmt.Printf("Отфильтованное содержимое каталога \"%s\":\n\n", recPath)
+	// Фильтрация
+	fmt.Printf("Только тесты каталога \"%s\":\n\n", recPath)
 	printDir(recPath, containsTest)
 }
