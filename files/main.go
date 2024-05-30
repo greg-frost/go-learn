@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+var sep = "   "
+
 // Проверка
 func check(err error) {
 	if err != nil {
@@ -37,7 +39,7 @@ func copyFile(src, dst string) error {
 		return err
 	}
 
-	fmt.Printf("\nСкопировано %d байт в \"%s\"\n", n, dst)
+	fmt.Printf("Скопировано %d байт в \"%s\"\n", n, dst)
 	return nil
 }
 
@@ -53,7 +55,7 @@ func printDir(path string, predicate func(string) bool) {
 			filename := filepath.Join(path, f.Name())
 
 			if predicate(filename) {
-				fmt.Println(filename)
+				fmt.Println(sep + filename)
 			}
 
 			if f.IsDir() {
@@ -81,10 +83,14 @@ func main() {
 	path := os.Getenv("GOPATH") + "/src/golearn/"
 	filename := "hello/main.go"
 
+	// Смена директории
+	err := os.Chdir(path)
+	check(err)
+
 	/* Чтение файла */
 
 	// Первый способ
-	file, err := os.Open(path + filename)
+	file, err := os.Open(filename)
 	check(err)
 	defer file.Close()
 
@@ -96,16 +102,19 @@ func main() {
 	check(err)
 
 	str1 := string(bs)
-	fmt.Printf("Файл %s:\n\n", filename)
-	fmt.Printf("\"\"\"\n%s\"\"\"\n\n", str1)
+	lines := strings.Split(str1, "\n")
+	fmt.Printf("Файл \"%s\":\n", filename)
+	for _, line := range lines {
+		fmt.Println(sep + line)
+	}
 
 	// Второй способ
-	bs, err = ioutil.ReadFile(path + filename)
+	bs, err = ioutil.ReadFile(filename)
 	check(err)
 	str2 := string(bs)
 
 	// Третий способ
-	bs, err = os.ReadFile(path + filename)
+	bs, err = os.ReadFile(filename)
 	check(err)
 	str3 := string(bs)
 
@@ -131,18 +140,17 @@ func main() {
 	// Первый способ
 	filename += ".txt"
 	filenameOld := filename + ".old"
-	file, err = os.Create(path + filename)
+	file, err = os.Create(filename)
 	check(err)
 
 	file.Write(bs)
 	file.WriteString(str2)
 	fmt.Println("Файл создан и записан!")
-	fmt.Println()
 
 	file.Sync()
 
 	// Второй способ
-	os.WriteFile(path+filename, bs, 0644)
+	os.WriteFile(filename, bs, 0644)
 	check(err)
 
 	// Третий способ (дозапись)
@@ -152,10 +160,13 @@ func main() {
 
 	w.Flush()
 
+	// Копирование файла
+	copyFile(filename, filenameOld)
+	fmt.Println()
+
 	// Очистка
-	defer os.Remove(path + filenameOld)
-	defer os.Remove(path + filename)
-	defer copyFile(path+filename, path+filenameOld)
+	defer os.Remove(filenameOld)
+	defer os.Remove(filename)
 	defer file.Close()
 
 	/* Чтение каталога */
@@ -168,23 +179,54 @@ func main() {
 	check(err)
 
 	fmt.Println("Содержимое текущего каталога:")
-	fmt.Println()
 	for _, fi := range fileInfos[:10] {
-		fmt.Printf("%s [%s, %d, %t]\n", fi.Name(), fi.ModTime(), fi.Size(), fi.IsDir())
+		fmt.Printf("%s%s [%s, %d, %t]\n", sep, fi.Name(), fi.ModTime(), fi.Size(), fi.IsDir())
 	}
-	fmt.Println("...")
+	fmt.Println(sep + "...")
 	fmt.Println()
 
 	// Рекурсивный обход
-	recPath := path + "test"
-	fmt.Printf("Все файлы каталога \"%s\":\n\n", recPath)
+	recPath := "test"
+	fmt.Printf("Все файлы каталога \"%s\":\n", recPath)
 	filepath.Walk(recPath, func(path string, info os.FileInfo, err error) error {
-		fmt.Println(path)
+		fmt.Println(sep + path)
 		return nil
 	})
 	fmt.Println()
 
 	// Фильтрация
-	fmt.Printf("Только тесты каталога \"%s\":\n\n", recPath)
+	fmt.Printf("Только тесты каталога \"%s\":\n", recPath)
 	printDir(recPath, containsTest)
+
+	/* Создание каталога */
+
+	fmt.Println()
+	dirname := "temp"
+	err = os.Mkdir(dirname, 0755)
+	check(err)
+	fmt.Printf("Создан каталог \"%s\"\n", dirname)
+
+	err = os.MkdirAll(dirname+"/inner", 0755)
+	check(err)
+	fmt.Printf("Создан каталог \"%s\"\n", dirname+"/inner")
+
+	defer os.RemoveAll(dirname)
+	fmt.Println("Созданные каталоги удалены")
+	fmt.Println()
+
+	/* Временные файлы и каталоги */
+
+	// Файл
+	tempFile, err := os.CreateTemp("", "temp")
+	check(err)
+	defer os.Remove(tempFile.Name())
+	fmt.Println("Создан временный файл:")
+	fmt.Println(sep + tempFile.Name())
+
+	// Каталог
+	tempDir, err := os.MkdirTemp("", "tempdir")
+	check(err)
+	defer os.RemoveAll(tempDir)
+	fmt.Println("Создан временный каталог:")
+	fmt.Println(sep + tempDir)
 }
