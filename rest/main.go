@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // Структура "альбом"
@@ -23,7 +24,7 @@ var albums = []album{
 }
 
 // Создание и получение альбомов
-func getAlbums(w http.ResponseWriter, r *http.Request) {
+func processAlbums(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	/* Создание альбома */
@@ -42,7 +43,13 @@ func getAlbums(w http.ResponseWriter, r *http.Request) {
 
 	/* Получение альбома по ID */
 
-	if id := r.FormValue("id"); id != "" {
+	var id string
+	id = strings.Split(r.URL.Path, "/")[2]
+	if id == "" {
+		id = r.URL.Query().Get("id")
+	}
+
+	if id != "" {
 		for _, a := range albums {
 			if a.ID == id {
 				w.WriteHeader(http.StatusOK)
@@ -66,7 +73,7 @@ func main() {
 	fmt.Println(" \n[ REST ]\n ")
 
 	// Обработчик
-	http.HandleFunc("/albums", getAlbums)
+	http.HandleFunc("/albums/", processAlbums)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
