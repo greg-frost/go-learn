@@ -49,6 +49,9 @@ func processAlbums(w http.ResponseWriter, r *http.Request) {
 		id = r.URL.Query().Get("id")
 	}
 
+	// Go 1.22
+	// id := r.PathValue("id")
+
 	if id != "" {
 		for _, a := range albums {
 			if a.ID == id {
@@ -74,6 +77,13 @@ func main() {
 
 	// Обработчик
 	http.HandleFunc("/albums/", processAlbums)
+
+	// Go 1.22
+	// mux := http.NewServeMux()
+	// mux.HandleFunc("GET /albums", getAlbums)
+	// mux.HandleFunc("GET /albums/{id}", getAlbumById)
+	// mux.HandleFunc("POST /albums", createAlbum)
+	// http.ListenAndServe("localhost:8080", mux)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
