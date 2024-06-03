@@ -85,12 +85,12 @@ func main() {
 	fmt.Println("[ Объекты ]")
 	objectUser := config.Object.User
 	objectStatus := config.Object.Status
-	fmt.Println("user:")
-	fmt.Printf("   login: %v (%T)\n", objectUser.Login, objectUser.Login)
-	fmt.Printf("   password: %v (%T)\n", objectUser.Password, objectUser.Password)
-	fmt.Printf("   langs: %v (%T)\n", objectUser.Langs, objectUser.Langs)
-	fmt.Println("status:")
-	fmt.Printf("   admin: %v (%T)\n", objectStatus.Admin, objectStatus.Admin)
-	fmt.Printf("   active: %v (%T)\n", objectStatus.Active, objectStatus.Active)
-	fmt.Printf("   banned: %v (%T)\n", objectStatus.Banned, objectStatus.Banned)
+	fmt.Println("User:")
+	fmt.Printf("   Login: %v (%T)\n", objectUser.Login, objectUser.Login)
+	fmt.Printf("   Password: %v (%T)\n", objectUser.Password, objectUser.Password)
+	fmt.Printf("   Langs: %v (%T)\n", objectUser.Langs, objectUser.Langs)
+	fmt.Println("Status:")
+	fmt.Printf("   Admin: %v (%T)\n", objectStatus.Admin, objectStatus.Admin)
+	fmt.Printf("   Active: %v (%T)\n", objectStatus.Active, objectStatus.Active)
+	fmt.Printf("   Banned: %v (%T)\n", objectStatus.Banned, objectStatus.Banned)
 }
