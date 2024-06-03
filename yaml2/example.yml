@@ -1,0 +1,57 @@
+---
+
+# [ Числа ]
+
+# целое
+int: 25
+# восьмеричное
+oct: 023332
+# шестнадцатиричное
+hex: 0x12d4
+# с плавающей точкой
+float: 25.0
+# экспонента
+exp: 12.3015e+05
+# логическое
+bool: true
+# бесконечность
+inf: .inf
+# минус бесконечность
+neginf: -.inf
+# не число
+nan: .NAN
+# null/nil
+null: ~
+
+# [ Строки ]
+
+str: Привет, Мир!
+strings: | 
+  Это
+  Отдельные
+  Строки
+paragraph: >
+  Это
+  Один
+  Параграф
+
+# [ Списки ]
+
+list:
+  - Go
+  - PHP
+  - JavaScript
+
+# [ Объекты ]
+
+object:
+  user:
+    login: Greg
+    password: Frost
+    langs: [Go, PHP, JavaScript]
+  status:
+    admin: true
+    active: true
+    banned: false
+
+...
