@@ -1,0 +1,37 @@
+# Пример TOML-файла
+
+# Поле
+title = "Пример TOML"
+
+# Секция
+[user]
+id = 1 # Число
+rate = 0.75 # Дробное
+name = "Greg Frost" # Строка
+birthday = 1987-08-21T12:34:56+03:00 # Дата
+
+[db]
+server = "192.168.1.1"
+ports = [ 8001, 8001, 8002 ] # Массив
+enabled = true # Логическое
+
+[servers]
+  # Вложенная секция
+  [servers.alpha]
+  ip = "10.0.0.1"
+  dc = "sun"
+
+  # Можно и без отступов
+  [servers.omega]
+  ip = "10.0.0.2"
+  dc = "moon"
+
+[clients]
+# Двумерный массив
+data = [ ["gamma", "delta"], ["1", "2"] ]
+
+# Можно и так
+hosts = [
+  "alpha",
+  "omega"
+]
