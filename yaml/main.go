@@ -55,7 +55,7 @@ func main() {
 	neginf, _ := config.Get("neginf")
 	fmt.Printf("-Inf: %q (%T)\n", neginf, neginf)
 	nan, _ := config.Get("nan")
-	fmt.Printf("NAN: %s (%T)\n", nan, nan)
+	fmt.Printf("NaN: %s (%T)\n", nan, nan)
 	null, _ := config.Get("null")
 	fmt.Printf("Null: %s (%T)\n", null, null)
 	fmt.Println()
@@ -66,8 +66,8 @@ func main() {
 	fmt.Printf("Str: %q (%T)\n", str, str)
 	strings, _ := config.Get("strings")
 	fmt.Printf("Strings: %q (%T)\n", strings, strings)
-	pragraph, _ := config.Get("pragraph")
-	fmt.Printf("Paragraph: %q (%T)\n", pragraph, pragraph)
+	paragraph, _ := config.Get("paragraph")
+	fmt.Printf("Paragraph: %q (%T)\n", paragraph, paragraph)
 	fmt.Println()
 
 	// Секция "Списки"
