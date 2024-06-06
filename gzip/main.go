@@ -29,9 +29,12 @@ func main() {
 		wg.Add(1)
 		go func(filename string) {
 			defer wg.Done()
-			compress(filename)
+			if err := compress(filename); err != nil {
+				fmt.Println("Ошибка:", err)
+				return
+			}
+			count++
 		}(file)
-		count++
 	}
 	wg.Wait()
 
