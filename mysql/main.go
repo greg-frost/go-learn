@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -17,8 +18,11 @@ type User struct {
 func main() {
 	fmt.Println(" \n[ MYSQL ]\n ")
 
+	start := time.Now()
+
 	// Подключение
-	db, err := sql.Open("mysql", "root@tcp(127.0.0.1:3306)/golearn")
+	conn := "root@tcp(127.0.0.1:3306)/golearn"
+	db, err := sql.Open("mysql", conn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,10 +38,11 @@ func main() {
 
 	// Создание таблицы
 	create, err := db.Query(`
-			CREATE TABLE IF NOT EXISTS users(
-			id INT(10) NOT NULL AUTO_INCREMENT,
-			name VARCHAR(50) NULL DEFAULT NULL,
-			PRIMARY KEY (id))
+			CREATE TABLE IF NOT EXISTS users (
+				id INT(10) NOT NULL AUTO_INCREMENT,
+				name VARCHAR(50) NOT NULL,
+				PRIMARY KEY (id)
+			)
 		`)
 	if err != nil {
 		log.Fatal(err)
@@ -103,4 +108,7 @@ func main() {
 	}
 	defer drop.Close()
 	fmt.Println("Таблица удалена")
+
+	end := time.Now()
+	fmt.Println("Время выполнения:", end.Sub(start))
 }
