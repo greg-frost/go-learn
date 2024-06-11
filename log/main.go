@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 )
@@ -73,12 +74,44 @@ func NewLogExtended() *LogExtended {
 }
 
 func main() {
-	fmt.Println(" \n[ ЛОГГЕР ]\n ")
+	fmt.Println(" \n[ ЛОГИРОВАНИЕ ]\n ")
 
-	logger := NewLogExtended()
-	logger.SetLogLevel(LogLevelWarning)
-	logger.Infoln("Не должно напечататься")
-	logger.Warnln("Hello")
-	logger.Errorln("World")
-	logger.Println("Debug")
+	// Стандартный
+	fmt.Println("Стандартный логгер:")
+	log.Printf("Hello\n")
+	log.Println("World")
+	fmt.Println()
+
+	// Настроенный
+	fmt.Println("Настроенный логгер:")
+	flags := log.LstdFlags | log.Lshortfile
+	logger := log.New(os.Stderr, "stderr ", flags)
+	logger.Printf("Hello\n")
+	logger.Println("World")
+	fmt.Println()
+
+	// Файловый
+	fmt.Println("Файловый логгер:")
+	f, err := os.CreateTemp("", "temp")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.Remove(f.Name())
+	file := log.New(f, "file ", flags)
+	file.Printf("Hello\n")
+	file.Println("World")
+	bs, err := ioutil.ReadFile(f.Name())
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(bs))
+
+	// Кастомный
+	fmt.Println("Кастомный логгер:")
+	custom := NewLogExtended()
+	custom.SetLogLevel(LogLevelWarning)
+	custom.Infoln("Не должно напечататься")
+	custom.Warnln("Hello")
+	custom.Errorln("World")
+	custom.Println("Debug")
 }
