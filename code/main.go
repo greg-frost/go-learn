@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,12 +12,26 @@ import (
 func main() {
 	fmt.Println(" \n[ КОД ]\n ")
 
-	files := 0
-	lines := 0
-
+	var files, dirs, lines int
 	path := os.Getenv("GOPATH") + "/src/golearn/"
 
-	/* Рекурсивный обход всех файлов .go */
+	/* Подсчет корневых директорий */
+
+	root, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	rootFiles, err := root.Readdir(-1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range rootFiles {
+		if file.IsDir() && !strings.HasPrefix(file.Name(), ".") {
+			dirs++
+		}
+	}
+
+	/* Подсчет количества go-файлов и строк кода */
 
 	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, ".go") {
@@ -40,6 +55,7 @@ func main() {
 
 	fmt.Println("Статистика:")
 	fmt.Println()
-	fmt.Println("Файлов .go:", files)
+	fmt.Println("Проектов:  ", dirs)
+	fmt.Println("Файлов go: ", files)
 	fmt.Println("Строк кода:", lines)
 }
