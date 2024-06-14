@@ -5,18 +5,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"time"
 )
 
 // Сервер
 func server() {
-	ln, err := net.Listen("tcp", ":9999")
+	conn, err := net.Listen("tcp", "localhost:9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации сервера:", err)
 		return
 	}
+	defer conn.Close()
 
 	for {
-		c, err := ln.Accept()
+		c, err := conn.Accept()
 		if err != nil {
 			fmt.Println("Ошибка приема соединения:", err)
 			continue
@@ -34,7 +36,7 @@ func connection(c net.Conn) {
 	if err != nil {
 		fmt.Println("Ошибка декодирования сообщения:", err)
 	} else {
-		fmt.Print("Получено: ", msg)
+		fmt.Println("Получено:", msg)
 	}
 
 	c.Close()
@@ -74,8 +76,6 @@ func main() {
 	go server()
 	go client()
 
-	/* Ожидание ввода */
-
-	var input string
-	fmt.Scanln(&input)
+	// Ожидание
+	time.Sleep(1 * time.Second)
 }
