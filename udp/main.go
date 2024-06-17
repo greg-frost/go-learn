@@ -17,7 +17,7 @@ func server() {
 	defer conn.Close()
 
 	for {
-		go connection(conn)
+		connection(conn)
 	}
 }
 
