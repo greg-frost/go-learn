@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 
 	redis "github.com/go-redis/redis/v8"
 )
@@ -61,14 +62,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Ключ
+	key := fmt.Sprintf("composite:%v", rand.Intn(1000000))
+
 	// Запись
-	err = client.Set(ctx, "composite", jsonBytes, 0).Err()
+	err = client.Set(ctx, key, jsonBytes, 0).Err()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Чтение
-	value, err = client.Get(ctx, "composite").Result()
+	value, err = client.Get(ctx, key).Result()
 	if err != nil {
 		log.Fatal(err)
 	}
