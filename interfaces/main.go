@@ -4,9 +4,6 @@ import (
 	"fmt"
 )
 
-// Канарейка
-var _ Logic = LogicProvider{}
-
 // Интерфейс "логика"
 type Logic interface {
 	Process(data string) string
