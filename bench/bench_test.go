@@ -56,7 +56,7 @@ func BenchmarkTemplates(b *testing.B) {
 	}
 }
 
-// Бенчмарк скомпилированных шаблонов
+// Бенчмарк шаблонов (скомпилированный)
 func BenchmarkCompiledTemplates(b *testing.B) {
 	b.Logf("b.N = %d\n", b.N)
 	tpl := "Hello {{.Name}}"
@@ -69,4 +69,21 @@ func BenchmarkCompiledTemplates(b *testing.B) {
 		t.Execute(&buf, data)
 		buf.Reset()
 	}
+}
+
+// Бенчмарк шаблонов (параллельный)
+func BenchmarkParallelTemplates(b *testing.B) {
+	tpl := "Hello {{.Name}}"
+	t, _ := template.New("test").Parse(tpl)
+	data := &map[string]string{
+		"Name": "World",
+	}
+	//var buf bytes.Buffer // Data race!
+	b.RunParallel(func(pb *testing.PB) {
+		var buf bytes.Buffer
+		for pb.Next() {
+			t.Execute(&buf, data)
+			buf.Reset()
+		}
+	})
 }
