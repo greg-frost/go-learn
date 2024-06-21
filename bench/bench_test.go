@@ -1,30 +1,32 @@
 package bench
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"testing"
+	"text/template"
 )
 
 // Путь к файлу
-var filename = os.Getenv("GOPATH") + "/src/golearn/hello/main.go"
+var filename = os.Getenv("GOPATH") + "/src/golearn/bench/bench.go"
 
 // "Черная дыра"
 var blackhole int
 
-// Тест
+// Тестирование длины файла
 func TestFileLen(t *testing.T) {
 	g, err := FileLen(filename, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	e := 98
+	e := 385
 	if g != e {
 		t.Errorf("Длина файла: получено %d, ожидается %d", g, e)
 	}
 }
 
-// Бенчмарк
+// Бенчмарк длины файла
 func BenchmarkFileLen(b *testing.B) {
 	for _, v := range []int{1, 10, 100, 1000, 10000, 100000} {
 		b.Run(fmt.Sprintf("FileLen-%d", v), func(b *testing.B) {
@@ -36,5 +38,19 @@ func BenchmarkFileLen(b *testing.B) {
 				blackhole = result
 			}
 		})
+	}
+}
+
+func BenchmarkTemplates(b *testing.B) {
+	b.Logf("b.N = %d\n", b.N)
+	tpl := "Hello {{.Name}}"
+	data := &map[string]string{
+		"Name": "World",
+	}
+	var buf bytes.Buffer
+	for i := 0; i < b.N; i++ {
+		t, _ := template.New("test").Parse(tpl)
+		t.Execute(&buf, data)
+		buf.Reset()
 	}
 }
