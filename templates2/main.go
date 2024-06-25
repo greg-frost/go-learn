@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -50,7 +51,13 @@ func handlePage(w http.ResponseWriter, r *http.Request) {
 		Content: "Данная страница была сгенерирована в Go!",
 		Date:    time.Now(),
 	}
-	t.Execute(w, page)
+	var b bytes.Buffer
+	err := t.Execute(&b, page)
+	if err != nil {
+		fmt.Fprint(w, "Ошибка выполнения шаблона")
+		return
+	}
+	b.WriteTo(w)
 }
 
 func main() {
