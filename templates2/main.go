@@ -3,22 +3,48 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"text/template"
 	"time"
 )
 
 // Путь и шаблоны
 var path = os.Getenv("GOPATH") + "/src/golearn/templates2/tmpl/"
 var t = map[string]*template.Template{}
+var qc template.HTML
+
+// Структура "страница"
+type Page struct {
+	Title   string
+	Content template.HTML
+	Date    time.Time
+}
+
+// Структура "пользователь"
+type User struct {
+	Username string
+	Name     string
+}
+
+// Структура "цитата"
+type Quote struct {
+	Quote  string
+	Person string
+}
+
+// Список функций шаблона
+var funcMap = template.FuncMap{
+	"dateFormat": dateFormat,
+}
 
 // Инициализация
 func init() {
 	t["simple"] = parseTemplate("simple.html")
-	t["page"] = parseTemplate("base.html", "page.html")
+	t["page"] = parseTemplate("base.html", "page.html", "quote.html")
 	t["user"] = parseTemplate("base.html", "user.html")
+	prepareQuote()
 }
 
 // Парсинг шаблона
@@ -35,27 +61,20 @@ func parseTemplate(filenames ...string) *template.Template {
 	return t
 }
 
-// Список функций шаблона
-var funcMap = template.FuncMap{
-	"dateFormat": dateFormat,
+// Подготовка цитаты
+func prepareQuote() {
+	quote := &Quote{
+		Quote:  "Данная страница была собрана из разных шаблонов, прямо как Франкенштейн...",
+		Person: "Морозов Григорий",
+	}
+	var b bytes.Buffer
+	t["page"].ExecuteTemplate(&b, "quote.html", quote)
+	qc = template.HTML(b.String())
 }
 
 // Форматирование даты
 func dateFormat(layout string, d time.Time) string {
 	return d.Format(layout)
-}
-
-// Структура "страница"
-type Page struct {
-	Title   string
-	Content string
-	Date    time.Time
-}
-
-// Структура "пользователь"
-type User struct {
-	Username string
-	Name     string
 }
 
 // Обработчик простой страницы
@@ -78,7 +97,7 @@ func handleSimple(w http.ResponseWriter, r *http.Request) {
 func handlePage(w http.ResponseWriter, r *http.Request) {
 	page := &Page{
 		Title:   "Составная страница",
-		Content: "Данная страница была собрана из разных шаблонов, прямо как Франкенштейн...",
+		Content: qc,
 	}
 	t["page"].ExecuteTemplate(w, "base", page)
 }
