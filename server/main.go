@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 )
 
 const (
@@ -53,13 +52,6 @@ func main() {
 	http.HandleFunc("/", textResponse)
 	http.HandleFunc("/html/", htmlResponse)
 	http.HandleFunc("/headers/", headersResponse)
-	http.Handle(
-		"/files/",
-		http.StripPrefix(
-			"/files/",
-			http.FileServer(http.Dir(os.Getenv("GOPATH")+"/src/golearn/server")),
-		),
-	)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
