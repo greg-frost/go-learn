@@ -48,6 +48,44 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	go deleteFile(filename, 3*time.Second)
 }
 
+// Обработчик множественной загрузки
+func handleMultipleUpload(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		t.Execute(w, nil)
+		return
+	}
+
+	err := r.ParseMultipartForm(16 << 20)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	form := r.MultipartForm
+	files := form.File["file"]
+	var uploaded int
+
+	for _, f := range files {
+		in, err := f.Open()
+		if err != nil {
+			continue
+		}
+		defer in.Close()
+
+		filename := path + f.Filename
+		out, err := os.Create(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer out.Close()
+		io.Copy(out, in)
+
+		go deleteFile(filename, 3*time.Second)
+		uploaded++
+	}
+
+	fmt.Fprintln(w, "Загружено файлов:", uploaded)
+}
+
 // Отложенное удаление файла
 func deleteFile(filename string, delay time.Duration) {
 	time.Sleep(delay)
@@ -57,8 +95,9 @@ func deleteFile(filename string, delay time.Duration) {
 func main() {
 	fmt.Println(" \n[ ЗАГРУЗКА ФАЙЛОВ ]\n ")
 
-	// Обработчик
+	// Обработчики
 	http.HandleFunc("/", handleUpload)
+	http.HandleFunc("/multiple", handleMultipleUpload)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
