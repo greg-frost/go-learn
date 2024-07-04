@@ -6,8 +6,11 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"mime"
+	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -37,7 +40,10 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	defer out.Close()
 	io.Copy(out, in)
 
-	contentType := h.Header["Content-Type"][0]
+	contentType := typeByHeader(h)
+	// contentType := typeByExt(h.Filename)
+	// contentType := typeByContent(in)
+
 	w.Header().Set("Content-Type", contentType)
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -90,6 +96,24 @@ func handleMultipleUpload(w http.ResponseWriter, r *http.Request) {
 func deleteFile(filename string, delay time.Duration) {
 	time.Sleep(delay)
 	os.Remove(filename)
+}
+
+// Определение типа файла по заголовку
+func typeByHeader(header *multipart.FileHeader) string {
+	return header.Header["Content-Type"][0]
+}
+
+// Определение типа файла по расширению
+func typeByExt(filename string) string {
+	ext := filepath.Ext(filename)
+	return mime.TypeByExtension(ext)
+}
+
+// Определение типа файла по содержимому
+func typeByContent(file multipart.File) string {
+	buffer := make([]byte, 512)
+	file.Read(buffer)
+	return http.DetectContentType(buffer)
 }
 
 func main() {
