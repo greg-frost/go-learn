@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"io"
@@ -92,6 +93,78 @@ func handleMultipleUpload(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Загружено файлов:", uploaded)
 }
 
+// Обработчик потоковой загрузки
+func handleStreamUpload(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		t.Execute(w, nil)
+		return
+	}
+
+	mr, err := r.MultipartReader()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	values := make(map[string][]string)
+	maxValueBytes := int64(10 << 20)
+	var parts int
+
+	for {
+		part, err := mr.NextPart()
+		if err == io.EOF {
+			break
+		}
+		name := part.FormName()
+		if name == "" {
+			continue
+		}
+		filename := part.FileName()
+		var b bytes.Buffer
+
+		// Текстовое поле
+		if filename == "" {
+			n, err := io.CopyN(&b, part, maxValueBytes)
+			if err != nil && err != io.EOF {
+				fmt.Fprint(w, "Ошибка чтения сообщения")
+				return
+			}
+			maxValueBytes -= n
+			if maxValueBytes == 0 {
+				fmt.Fprint(w, "Сообщение слишком большое")
+				return
+			}
+			values[name] = append(values[name], b.String())
+			continue
+		}
+
+		// Файловое поле
+		filename = path + filename
+		out, err := os.Create(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer out.Close()
+		for {
+			buffer := make([]byte, 100000)
+			m, err := part.Read(buffer)
+			if err == io.EOF {
+				break
+			}
+			out.Write(buffer[:m])
+			parts++
+		}
+
+		go deleteFile(filename, 3*time.Second)
+	}
+
+	fmt.Fprintln(w, "Загружено фрагментов:", parts)
+
+	formValue := values["name"][0]
+	if formValue != "" {
+		fmt.Fprintln(w, "Текстовое поле:", formValue)
+	}
+}
+
 // Отложенное удаление файла
 func deleteFile(filename string, delay time.Duration) {
 	time.Sleep(delay)
@@ -122,6 +195,7 @@ func main() {
 	// Обработчики
 	http.HandleFunc("/", handleUpload)
 	http.HandleFunc("/multiple", handleMultipleUpload)
+	http.HandleFunc("/stream", handleStreamUpload)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
