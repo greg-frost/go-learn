@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -59,6 +60,19 @@ func main() {
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
+	}
+	fmt.Println("Статус ответа:", res.Status)
+
+	// Свой клиент
+
+	fmt.Println()
+	fmt.Println("HEAD:", addr)
+
+	client := &http.Client{Timeout: 200 * time.Millisecond}
+	res, err = client.Head(addr)
+	if err != nil {
+		fmt.Println("Ошибка: таймаут!")
+		return
 	}
 	fmt.Println("Статус ответа:", res.Status)
 }
