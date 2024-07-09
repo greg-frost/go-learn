@@ -13,11 +13,10 @@ import (
 func main() {
 	fmt.Println(" \n[ HTTP-КЛИЕНТ ]\n ")
 
-	// GET-запрос
+	/* GET-запрос */
 
 	addr := "https://go.dev"
 	fmt.Println("GET:", addr)
-
 	get, err := http.Get(addr)
 	if err != nil {
 		log.Fatal(err)
@@ -47,11 +46,10 @@ func main() {
 	}
 	fmt.Println("Осталось символов:", len(body))
 
-	// POST-запрос
+	/* POST-запрос */
 
 	fmt.Println()
 	fmt.Println("POST:", addr)
-
 	data := strings.NewReader("payload data")
 	req, err := http.NewRequest("POST", addr, data)
 	if err != nil {
@@ -63,11 +61,10 @@ func main() {
 	}
 	fmt.Println("Статус ответа:", res.Status)
 
-	// Свой клиент
+	/* Свой клиент */
 
 	fmt.Println()
 	fmt.Println("HEAD:", addr)
-
 	client := &http.Client{Timeout: 200 * time.Millisecond}
 	res, err = client.Head(addr)
 	if err != nil {
