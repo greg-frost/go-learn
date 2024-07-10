@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 // Структура "ошибка"
@@ -14,11 +16,14 @@ type Error struct {
 	Message  string `json:"message"`
 }
 
-// JSON-ошибка
+// Структура "обертка ошибки"
+type ErrorWrap struct {
+	Err Error `json:"error"`
+}
+
+// Формирование JSON-ошибки
 func JSONError(w http.ResponseWriter, e Error) {
-	data := struct {
-		Err Error `json:"error"`
-	}{e}
+	data := ErrorWrap{e}
 
 	b, err := json.Marshal(data)
 	if err != nil {
@@ -31,7 +36,7 @@ func JSONError(w http.ResponseWriter, e Error) {
 	fmt.Fprint(w, string(b))
 }
 
-// Обработчик ошибки
+// Обработчик страницы с ошибкой
 func handleError(w http.ResponseWriter, r *http.Request) {
 	e := Error{
 		HTTPCode: http.StatusForbidden,
@@ -41,14 +46,66 @@ func handleError(w http.ResponseWriter, r *http.Request) {
 	JSONError(w, e)
 }
 
+// Форматирование ошибки
+func (e Error) Error() string {
+	msg := "HTTP: %d, Код: %d, Сообщение: %s"
+	return fmt.Sprintf(msg, e.HTTPCode, e.Code, e.Message)
+}
+
+// Получение страницы
+func get(url string) (*http.Response, error) {
+	res, err := http.Get(url)
+	if err != nil {
+		return res, err
+	}
+
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		if res.Header.Get("Content-Type") != "application/json" {
+			msg := "Неизвестная ошибка, HTTP-статус: %s"
+			return res, fmt.Errorf(msg, res.Status)
+		}
+
+		b, _ := ioutil.ReadAll(res.Body)
+		res.Body.Close()
+		var data ErrorWrap
+		err = json.Unmarshal(b, &data)
+		if err != nil {
+			msg := "Не удалось прочитать JSON: %s, HTTP-статус: %s"
+			return res, fmt.Errorf(msg, err, res.Status)
+		}
+		data.Err.HTTPCode = res.StatusCode
+
+		return res, data.Err
+	}
+	return res, nil
+}
+
 func main() {
 	fmt.Println(" \n[ HTTP-ОШИБКИ ]\n ")
 
-	// Обработчик
-	http.HandleFunc("/", handleError)
+	/* Сервер */
 
-	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
-	fmt.Println("(на http://localhost:8080)")
-	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+	fmt.Println("Сервер:")
+	go func() {
+		http.HandleFunc("/", handleError)
+
+		fmt.Println("Ожидаю обновлений...")
+		fmt.Println("(на http://localhost:8080)")
+		log.Fatal(http.ListenAndServe("localhost:8080", nil))
+	}()
+
+	time.Sleep(250 * time.Millisecond)
+	fmt.Println()
+
+	/* Клиент */
+
+	fmt.Println("Клиент:")
+	res, err := get("http://localhost:8080")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	b, _ := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	fmt.Println(string(b))
 }
