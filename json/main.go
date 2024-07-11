@@ -16,7 +16,7 @@ type Person struct {
 	DateOfBirth time.Time `json:"-"`
 }
 
-// Композитная структура "Ответ"
+// Композитная структура "ответ"
 type (
 	Response struct {
 		Header Header `json:"header"`
@@ -40,14 +40,40 @@ type (
 	}
 )
 
-// Чтение JSON-строки
-func readJson(respJson string) (Response, error) {
-	resp := Response{}
+// Чтение JSON
+func readJSON(respJson string) (Response, error) {
+	var resp Response
 	if err := json.Unmarshal([]byte(respJson), &resp); err != nil {
 		return Response{}, fmt.Errorf("JSON десериализация: %w", err)
 	}
 
 	return resp, nil
+}
+
+// Печать JSON
+func printJSON(v interface{}) {
+	switch v := v.(type) {
+	case string:
+		fmt.Println("строка:", v)
+	case float64:
+		fmt.Println("число:", v)
+	case bool:
+		fmt.Println("число:", v)
+	case []interface{}:
+		fmt.Println("массив:")
+		for _, data := range v {
+			fmt.Print("- ")
+			printJSON(data)
+		}
+	case map[string]interface{}:
+		fmt.Println("объект:")
+		for field, data := range v {
+			fmt.Printf("%q ", field)
+			printJSON(data)
+		}
+	default:
+		fmt.Println("неизвестный тип")
+	}
 }
 
 func main() {
@@ -61,13 +87,12 @@ func main() {
 		DateOfBirth: time.Now(),
 	}
 
-	jsMan, err := json.Marshal(man)
+	jsonMan, err := json.Marshal(man)
 	if err != nil {
-		log.Fatalln("не удалось сериализовать в json")
+		log.Fatal(err)
 	}
 
-	fmt.Printf("Сериализация:\n%v", string(jsMan))
-	fmt.Println(" \n ")
+	fmt.Printf("Сериализация:\n%v\n\n", string(jsonMan))
 
 	/* Анонимная структура */
 
@@ -80,9 +105,8 @@ func main() {
 		Limit:        50,
 	}
 
-	jsReq, _ := json.Marshal(req)
-	fmt.Printf("Анонимная структура:\n%v", string(jsReq))
-	fmt.Println(" \n ")
+	jsonReq, _ := json.Marshal(req)
+	fmt.Printf("Анонимная структура:\n%v\n\n", string(jsonReq))
 
 	/* Композитный JSON (вручную) */
 
@@ -103,9 +127,8 @@ func main() {
 		},
 	}
 
-	jsResp1, _ := json.Marshal(resp1)
-	fmt.Printf("Структура ответа (вручную):\n%+v\n%v\n", resp1, string(jsResp1))
-	fmt.Println()
+	jsonResp1, _ := json.Marshal(resp1)
+	fmt.Printf("Структура ответа (вручную):\n%+v\n%v\n\n", resp1, string(jsonResp1))
 
 	/* Композитный JSON (десериализация) */
 
@@ -126,9 +149,9 @@ func main() {
 	}
 	`
 
-	resp2, _ := readJson(respJson)
-	jsResp2, _ := json.Marshal(resp2)
-	fmt.Printf("Структура ответа (десериализация):\n%+v\n%v\n", resp2, string(jsResp2))
+	resp2, _ := readJSON(respJson)
+	jsonResp2, _ := json.Marshal(resp2)
+	fmt.Printf("Структура ответа (десериализация):\n%+v\n%v\n\n", resp2, string(jsonResp2))
 
 	/* Encoder и Decoder */
 
@@ -149,18 +172,48 @@ func main() {
 	for dec.More() {
 		err := dec.Decode(&p)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		p.Name = p.Name + " " + p.Name
 
 		err = enc.Encode(p)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 
-	fmt.Println()
 	fmt.Println("Encode и Decode:")
-	fmt.Print(b.String())
+	fmt.Println(b.String())
+
+	/* Произвольный формат */
+
+	fmt.Println("Произвольный формат:")
+	jsonCustom := `
+	{
+		"first_name": "Greg",
+		"last_name": "Frost",
+		"age": 36,
+		"is_active": true,
+		"langs":
+		{
+			"items": [
+				"Go",
+				"PHP",
+				"JavaScript"
+			],
+			"rate": 1.21
+		}
+	}
+	`
+
+	var custom interface{}
+	err = json.Unmarshal([]byte(jsonCustom), &custom)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(custom)
+	fmt.Println()
+
+	printJSON(custom)
 }
