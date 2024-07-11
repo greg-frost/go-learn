@@ -58,7 +58,7 @@ func printJSON(v interface{}) {
 	case float64:
 		fmt.Println("число:", v)
 	case bool:
-		fmt.Println("число:", v)
+		fmt.Println("логическое:", v)
 	case []interface{}:
 		fmt.Println("массив:")
 		for _, data := range v {
