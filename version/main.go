@@ -34,6 +34,21 @@ func handleByUrl(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(b))
 }
 
+// Обработчик версии 2 по URL
+func handleByUrlV2(w http.ResponseWriter, r *http.Request) {
+	data := MessageV2{
+		Version: 2,
+		Message: "Сообщение приложения",
+	}
+	b, err := json.Marshal(data)
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(b))
+}
+
 // Обработчик версии по Content-Type
 func handleByContentType(w http.ResponseWriter, r *http.Request) {
 	var err error
@@ -95,6 +110,7 @@ func main() {
 	fmt.Println("Сервер:")
 	go func() {
 		http.HandleFunc("/api/v1/endpoint", handleByUrl)
+		http.HandleFunc("/api/v2/endpoint", handleByUrlV2)
 		http.HandleFunc("/endpoint", handleByContentType)
 
 		fmt.Println("Ожидаю обновлений...")
@@ -109,21 +125,18 @@ func main() {
 
 	fmt.Println("Клиенты:")
 
-	res, err := getPage("http://localhost:8080/api/v1/endpoint", "")
-	if err != nil {
-		log.Fatal(err)
-	}
+	res, _ := getPage("http://localhost:8080/api/v1/endpoint", "")
 	fmt.Println("V1 по URL:", res)
 
-	res, err = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=1.0")
-	if err != nil {
-		log.Fatal(err)
-	}
+	res, _ = getPage("http://localhost:8080/api/v2/endpoint", "")
+	fmt.Println("V2 по URL:", res)
+
+	res, _ = getPage("http://localhost:8080/endpoint", "")
+	fmt.Println("V? по Content-Type:", res)
+
+	res, _ = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=1.0")
 	fmt.Println("V1 по Content-Type:", res)
 
-	res, err = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=2.0")
-	if err != nil {
-		log.Fatal(err)
-	}
+	res, _ = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=2.0")
 	fmt.Println("V2 по Content-Type:", res)
 }
