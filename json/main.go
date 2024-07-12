@@ -51,7 +51,12 @@ func readJSON(respJson string) (Response, error) {
 }
 
 // Печать JSON
-func printJSON(v interface{}) {
+func printJSON(v interface{}, caption string, depth int) {
+	fmt.Print(strings.Repeat("  ", depth))
+	if caption != "" {
+		fmt.Print(caption, " ")
+	}
+
 	switch v := v.(type) {
 	case string:
 		fmt.Println("строка:", v)
@@ -62,14 +67,12 @@ func printJSON(v interface{}) {
 	case []interface{}:
 		fmt.Println("массив:")
 		for _, data := range v {
-			fmt.Print("- ")
-			printJSON(data)
+			printJSON(data, "-", depth+1)
 		}
 	case map[string]interface{}:
 		fmt.Println("объект:")
 		for field, data := range v {
-			fmt.Printf("%q ", field)
-			printJSON(data)
+			printJSON(data, fmt.Sprintf("%q", field), depth+1)
 		}
 	default:
 		fmt.Println("неизвестный тип")
@@ -215,5 +218,5 @@ func main() {
 	fmt.Println(custom)
 	fmt.Println()
 
-	printJSON(custom)
+	printJSON(custom, "", 0)
 }
