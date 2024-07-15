@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"runtime"
+	"sort"
 	"strings"
 )
 
@@ -45,4 +47,24 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Текущий каталог:", pwd)
+	fmt.Println()
+
+	// Хост
+	host, err := os.Hostname()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Имя хоста:", host)
+
+	// IP-адреса
+	addrs, err := net.LookupHost(host)
+	if err != nil {
+		log.Fatal(err)
+	}
+	sort.Strings(addrs)
+	fmt.Println("IP-адреса:")
+	for _, addr := range addrs {
+		parts := strings.Split(addr, "%")
+		fmt.Println(parts[0])
+	}
 }
