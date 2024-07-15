@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"runtime"
 	"strings"
 )
@@ -11,7 +13,8 @@ func main() {
 
 	// ОС
 	fmt.Print("Операционная система: ")
-	switch os := runtime.GOOS; os {
+	OS := runtime.GOOS
+	switch OS {
 	case "windows":
 		fmt.Println("WINDOWS")
 	case "darwin":
@@ -19,9 +22,27 @@ func main() {
 	case "linux":
 		fmt.Println("LINUX")
 	default:
-		fmt.Println(strings.ToUpper(os))
+		fmt.Println(strings.ToUpper(OS))
 	}
 
 	// Число ядер
-	fmt.Println("Число ядер процессора:", runtime.NumCPU())
+	numCPU := runtime.NumCPU()
+	fmt.Println("Число ядер процессора:", numCPU)
+	fmt.Println()
+
+	// Идентификатор процесса
+	pid := os.Getpid()
+	fmt.Println("ID процесса:", pid)
+
+	// Разделители пути
+	pathSep := string(os.PathSeparator)
+	pathListSep := string(os.PathListSeparator)
+	fmt.Println("Разделители пути:", pathSep, "и", pathListSep)
+
+	// Текущий каталог
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Текущий каталог:", pwd)
 }
