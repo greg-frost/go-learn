@@ -9,14 +9,19 @@ import (
 func main() {
 	fmt.Println(" \n[ OS ]\n ")
 
-	fmt.Print("Go работает на ")
+	// ОС
+	fmt.Print("Операционная система: ")
 	switch os := runtime.GOOS; os {
+	case "windows":
+		fmt.Println("WINDOWS")
 	case "darwin":
-		fmt.Println("OS X.")
+		fmt.Println("OS X")
 	case "linux":
-		fmt.Println("LINUX.")
+		fmt.Println("LINUX")
 	default:
-		fmt.Printf("%s.\n", strings.ToUpper(os))
+		fmt.Println(strings.ToUpper(os))
 	}
+
+	// Число ядер
 	fmt.Println("Число ядер процессора:", runtime.NumCPU())
 }
