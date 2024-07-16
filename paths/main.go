@@ -19,6 +19,12 @@ func main() {
 	fmt.Println(filepath.Join("dir/../dir", "file"))
 	fmt.Println()
 
+	fmt.Println("Преобразование:")
+	fmt.Println(filepath.ToSlash(path))
+	fmt.Println(filepath.Split(path))
+	fmt.Println(filepath.Split("dir/sub/file"))
+	fmt.Println()
+
 	fmt.Println("Фрагменты:")
 	fmt.Println("Dir:", filepath.Dir(path))
 	fmt.Println("Base:", filepath.Base(path))
