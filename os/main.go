@@ -5,10 +5,20 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"runtime"
 	"sort"
 	"strings"
 )
+
+// Проверка зависимости
+func checkDependency(name string) error {
+	if _, err := exec.LookPath(name); err != nil {
+		msg := "Не удалось найти '%s' в PATH: %s"
+		return fmt.Errorf(msg, name, err)
+	}
+	return nil
+}
 
 func main() {
 	fmt.Println(" \n[ OS ]\n ")
@@ -66,5 +76,23 @@ func main() {
 	for _, addr := range addrs {
 		parts := strings.Split(addr, "%")
 		fmt.Println(parts[0])
+	}
+	fmt.Println()
+
+	// Зависимости
+	fmt.Println("Зависимости:")
+	err = checkDependency("ping")
+	fmt.Print("ping - ")
+	if err == nil {
+		fmt.Println("доступно")
+	} else {
+		fmt.Println("недоступно")
+	}
+	err = checkDependency("pong")
+	fmt.Print("pong - ")
+	if err == nil {
+		fmt.Println("доступно")
+	} else {
+		fmt.Println("недоступно")
 	}
 }
