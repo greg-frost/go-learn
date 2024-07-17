@@ -12,12 +12,11 @@ import (
 )
 
 // Проверка зависимости
-func checkDependency(name string) error {
+func checkDependency(name string) (bool, string) {
 	if _, err := exec.LookPath(name); err != nil {
-		msg := "Не удалось найти '%s' в PATH: %s"
-		return fmt.Errorf(msg, name, err)
+		return false, "недоступно"
 	}
-	return nil
+	return true, "доступно"
 }
 
 func main() {
@@ -81,18 +80,8 @@ func main() {
 
 	// Зависимости
 	fmt.Println("Зависимости:")
-	err = checkDependency("ping")
-	fmt.Print("ping - ")
-	if err == nil {
-		fmt.Println("доступно")
-	} else {
-		fmt.Println("недоступно")
-	}
-	err = checkDependency("pong")
-	fmt.Print("pong - ")
-	if err == nil {
-		fmt.Println("доступно")
-	} else {
-		fmt.Println("недоступно")
-	}
+	_, ping := checkDependency("ping")
+	fmt.Println("ping -", ping)
+	_, pong := checkDependency("pong")
+	fmt.Println("pong -", pong)
 }
