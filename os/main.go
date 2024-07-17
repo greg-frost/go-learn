@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"time"
 )
 
 // Проверка зависимости
@@ -17,6 +18,17 @@ func checkDependency(name string) (bool, string) {
 		return false, "недоступно"
 	}
 	return true, "доступно"
+}
+
+// Мониторинг среды выполнения
+func monitorRuntime(d time.Duration) {
+	m := &runtime.MemStats{}
+	for {
+		goroutines := runtime.NumGoroutine()
+		runtime.ReadMemStats(m)
+		fmt.Printf("Горутины: %2d  |  Память: %7d\n", goroutines, m.Alloc)
+		time.Sleep(d)
+	}
 }
 
 func main() {
@@ -84,4 +96,16 @@ func main() {
 	fmt.Println("ping -", ping)
 	_, pong := checkDependency("pong")
 	fmt.Println("pong -", pong)
+	fmt.Println()
+
+	// Мониторинг
+	fmt.Println("Мониторинг:")
+	go monitorRuntime(time.Second)
+	for i := 0; i < 5; i++ {
+		go func() {
+			time.Sleep(5 * time.Second)
+		}()
+		time.Sleep(500 * time.Millisecond)
+	}
+	time.Sleep(2 * time.Second)
 }
