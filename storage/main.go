@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -10,14 +11,21 @@ import (
 	"path/filepath"
 )
 
-// Путь
-var path = os.Getenv("GOPATH") + "/src/golearn/storage"
-
 // Интерфейс "файл"
 type File interface {
 	Load(string) (io.ReadCloser, error)
 	Save(string, io.ReadSeeker) error
 }
+
+// Общие ошибки
+var (
+	ErrFileNotFound   = errors.New("Файл не найден")
+	ErrCannotLoadFile = errors.New("Не удалось загрузить файл")
+	ErrCannotSaveFile = errors.New("Не удалось сохранить файл")
+)
+
+// Путь
+var path = os.Getenv("GOPATH") + "/src/golearn/storage"
 
 // Структура "локальный файл"
 type LocalFile struct {
@@ -32,7 +40,18 @@ func newFileStore() (File, error) {
 // Загрузка
 func (l LocalFile) Load(path string) (io.ReadCloser, error) {
 	p := filepath.Join(l.Base, path)
-	return os.Open(p)
+
+	var e error
+	o, err := os.Open(p)
+	if err != nil && os.IsNotExist(err) {
+		log.Printf("Не удалось обнаружить %s", path)
+		e = ErrFileNotFound
+	} else if err != nil {
+		log.Printf("Ошибка при загрузке файла %s: %s", path, err)
+		e = ErrCannotLoadFile
+	}
+
+	return o, e
 }
 
 // Сохранение
@@ -42,17 +61,21 @@ func (l LocalFile) Save(path string, body io.ReadSeeker) error {
 
 	err := os.MkdirAll(d, os.ModeDir|os.ModePerm)
 	if err != nil {
-		return err
+		return ErrCannotSaveFile
 	}
 
 	f, err := os.Create(p)
 	if err != nil {
-		return err
+		return ErrCannotSaveFile
 	}
 	defer f.Close()
 
 	_, err = io.Copy(f, body)
-	return err
+	if err != nil {
+		return ErrCannotSaveFile
+	}
+
+	return nil
 }
 
 func main() {
