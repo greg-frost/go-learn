@@ -44,10 +44,10 @@ func (l LocalFile) Load(path string) (io.ReadCloser, error) {
 	var e error
 	o, err := os.Open(p)
 	if err != nil && os.IsNotExist(err) {
-		log.Printf("Не удалось обнаружить %s", path)
+		log.Printf("Не удалось обнаружить %s", p)
 		e = ErrFileNotFound
 	} else if err != nil {
-		log.Printf("Ошибка при загрузке файла %s: %s", path, err)
+		log.Printf("Ошибка при загрузке файла %s: %s", p, err)
 		e = ErrCannotLoadFile
 	}
 
@@ -61,17 +61,20 @@ func (l LocalFile) Save(path string, body io.ReadSeeker) error {
 
 	err := os.MkdirAll(d, os.ModeDir|os.ModePerm)
 	if err != nil {
+		log.Printf("Не удалось создать каталог %s", d)
 		return ErrCannotSaveFile
 	}
 
 	f, err := os.Create(p)
 	if err != nil {
+		log.Printf("Не удалось создать файл %s", p)
 		return ErrCannotSaveFile
 	}
 	defer f.Close()
 
 	_, err = io.Copy(f, body)
 	if err != nil {
+		log.Print("Не удалось скопировать текст в новый файл")
 		return ErrCannotSaveFile
 	}
 
