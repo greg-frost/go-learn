@@ -28,4 +28,14 @@ func main() {
 
 	fmt.Println("Кодирование:")
 	fmt.Println(string(out))
+	fmt.Println()
+
+	// Декодирование
+	var u2 user.User
+	err = codec.NewDecoderBytes(out, jh).Decode(&u2)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Декодирование:")
+	fmt.Printf("%+v\n", u2)
 }
