@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"golearn/codec/user"
 
@@ -15,27 +16,41 @@ func main() {
 	// JSON-обработчик
 	jh := new(codec.JsonHandle)
 
-	// Кодирование
+	// Данные
 	u := &user.User{
 		Name:  "Greg",
 		Email: "greg-frost@yandex.ru",
 	}
 	var out []byte
-	err := codec.NewEncoderBytes(&out, jh).Encode(&u)
-	if err != nil {
-		log.Fatal(err)
+	var u2 user.User
+
+	times := 1000000
+	fmt.Println("Число повторов:", times)
+	fmt.Println()
+
+	// Кодирование
+	start := time.Now()
+	for i := 0; i < times; i++ {
+		err := codec.NewEncoderBytes(&out, jh).Encode(&u)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	fmt.Println("Кодирование:")
 	fmt.Println(string(out))
+	fmt.Println("Заняло", time.Now().Sub(start))
 	fmt.Println()
 
 	// Декодирование
-	var u2 user.User
-	err = codec.NewDecoderBytes(out, jh).Decode(&u2)
-	if err != nil {
-		log.Fatal(err)
+	start = time.Now()
+	for i := 0; i < times; i++ {
+		err := codec.NewDecoderBytes(out, jh).Decode(&u2)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	fmt.Println("Декодирование:")
 	fmt.Printf("%+v\n", u2)
+	fmt.Println("Заняло", time.Now().Sub(start))
 }
