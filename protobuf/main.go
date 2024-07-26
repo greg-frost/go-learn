@@ -125,5 +125,32 @@ func main() {
 	fmt.Println("ID:", pbUser.GetId())
 	fmt.Println("E-mail:", pbUser.GetEmail())
 	raw = strings.TrimSpace(string(body))
-	fmt.Printf("RAW: %s (%d)\n", raw, len(raw))
+	fmt.Printf("RAW: %s (%d)\n\n", raw, len(raw))
+
+	/* Сравнение */
+
+	times := 1000
+	fmt.Printf("Сравнение (%d повторов):\n", times)
+
+	// JSON
+	start := time.Now()
+	for i := 0; i < times; i++ {
+		res, _ := http.Get("http://localhost:8080/json")
+		body, _ := ioutil.ReadAll(res.Body)
+		res.Body.Close()
+		var jsUser User
+		json.Unmarshal(body, &jsUser)
+	}
+	fmt.Println("JSON:", time.Now().Sub(start))
+
+	// Protobuf
+	start = time.Now()
+	for i := 0; i < times; i++ {
+		res, _ := http.Get("http://localhost:8080/protobuf")
+		body, _ := ioutil.ReadAll(res.Body)
+		res.Body.Close()
+		var pbUser pb.User
+		proto.Unmarshal(body, &pbUser)
+	}
+	fmt.Println("Protobuf:", time.Now().Sub(start))
 }
