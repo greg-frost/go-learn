@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	pb "golearn/protobuf/user"
+	pb "golearn/protobuf/v2/user"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -38,7 +38,7 @@ func main() {
 
 	fmt.Println("Сервер:")
 	go func() {
-		http.HandleFunc("/", handleProtobuf)
+		http.HandleFunc("/proto", handleProtobuf)
 
 		fmt.Println("Ожидаю обновлений...")
 		fmt.Println("(на http://localhost:8080)")
@@ -51,16 +51,16 @@ func main() {
 	/* Клиент */
 
 	fmt.Println("Клиент:")
-	res, err := http.Get("http://localhost:8080")
+	res, err := http.Get("http://localhost:8080/proto")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
 
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
+	res.Body.Close()
 
 	var u pb.User
 	err = proto.Unmarshal(b, &u)
