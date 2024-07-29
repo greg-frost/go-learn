@@ -21,13 +21,27 @@ type User struct {
 	Email string `json:"email,omitempty"`
 }
 
-// Обработчик JSON
-func handleJSON(w http.ResponseWriter, r *http.Request) {
-	u := User{
+// Новый пользователь
+func newUser() User {
+	return User{
 		Name:  "Greg Frost",
 		Id:    100021,
 		Email: "greg-frost@yandex.ru",
 	}
+}
+
+// Новый protobuf-пользователь
+func newPbUser() pb.User {
+	return pb.User{
+		Name:  proto.String("Greg Frost"),
+		Id:    proto.Int32(100021),
+		Email: proto.String("greg-frost@yandex.ru"),
+	}
+}
+
+// Обработчик JSON
+func handleJSON(w http.ResponseWriter, r *http.Request) {
+	u := newUser()
 
 	body, err := json.Marshal(u)
 	if err != nil {
@@ -41,13 +55,9 @@ func handleJSON(w http.ResponseWriter, r *http.Request) {
 
 // Обработчик Protocol Buffers
 func handleProtobuf(w http.ResponseWriter, r *http.Request) {
-	u := &pb.User{
-		Name:  proto.String("Greg Frost"),
-		Id:    proto.Int32(100021),
-		Email: proto.String("greg-frost@yandex.ru"),
-	}
+	u := newPbUser()
 
-	body, err := proto.Marshal(u)
+	body, err := proto.Marshal(&u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -129,27 +139,23 @@ func main() {
 
 	/* Сравнение */
 
-	times := 1000
+	times := 100000
 	fmt.Printf("Сравнение (%d повторов):\n", times)
 
 	// JSON
+	jsUser = newUser()
 	start := time.Now()
 	for i := 0; i < times; i++ {
-		res, _ := http.Get("http://localhost:8080/json")
-		body, _ := ioutil.ReadAll(res.Body)
-		res.Body.Close()
-		var jsUser User
+		body, _ = json.Marshal(jsUser)
 		json.Unmarshal(body, &jsUser)
 	}
 	fmt.Println("JSON:", time.Now().Sub(start))
 
 	// Protobuf
+	pbUser = newPbUser()
 	start = time.Now()
 	for i := 0; i < times; i++ {
-		res, _ := http.Get("http://localhost:8080/protobuf")
-		body, _ := ioutil.ReadAll(res.Body)
-		res.Body.Close()
-		var pbUser pb.User
+		body, _ = proto.Marshal(&pbUser)
 		proto.Unmarshal(body, &pbUser)
 	}
 	fmt.Println("Protobuf:", time.Now().Sub(start))
