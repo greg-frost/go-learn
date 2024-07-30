@@ -12,8 +12,11 @@ import (
 func main() {
 	fmt.Println(" \n[ КОД ]\n ")
 
-	var files, dirs, lines int
+	// Настройки
 	path := os.Getenv("GOPATH") + "/src/golearn/"
+	skip := []string{".pb", "_generated"}
+
+	var files, dirs, lines int
 
 	/* Подсчет корневых директорий */
 
@@ -35,6 +38,12 @@ func main() {
 
 	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, ".go") {
+			for _, s := range skip {
+				if strings.Contains(path, s) {
+					return nil
+				}
+			}
+
 			file, err := os.Open(path)
 			if err != nil {
 				return nil
