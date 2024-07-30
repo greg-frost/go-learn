@@ -1,5 +1,4 @@
 package user;
-
 option go_package = ".";
 
 message User {

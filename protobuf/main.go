@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	pb "golearn/protobuf/v2/user"
+	pb2 "golearn/protobuf/v2/user"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -30,9 +30,9 @@ func newUser() User {
 	}
 }
 
-// Новый protobuf-пользователь
-func newPbUser() pb.User {
-	return pb.User{
+// Новый пользователь Protobuf v2
+func newUserPb2() pb2.User {
+	return pb2.User{
 		Name:  proto.String("Greg Frost"),
 		Id:    proto.Int32(100021),
 		Email: proto.String("greg-frost@yandex.ru"),
@@ -53,9 +53,9 @@ func handleJSON(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
-// Обработчик Protocol Buffers
-func handleProtobuf(w http.ResponseWriter, r *http.Request) {
-	u := newPbUser()
+// Обработчик Protocol Buffers v2
+func handleProtobuf2(w http.ResponseWriter, r *http.Request) {
+	u := newUserPb2()
 
 	body, err := proto.Marshal(&u)
 	if err != nil {
@@ -75,7 +75,7 @@ func main() {
 	fmt.Println("Сервер:")
 	go func() {
 		http.HandleFunc("/json", handleJSON)
-		http.HandleFunc("/protobuf", handleProtobuf)
+		http.HandleFunc("/protobuf2", handleProtobuf2)
 
 		fmt.Println("Ожидаю обновлений...")
 		fmt.Println("(на http://localhost:8080)")
@@ -113,8 +113,8 @@ func main() {
 
 	/* Protobuf */
 
-	fmt.Println("Protobuf:")
-	res, err = http.Get("http://localhost:8080/protobuf")
+	fmt.Println("Protobuf v2:")
+	res, err = http.Get("http://localhost:8080/protobuf2")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -125,7 +125,7 @@ func main() {
 	}
 	res.Body.Close()
 
-	var pbUser pb.User
+	var pbUser pb2.User
 	err = proto.Unmarshal(body, &pbUser)
 	if err != nil {
 		log.Fatal(err)
@@ -152,11 +152,11 @@ func main() {
 	fmt.Println("JSON:", time.Now().Sub(start))
 
 	// Protobuf
-	pbUser = newPbUser()
+	pbUser = newUserPb2()
 	start = time.Now()
 	for i := 0; i < times; i++ {
 		body, _ = proto.Marshal(&pbUser)
 		proto.Unmarshal(body, &pbUser)
 	}
-	fmt.Println("Protobuf:", time.Now().Sub(start))
+	fmt.Println("Protobuf v2:", time.Now().Sub(start))
 }
