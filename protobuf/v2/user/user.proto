@@ -1,5 +1,5 @@
 syntax = "proto2";
-package user;
+package user2;
 
 option go_package = ".";
 
