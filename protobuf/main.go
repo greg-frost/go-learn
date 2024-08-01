@@ -1,15 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"reflect"
 	"strings"
 	"time"
 
 	pb2 "golearn/protobuf/v2/user"
+	pbp "golearn/protobuf/v3/people"
 	pb3 "golearn/protobuf/v3/user"
 
 	"google.golang.org/protobuf/proto"
@@ -46,6 +50,21 @@ func newUserPb3() pb3.User {
 		Name:  "Greg Frost",
 		Id:    100021,
 		Email: "greg-frost@yandex.ru",
+	}
+}
+
+// Новый человек
+func newPerson() *pbp.Person {
+	return &pbp.Person{
+		Name:  "Greg Frost",
+		Id:    100021,
+		Email: "greg-frost@yandex.ru",
+		Phones: []*pbp.Person_PhoneNumber{
+			{
+				Number: "+7 987 65-43-21",
+				Type:   pbp.PhoneType_PHONE_TYPE_HOME,
+			},
+		},
 	}
 }
 
@@ -219,4 +238,87 @@ func main() {
 		proto.Unmarshal(body, &pbv3User)
 	}
 	fmt.Println("Protobuf v3:", time.Now().Sub(start))
+	fmt.Println()
+
+	/* Сложный пример */
+
+	fmt.Println("Комплексный Protobuf:")
+	fmt.Println()
+
+	fmt.Println("Создание объектов...")
+	people := &pbp.People{
+		People: []*pbp.Person{newPerson(), newPerson(), newPerson()},
+	}
+
+	fmt.Println("Сериализация...")
+	out, err := proto.Marshal(people)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Запись в файл...")
+	path := os.Getenv("GOPATH") + "/src/golearn/"
+	filename := path + "protobuf/file.txt"
+	if err = ioutil.WriteFile(filename, out, 0644); err != nil {
+		log.Fatal(err)
+	}
+	defer os.Remove(filename)
+
+	fmt.Println("Чтение из файла...")
+	in, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Десериализация...")
+	newPeople := &pbp.People{}
+	if err = proto.Unmarshal(in, newPeople); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println()
+
+	fmt.Print("Сериализованные данные идентичны: ")
+	if equalBytes := bytes.Compare(in, out); equalBytes == 0 {
+		fmt.Println("да")
+	} else {
+		fmt.Println("нет")
+	}
+
+	fmt.Print("Десериализованные структуры равны: ")
+	if p1, p2 := fmt.Sprintf("%+v", people), fmt.Sprintf("%+v", newPeople); p1 == p2 {
+		fmt.Println("да")
+	} else {
+		fmt.Println("нет")
+	}
+
+	fmt.Print("Десериализованные структуры идентичны: ")
+	if reflect.DeepEqual(people, newPeople) {
+		fmt.Println("да")
+	} else {
+		fmt.Println("нет")
+	}
+	fmt.Println()
+
+	fmt.Println("Имя:", newPeople.People[0].GetName())
+	fmt.Println("ID:", newPeople.People[0].GetId())
+	fmt.Println("E-mail:", newPeople.People[0].GetEmail())
+
+	fmt.Print("Телефоны: ")
+	for _, phone := range newPeople.People[0].GetPhones() {
+		var phoneType string
+		switch phone.Type {
+		case pbp.PhoneType_PHONE_TYPE_MOBILE:
+			phoneType = "сот."
+		case pbp.PhoneType_PHONE_TYPE_HOME:
+			phoneType = "дом."
+		case pbp.PhoneType_PHONE_TYPE_WORK:
+			phoneType = "раб."
+		default:
+			phoneType = "?"
+		}
+		fmt.Printf("%s (%s) ", phone.Number, phoneType)
+	}
+	fmt.Printf("\n\n")
+
+	fmt.Println("Количество:", len(newPeople.People))
 }
