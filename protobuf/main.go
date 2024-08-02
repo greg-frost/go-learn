@@ -304,7 +304,6 @@ func main() {
 	fmt.Println("Имя:", newPeople.People[0].GetName())
 	fmt.Println("ID:", newPeople.People[0].GetId())
 	fmt.Println("E-mail:", newPeople.People[0].GetEmail())
-
 	fmt.Print("Телефоны: ")
 	for _, phone := range newPeople.People[0].GetPhones() {
 		var phoneType string
@@ -322,5 +321,7 @@ func main() {
 	}
 	fmt.Println()
 	fmt.Println("Дата:", people.People[0].GetLastUpdated().AsTime())
-	fmt.Println("Количество элементов:", len(newPeople.People))
+	fmt.Println()
+
+	fmt.Println("Количество:", len(newPeople.People))
 }
