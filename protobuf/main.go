@@ -17,6 +17,7 @@ import (
 	pb3 "golearn/protobuf/v3/user"
 
 	"google.golang.org/protobuf/proto"
+	tspb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Структура "пользователь"
@@ -65,6 +66,7 @@ func newPerson() *pbp.Person {
 				Type:   pbp.PhoneType_PHONE_TYPE_HOME,
 			},
 		},
+		LastUpdated: tspb.New(time.Now()),
 	}
 }
 
@@ -318,7 +320,7 @@ func main() {
 		}
 		fmt.Printf("%s (%s) ", phone.Number, phoneType)
 	}
-	fmt.Printf("\n\n")
-
-	fmt.Println("Количество:", len(newPeople.People))
+	fmt.Println()
+	fmt.Println("Дата:", people.People[0].GetLastUpdated().AsTime())
+	fmt.Println("Количество элементов:", len(newPeople.People))
 }

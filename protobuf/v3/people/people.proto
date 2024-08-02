@@ -1,7 +1,7 @@
 syntax = "proto3";
 package people;
 
-//import "google/protobuf/timestamp.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = ".";
 
@@ -17,7 +17,7 @@ message Person {
 
 	repeated PhoneNumber phones = 4;
 
-	//google.protobuf.Timestamp last_updated = 5;
+	google.protobuf.Timestamp last_updated = 5;
 }
 
 enum PhoneType {
