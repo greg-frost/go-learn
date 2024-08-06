@@ -28,13 +28,15 @@ func main() {
 
 	fmt.Println("Сервер:")
 	go func() {
+		fmt.Println("Запуск на localhost:8888")
+
 		listener, err := net.Listen("tcp", "localhost:8888")
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		s := grpc.NewServer()
-		pb.RegisterHelloService(s, &server{})
+		pb.RegisterHelloServer(s, &server{})
 		s.Serve(listener)
 	}()
 
@@ -60,5 +62,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Получено:", r.Message)
+	fmt.Printf("Получено %q\n", r.Message)
 }
