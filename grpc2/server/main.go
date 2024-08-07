@@ -19,10 +19,17 @@ type server struct {
 	pb.UnimplementedGreeterServer
 }
 
-// Общение через gRPC
+// Приветствие
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Printf("Получено: %v", in.GetName())
 	return &pb.HelloReply{Message: "Привет, " + in.GetName() + "!"}, nil
+}
+
+// Поздравление
+func (s *server) Congrats(ctx context.Context, in *pb.CongratRequest) (*pb.HelloReply, error) {
+	log.Printf("Получено: имя - %v, возраст - %d", in.GetName(), in.GetAge())
+	msg := fmt.Sprintf("%v, поздравляем с %d-летием!", in.GetName(), in.GetAge())
+	return &pb.HelloReply{Message: msg}, nil
 }
 
 func main() {

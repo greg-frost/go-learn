@@ -16,6 +16,7 @@ import (
 var (
 	addr = flag.String("addr", "localhost:8888", "Адрес сервера")
 	name = flag.String("name", "Greg Frost", "Имя для приветствия")
+	age  = flag.Int("age", 100, "Возраст для поздравления")
 )
 
 func main() {
@@ -37,9 +38,16 @@ func main() {
 	defer cancel()
 
 	// Вызов gRPC-метода SayHello
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: *name})
+	r1, err := c.SayHello(ctx, &pb.HelloRequest{Name: *name})
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Метод SayHello: %q\n", r.GetMessage())
+	fmt.Printf("Метод SayHello: %q\n", r1.GetMessage())
+
+	// Вызов gRPC-метода Congrats
+	r2, err := c.Congrats(ctx, &pb.CongratRequest{Name: *name, Age: int32(*age)})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Метод Congrats: %q\n", r2.GetMessage())
 }

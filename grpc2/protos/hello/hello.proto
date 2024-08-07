@@ -5,10 +5,16 @@ option go_package = ".";
 
 service Greeter {
 	rpc SayHello (HelloRequest) returns (HelloReply) {}
+	rpc Congrats (CongratRequest) returns (HelloReply) {}
 }
 
 message HelloRequest {
 	string name = 1;
+}
+
+message CongratRequest {
+	string name = 1;
+	int32 age = 2;
 }
 
 message HelloReply {
