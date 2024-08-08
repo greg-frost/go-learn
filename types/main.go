@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -36,6 +38,30 @@ func mul(a interface{}, b int) interface{} {
 	default:
 		return nil
 	}
+}
+
+// Перегруженная сумма (рефлексия)
+func sum(v ...interface{}) float64 {
+	var res float64
+	for _, val := range v {
+		ref := reflect.ValueOf(val)
+		switch ref.Kind() {
+		case reflect.Int, reflect.Int32, reflect.Int64:
+			res += float64(ref.Int())
+		case reflect.Uint, reflect.Uint8, reflect.Uint32, reflect.Uint64:
+			res += float64(ref.Uint())
+		case reflect.String:
+			a, err := strconv.ParseFloat(ref.String(), 64)
+			if err != nil {
+				fmt.Printf("Ошибка парсинга строки %s, игнорирую.\n", val)
+				continue
+			}
+			res += a
+		default:
+			fmt.Printf("Неизвестный тип %T, игнорирую.\n", val)
+		}
+	}
+	return res
 }
 
 func main() {
@@ -110,4 +136,18 @@ func main() {
 	fmt.Println("Перегруженное умножение:")
 	fmt.Println("Число:", mul(vi, va))
 	fmt.Println("Строка:", mul(vs, va))
+	fmt.Println()
+
+	/* Перегруженная сумма */
+
+	type MyInt int64
+
+	var (
+		a uint8  = 2
+		b int    = 37
+		c string = "3.2"
+		d MyInt  = 1
+	)
+
+	fmt.Println("Перегруженная сумма:", sum(a, b, c, d))
 }
