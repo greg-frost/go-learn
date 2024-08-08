@@ -40,8 +40,42 @@ func mul(a interface{}, b int) interface{} {
 	}
 }
 
-// Перегруженная сумма (рефлексия)
+// Перегруженная сумма
 func sum(v ...interface{}) float64 {
+	var res float64
+	for _, val := range v {
+		ref := reflect.ValueOf(val)
+		switch val.(type) {
+		case int:
+			res += float64(val.(int))
+		case int32:
+			res += float64(val.(int32))
+		case int64:
+			res += float64(val.(int64))
+		case uint:
+			res += float64(val.(uint))
+		case uint8:
+			res += float64(val.(uint8))
+		case uint32:
+			res += float64(val.(uint32))
+		case uint64:
+			res += float64(val.(uint64))
+		case string:
+			a, err := strconv.ParseFloat(ref.String(), 64)
+			if err != nil {
+				fmt.Printf("Ошибка парсинга строки %s, игнорирую.\n", val)
+				continue
+			}
+			res += a
+		default:
+			fmt.Printf("Неизвестный тип %T, игнорирую.\n", val)
+		}
+	}
+	return res
+}
+
+// Перегруженная сумма (рефлексия)
+func sumRef(v ...interface{}) float64 {
 	var res float64
 	for _, val := range v {
 		ref := reflect.ValueOf(val)
@@ -149,5 +183,7 @@ func main() {
 		d MyInt  = 1
 	)
 
-	fmt.Println("Перегруженная сумма:", sum(a, b, c, d))
+	fmt.Println("Перегруженная сумма:")
+	fmt.Println("Проверка типа:", sum(a, b, c, d))
+	fmt.Println("Рефлексия:", sumRef(a, b, c, d))
 }
