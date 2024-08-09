@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"reflect"
 	"strconv"
 	"strings"
@@ -115,6 +116,14 @@ func isStringer(v interface{}) bool {
 	return ok
 }
 
+// Проверка любого интерфейса
+func isImplements(current, target interface{}) bool {
+	iface := reflect.TypeOf(target).Elem()
+	v := reflect.ValueOf(iface)
+	t := v.Type()
+	return t.Implements(iface)
+}
+
 func main() {
 	fmt.Println(" \n[ ТИПЫ ]\n ")
 
@@ -208,6 +217,9 @@ func main() {
 	/* Проверка интерфейса */
 
 	fmt.Println("Реализация интерфейса:")
+	fmt.Println()
+
+	fmt.Println("Проверка типа:")
 	name := &Name{First: "Greg", Last: "Frost"}
 	if isStringer(name) {
 		fmt.Printf("%T реализует интерфейс fmt.Stringer\n", name)
@@ -219,5 +231,20 @@ func main() {
 		fmt.Printf("%T реализует интерфейс fmt.Stringer\n", num)
 	} else {
 		fmt.Printf("%T не реализует интерфейс fmt.Stringer\n", num)
+	}
+	fmt.Println()
+
+	fmt.Println("Рефлексия:")
+	stringer := (*fmt.Stringer)(nil)
+	if isImplements(name, stringer) {
+		fmt.Printf("%T реализует интерфейс %T\n", name, stringer)
+	} else {
+		fmt.Printf("%T не реализует интерфейс %T\n", name, stringer)
+	}
+	writer := (*io.Writer)(nil)
+	if isImplements(num, writer) {
+		fmt.Printf("%T реализует интерфейс %T\n", name, writer)
+	} else {
+		fmt.Printf("%T не реализует интерфейс %T\n", name, writer)
 	}
 }
