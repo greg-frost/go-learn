@@ -98,6 +98,23 @@ func sumRef(v ...interface{}) float64 {
 	return res
 }
 
+// Структура "имя"
+type Name struct {
+	First string
+	Last  string
+}
+
+// Стрингер
+func (n *Name) String() string {
+	return n.First + " " + n.Last
+}
+
+// Проверка интерфейса Stringer
+func isStringer(v interface{}) bool {
+	_, ok := v.(fmt.Stringer)
+	return ok
+}
+
 func main() {
 	fmt.Println(" \n[ ТИПЫ ]\n ")
 
@@ -186,4 +203,21 @@ func main() {
 	fmt.Println("Перегруженная сумма:")
 	fmt.Println("Проверка типа:", sum(a, b, c, d))
 	fmt.Println("Рефлексия:", sumRef(a, b, c, d))
+	fmt.Println()
+
+	/* Проверка интерфейса */
+
+	fmt.Println("Реализация интерфейса:")
+	name := &Name{First: "Greg", Last: "Frost"}
+	if isStringer(name) {
+		fmt.Printf("%T реализует интерфейс fmt.Stringer\n", name)
+	} else {
+		fmt.Printf("%T не реализует интерфейс fmt.Stringer\n", name)
+	}
+	num := 123
+	if isStringer(num) {
+		fmt.Printf("%T реализует интерфейс fmt.Stringer\n", num)
+	} else {
+		fmt.Printf("%T не реализует интерфейс fmt.Stringer\n", num)
+	}
 }
