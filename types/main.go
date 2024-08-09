@@ -222,15 +222,15 @@ func main() {
 	fmt.Println("Проверка типа:")
 	name := &Name{First: "Greg", Last: "Frost"}
 	if isStringer(name) {
-		fmt.Printf("%T реализует интерфейс fmt.Stringer\n", name)
+		fmt.Printf("%T реализует интерфейс *fmt.Stringer\n", name)
 	} else {
-		fmt.Printf("%T не реализует интерфейс fmt.Stringer\n", name)
+		fmt.Printf("%T не реализует интерфейс *fmt.Stringer\n", name)
 	}
 	num := 123
 	if isStringer(num) {
-		fmt.Printf("%T реализует интерфейс fmt.Stringer\n", num)
+		fmt.Printf("%T реализует интерфейс *fmt.Stringer\n", num)
 	} else {
-		fmt.Printf("%T не реализует интерфейс fmt.Stringer\n", num)
+		fmt.Printf("%T не реализует интерфейс *fmt.Stringer\n", num)
 	}
 	fmt.Println()
 
