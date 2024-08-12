@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// Адрес, имя и возраст
 var (
 	addr = flag.String("addr", "localhost:8888", "Адрес сервера")
 	name = flag.String("name", "Greg Frost", "Имя для приветствия")

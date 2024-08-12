@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Порт
 var port = flag.Int("port", 8888, "Порт сервера")
 
 // Структура "сервер"
