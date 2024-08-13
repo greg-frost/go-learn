@@ -37,35 +37,15 @@ func NewRouteServer() *routeServer {
 	}
 
 	// Демаршаллинг
-	routes := []struct {
-		Name     string
-		Location struct {
-			Latitude  int32
-			Longitude int32
-		}
-	}{}
-	err = json.Unmarshal(b, &routes)
+	err = json.Unmarshal(b, &rs.savedFeatures)
 	if err != nil {
 		return rs
 	}
 
-	// Запись объектов
-	var sf []*pb.Feature
-	for _, r := range routes {
-		sf = append(sf, &pb.Feature{
-			Name: r.Name,
-			Location: &pb.Point{
-				Latitude:  r.Location.Latitude,
-				Longitude: r.Location.Longitude,
-			},
-		})
-	}
-	rs.savedFeatures = sf
-
 	return rs
 }
 
-// Приветствие
+// Получение объекта
 func (s *routeServer) GetFeature(ctx context.Context, point *pb.Point) (*pb.Feature, error) {
 	for _, feature := range s.savedFeatures {
 		if proto.Equal(feature.Location, point) {
