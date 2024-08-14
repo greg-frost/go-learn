@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.34.2
 // 	protoc        v5.27.3
-// source: grpc3/protos/route/route.proto
+// source: route.proto
 
 package __
 
@@ -32,7 +32,7 @@ type Point struct {
 func (x *Point) Reset() {
 	*x = Point{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_grpc3_protos_route_route_proto_msgTypes[0]
+		mi := &file_route_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -45,7 +45,7 @@ func (x *Point) String() string {
 func (*Point) ProtoMessage() {}
 
 func (x *Point) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc3_protos_route_route_proto_msgTypes[0]
+	mi := &file_route_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +58,7 @@ func (x *Point) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Point.ProtoReflect.Descriptor instead.
 func (*Point) Descriptor() ([]byte, []int) {
-	return file_grpc3_protos_route_route_proto_rawDescGZIP(), []int{0}
+	return file_route_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Point) GetLatitude() int32 {
@@ -75,6 +75,61 @@ func (x *Point) GetLongitude() int32 {
 	return 0
 }
 
+type Rectangle struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Lo *Point `protobuf:"bytes,1,opt,name=lo,proto3" json:"lo,omitempty"`
+	Hi *Point `protobuf:"bytes,2,opt,name=hi,proto3" json:"hi,omitempty"`
+}
+
+func (x *Rectangle) Reset() {
+	*x = Rectangle{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_route_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Rectangle) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Rectangle) ProtoMessage() {}
+
+func (x *Rectangle) ProtoReflect() protoreflect.Message {
+	mi := &file_route_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Rectangle.ProtoReflect.Descriptor instead.
+func (*Rectangle) Descriptor() ([]byte, []int) {
+	return file_route_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Rectangle) GetLo() *Point {
+	if x != nil {
+		return x.Lo
+	}
+	return nil
+}
+
+func (x *Rectangle) GetHi() *Point {
+	if x != nil {
+		return x.Hi
+	}
+	return nil
+}
+
 type Feature struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -87,7 +142,7 @@ type Feature struct {
 func (x *Feature) Reset() {
 	*x = Feature{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_grpc3_protos_route_route_proto_msgTypes[1]
+		mi := &file_route_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -100,7 +155,7 @@ func (x *Feature) String() string {
 func (*Feature) ProtoMessage() {}
 
 func (x *Feature) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc3_protos_route_route_proto_msgTypes[1]
+	mi := &file_route_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -113,7 +168,7 @@ func (x *Feature) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Feature.ProtoReflect.Descriptor instead.
 func (*Feature) Descriptor() ([]byte, []int) {
-	return file_grpc3_protos_route_route_proto_rawDescGZIP(), []int{1}
+	return file_route_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Feature) GetName() string {
@@ -130,62 +185,74 @@ func (x *Feature) GetLocation() *Point {
 	return nil
 }
 
-var File_grpc3_protos_route_route_proto protoreflect.FileDescriptor
+var File_route_proto protoreflect.FileDescriptor
 
-var file_grpc3_protos_route_route_proto_rawDesc = []byte{
-	0x0a, 0x1e, 0x67, 0x72, 0x70, 0x63, 0x33, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x2f, 0x72,
-	0x6f, 0x75, 0x74, 0x65, 0x2f, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x12, 0x05, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x22, 0x41, 0x0a, 0x05, 0x50, 0x6f, 0x69, 0x6e, 0x74,
-	0x12, 0x1a, 0x0a, 0x08, 0x6c, 0x61, 0x74, 0x69, 0x74, 0x75, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x05, 0x52, 0x08, 0x6c, 0x61, 0x74, 0x69, 0x74, 0x75, 0x64, 0x65, 0x12, 0x1c, 0x0a, 0x09,
-	0x6c, 0x6f, 0x6e, 0x67, 0x69, 0x74, 0x75, 0x64, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52,
-	0x09, 0x6c, 0x6f, 0x6e, 0x67, 0x69, 0x74, 0x75, 0x64, 0x65, 0x22, 0x47, 0x0a, 0x07, 0x46, 0x65,
-	0x61, 0x74, 0x75, 0x72, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x28, 0x0a, 0x08, 0x6c, 0x6f, 0x63,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x72, 0x6f,
-	0x75, 0x74, 0x65, 0x2e, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74,
-	0x69, 0x6f, 0x6e, 0x32, 0x35, 0x0a, 0x05, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x12, 0x2c, 0x0a, 0x0a,
-	0x47, 0x65, 0x74, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x12, 0x0c, 0x2e, 0x72, 0x6f, 0x75,
-	0x74, 0x65, 0x2e, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x1a, 0x0e, 0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65,
-	0x2e, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x00, 0x42, 0x03, 0x5a, 0x01, 0x2e, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+var file_route_proto_rawDesc = []byte{
+	0x0a, 0x0b, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x72,
+	0x6f, 0x75, 0x74, 0x65, 0x22, 0x41, 0x0a, 0x05, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x1a, 0x0a,
+	0x08, 0x6c, 0x61, 0x74, 0x69, 0x74, 0x75, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x08, 0x6c, 0x61, 0x74, 0x69, 0x74, 0x75, 0x64, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x6c, 0x6f, 0x6e,
+	0x67, 0x69, 0x74, 0x75, 0x64, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x6c, 0x6f,
+	0x6e, 0x67, 0x69, 0x74, 0x75, 0x64, 0x65, 0x22, 0x47, 0x0a, 0x09, 0x52, 0x65, 0x63, 0x74, 0x61,
+	0x6e, 0x67, 0x6c, 0x65, 0x12, 0x1c, 0x0a, 0x02, 0x6c, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x0c, 0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x52, 0x02,
+	0x6c, 0x6f, 0x12, 0x1c, 0x0a, 0x02, 0x68, 0x69, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0c,
+	0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x52, 0x02, 0x68, 0x69,
+	0x22, 0x47, 0x0a, 0x07, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e,
+	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12,
+	0x28, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x0c, 0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x52,
+	0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x6b, 0x0a, 0x05, 0x52, 0x6f, 0x75,
+	0x74, 0x65, 0x12, 0x2c, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65,
+	0x12, 0x0c, 0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x1a, 0x0e,
+	0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x00,
+	0x12, 0x34, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x73,
+	0x12, 0x10, 0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x52, 0x65, 0x63, 0x74, 0x61, 0x6e, 0x67,
+	0x6c, 0x65, 0x1a, 0x0e, 0x2e, 0x72, 0x6f, 0x75, 0x74, 0x65, 0x2e, 0x46, 0x65, 0x61, 0x74, 0x75,
+	0x72, 0x65, 0x22, 0x00, 0x30, 0x01, 0x42, 0x03, 0x5a, 0x01, 0x2e, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
-	file_grpc3_protos_route_route_proto_rawDescOnce sync.Once
-	file_grpc3_protos_route_route_proto_rawDescData = file_grpc3_protos_route_route_proto_rawDesc
+	file_route_proto_rawDescOnce sync.Once
+	file_route_proto_rawDescData = file_route_proto_rawDesc
 )
 
-func file_grpc3_protos_route_route_proto_rawDescGZIP() []byte {
-	file_grpc3_protos_route_route_proto_rawDescOnce.Do(func() {
-		file_grpc3_protos_route_route_proto_rawDescData = protoimpl.X.CompressGZIP(file_grpc3_protos_route_route_proto_rawDescData)
+func file_route_proto_rawDescGZIP() []byte {
+	file_route_proto_rawDescOnce.Do(func() {
+		file_route_proto_rawDescData = protoimpl.X.CompressGZIP(file_route_proto_rawDescData)
 	})
-	return file_grpc3_protos_route_route_proto_rawDescData
+	return file_route_proto_rawDescData
 }
 
-var file_grpc3_protos_route_route_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_grpc3_protos_route_route_proto_goTypes = []any{
-	(*Point)(nil),   // 0: route.Point
-	(*Feature)(nil), // 1: route.Feature
+var file_route_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_route_proto_goTypes = []any{
+	(*Point)(nil),     // 0: route.Point
+	(*Rectangle)(nil), // 1: route.Rectangle
+	(*Feature)(nil),   // 2: route.Feature
 }
-var file_grpc3_protos_route_route_proto_depIdxs = []int32{
-	0, // 0: route.Feature.location:type_name -> route.Point
-	0, // 1: route.Route.GetFeature:input_type -> route.Point
-	1, // 2: route.Route.GetFeature:output_type -> route.Feature
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+var file_route_proto_depIdxs = []int32{
+	0, // 0: route.Rectangle.lo:type_name -> route.Point
+	0, // 1: route.Rectangle.hi:type_name -> route.Point
+	0, // 2: route.Feature.location:type_name -> route.Point
+	0, // 3: route.Route.GetFeature:input_type -> route.Point
+	1, // 4: route.Route.ListFeatures:input_type -> route.Rectangle
+	2, // 5: route.Route.GetFeature:output_type -> route.Feature
+	2, // 6: route.Route.ListFeatures:output_type -> route.Feature
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
-func init() { file_grpc3_protos_route_route_proto_init() }
-func file_grpc3_protos_route_route_proto_init() {
-	if File_grpc3_protos_route_route_proto != nil {
+func init() { file_route_proto_init() }
+func file_route_proto_init() {
+	if File_route_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_grpc3_protos_route_route_proto_msgTypes[0].Exporter = func(v any, i int) any {
+		file_route_proto_msgTypes[0].Exporter = func(v any, i int) any {
 			switch v := v.(*Point); i {
 			case 0:
 				return &v.state
@@ -197,7 +264,19 @@ func file_grpc3_protos_route_route_proto_init() {
 				return nil
 			}
 		}
-		file_grpc3_protos_route_route_proto_msgTypes[1].Exporter = func(v any, i int) any {
+		file_route_proto_msgTypes[1].Exporter = func(v any, i int) any {
+			switch v := v.(*Rectangle); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_route_proto_msgTypes[2].Exporter = func(v any, i int) any {
 			switch v := v.(*Feature); i {
 			case 0:
 				return &v.state
@@ -214,18 +293,18 @@ func file_grpc3_protos_route_route_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_grpc3_protos_route_route_proto_rawDesc,
+			RawDescriptor: file_route_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_grpc3_protos_route_route_proto_goTypes,
-		DependencyIndexes: file_grpc3_protos_route_route_proto_depIdxs,
-		MessageInfos:      file_grpc3_protos_route_route_proto_msgTypes,
+		GoTypes:           file_route_proto_goTypes,
+		DependencyIndexes: file_route_proto_depIdxs,
+		MessageInfos:      file_route_proto_msgTypes,
 	}.Build()
-	File_grpc3_protos_route_route_proto = out.File
-	file_grpc3_protos_route_route_proto_rawDesc = nil
-	file_grpc3_protos_route_route_proto_goTypes = nil
-	file_grpc3_protos_route_route_proto_depIdxs = nil
+	File_route_proto = out.File
+	file_route_proto_rawDesc = nil
+	file_route_proto_goTypes = nil
+	file_route_proto_depIdxs = nil
 }

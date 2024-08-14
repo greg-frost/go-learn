@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.27.3
-// source: grpc3/protos/route/route.proto
+// source: route.proto
 
 package __
 
@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Route_GetFeature_FullMethodName = "/route.Route/GetFeature"
+	Route_GetFeature_FullMethodName   = "/route.Route/GetFeature"
+	Route_ListFeatures_FullMethodName = "/route.Route/ListFeatures"
 )
 
 // RouteClient is the client API for Route service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RouteClient interface {
 	GetFeature(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Feature, error)
+	ListFeatures(ctx context.Context, in *Rectangle, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Feature], error)
 }
 
 type routeClient struct {
@@ -47,11 +49,31 @@ func (c *routeClient) GetFeature(ctx context.Context, in *Point, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *routeClient) ListFeatures(ctx context.Context, in *Rectangle, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Feature], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Route_ServiceDesc.Streams[0], Route_ListFeatures_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[Rectangle, Feature]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Route_ListFeaturesClient = grpc.ServerStreamingClient[Feature]
+
 // RouteServer is the server API for Route service.
 // All implementations must embed UnimplementedRouteServer
 // for forward compatibility.
 type RouteServer interface {
 	GetFeature(context.Context, *Point) (*Feature, error)
+	ListFeatures(*Rectangle, grpc.ServerStreamingServer[Feature]) error
 	mustEmbedUnimplementedRouteServer()
 }
 
@@ -64,6 +86,9 @@ type UnimplementedRouteServer struct{}
 
 func (UnimplementedRouteServer) GetFeature(context.Context, *Point) (*Feature, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFeature not implemented")
+}
+func (UnimplementedRouteServer) ListFeatures(*Rectangle, grpc.ServerStreamingServer[Feature]) error {
+	return status.Errorf(codes.Unimplemented, "method ListFeatures not implemented")
 }
 func (UnimplementedRouteServer) mustEmbedUnimplementedRouteServer() {}
 func (UnimplementedRouteServer) testEmbeddedByValue()               {}
@@ -104,6 +129,17 @@ func _Route_GetFeature_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Route_ListFeatures_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Rectangle)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RouteServer).ListFeatures(m, &grpc.GenericServerStream[Rectangle, Feature]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Route_ListFeaturesServer = grpc.ServerStreamingServer[Feature]
+
 // Route_ServiceDesc is the grpc.ServiceDesc for Route service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +152,12 @@ var Route_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Route_GetFeature_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "grpc3/protos/route/route.proto",
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "ListFeatures",
+			Handler:       _Route_ListFeatures_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "route.proto",
 }
