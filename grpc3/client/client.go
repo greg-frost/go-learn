@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"time"
 
 	pb "golearn/grpc3/protos/route"
@@ -71,6 +72,44 @@ func ListFeatures(client pb.RouteClient, rect *pb.Rectangle) {
 	fmt.Println("Найдено объектов:", count)
 }
 
+// Запись маршрута и выдача результата
+func RecordRoute(client pb.RouteClient) {
+	// Слаучайное число (но не меньше двух) случайных точек
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	pointCount := int(r.Int31n(100)) + 2
+	var points []*pb.Point
+	for i := 0; i < pointCount; i++ {
+		points = append(points, randomPoint(r))
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	stream, err := client.RecordRoute(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, point := range points {
+		if err := stream.Send(point); err != nil {
+			log.Fatal(err)
+		}
+	}
+	reply, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Результат маршрута:\nТочек - %d\nОбъектов - %d\nРасстояние - %d\n",
+		reply.GetPointCount(), reply.GetFeatureCount(), reply.GetDistance())
+}
+
+// Генерация случайной точки
+func randomPoint(r *rand.Rand) *pb.Point {
+	lat := (r.Int31n(180) - 90) * 1e7
+	long := (r.Int31n(360) - 180) * 1e7
+	return &pb.Point{Latitude: lat, Longitude: long}
+}
+
 func main() {
 	fmt.Println(" \n[ GRPC3 (КЛИЕНТ) ]\n ")
 
@@ -88,15 +127,20 @@ func main() {
 	c := pb.NewRouteClient(conn)
 
 	// Метод GetFeature
-	fmt.Println("GetFeature:")
+	fmt.Printf("GetFeature\n----------\n")
 	GetFeature(c, &pb.Point{Latitude: 409146138, Longitude: -746188906})
 	GetFeature(c, &pb.Point{Latitude: 0, Longitude: 0})
 	fmt.Println()
 
 	// Метод ListFeatures
-	fmt.Println("ListFeatures:")
+	fmt.Printf("ListFeatures\n------------\n")
 	ListFeatures(c, &pb.Rectangle{
 		Lo: &pb.Point{Latitude: 400000000, Longitude: -750000000},
 		Hi: &pb.Point{Latitude: 405000000, Longitude: -745000000},
 	})
+	fmt.Println()
+
+	// Метод RecordRoute
+	fmt.Printf("RecordRoute\n-----------\n")
+	RecordRoute(c)
 }
