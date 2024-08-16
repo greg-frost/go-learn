@@ -7,6 +7,7 @@ service Route {
 	rpc GetFeature (Point) returns (Feature) {}
 	rpc ListFeatures (Rectangle) returns (stream Feature) {}
 	rpc RecordRoute(stream Point) returns (RouteSummary) {}
+	rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
 }
 
 message Point {
@@ -29,4 +30,9 @@ message RouteSummary {
 	int32 feature_count = 2;
 	int32 distance = 3;
 	int32 elapsed_time = 4;
+}
+
+message RouteNote {
+	Point location = 1;
+	string message = 2;
 }

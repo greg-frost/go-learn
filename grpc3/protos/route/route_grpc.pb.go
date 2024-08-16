@@ -22,6 +22,7 @@ const (
 	Route_GetFeature_FullMethodName   = "/route.Route/GetFeature"
 	Route_ListFeatures_FullMethodName = "/route.Route/ListFeatures"
 	Route_RecordRoute_FullMethodName  = "/route.Route/RecordRoute"
+	Route_RouteChat_FullMethodName    = "/route.Route/RouteChat"
 )
 
 // RouteClient is the client API for Route service.
@@ -31,6 +32,7 @@ type RouteClient interface {
 	GetFeature(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Feature, error)
 	ListFeatures(ctx context.Context, in *Rectangle, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Feature], error)
 	RecordRoute(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[Point, RouteSummary], error)
+	RouteChat(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[RouteNote, RouteNote], error)
 }
 
 type routeClient struct {
@@ -83,6 +85,19 @@ func (c *routeClient) RecordRoute(ctx context.Context, opts ...grpc.CallOption) 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Route_RecordRouteClient = grpc.ClientStreamingClient[Point, RouteSummary]
 
+func (c *routeClient) RouteChat(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[RouteNote, RouteNote], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Route_ServiceDesc.Streams[2], Route_RouteChat_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[RouteNote, RouteNote]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Route_RouteChatClient = grpc.BidiStreamingClient[RouteNote, RouteNote]
+
 // RouteServer is the server API for Route service.
 // All implementations must embed UnimplementedRouteServer
 // for forward compatibility.
@@ -90,6 +105,7 @@ type RouteServer interface {
 	GetFeature(context.Context, *Point) (*Feature, error)
 	ListFeatures(*Rectangle, grpc.ServerStreamingServer[Feature]) error
 	RecordRoute(grpc.ClientStreamingServer[Point, RouteSummary]) error
+	RouteChat(grpc.BidiStreamingServer[RouteNote, RouteNote]) error
 	mustEmbedUnimplementedRouteServer()
 }
 
@@ -108,6 +124,9 @@ func (UnimplementedRouteServer) ListFeatures(*Rectangle, grpc.ServerStreamingSer
 }
 func (UnimplementedRouteServer) RecordRoute(grpc.ClientStreamingServer[Point, RouteSummary]) error {
 	return status.Errorf(codes.Unimplemented, "method RecordRoute not implemented")
+}
+func (UnimplementedRouteServer) RouteChat(grpc.BidiStreamingServer[RouteNote, RouteNote]) error {
+	return status.Errorf(codes.Unimplemented, "method RouteChat not implemented")
 }
 func (UnimplementedRouteServer) mustEmbedUnimplementedRouteServer() {}
 func (UnimplementedRouteServer) testEmbeddedByValue()               {}
@@ -166,6 +185,13 @@ func _Route_RecordRoute_Handler(srv interface{}, stream grpc.ServerStream) error
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Route_RecordRouteServer = grpc.ClientStreamingServer[Point, RouteSummary]
 
+func _Route_RouteChat_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RouteServer).RouteChat(&grpc.GenericServerStream[RouteNote, RouteNote]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Route_RouteChatServer = grpc.BidiStreamingServer[RouteNote, RouteNote]
+
 // Route_ServiceDesc is the grpc.ServiceDesc for Route service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -187,6 +213,12 @@ var Route_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "RecordRoute",
 			Handler:       _Route_RecordRoute_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "RouteChat",
+			Handler:       _Route_RouteChat_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},
