@@ -11,6 +11,7 @@ import (
 	"math"
 	"net"
 	"os"
+	"sync"
 	"time"
 
 	pb "golearn/grpc3/protos/route"
@@ -27,11 +28,15 @@ var path = os.Getenv("GOPATH") + "/src/golearn/grpc3/"
 type routeServer struct {
 	pb.UnimplementedRouteServer
 	savedFeatures []*pb.Feature
+	routeNotes    map[string][]*pb.RouteNote
+	mu            sync.Mutex
 }
 
 // Конструктор сервера
 func NewRouteServer() *routeServer {
-	rs := &routeServer{}
+	rs := &routeServer{
+		routeNotes: make(map[string][]*pb.RouteNote),
+	}
 
 	// Чтение файла
 	b, err := ioutil.ReadFile(path + "data/routes.json")
@@ -104,6 +109,32 @@ func (s *routeServer) RecordRoute(stream pb.Route_RecordRouteServer) error {
 	}
 }
 
+// Обмен сообщениями между клиентом и сервером по точкам маршрута
+func (s *routeServer) RouteChat(stream pb.Route_RouteChatServer) error {
+	for {
+		in, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		key := serialize(in.Location)
+
+		s.mu.Lock()
+		s.routeNotes[key] = append(s.routeNotes[key], in)
+		rn := make([]*pb.RouteNote, len(s.routeNotes[key]))
+		copy(rn, s.routeNotes[key])
+		s.mu.Unlock()
+
+		for _, note := range rn {
+			if err := stream.Send(note); err != nil {
+				return err
+			}
+		}
+	}
+}
+
 // Проверка вхождения объекта в прямоугольник координат
 func inRange(point *pb.Point, rect *pb.Rectangle) bool {
 	left := math.Min(float64(rect.Lo.Longitude), float64(rect.Hi.Longitude))
@@ -144,6 +175,11 @@ func calcDistance(p1 *pb.Point, p2 *pb.Point) int32 {
 // Перевод градусов в радианы
 func toRadians(num float64) float64 {
 	return num * math.Pi / float64(180)
+}
+
+// Сериализация координат
+func serialize(point *pb.Point) string {
+	return fmt.Sprintf("%d %d", point.Latitude, point.Longitude)
 }
 
 func main() {
