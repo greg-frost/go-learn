@@ -103,6 +103,54 @@ func RecordRoute(client pb.RouteClient) {
 		reply.GetPointCount(), reply.GetFeatureCount(), reply.GetDistance())
 }
 
+// Обмен сообщениями по маршруту
+func RouteChat(client pb.RouteClient) {
+	notes := []*pb.RouteNote{
+		{Location: &pb.Point{Latitude: 0, Longitude: 1}, Message: "Первое сообщение"},
+		{Location: &pb.Point{Latitude: 0, Longitude: 2}, Message: "Второе сообщение"},
+		{Location: &pb.Point{Latitude: 0, Longitude: 3}, Message: "Третье сообщение"},
+		{Location: &pb.Point{Latitude: 0, Longitude: 1}, Message: "Четвертое сообщение"},
+		{Location: &pb.Point{Latitude: 0, Longitude: 2}, Message: "Пятое сообщение"},
+		{Location: &pb.Point{Latitude: 0, Longitude: 3}, Message: "Шестое сообщение"},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	stream, err := client.RouteChat(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Получение
+	wait := make(chan struct{})
+	go func() {
+		for {
+			in, err := stream.Recv()
+			if err == io.EOF {
+				close(wait)
+				return
+			}
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Printf("Получено %s в точке (%d, %d)\n",
+				in.Message, in.Location.Latitude, in.Location.Longitude)
+		}
+	}()
+
+	// Отправка
+	for _, note := range notes {
+		if err := stream.Send(note); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	stream.CloseSend()
+	<-wait
+}
+
 // Генерация случайной точки
 func randomPoint(r *rand.Rand) *pb.Point {
 	lat := (r.Int31n(180) - 90) * 1e7
@@ -127,13 +175,15 @@ func main() {
 	c := pb.NewRouteClient(conn)
 
 	// Метод GetFeature
-	fmt.Printf("GetFeature\n----------\n")
+	fmt.Println("GetFeature")
+	fmt.Println("----------")
 	GetFeature(c, &pb.Point{Latitude: 409146138, Longitude: -746188906})
 	GetFeature(c, &pb.Point{Latitude: 0, Longitude: 0})
 	fmt.Println()
 
 	// Метод ListFeatures
-	fmt.Printf("ListFeatures\n------------\n")
+	fmt.Println("ListFeatures")
+	fmt.Println("------------")
 	ListFeatures(c, &pb.Rectangle{
 		Lo: &pb.Point{Latitude: 400000000, Longitude: -750000000},
 		Hi: &pb.Point{Latitude: 405000000, Longitude: -745000000},
@@ -141,6 +191,13 @@ func main() {
 	fmt.Println()
 
 	// Метод RecordRoute
-	fmt.Printf("RecordRoute\n-----------\n")
+	fmt.Println("RecordRoute")
+	fmt.Println("-----------")
 	RecordRoute(c)
+	fmt.Println()
+
+	// Метод RouteChat
+	fmt.Println("RouteChat")
+	fmt.Println("---------")
+	RouteChat(c)
 }

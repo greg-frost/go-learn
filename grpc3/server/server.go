@@ -111,6 +111,9 @@ func (s *routeServer) RecordRoute(stream pb.Route_RecordRouteServer) error {
 
 // Обмен сообщениями между клиентом и сервером по точкам маршрута
 func (s *routeServer) RouteChat(stream pb.Route_RouteChatServer) error {
+	// Обнуление списка сообщений маршрута
+	s.routeNotes = make(map[string][]*pb.RouteNote)
+
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
@@ -123,8 +126,11 @@ func (s *routeServer) RouteChat(stream pb.Route_RouteChatServer) error {
 
 		s.mu.Lock()
 		s.routeNotes[key] = append(s.routeNotes[key], in)
+
+		// Копирование, чтобы не блокировать клиента
 		rn := make([]*pb.RouteNote, len(s.routeNotes[key]))
 		copy(rn, s.routeNotes[key])
+
 		s.mu.Unlock()
 
 		for _, note := range rn {
