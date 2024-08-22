@@ -24,6 +24,20 @@ func isPrime(n int) bool {
 	return true
 }
 
+// Взаимно простые ли числа
+func isCoprime(n, m int) bool {
+	min := n
+	if m < n {
+		min = m
+	}
+	for i := 2; i*i <= min; i++ {
+		if n%i == 0 && m%i == 0 {
+			return false
+		}
+	}
+	return true
+}
+
 // Быстрое возведение в степень по модулю
 func fastPowMod(x, n, p int) int {
 	c, d, r := x%p, n, 1
@@ -44,7 +58,7 @@ func main() {
 
 	fmt.Println("Выбор двух простых чисел:")
 
-	// Простое числа p
+	// Простое число p
 	var p int
 	for !isPrime(p) {
 		p = random(1e6, 1e9)
@@ -59,9 +73,25 @@ func main() {
 	}
 	fmt.Printf("q = %d\n\n", q)
 
-	// Произведение этих чисел
+	// Произведение простых чисел
 	fmt.Println("Произведение p и q:")
 
 	n := p * q
-	fmt.Printf("n = %d\n", n)
+	fi := (p - 1) * (q - 1)
+	fmt.Printf("n = %d\n\n", n)
+
+	fmt.Println("...")
+	fmt.Println()
+
+	/* Генерация ключа шифрования */
+
+	fmt.Println("Выбор числа для шифрования:")
+
+	// Число e
+	var e int
+	for !isPrime(e) || !isCoprime(e, fi) {
+		e = random(1e5, 1e8)
+	}
+	//e = 65537
+	fmt.Printf("e = %d\n", e)
 }
