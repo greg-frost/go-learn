@@ -26,7 +26,10 @@ func isPrime(n int) bool {
 
 // Возведение в степень
 func pow(x, n int) int {
-	return int(math.Pow(float64(x), float64(n)))
+	return int(math.Pow(
+		float64(x),
+		float64(n),
+	))
 }
 
 // Быстрое возведение в степень
@@ -62,7 +65,7 @@ func main() {
 
 	fmt.Println("Выбор двух открытых чисел:")
 
-	// Простое числа p
+	// Простое число p
 	var p int
 	for !isPrime(p) {
 		p = random(1e6, 1e9)
