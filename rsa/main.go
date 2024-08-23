@@ -26,16 +26,41 @@ func isPrime(n int) bool {
 
 // Взаимно простые ли числа
 func isCoprime(n, m int) bool {
-	min := n
-	if m < n {
-		min = m
-	}
-	for i := 2; i*i <= min; i++ {
+	for i := 2; i*i <= n && i*i <= m; i++ {
 		if n%i == 0 && m%i == 0 {
 			return false
 		}
 	}
 	return true
+}
+
+// Алгоритм Евклида (наименьший общий делитель)
+func euclid(a, b int) int {
+	if b == 0 {
+		return a
+	}
+	return euclid(b, a%b)
+}
+
+// Расширенный алгоритм Евклида (разложение на сумму множителей)
+func extendedEuclid(a, b int) (int, int, int) {
+	if b == 0 {
+		return a, 1, 0
+	}
+	r, x, y := extendedEuclid(b, a%b)
+	return r, y, x - a/b*y
+}
+
+// Модульная (мультипликативная) инверсия
+func modularInverse(a, n int) int {
+	r, x, _ := extendedEuclid(a, n)
+	if r != 1 {
+		return 0
+	}
+	if x < 0 {
+		return x + n
+	}
+	return x
 }
 
 // Быстрое возведение в степень по модулю
@@ -51,6 +76,12 @@ func fastPowMod(x, n, p int) int {
 	return r
 }
 
+// Минимальный и максимальный пороги
+const (
+	min = 1e3
+	max = 1e4
+)
+
 func main() {
 	fmt.Println(" \n[ RSA ]\n ")
 
@@ -61,14 +92,14 @@ func main() {
 	// Простое число p
 	var p int
 	for !isPrime(p) {
-		p = random(1e6, 1e9)
+		p = random(min, max)
 	}
 	fmt.Printf("p = %d\n", p)
 
 	// Простое число q
 	var q, diff int
-	for !isPrime(q) || q == p || diff < 1e6 {
-		q = random(1e6, 1e9)
+	for !isPrime(q) || q == p || diff < min {
+		q = random(min, max)
 		diff = int(math.Abs(float64(p - q)))
 	}
 	fmt.Printf("q = %d\n\n", q)
@@ -90,8 +121,41 @@ func main() {
 	// Число e
 	var e int
 	for !isPrime(e) || !isCoprime(e, fi) {
-		e = random(1e5, 1e8)
+		e = random(min, max)
 	}
 	//e = 65537
-	fmt.Printf("e = %d\n", e)
+	fmt.Printf("e = %d\n\n", e)
+
+	/* Генерация ключа дешифрования */
+
+	fmt.Println("Выбор числа для дешифрования:")
+
+	// Число d
+	d := modularInverse(e, fi)
+	fmt.Printf("d = %d\n\n", d)
+
+	fmt.Println("...")
+	fmt.Println()
+
+	/* Шифрование и дешифрование */
+
+	fmt.Println("Оригинальное сообщение:")
+
+	// Генерация сообщения (не длиннее n)
+	M := random(1, n)
+	fmt.Printf("M = %d\n\n", M)
+
+	fmt.Println("Зашифрованное сообщение:")
+
+	// Шифрование (M^e mod n)
+	Me := fastPowMod(M, e, n)
+	fmt.Printf("M(e) = %d\n\n", Me)
+
+	fmt.Println("Расшифрованное сообщение:")
+
+	// Дешифрование (Me^d mod n)
+	Md := fastPowMod(Me, d, n)
+	fmt.Printf("M(d) = %d\n\n", Md)
+
+	fmt.Println("Сообщения идентичны:", M == Md)
 }
