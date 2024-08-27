@@ -14,7 +14,7 @@ func main() {
 
 	// Настройки
 	path := os.Getenv("GOPATH") + "/src/golearn/"
-	skip := []string{".pb", "_generated"}
+	skip := []string{".pb", "generated"}
 
 	var files, dirs, lines int
 
