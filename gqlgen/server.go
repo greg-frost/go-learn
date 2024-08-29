@@ -17,11 +17,13 @@ const defaultPort = "8080"
 func main() {
 	fmt.Println(" \n[ GRAPHQL-СЕРВЕР ]\n ")
 
+	// Порт
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
+	// Сервер
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
 		Resolvers: &graph.Resolver{},
 	}))
