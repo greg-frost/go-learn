@@ -1,10 +1,12 @@
 package main
 
 import (
-	"golearn/gqlgen/graph"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"golearn/gqlgen/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -13,16 +15,26 @@ import (
 const defaultPort = "8080"
 
 func main() {
+	fmt.Println(" \n[ GRAPHQL-СЕРВЕР ]\n ")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
+		Resolvers: &graph.Resolver{},
+	}))
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	// Обработчики
+	http.Handle("/", playground.Handler("GraphQL-сервер", "/query"))
 	http.Handle("/query", srv)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	// log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	// log.Fatal(http.ListenAndServe(":"+port, nil))
+
+	// Запуск сервера
+	fmt.Println("Ожидаю обновлений...")
+	fmt.Printf("(на http://localhost:%s)\n", port)
+	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
 }
