@@ -8,21 +8,17 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"math/big"
-
 	"golearn/gqlgen/graph/model"
+	"math/big"
 )
 
 // CreateTodo is the resolver for the createTodo field.
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
 	id, _ := rand.Int(rand.Reader, big.NewInt(100))
 	todo := &model.Todo{
-		Text: input.Text,
-		ID:   fmt.Sprintf("T%d", id),
-		User: &model.User{
-			ID:   input.UserID,
-			Name: "user" + input.UserID,
-		},
+		Text:   input.Text,
+		ID:     fmt.Sprintf("T%d", id),
+		UserID: input.UserID,
 	}
 	r.todos = append(r.todos, todo)
 	return todo, nil
@@ -33,11 +29,23 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	return r.todos, nil
 }
 
+// User is the resolver for the user field.
+func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
+	return &model.User{
+		ID:   obj.UserID,
+		Name: "user " + obj.UserID,
+	}, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Todo returns TodoResolver implementation.
+func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type todoResolver struct{ *Resolver }
