@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"golearn/gqlgen/graph"
+	"golearn/gqlgen2/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"

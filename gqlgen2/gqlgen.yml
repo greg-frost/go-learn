@@ -66,7 +66,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "golearn/gqlgen/graph/model"
+ - "golearn/gqlgen2/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -85,3 +85,9 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  # Video:
+  #   model: golearn/gqlgen2/graph/model/models.Video
+  # ID:
+  #   model: golearn/gqlgen2/graph/model/models.ID
+  # Timestamp:
+  #   model: golearn/gqlgen2/graph/model/models.Timestamp

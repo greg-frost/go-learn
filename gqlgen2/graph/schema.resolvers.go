@@ -12,7 +12,8 @@ import (
 
 // CreateVideo is the resolver for the createVideo field.
 func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo) (*model.Video, error) {
-	panic(fmt.Errorf("not implemented: CreateVideo - createVideo"))
+	fmt.Printf("\nCreateVideo input:\n\n%#v\nid = %v (%T)\n", input, input.UserID, input.UserID)
+	return &model.Video{}, nil
 }
 
 // Videos is the resolver for the videos field.
