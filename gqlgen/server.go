@@ -15,7 +15,7 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	fmt.Println(" \n[ GRAPHQL-СЕРВЕР ]\n ")
+	fmt.Println(" \n[ GQLGEN ]\n ")
 
 	// Порт
 	port := os.Getenv("PORT")
