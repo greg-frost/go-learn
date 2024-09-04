@@ -9,11 +9,11 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
-// type Id int
+type Num int
 type Timestamp time.Time
 
 type Video struct {
-	ID          int           `json:"id"`
+	ID          Num           `json:"id"`
 	Name        string        `json:"name"`
 	Description string        `json:"description"`
 	User        *User         `json:"user"`
@@ -23,27 +23,20 @@ type Video struct {
 	Related     []*Video      `json:"related"`
 }
 
-type NewVideo struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	UserID      int    `json:"userId"`
-	URL         string `json:"url"`
+func MarshalNum(id Num) graphql.Marshaler {
+	return graphql.WriterFunc(func(w io.Writer) {
+		io.WriteString(w, strconv.Quote(fmt.Sprintf("%d", id)))
+	})
 }
 
-// func MarshalId(id Id) graphql.Marshaler {
-// 	return graphql.WriterFunc(func(w io.Writer) {
-// 		io.WriteString(w, strconv.Quote(fmt.Sprintf("%d", id)))
-// 	})
-// }
-
-// func UnmarshalId(v interface{}) (Id, error) {
-// 	id, ok := v.(string)
-// 	if !ok {
-// 		return 0, fmt.Errorf("ID должен быть строкой")
-// 	}
-// 	i, e := strconv.Atoi(id)
-// 	return Id(i), e
-// }
+func UnmarshalNum(v interface{}) (Num, error) {
+	id, ok := v.(string)
+	if !ok {
+		return 0, fmt.Errorf("ID должен быть строкой")
+	}
+	i, e := strconv.Atoi(id)
+	return Num(i), e
+}
 
 func MarshalTimestamp(t Timestamp) graphql.Marshaler {
 	timestamp := time.Time(t).Unix() * 1000

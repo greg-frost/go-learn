@@ -85,9 +85,3 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  # Video:
-  #   model: golearn/gqlgen2/graph/model/models.Video
-  # ID:
-  #   model: golearn/gqlgen2/graph/model/models.ID
-  # Timestamp:
-  #   model: golearn/gqlgen2/graph/model/models.Timestamp

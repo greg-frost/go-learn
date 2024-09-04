@@ -1,11 +1,11 @@
 type User {
-    id: ID!
+    id: Int!
     name: String!
     email: String!
 }
 
 type Video {
-    id: ID!
+    id: Num!
     name: String!
     description: String!
     user: User!
@@ -16,15 +16,15 @@ type Video {
 }
 
 type Screenshot {
-    id: ID!
-    videoId: ID!
+    id: Int!
+    videoId: Int!
     url: String!
 }
 
 input NewVideo {
     name: String!
     description: String!
-    userId: ID!
+    userId: Int!
     url: String!
 } 
 
@@ -36,4 +36,5 @@ type Query {
     videos(limit: Int = 25, offset: Int = 0): [Video!]!
 }
 
+scalar Num
 scalar Timestamp
