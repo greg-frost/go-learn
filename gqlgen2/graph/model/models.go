@@ -23,6 +23,14 @@ type Video struct {
 	Related     []*Video      `json:"related"`
 }
 
+type NewVideo struct {
+	ID          *Num   `json:"id,omitempty"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	UserID      int    `json:"userId"`
+	URL         string `json:"url"`
+}
+
 func MarshalNum(id Num) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
 		io.WriteString(w, strconv.Quote(fmt.Sprintf("%d", id)))
@@ -32,7 +40,7 @@ func MarshalNum(id Num) graphql.Marshaler {
 func UnmarshalNum(v interface{}) (Num, error) {
 	id, ok := v.(string)
 	if !ok {
-		return 0, fmt.Errorf("ID должен быть строкой")
+		return 0, fmt.Errorf("номер должен быть строкой")
 	}
 	i, e := strconv.Atoi(id)
 	return Num(i), e

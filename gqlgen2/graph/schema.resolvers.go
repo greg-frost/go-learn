@@ -12,13 +12,49 @@ import (
 
 // CreateVideo is the resolver for the createVideo field.
 func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo) (*model.Video, error) {
-	fmt.Printf("\nCreateVideo input:\n\n%#v\nid = %v (%T)\n", input, input.UserID, input.UserID)
-	return &model.Video{}, nil
+	id := input.ID
+	n := len(r.Resolver.videos)
+	if n == 0 {
+		r.Resolver.videos = make(map[model.Num]model.Video)
+	}
+
+	var video model.Video
+	video.Name = input.Name
+	video.Description = input.Description
+	video.URL = input.URL
+
+	if id == nil {
+		newId := model.Num(n + 1)
+		video.ID = newId
+		r.Resolver.videos[newId] = video
+	} else {
+		videoId := model.Num(*id)
+		_, ok := r.Resolver.videos[videoId]
+		if !ok {
+			return nil, fmt.Errorf("видео не найдено")
+		}
+		r.Resolver.videos[videoId] = video
+	}
+
+	return &video, nil
+}
+
+// Video is the resolver for the video field.
+func (r *queryResolver) Video(ctx context.Context, id model.Num) (*model.Video, error) {
+	video, ok := r.Resolver.videos[id]
+	if !ok {
+		return nil, fmt.Errorf("видео не найдено")
+	}
+	return &video, nil
 }
 
 // Videos is the resolver for the videos field.
 func (r *queryResolver) Videos(ctx context.Context, limit *int, offset *int) ([]*model.Video, error) {
-	panic(fmt.Errorf("not implemented: Videos - videos"))
+	videos := make([]*model.Video, len(r.Resolver.videos))
+	for _, video := range r.Resolver.videos {
+		videos = append(videos, &video)
+	}
+	return videos, nil
 }
 
 // Mutation returns MutationResolver implementation.

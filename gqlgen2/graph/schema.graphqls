@@ -22,6 +22,7 @@ type Screenshot {
 }
 
 input NewVideo {
+    id: Num
     name: String!
     description: String!
     userId: Int!
@@ -33,6 +34,7 @@ type Mutation {
 }
 
 type Query {
+    video(id: Num!): Video
     videos(limit: Int = 25, offset: Int = 0): [Video!]!
 }
 

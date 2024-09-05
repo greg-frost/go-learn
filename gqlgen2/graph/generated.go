@@ -52,6 +52,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Video  func(childComplexity int, id model.Num) int
 		Videos func(childComplexity int, limit *int, offset *int) int
 	}
 
@@ -83,6 +84,7 @@ type MutationResolver interface {
 	CreateVideo(ctx context.Context, input model.NewVideo) (*model.Video, error)
 }
 type QueryResolver interface {
+	Video(ctx context.Context, id model.Num) (*model.Video, error)
 	Videos(ctx context.Context, limit *int, offset *int) ([]*model.Video, error)
 }
 
@@ -116,6 +118,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateVideo(childComplexity, args["input"].(model.NewVideo)), true
+
+	case "Query.video":
+		if e.complexity.Query.Video == nil {
+			break
+		}
+
+		args, err := ec.field_Query_video_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Video(childComplexity, args["id"].(model.Num)), true
 
 	case "Query.videos":
 		if e.complexity.Query.Videos == nil {
@@ -387,6 +401,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_video_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.Num
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNNum2golearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_videos_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -540,6 +569,76 @@ func (ec *executionContext) fieldContext_Mutation_createVideo(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createVideo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_video(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_video(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Video(rctx, fc.Args["id"].(model.Num))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Video)
+	fc.Result = res
+	return ec.marshalOVideo2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_video(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Video_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Video_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Video_description(ctx, field)
+			case "user":
+				return ec.fieldContext_Video_user(ctx, field)
+			case "url":
+				return ec.fieldContext_Video_url(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Video_createdAt(ctx, field)
+			case "screenshots":
+				return ec.fieldContext_Video_screenshots(ctx, field)
+			case "related":
+				return ec.fieldContext_Video_related(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Video", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_video_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3186,13 +3285,20 @@ func (ec *executionContext) unmarshalInputNewVideo(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "description", "userId", "url"}
+	fieldsInOrder := [...]string{"id", "name", "description", "userId", "url"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -3303,6 +3409,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "video":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_video(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "videos":
 			field := field
 
@@ -4294,6 +4419,22 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
+func (ec *executionContext) unmarshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx context.Context, v interface{}) (*model.Num, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := model.UnmarshalNum(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx context.Context, sel ast.SelectionSet, v *model.Num) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := model.MarshalNum(*v)
+	return res
+}
+
 func (ec *executionContext) marshalOScreenshot2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐScreenshot(ctx context.Context, sel ast.SelectionSet, v []*model.Screenshot) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -4356,6 +4497,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOVideo2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx context.Context, sel ast.SelectionSet, v *model.Video) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Video(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

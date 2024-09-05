@@ -5,13 +5,6 @@ package model
 type Mutation struct {
 }
 
-type NewVideo struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	UserID      int    `json:"userId"`
-	URL         string `json:"url"`
-}
-
 type Query struct {
 }
 
