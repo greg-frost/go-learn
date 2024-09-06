@@ -56,6 +56,7 @@ func (r *queryResolver) Video(ctx context.Context, id model.Num) (*model.Video, 
 func (r *queryResolver) Videos(ctx context.Context, limit *int, offset *int) ([]*model.Video, error) {
 	videos := make([]*model.Video, 0, len(r.Resolver.videos))
 	for _, video := range r.Resolver.videos {
+		video := video
 		videos = append(videos, &video)
 	}
 	return videos, nil
