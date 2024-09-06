@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"golearn/gqlgen2/graph/model"
+	"time"
 )
 
 // CreateVideo is the resolver for the createVideo field.
@@ -20,8 +21,10 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 
 	var video model.Video
 	video.Name = input.Name
+	video.User = &model.User{}
 	video.Description = input.Description
 	video.URL = input.URL
+	video.CreatedAt = model.Timestamp(time.Now())
 
 	if id == nil {
 		newId := model.Num(n + 1)
@@ -33,6 +36,7 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 		if !ok {
 			return nil, fmt.Errorf("видео не найдено")
 		}
+		video.ID = videoId
 		r.Resolver.videos[videoId] = video
 	}
 
@@ -50,7 +54,7 @@ func (r *queryResolver) Video(ctx context.Context, id model.Num) (*model.Video, 
 
 // Videos is the resolver for the videos field.
 func (r *queryResolver) Videos(ctx context.Context, limit *int, offset *int) ([]*model.Video, error) {
-	videos := make([]*model.Video, len(r.Resolver.videos))
+	videos := make([]*model.Video, 0, len(r.Resolver.videos))
 	for _, video := range r.Resolver.videos {
 		videos = append(videos, &video)
 	}
