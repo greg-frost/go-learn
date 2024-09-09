@@ -1,12 +1,14 @@
 enum Genre {
-    "No genre"
-    NO
-    "Funny videos"
-    FUN
-    "Documentary videos"
-    DOC
+    "Top videos"
+    TOP
     "Educational videos"
     EDU
+    "Documentary videos"
+    DOC
+    "Professional videos"
+    PRO
+    "Funny videos"
+    FUN
 }
 
 type User {
@@ -21,7 +23,7 @@ type Video {
     description: String!
     user: User!
     url: String!
-    genre: Genre!
+    genre: Genre
     createdAt: Timestamp!
     screenshots: [Screenshot]
     related(limit: Int = 25, offset: Int = 0): [Video!]!
@@ -39,7 +41,7 @@ input NewVideo {
     description: String!
     userId: Int!
     url: String!
-    genre: Genre!
+    genre: Genre
 }
 
 type Mutation {
@@ -48,7 +50,7 @@ type Mutation {
 
 type Query {
     video(id: Num!): Video
-    videos(limit: Int = 25, offset: Int = 0): [Video!]!
+    videos(genre: Genre, limit: Int = 25, offset: Int = 0): [Video!]!
 }
 
 scalar Num

@@ -29,26 +29,29 @@ type User struct {
 type Genre string
 
 const (
-	// No genre
-	GenreNo Genre = "NO"
-	// Funny videos
-	GenreFun Genre = "FUN"
-	// Documentary videos
-	GenreDoc Genre = "DOC"
+	// Top videos
+	GenreTop Genre = "TOP"
 	// Educational videos
 	GenreEdu Genre = "EDU"
+	// Documentary videos
+	GenreDoc Genre = "DOC"
+	// Professional videos
+	GenrePro Genre = "PRO"
+	// Funny videos
+	GenreFun Genre = "FUN"
 )
 
 var AllGenre = []Genre{
-	GenreNo,
-	GenreFun,
-	GenreDoc,
+	GenreTop,
 	GenreEdu,
+	GenreDoc,
+	GenrePro,
+	GenreFun,
 }
 
 func (e Genre) IsValid() bool {
 	switch e {
-	case GenreNo, GenreFun, GenreDoc, GenreEdu:
+	case GenreTop, GenreEdu, GenreDoc, GenrePro, GenreFun:
 		return true
 	}
 	return false

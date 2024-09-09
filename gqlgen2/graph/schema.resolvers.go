@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"golearn/gqlgen2/graph/model"
+	"sort"
 	"time"
 )
 
@@ -54,12 +55,20 @@ func (r *queryResolver) Video(ctx context.Context, id model.Num) (*model.Video, 
 }
 
 // Videos is the resolver for the videos field.
-func (r *queryResolver) Videos(ctx context.Context, limit *int, offset *int) ([]*model.Video, error) {
+func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *int, offset *int) ([]*model.Video, error) {
 	videos := make([]*model.Video, 0, len(r.Resolver.videos))
 	for _, video := range r.Resolver.videos {
 		video := video
+		if genre != nil && (video.Genre == nil || *genre != *video.Genre) {
+			continue
+		}
 		videos = append(videos, &video)
 	}
+
+	sort.Slice(videos, func(i, j int) bool {
+		return videos[i].ID < videos[j].ID
+	})
+
 	return videos, nil
 }
 
