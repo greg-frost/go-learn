@@ -71,6 +71,7 @@ type ComplexityRoot struct {
 	Video struct {
 		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
+		Genre       func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Related     func(childComplexity int, limit *int, offset *int) int
@@ -198,6 +199,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Video.Description(childComplexity), true
+
+	case "Video.genre":
+		if e.complexity.Video.Genre == nil {
+			break
+		}
+
+		return e.complexity.Video.Genre(childComplexity), true
 
 	case "Video.id":
 		if e.complexity.Video.ID == nil {
@@ -551,6 +559,8 @@ func (ec *executionContext) fieldContext_Mutation_createVideo(ctx context.Contex
 				return ec.fieldContext_Video_user(ctx, field)
 			case "url":
 				return ec.fieldContext_Video_url(ctx, field)
+			case "genre":
+				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
 			case "screenshots":
@@ -621,6 +631,8 @@ func (ec *executionContext) fieldContext_Query_video(ctx context.Context, field 
 				return ec.fieldContext_Video_user(ctx, field)
 			case "url":
 				return ec.fieldContext_Video_url(ctx, field)
+			case "genre":
+				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
 			case "screenshots":
@@ -694,6 +706,8 @@ func (ec *executionContext) fieldContext_Query_videos(ctx context.Context, field
 				return ec.fieldContext_Video_user(ctx, field)
 			case "url":
 				return ec.fieldContext_Video_url(ctx, field)
+			case "genre":
+				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
 			case "screenshots":
@@ -1339,6 +1353,50 @@ func (ec *executionContext) fieldContext_Video_url(_ context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _Video_genre(ctx context.Context, field graphql.CollectedField, obj *model.Video) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Video_genre(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Genre, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Genre)
+	fc.Result = res
+	return ec.marshalNGenre2golearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Video_genre(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Video",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Genre does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Video_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Video) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Video_createdAt(ctx, field)
 	if err != nil {
@@ -1481,6 +1539,8 @@ func (ec *executionContext) fieldContext_Video_related(ctx context.Context, fiel
 				return ec.fieldContext_Video_user(ctx, field)
 			case "url":
 				return ec.fieldContext_Video_url(ctx, field)
+			case "genre":
+				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
 			case "screenshots":
@@ -3285,7 +3345,7 @@ func (ec *executionContext) unmarshalInputNewVideo(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "name", "description", "userId", "url"}
+	fieldsInOrder := [...]string{"id", "name", "description", "userId", "url", "genre"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3327,6 +3387,13 @@ func (ec *executionContext) unmarshalInputNewVideo(ctx context.Context, obj inte
 				return it, err
 			}
 			it.URL = data
+		case "genre":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genre"))
+			data, err := ec.unmarshalNGenre2golearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Genre = data
 		}
 	}
 
@@ -3612,6 +3679,11 @@ func (ec *executionContext) _Video(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "url":
 			out.Values[i] = ec._Video_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "genre":
+			out.Values[i] = ec._Video_genre(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3989,6 +4061,16 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNGenre2golearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx context.Context, v interface{}) (model.Genre, error) {
+	var res model.Genre
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGenre2golearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx context.Context, sel ast.SelectionSet, v model.Genre) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {

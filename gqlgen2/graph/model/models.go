@@ -19,6 +19,7 @@ type Video struct {
 	User        *User         `json:"user"`
 	URL         string        `json:"url"`
 	CreatedAt   Timestamp     `json:"createdAt"`
+	Genre       Genre         `json:"genre"`
 	Screenshots []*Screenshot `json:"screenshots,omitempty"`
 	Related     []*Video      `json:"related"`
 }
@@ -29,6 +30,7 @@ type NewVideo struct {
 	Description string `json:"description"`
 	UserID      int    `json:"userId"`
 	URL         string `json:"url"`
+	Genre       Genre  `json:"genre"`
 }
 
 func MarshalNum(id Num) graphql.Marshaler {

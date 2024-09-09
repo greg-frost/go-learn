@@ -25,6 +25,7 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 	video.Description = input.Description
 	video.URL = input.URL
 	video.CreatedAt = model.Timestamp(time.Now())
+	video.Genre = input.Genre
 
 	if id == nil {
 		newId := model.Num(n + 1)

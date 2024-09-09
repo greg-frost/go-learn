@@ -1,3 +1,14 @@
+enum Genre {
+    "No genre"
+    NO
+    "Funny videos"
+    FUN
+    "Documentary videos"
+    DOC
+    "Educational videos"
+    EDU
+}
+
 type User {
     id: Int!
     name: String!
@@ -10,6 +21,7 @@ type Video {
     description: String!
     user: User!
     url: String!
+    genre: Genre!
     createdAt: Timestamp!
     screenshots: [Screenshot]
     related(limit: Int = 25, offset: Int = 0): [Video!]!
@@ -27,7 +39,8 @@ input NewVideo {
     description: String!
     userId: Int!
     url: String!
-} 
+    genre: Genre!
+}
 
 type Mutation {
     createVideo(input: NewVideo!): Video!

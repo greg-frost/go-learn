@@ -2,6 +2,12 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
 type Mutation struct {
 }
 
@@ -18,4 +24,53 @@ type User struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
+}
+
+type Genre string
+
+const (
+	// No genre
+	GenreNo Genre = "NO"
+	// Funny videos
+	GenreFun Genre = "FUN"
+	// Documentary videos
+	GenreDoc Genre = "DOC"
+	// Educational videos
+	GenreEdu Genre = "EDU"
+)
+
+var AllGenre = []Genre{
+	GenreNo,
+	GenreFun,
+	GenreDoc,
+	GenreEdu,
+}
+
+func (e Genre) IsValid() bool {
+	switch e {
+	case GenreNo, GenreFun, GenreDoc, GenreEdu:
+		return true
+	}
+	return false
+}
+
+func (e Genre) String() string {
+	return string(e)
+}
+
+func (e *Genre) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Genre(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Genre", str)
+	}
+	return nil
+}
+
+func (e Genre) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
