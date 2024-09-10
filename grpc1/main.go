@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	pb "golearn/grpc/protos/hello"
+	pb "golearn/grpc1/protos/hello"
 
 	"google.golang.org/grpc"
 )
@@ -22,7 +22,7 @@ func (s *server) Say(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRespons
 }
 
 func main() {
-	fmt.Println(" \n[ GRPC ]\n ")
+	fmt.Println(" \n[ GRPC 1 ]\n ")
 
 	/* Сервер */
 
