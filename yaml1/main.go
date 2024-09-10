@@ -27,10 +27,10 @@ func nodeToList(node yaml.Node) yaml.List {
 }
 
 func main() {
-	fmt.Println(" \n[ YAML-КОНФИГУРАЦИЯ ]\n ")
+	fmt.Println(" \n[ YAML-КОНФИГУРАЦИЯ 1 ]\n ")
 
 	// Чтение конфигурации
-	path := os.Getenv("GOPATH") + "/src/golearn/yaml/"
+	path := os.Getenv("GOPATH") + "/src/golearn/yaml1/"
 	config, err := yaml.ReadFile(path + "example.yaml")
 	if err != nil {
 		log.Fatalf("Не удалось прочитать yaml-файл: %s", err)
