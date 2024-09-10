@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	fmt.Println(" \n[ ТЕКСТОВЫЕ ШАБЛОНЫ ]\n ")
+	fmt.Println(" \n[ ШАБЛОНЫ 1 (TEXT) ]\n ")
 
 	// Создание и парсинг
 	t1 := template.New("t1")
