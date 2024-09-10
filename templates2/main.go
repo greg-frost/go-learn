@@ -112,7 +112,7 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println(" \n[ HTML-ШАБЛОНЫ ]\n ")
+	fmt.Println(" \n[ ШАБЛОНЫ 2 (HTML) ]\n ")
 
 	// Обработчики
 	http.HandleFunc("/", handleSimple)
