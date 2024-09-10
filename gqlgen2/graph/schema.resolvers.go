@@ -56,7 +56,8 @@ func (r *queryResolver) Video(ctx context.Context, id model.Num) (*model.Video, 
 
 // Videos is the resolver for the videos field.
 func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *int, offset *int) ([]*model.Video, error) {
-	videos := make([]*model.Video, 0, len(r.Resolver.videos))
+	n := len(r.Resolver.videos)
+	videos := make([]*model.Video, 0, n)
 	for _, video := range r.Resolver.videos {
 		video := video
 		if genre != nil && (video.Genre == nil || *genre != *video.Genre) {
@@ -69,7 +70,15 @@ func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *i
 		return videos[i].ID < videos[j].ID
 	})
 
-	return videos, nil
+	from, to := 0, n
+	if *offset >= 0 && *offset < n {
+		from = *offset
+	}
+	if *offset+*limit >= 0 && n > *offset+*limit {
+		to = *offset + *limit
+	}
+
+	return videos[from:to], nil
 }
 
 // Mutation returns MutationResolver implementation.
