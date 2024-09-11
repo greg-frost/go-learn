@@ -8,7 +8,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"golearn/gqlgen/graph/model"
+	"golearn/graphql1/graph/model"
 	"math/big"
 )
 
