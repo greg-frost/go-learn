@@ -1,6 +1,6 @@
 package graph
 
-import "golearn/gqlgen2/graph/model"
+import "golearn/graphql2/graph/model"
 
 //go:generate go run github.com/99designs/gqlgen generate
 

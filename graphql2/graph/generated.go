@@ -8,7 +8,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"golearn/gqlgen2/graph/model"
+	"golearn/graphql2/graph/model"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -385,7 +385,7 @@ func (ec *executionContext) field_Mutation_createVideo_args(ctx context.Context,
 	var arg0 model.NewVideo
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewVideo2golearnᚋgqlgen2ᚋgraphᚋmodelᚐNewVideo(ctx, tmp)
+		arg0, err = ec.unmarshalNNewVideo2golearnᚋgraphql2ᚋgraphᚋmodelᚐNewVideo(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -415,7 +415,7 @@ func (ec *executionContext) field_Query_video_args(ctx context.Context, rawArgs 
 	var arg0 model.Num
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNNum2golearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx, tmp)
+		arg0, err = ec.unmarshalNNum2golearnᚋgraphql2ᚋgraphᚋmodelᚐNum(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -430,7 +430,7 @@ func (ec *executionContext) field_Query_videos_args(ctx context.Context, rawArgs
 	var arg0 *model.Genre
 	if tmp, ok := rawArgs["genre"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genre"))
-		arg0, err = ec.unmarshalOGenre2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx, tmp)
+		arg0, err = ec.unmarshalOGenre2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐGenre(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -547,7 +547,7 @@ func (ec *executionContext) _Mutation_createVideo(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Video)
 	fc.Result = res
-	return ec.marshalNVideo2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx, field.Selections, res)
+	return ec.marshalNVideo2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createVideo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -619,7 +619,7 @@ func (ec *executionContext) _Query_video(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.(*model.Video)
 	fc.Result = res
-	return ec.marshalOVideo2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx, field.Selections, res)
+	return ec.marshalOVideo2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_video(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -694,7 +694,7 @@ func (ec *executionContext) _Query_videos(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.([]*model.Video)
 	fc.Result = res
-	return ec.marshalNVideo2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideoᚄ(ctx, field.Selections, res)
+	return ec.marshalNVideo2ᚕᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_videos(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1162,7 +1162,7 @@ func (ec *executionContext) _Video_id(ctx context.Context, field graphql.Collect
 	}
 	res := resTmp.(model.Num)
 	fc.Result = res
-	return ec.marshalNNum2golearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx, field.Selections, res)
+	return ec.marshalNNum2golearnᚋgraphql2ᚋgraphᚋmodelᚐNum(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Video_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1294,7 +1294,7 @@ func (ec *executionContext) _Video_user(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Video_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1387,7 +1387,7 @@ func (ec *executionContext) _Video_genre(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.(*model.Genre)
 	fc.Result = res
-	return ec.marshalOGenre2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx, field.Selections, res)
+	return ec.marshalOGenre2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐGenre(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Video_genre(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1431,7 +1431,7 @@ func (ec *executionContext) _Video_createdAt(ctx context.Context, field graphql.
 	}
 	res := resTmp.(model.Timestamp)
 	fc.Result = res
-	return ec.marshalNTimestamp2golearnᚋgqlgen2ᚋgraphᚋmodelᚐTimestamp(ctx, field.Selections, res)
+	return ec.marshalNTimestamp2golearnᚋgraphql2ᚋgraphᚋmodelᚐTimestamp(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Video_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1472,7 +1472,7 @@ func (ec *executionContext) _Video_screenshots(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Screenshot)
 	fc.Result = res
-	return ec.marshalOScreenshot2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐScreenshot(ctx, field.Selections, res)
+	return ec.marshalOScreenshot2ᚕᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐScreenshot(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Video_screenshots(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1524,7 +1524,7 @@ func (ec *executionContext) _Video_related(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.([]*model.Video)
 	fc.Result = res
-	return ec.marshalNVideo2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideoᚄ(ctx, field.Selections, res)
+	return ec.marshalNVideo2ᚕᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Video_related(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3360,7 +3360,7 @@ func (ec *executionContext) unmarshalInputNewVideo(ctx context.Context, obj inte
 		switch k {
 		case "id":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			data, err := ec.unmarshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx, v)
+			data, err := ec.unmarshalONum2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐNum(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3395,7 +3395,7 @@ func (ec *executionContext) unmarshalInputNewVideo(ctx context.Context, obj inte
 			it.URL = data
 		case "genre":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genre"))
-			data, err := ec.unmarshalOGenre2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx, v)
+			data, err := ec.unmarshalOGenre2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐGenre(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4081,17 +4081,17 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewVideo2golearnᚋgqlgen2ᚋgraphᚋmodelᚐNewVideo(ctx context.Context, v interface{}) (model.NewVideo, error) {
+func (ec *executionContext) unmarshalNNewVideo2golearnᚋgraphql2ᚋgraphᚋmodelᚐNewVideo(ctx context.Context, v interface{}) (model.NewVideo, error) {
 	res, err := ec.unmarshalInputNewVideo(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNum2golearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx context.Context, v interface{}) (model.Num, error) {
+func (ec *executionContext) unmarshalNNum2golearnᚋgraphql2ᚋgraphᚋmodelᚐNum(ctx context.Context, v interface{}) (model.Num, error) {
 	res, err := model.UnmarshalNum(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNNum2golearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx context.Context, sel ast.SelectionSet, v model.Num) graphql.Marshaler {
+func (ec *executionContext) marshalNNum2golearnᚋgraphql2ᚋgraphᚋmodelᚐNum(ctx context.Context, sel ast.SelectionSet, v model.Num) graphql.Marshaler {
 	res := model.MarshalNum(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -4116,12 +4116,12 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNTimestamp2golearnᚋgqlgen2ᚋgraphᚋmodelᚐTimestamp(ctx context.Context, v interface{}) (model.Timestamp, error) {
+func (ec *executionContext) unmarshalNTimestamp2golearnᚋgraphql2ᚋgraphᚋmodelᚐTimestamp(ctx context.Context, v interface{}) (model.Timestamp, error) {
 	res, err := model.UnmarshalTimestamp(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNTimestamp2golearnᚋgqlgen2ᚋgraphᚋmodelᚐTimestamp(ctx context.Context, sel ast.SelectionSet, v model.Timestamp) graphql.Marshaler {
+func (ec *executionContext) marshalNTimestamp2golearnᚋgraphql2ᚋgraphᚋmodelᚐTimestamp(ctx context.Context, sel ast.SelectionSet, v model.Timestamp) graphql.Marshaler {
 	res := model.MarshalTimestamp(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -4131,7 +4131,7 @@ func (ec *executionContext) marshalNTimestamp2golearnᚋgqlgen2ᚋgraphᚋmodel�
 	return res
 }
 
-func (ec *executionContext) marshalNUser2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4141,11 +4141,11 @@ func (ec *executionContext) marshalNUser2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐ
 	return ec._User(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNVideo2golearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx context.Context, sel ast.SelectionSet, v model.Video) graphql.Marshaler {
+func (ec *executionContext) marshalNVideo2golearnᚋgraphql2ᚋgraphᚋmodelᚐVideo(ctx context.Context, sel ast.SelectionSet, v model.Video) graphql.Marshaler {
 	return ec._Video(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNVideo2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Video) graphql.Marshaler {
+func (ec *executionContext) marshalNVideo2ᚕᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Video) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4169,7 +4169,7 @@ func (ec *executionContext) marshalNVideo2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmode
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNVideo2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx, sel, v[i])
+			ret[i] = ec.marshalNVideo2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideo(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4189,7 +4189,7 @@ func (ec *executionContext) marshalNVideo2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmode
 	return ret
 }
 
-func (ec *executionContext) marshalNVideo2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx context.Context, sel ast.SelectionSet, v *model.Video) graphql.Marshaler {
+func (ec *executionContext) marshalNVideo2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideo(ctx context.Context, sel ast.SelectionSet, v *model.Video) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4478,7 +4478,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOGenre2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx context.Context, v interface{}) (*model.Genre, error) {
+func (ec *executionContext) unmarshalOGenre2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐGenre(ctx context.Context, v interface{}) (*model.Genre, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4487,7 +4487,7 @@ func (ec *executionContext) unmarshalOGenre2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodel
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGenre2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐGenre(ctx context.Context, sel ast.SelectionSet, v *model.Genre) graphql.Marshaler {
+func (ec *executionContext) marshalOGenre2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐGenre(ctx context.Context, sel ast.SelectionSet, v *model.Genre) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4510,7 +4510,7 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) unmarshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx context.Context, v interface{}) (*model.Num, error) {
+func (ec *executionContext) unmarshalONum2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐNum(ctx context.Context, v interface{}) (*model.Num, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4518,7 +4518,7 @@ func (ec *executionContext) unmarshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodel�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐNum(ctx context.Context, sel ast.SelectionSet, v *model.Num) graphql.Marshaler {
+func (ec *executionContext) marshalONum2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐNum(ctx context.Context, sel ast.SelectionSet, v *model.Num) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4526,7 +4526,7 @@ func (ec *executionContext) marshalONum2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐN
 	return res
 }
 
-func (ec *executionContext) marshalOScreenshot2ᚕᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐScreenshot(ctx context.Context, sel ast.SelectionSet, v []*model.Screenshot) graphql.Marshaler {
+func (ec *executionContext) marshalOScreenshot2ᚕᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐScreenshot(ctx context.Context, sel ast.SelectionSet, v []*model.Screenshot) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4553,7 +4553,7 @@ func (ec *executionContext) marshalOScreenshot2ᚕᚖgolearnᚋgqlgen2ᚋgraph�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOScreenshot2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐScreenshot(ctx, sel, v[i])
+			ret[i] = ec.marshalOScreenshot2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐScreenshot(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4567,7 +4567,7 @@ func (ec *executionContext) marshalOScreenshot2ᚕᚖgolearnᚋgqlgen2ᚋgraph�
 	return ret
 }
 
-func (ec *executionContext) marshalOScreenshot2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐScreenshot(ctx context.Context, sel ast.SelectionSet, v *model.Screenshot) graphql.Marshaler {
+func (ec *executionContext) marshalOScreenshot2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐScreenshot(ctx context.Context, sel ast.SelectionSet, v *model.Screenshot) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4590,7 +4590,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOVideo2ᚖgolearnᚋgqlgen2ᚋgraphᚋmodelᚐVideo(ctx context.Context, sel ast.SelectionSet, v *model.Video) graphql.Marshaler {
+func (ec *executionContext) marshalOVideo2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐVideo(ctx context.Context, sel ast.SelectionSet, v *model.Video) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

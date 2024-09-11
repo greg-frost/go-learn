@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"golearn/gqlgen2/graph"
+	"golearn/graphql2/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -15,7 +15,7 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	fmt.Println(" \n[ GQLGEN 2 ]\n ")
+	fmt.Println(" \n[ GRAPHQL 2 (GQLGEN) ]\n ")
 
 	// Порт
 	port := os.Getenv("PORT")

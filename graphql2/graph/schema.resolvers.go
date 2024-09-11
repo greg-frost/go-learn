@@ -7,7 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
-	"golearn/gqlgen2/graph/model"
+	"golearn/graphql2/graph/model"
 	"sort"
 	"time"
 )
