@@ -14,12 +14,6 @@ type Mutation struct {
 type Query struct {
 }
 
-type Screenshot struct {
-	ID      int    `json:"id"`
-	VideoID int    `json:"videoId"`
-	URL     string `json:"url"`
-}
-
 type User struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`

@@ -13,15 +13,13 @@ type Num int
 type Timestamp time.Time
 
 type Video struct {
-	ID          Num           `json:"id"`
-	Name        string        `json:"name"`
-	Description string        `json:"description"`
-	User        *User         `json:"user"`
-	URL         string        `json:"url"`
-	CreatedAt   Timestamp     `json:"createdAt"`
-	Genre       *Genre        `json:"genre,omitempty"`
-	Screenshots []*Screenshot `json:"screenshots,omitempty"`
-	Related     []*Video      `json:"related"`
+	ID          Num       `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	UserID      int       `json:"-"`
+	URL         string    `json:"url"`
+	CreatedAt   Timestamp `json:"createdAt"`
+	Genre       *Genre    `json:"genre,omitempty"`
 }
 
 type NewVideo struct {

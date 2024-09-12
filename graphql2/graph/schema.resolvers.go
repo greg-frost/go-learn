@@ -22,7 +22,7 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 
 	var video model.Video
 	video.Name = input.Name
-	video.User = &model.User{}
+	video.UserID = input.UserID
 	video.Description = input.Description
 	video.URL = input.URL
 	video.CreatedAt = model.Timestamp(time.Now())
@@ -81,11 +81,27 @@ func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *i
 	return videos[from:to], nil
 }
 
+// User is the resolver for the user field.
+func (r *videoResolver) User(ctx context.Context, obj *model.Video) (*model.User, error) {
+	if obj.UserID == 1 {
+		return &model.User{
+			ID:    1,
+			Name:  "Greg Frost",
+			Email: "greg-frost@yandex.ru",
+		}, nil
+	}
+	return &model.User{ID: obj.UserID}, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Video returns VideoResolver implementation.
+func (r *Resolver) Video() VideoResolver { return &videoResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type videoResolver struct{ *Resolver }
