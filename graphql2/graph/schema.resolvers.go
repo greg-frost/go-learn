@@ -81,6 +81,33 @@ func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *i
 	return videos[from:to], nil
 }
 
+// Tick is the resolver for the tick field.
+func (r *subscriptionResolver) Tick(ctx context.Context) (<-chan *model.Time, error) {
+	ch := make(chan *model.Time)
+
+	go func() {
+		defer close(ch)
+
+		for {
+			time.Sleep(time.Second)
+
+			currentTime := time.Now()
+			t := &model.Time{
+				UnixTime:  int(currentTime.Unix()),
+				TimeStamp: currentTime.Format(time.RFC3339),
+			}
+
+			select {
+			case <-ctx.Done():
+				return
+			case ch <- t:
+			}
+		}
+	}()
+
+	return ch, nil
+}
+
 // VideoPublished is the resolver for the videoPublished field.
 func (r *subscriptionResolver) VideoPublished(ctx context.Context) (<-chan *model.Video, error) {
 	panic(fmt.Errorf("not implemented: VideoPublished - videoPublished"))

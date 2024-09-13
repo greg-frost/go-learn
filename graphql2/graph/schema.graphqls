@@ -1,3 +1,24 @@
+type Video {
+    id: Num!
+    name: String!
+    description: String!
+    user: User!
+    url: String!
+    genre: Genre
+    createdAt: Timestamp!
+}
+
+type User {
+    id: Int!
+    name: String!
+    email: String!
+}
+
+type Time {
+    unixTime: Int!
+    timeStamp: String!
+}
+
 enum Genre {
     "Top videos"
     TOP
@@ -9,22 +30,6 @@ enum Genre {
     PRO
     "Funny videos"
     FUN
-}
-
-type User {
-    id: Int!
-    name: String!
-    email: String!
-}
-
-type Video {
-    id: Num!
-    name: String!
-    description: String!
-    user: User!
-    url: String!
-    genre: Genre
-    createdAt: Timestamp!
 }
 
 input NewVideo {
@@ -46,6 +51,7 @@ type Query {
 }
 
 type Subscription {
+    tick: Time!
     videoPublished: Video!
 }
 
