@@ -81,6 +81,11 @@ func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *i
 	return videos[from:to], nil
 }
 
+// VideoPublished is the resolver for the videoPublished field.
+func (r *subscriptionResolver) VideoPublished(ctx context.Context) (<-chan *model.Video, error) {
+	panic(fmt.Errorf("not implemented: VideoPublished - videoPublished"))
+}
+
 // User is the resolver for the user field.
 func (r *videoResolver) User(ctx context.Context, obj *model.Video) (*model.User, error) {
 	if obj.UserID == 1 {
@@ -99,9 +104,13 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Subscription returns SubscriptionResolver implementation.
+func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
+
 // Video returns VideoResolver implementation.
 func (r *Resolver) Video() VideoResolver { return &videoResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type subscriptionResolver struct{ *Resolver }
 type videoResolver struct{ *Resolver }
