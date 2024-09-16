@@ -11,3 +11,5 @@ import "golearn/graphql2/graph/model"
 type Resolver struct {
 	videos map[model.Num]model.Video
 }
+
+var videoPublishedSubs = map[int]chan *model.Video{}

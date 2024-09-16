@@ -14,12 +14,6 @@ import (
 
 // CreateVideo is the resolver for the createVideo field.
 func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo) (*model.Video, error) {
-	id := input.ID
-	n := len(r.Resolver.videos)
-	if n == 0 {
-		r.Resolver.videos = make(map[model.Num]model.Video)
-	}
-
 	var video model.Video
 	video.Name = input.Name
 	video.UserID = input.UserID
@@ -27,6 +21,12 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 	video.URL = input.URL
 	video.CreatedAt = model.Timestamp(time.Now())
 	video.Genre = input.Genre
+
+	id := input.ID
+	n := len(r.Resolver.videos)
+	if r.Resolver.videos == nil {
+		r.Resolver.videos = make(map[model.Num]model.Video)
+	}
 
 	if id == nil {
 		newId := model.Num(n + 1)
@@ -40,6 +40,10 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 		}
 		video.ID = videoId
 		r.Resolver.videos[videoId] = video
+	}
+
+	for _, observer := range videoPublishedSubs {
+		observer <- &video
 	}
 
 	return &video, nil
@@ -83,7 +87,16 @@ func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *i
 
 // VideoPublished is the resolver for the videoPublished field.
 func (r *subscriptionResolver) VideoPublished(ctx context.Context) (<-chan *model.Video, error) {
-	panic(fmt.Errorf("not implemented: VideoPublished - videoPublished"))
+	n := len(videoPublishedSubs)
+	id := n + 1
+
+	videoCh := make(chan *model.Video, 1)
+	go func() {
+		<-ctx.Done()
+	}()
+	videoPublishedSubs[id] = videoCh
+
+	return videoCh, nil
 }
 
 // User is the resolver for the user field.
