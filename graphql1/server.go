@@ -9,6 +9,7 @@ import (
 	"golearn/graphql1/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
@@ -27,6 +28,9 @@ func main() {
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
 		Resolvers: &graph.Resolver{},
 	}))
+
+	// Web-socket
+	srv.AddTransport(&transport.Websocket{})
 
 	// Обработчики
 	http.Handle("/", playground.Handler("GraphQL-сервер", "/query"))

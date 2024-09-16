@@ -10,8 +10,9 @@ type User {
 	name: String!
 }
 
-type Query {
-	todos: [Todo!]!
+type Time {
+    unixTime: Int!
+    timeStamp: String!
 }
 
 input NewTodo {
@@ -19,6 +20,14 @@ input NewTodo {
 	userId: String!
 }
 
+type Query {
+	todos: [Todo!]!
+}
+
 type Mutation {
 	createTodo(input: NewTodo!): Todo!
+}
+
+type Subscription {
+    tick: Time!
 }

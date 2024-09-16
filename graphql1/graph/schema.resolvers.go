@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"golearn/graphql1/graph/model"
 	"math/big"
+	"time"
 )
 
 // CreateTodo is the resolver for the createTodo field.
@@ -29,6 +30,33 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	return r.todos, nil
 }
 
+// Tick is the resolver for the tick field.
+func (r *subscriptionResolver) Tick(ctx context.Context) (<-chan *model.Time, error) {
+	ch := make(chan *model.Time)
+
+	go func() {
+		defer close(ch)
+
+		for {
+			time.Sleep(time.Second)
+
+			currentTime := time.Now()
+			t := &model.Time{
+				UnixTime:  int(currentTime.Unix()),
+				TimeStamp: currentTime.Format(time.RFC3339),
+			}
+
+			select {
+			case <-ctx.Done():
+				return
+			case ch <- t:
+			}
+		}
+	}()
+
+	return ch, nil
+}
+
 // User is the resolver for the user field.
 func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
 	return &model.User{
@@ -43,9 +71,13 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Subscription returns SubscriptionResolver implementation.
+func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
+
 // Todo returns TodoResolver implementation.
 func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type subscriptionResolver struct{ *Resolver }
 type todoResolver struct{ *Resolver }
