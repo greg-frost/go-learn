@@ -60,13 +60,7 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		Tick           func(childComplexity int) int
 		VideoPublished func(childComplexity int) int
-	}
-
-	Time struct {
-		TimeStamp func(childComplexity int) int
-		UnixTime  func(childComplexity int) int
 	}
 
 	User struct {
@@ -94,7 +88,6 @@ type QueryResolver interface {
 	Videos(ctx context.Context, genre *model.Genre, limit *int, offset *int) ([]*model.Video, error)
 }
 type SubscriptionResolver interface {
-	Tick(ctx context.Context) (<-chan *model.Time, error)
 	VideoPublished(ctx context.Context) (<-chan *model.Video, error)
 }
 type VideoResolver interface {
@@ -156,33 +149,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Videos(childComplexity, args["genre"].(*model.Genre), args["limit"].(*int), args["offset"].(*int)), true
 
-	case "Subscription.tick":
-		if e.complexity.Subscription.Tick == nil {
-			break
-		}
-
-		return e.complexity.Subscription.Tick(childComplexity), true
-
 	case "Subscription.videoPublished":
 		if e.complexity.Subscription.VideoPublished == nil {
 			break
 		}
 
 		return e.complexity.Subscription.VideoPublished(childComplexity), true
-
-	case "Time.timeStamp":
-		if e.complexity.Time.TimeStamp == nil {
-			break
-		}
-
-		return e.complexity.Time.TimeStamp(childComplexity), true
-
-	case "Time.unixTime":
-		if e.complexity.Time.UnixTime == nil {
-			break
-		}
-
-		return e.complexity.Time.UnixTime(childComplexity), true
 
 	case "User.email":
 		if e.complexity.User.Email == nil {
@@ -851,70 +823,6 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscription_tick(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_tick(ctx, field)
-	if err != nil {
-		return nil
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().Tick(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return nil
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return nil
-	}
-	return func(ctx context.Context) graphql.Marshaler {
-		select {
-		case res, ok := <-resTmp.(<-chan *model.Time):
-			if !ok {
-				return nil
-			}
-			return graphql.WriterFunc(func(w io.Writer) {
-				w.Write([]byte{'{'})
-				graphql.MarshalString(field.Alias).MarshalGQL(w)
-				w.Write([]byte{':'})
-				ec.marshalNTime2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐTime(ctx, field.Selections, res).MarshalGQL(w)
-				w.Write([]byte{'}'})
-			})
-		case <-ctx.Done():
-			return nil
-		}
-	}
-}
-
-func (ec *executionContext) fieldContext_Subscription_tick(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "unixTime":
-				return ec.fieldContext_Time_unixTime(ctx, field)
-			case "timeStamp":
-				return ec.fieldContext_Time_timeStamp(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Time", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Subscription_videoPublished(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
 	fc, err := ec.fieldContext_Subscription_videoPublished(ctx, field)
 	if err != nil {
@@ -984,94 +892,6 @@ func (ec *executionContext) fieldContext_Subscription_videoPublished(_ context.C
 				return ec.fieldContext_Video_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Video", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Time_unixTime(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Time_unixTime(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UnixTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Time_unixTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Time",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Time_timeStamp(ctx context.Context, field graphql.CollectedField, obj *model.Time) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Time_timeStamp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TimeStamp, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Time_timeStamp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Time",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3518,57 +3338,11 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 
 	switch fields[0].Name {
-	case "tick":
-		return ec._Subscription_tick(ctx, fields[0])
 	case "videoPublished":
 		return ec._Subscription_videoPublished(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
-}
-
-var timeImplementors = []string{"Time"}
-
-func (ec *executionContext) _Time(ctx context.Context, sel ast.SelectionSet, obj *model.Time) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, timeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Time")
-		case "unixTime":
-			out.Values[i] = ec._Time_unixTime(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "timeStamp":
-			out.Values[i] = ec._Time_timeStamp(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
 }
 
 var userImplementors = []string{"User"}
@@ -4106,20 +3880,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNTime2golearnᚋgraphql2ᚋgraphᚋmodelᚐTime(ctx context.Context, sel ast.SelectionSet, v model.Time) graphql.Marshaler {
-	return ec._Time(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTime2ᚖgolearnᚋgraphql2ᚋgraphᚋmodelᚐTime(ctx context.Context, sel ast.SelectionSet, v *model.Time) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Time(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNTimestamp2golearnᚋgraphql2ᚋgraphᚋmodelᚐTimestamp(ctx context.Context, v interface{}) (model.Timestamp, error) {

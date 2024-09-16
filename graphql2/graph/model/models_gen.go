@@ -17,11 +17,6 @@ type Query struct {
 type Subscription struct {
 }
 
-type Time struct {
-	UnixTime  int    `json:"unixTime"`
-	TimeStamp string `json:"timeStamp"`
-}
-
 type User struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
