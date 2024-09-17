@@ -15,22 +15,25 @@ import (
 
 // Добавление нового дела для выполнения
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+	// Случайный идентификатор
 	id, _ := rand.Int(rand.Reader, big.NewInt(100))
+
 	todo := &model.Todo{
 		Text:   input.Text,
 		ID:     fmt.Sprintf("T%d", id),
 		UserID: input.UserID,
 	}
 	r.todos = append(r.todos, todo)
+
 	return todo, nil
 }
 
-// Список дел для выполнения
+// Получение списка дел для выполнения
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	return r.todos, nil
 }
 
-// Тикер времени
+// Подписка на тикер времени
 func (r *subscriptionResolver) Tick(ctx context.Context) (<-chan *model.Time, error) {
 	ch := make(chan *model.Time)
 
@@ -38,8 +41,10 @@ func (r *subscriptionResolver) Tick(ctx context.Context) (<-chan *model.Time, er
 		defer close(ch)
 
 		for {
+			// Раз в секунду
 			time.Sleep(time.Second)
 
+			// Временная метка
 			currentTime := time.Now()
 			t := &model.Time{
 				UnixTime:  int(currentTime.Unix()),
@@ -47,8 +52,10 @@ func (r *subscriptionResolver) Tick(ctx context.Context) (<-chan *model.Time, er
 			}
 
 			select {
+			// Подписка завершена
 			case <-ctx.Done():
 				return
+			// Стандартное поведение
 			case ch <- t:
 			}
 		}

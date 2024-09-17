@@ -26,7 +26,7 @@ input NewTodo {
 
 # Запросы
 type Query {
-	todos: [Todo!]! # Список дел
+	todos: [Todo!]! # Получение списка дел
 }
 
 # Мутации
@@ -36,5 +36,5 @@ type Mutation {
 
 # Подписки
 type Subscription {
-    tick: Time! # Тикер
+    tick: Time! # Тикер времени
 }
