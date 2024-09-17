@@ -13,6 +13,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
+// Порт по умолчанию
 const defaultPort = "8080"
 
 func main() {

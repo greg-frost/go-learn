@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-// CreateTodo is the resolver for the createTodo field.
+// Добавление нового дела для выполнения
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
 	id, _ := rand.Int(rand.Reader, big.NewInt(100))
 	todo := &model.Todo{
@@ -25,12 +25,12 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	return todo, nil
 }
 
-// Todos is the resolver for the todos field.
+// Список дел для выполнения
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	return r.todos, nil
 }
 
-// Tick is the resolver for the tick field.
+// Тикер времени
 func (r *subscriptionResolver) Tick(ctx context.Context) (<-chan *model.Time, error) {
 	ch := make(chan *model.Time)
 
@@ -57,7 +57,7 @@ func (r *subscriptionResolver) Tick(ctx context.Context) (<-chan *model.Time, er
 	return ch, nil
 }
 
-// User is the resolver for the user field.
+// Получение пользователя
 func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
 	return &model.User{
 		ID:   obj.UserID,
