@@ -1,15 +1,13 @@
 package graph
 
-import "golearn/graphql2/graph/model"
-
 //go:generate go run github.com/99designs/gqlgen generate
 
-// This file will not be regenerated automatically.
-//
-// It serves as dependency injection for your app, add any dependencies you require here.
+import "golearn/graphql2/graph/model"
 
+// Структура "обработчик"
 type Resolver struct {
 	videos map[model.Num]model.Video
 }
 
+// Список подписчиков на событие публикации видео
 var videoPublishedSubs = map[int]chan *model.Video{}

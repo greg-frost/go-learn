@@ -12,8 +12,9 @@ import (
 	"time"
 )
 
-// CreateVideo is the resolver for the createVideo field.
+// Добавление нового видео
 func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo) (*model.Video, error) {
+	// Данные видео
 	var video model.Video
 	video.Name = input.Name
 	video.UserID = input.UserID
@@ -22,17 +23,21 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 	video.CreatedAt = model.Timestamp(time.Now())
 	video.Genre = input.Genre
 
+	// ID и хранилище
 	id := input.ID
 	n := len(r.Resolver.videos)
 	if r.Resolver.videos == nil {
 		r.Resolver.videos = make(map[model.Num]model.Video)
 	}
 
-	if id == nil {
+	if id == nil { // Создание нового видео
+
 		newId := model.Num(n + 1)
 		video.ID = newId
 		r.Resolver.videos[newId] = video
-	} else {
+
+	} else { // Редактирование видео
+
 		videoId := model.Num(*id)
 		_, ok := r.Resolver.videos[videoId]
 		if !ok {
@@ -42,6 +47,7 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 		r.Resolver.videos[videoId] = video
 	}
 
+	// Оповещение подписчиков
 	for _, observer := range videoPublishedSubs {
 		observer <- &video
 	}
@@ -49,7 +55,7 @@ func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo
 	return &video, nil
 }
 
-// Video is the resolver for the video field.
+// Получение видео
 func (r *queryResolver) Video(ctx context.Context, id model.Num) (*model.Video, error) {
 	video, ok := r.Resolver.videos[id]
 	if !ok {
@@ -58,22 +64,28 @@ func (r *queryResolver) Video(ctx context.Context, id model.Num) (*model.Video, 
 	return &video, nil
 }
 
-// Videos is the resolver for the videos field.
+// Получение списка видео
 func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *int, offset *int) ([]*model.Video, error) {
 	n := len(r.Resolver.videos)
 	videos := make([]*model.Video, 0, n)
+
+	// Обход видео и запись их в срез
 	for _, video := range r.Resolver.videos {
 		video := video
+
+		// Фильтрация по жанру
 		if genre != nil && (video.Genre == nil || *genre != *video.Genre) {
 			continue
 		}
 		videos = append(videos, &video)
 	}
 
+	// Сортировка среза видео по ID
 	sort.Slice(videos, func(i, j int) bool {
 		return videos[i].ID < videos[j].ID
 	})
 
+	// Лимит и смещение
 	from, to := 0, n
 	if *offset >= 0 && *offset < n {
 		from = *offset
@@ -85,11 +97,13 @@ func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *i
 	return videos[from:to], nil
 }
 
-// VideoPublished is the resolver for the videoPublished field.
+// Подписка на публикацию видео
 func (r *subscriptionResolver) VideoPublished(ctx context.Context) (<-chan *model.Video, error) {
+	// Подписчики и ID
 	n := len(videoPublishedSubs)
 	id := n + 1
 
+	// Создание нового подписчика
 	videoCh := make(chan *model.Video, 1)
 	go func() {
 		<-ctx.Done()
@@ -99,7 +113,7 @@ func (r *subscriptionResolver) VideoPublished(ctx context.Context) (<-chan *mode
 	return videoCh, nil
 }
 
-// User is the resolver for the user field.
+// Получение пользователя
 func (r *videoResolver) User(ctx context.Context, obj *model.Video) (*model.User, error) {
 	if obj.UserID == 1 {
 		return &model.User{

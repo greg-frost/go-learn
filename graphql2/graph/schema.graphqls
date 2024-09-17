@@ -1,3 +1,4 @@
+# Видео
 type Video {
     id: Num!
     name: String!
@@ -8,12 +9,14 @@ type Video {
     createdAt: Timestamp!
 }
 
+# Пользователь
 type User {
     id: Int!
     name: String!
     email: String!
 }
 
+# Жанр
 enum Genre {
     "Top videos"
     TOP
@@ -27,6 +30,7 @@ enum Genre {
     FUN
 }
 
+# Новое видео
 input NewVideo {
     id: Num
     name: String!
@@ -36,18 +40,21 @@ input NewVideo {
     genre: Genre
 }
 
+# Запросы
 type Query {
-    video(id: Num!): Video
-    videos(genre: Genre, limit: Int = 25, offset: Int = 0): [Video!]!
+    video(id: Num!): Video # Получение видео
+    videos(genre: Genre, limit: Int = 25, offset: Int = 0): [Video!]! # Получение списка видео
 }
 
+# Мутации
 type Mutation {
-    createVideo(input: NewVideo!): Video!
+    createVideo(input: NewVideo!): Video! # Добавление видео
 }
 
+# Подписки
 type Subscription {
-    videoPublished: Video!
+    videoPublished: Video! # Публикация видео
 }
 
-scalar Num
-scalar Timestamp
+scalar Num # Номер
+scalar Timestamp # Временная метка

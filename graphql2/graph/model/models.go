@@ -9,9 +9,13 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+// Тип "номер"
 type Num int
+
+// Тип "временная метка"
 type Timestamp time.Time
 
+// Структура "видео"
 type Video struct {
 	ID          Num       `json:"id"`
 	Name        string    `json:"name"`
@@ -22,6 +26,7 @@ type Video struct {
 	Genre       *Genre    `json:"genre,omitempty"`
 }
 
+// Структура "новое видео"
 type NewVideo struct {
 	ID          *Num   `json:"id,omitempty"`
 	Name        string `json:"name"`
@@ -31,12 +36,14 @@ type NewVideo struct {
 	Genre       *Genre `json:"genre,omitempty"`
 }
 
+// Маршаллинг номера
 func MarshalNum(id Num) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
 		io.WriteString(w, strconv.Quote(fmt.Sprintf("%d", id)))
 	})
 }
 
+// Демаршаллинг номера
 func UnmarshalNum(v interface{}) (Num, error) {
 	id, ok := v.(string)
 	if !ok {
@@ -46,6 +53,7 @@ func UnmarshalNum(v interface{}) (Num, error) {
 	return Num(i), e
 }
 
+// Маршаллинг временной метки
 func MarshalTimestamp(t Timestamp) graphql.Marshaler {
 	timestamp := time.Time(t).Unix() * 1000
 
@@ -54,6 +62,7 @@ func MarshalTimestamp(t Timestamp) graphql.Marshaler {
 	})
 }
 
+// Демаршаллинг временной метки
 func UnmarshalTimestamp(v interface{}) (Timestamp, error) {
 	if s, ok := v.(int); ok {
 		return Timestamp(time.Unix(int64(s), 0)), nil
