@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"golearn/graphql2/auth"
 	"golearn/graphql2/graph/model"
 	"sort"
 	"time"
@@ -14,6 +15,11 @@ import (
 
 // Добавление нового видео
 func (r *mutationResolver) CreateVideo(ctx context.Context, input model.NewVideo) (*model.Video, error) {
+	// Аутентификация
+	if user := auth.ForContext(ctx); user == nil || !user.IsAdmin {
+		return &model.Video{}, fmt.Errorf("Доступ запрещен")
+	}
+
 	// Данные видео
 	var video model.Video
 	video.Name = input.Name

@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"math/rand"
 	"net/http"
 )
@@ -29,15 +28,15 @@ func Middleware(db *sql.DB) func(http.Handler) http.Handler {
 			c, err := r.Cookie("auth-cookie")
 
 			// Пропуск авторизованных пользователей дальше
-			if err != nil || c == nil {
-				next.ServeHTTP(w, r)
-				return
-			}
+			// if err != nil || c == nil {
+			// 	next.ServeHTTP(w, r)
+			// 	return
+			// }
 
 			// Получение ID пользователя из cookie
 			userId, err := validateAndGetUserID(c)
 			if err != nil {
-				http.Error(w, "Доступ запрещен", http.StatusForbidden)
+				http.Error(w, "Неправильный cookie", http.StatusForbidden)
 				return
 			}
 
@@ -54,14 +53,15 @@ func Middleware(db *sql.DB) func(http.Handler) http.Handler {
 	}
 }
 
+// Извлечение пользователя из контекста
+func ForContext(ctx context.Context) *User {
+	raw, _ := ctx.Value(userCtxKey).(*User)
+	return raw
+}
+
 // Получение ID пользователя из cookie
 func validateAndGetUserID(c *http.Cookie) (int, error) {
-	id := rand.Intn(2) + 1
-	if id == 1 {
-		return id, nil
-	}
-	return id, errors.New("пользователь не админ")
-
+	return rand.Intn(2) + 1, nil
 }
 
 // Получение пользователя по ID
@@ -75,10 +75,4 @@ func getUserByID(db *sql.DB, userId int) *User {
 	return &User{
 		Name: "(гость)",
 	}
-}
-
-// Извлечение пользователя из контекста
-func ForContext(ctx context.Context) *User {
-	raw, _ := ctx.Value(userCtxKey).(*User)
-	return raw
 }

@@ -6,11 +6,13 @@ import (
 	"net/http"
 	"os"
 
+	"golearn/graphql2/auth"
 	"golearn/graphql2/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
 )
 
 // Порт по умолчанию
@@ -25,6 +27,12 @@ func main() {
 		port = defaultPort
 	}
 
+	// Роутер
+	router := chi.NewRouter()
+
+	// Промежуточный слой (авторизация)
+	router.Use(auth.Middleware(nil))
+
 	// Сервер
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
 		Resolvers: &graph.Resolver{},
@@ -34,11 +42,11 @@ func main() {
 	srv.AddTransport(&transport.Websocket{})
 
 	// Обработчики
-	http.Handle("/", playground.Handler("GraphQL-сервер", "/query"))
-	http.Handle("/query", srv)
+	router.Handle("/", playground.Handler("GraphQL-сервер", "/query"))
+	router.Handle("/query", srv)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
 	fmt.Printf("(на http://localhost:%s)\n", port)
-	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
+	log.Fatal(http.ListenAndServe("localhost:"+port, router))
 }
