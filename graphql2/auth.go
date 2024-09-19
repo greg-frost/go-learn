@@ -3,6 +3,8 @@ package auth
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"math/rand"
 	"net/http"
 )
 
@@ -35,7 +37,7 @@ func Middleware(db *sql.DB) func(http.Handler) http.Handler {
 			// Получение ID пользователя из cookie
 			userId, err := validateAndGetUserID(c)
 			if err != nil {
-				http.Error(w, "Неправильный cookie", http.StatusForbidden)
+				http.Error(w, "Доступ запрещен", http.StatusForbidden)
 				return
 			}
 
@@ -49,6 +51,29 @@ func Middleware(db *sql.DB) func(http.Handler) http.Handler {
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 		})
+	}
+}
+
+// Получение ID пользователя из cookie
+func validateAndGetUserID(c *http.Cookie) (int, error) {
+	id := rand.Intn(2) + 1
+	if id == 1 {
+		return id, nil
+	}
+	return id, errors.New("пользователь не админ")
+
+}
+
+// Получение пользователя по ID
+func getUserByID(db *sql.DB, userId int) *User {
+	if userId == 1 {
+		return &User{
+			Name:    "Greg Frost",
+			IsAdmin: true,
+		}
+	}
+	return &User{
+		Name: "(гость)",
 	}
 }
 
