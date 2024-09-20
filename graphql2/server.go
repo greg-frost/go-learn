@@ -30,13 +30,15 @@ func main() {
 	// Роутер
 	router := chi.NewRouter()
 
-	// Промежуточный слой (авторизация)
+	// Промежуточный слой (аутентификация)
 	router.Use(auth.Middleware(nil))
 
 	// Сервер
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
-		Resolvers: &graph.Resolver{},
-	}))
+	srv := handler.NewDefaultServer(
+		graph.NewExecutableSchema(graph.Config{
+			Resolvers: &graph.Resolver{},
+		}),
+	)
 
 	// Web-socket
 	srv.AddTransport(&transport.Websocket{})
