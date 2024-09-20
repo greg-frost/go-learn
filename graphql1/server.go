@@ -26,9 +26,11 @@ func main() {
 	}
 
 	// Сервер
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
-		Resolvers: &graph.Resolver{},
-	}))
+	srv := handler.NewDefaultServer(
+		graph.NewExecutableSchema(graph.Config{
+			Resolvers: &graph.Resolver{},
+		}),
+	)
 
 	// Web-socket
 	srv.AddTransport(&transport.Websocket{})
