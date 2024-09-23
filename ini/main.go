@@ -27,7 +27,7 @@ func main() {
 	}{}
 
 	// Чтение конфигурации
-	path := os.Getenv("GOPATH") + "/src/golearn/ini/"
+	path := os.Getenv("GOPATH") + "/src/learn/ini/"
 	err := ini.ReadFileInto(&config, path+"example.ini")
 	if err != nil {
 		log.Fatalf("Не удалось прочитать ini-файл: %s", err)

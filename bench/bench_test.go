@@ -9,7 +9,7 @@ import (
 )
 
 // Путь к файлу
-var filename = os.Getenv("GOPATH") + "/src/golearn/bench/bench.go"
+var filename = os.Getenv("GOPATH") + "/src/learn/bench/bench.go"
 
 // "Черная дыра"
 var blackhole int

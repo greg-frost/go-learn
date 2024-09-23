@@ -12,7 +12,7 @@ func main() {
 	fmt.Println(" \n[ GZIP-КОМПРЕССИЯ ]\n ")
 
 	// Смена директории
-	path := os.Getenv("GOPATH") + "/src/golearn/gzip/"
+	path := os.Getenv("GOPATH") + "/src/learn/gzip/"
 	os.Chdir(path)
 
 	if len(os.Args) == 1 {

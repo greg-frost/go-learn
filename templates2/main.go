@@ -11,7 +11,7 @@ import (
 )
 
 // Путь и шаблоны
-var path = os.Getenv("GOPATH") + "/src/golearn/templates2/tmpl/"
+var path = os.Getenv("GOPATH") + "/src/learn/templates2/tmpl/"
 var t = map[string]*template.Template{}
 var qc template.HTML
 

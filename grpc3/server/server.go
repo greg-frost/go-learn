@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	pb "golearn/grpc3/protos/route"
+	pb "go-learn/grpc3/protos/route"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
@@ -22,7 +22,7 @@ import (
 
 // Порт и путь
 var port = flag.Int("port", 8888, "Порт сервера")
-var path = os.Getenv("GOPATH") + "/src/golearn/grpc3/"
+var path = os.Getenv("GOPATH") + "/src/learn/grpc3/"
 
 // Структура "сервер"
 type routeServer struct {

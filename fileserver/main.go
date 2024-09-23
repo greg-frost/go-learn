@@ -9,7 +9,7 @@ import (
 )
 
 // Путь
-var path = os.Getenv("GOPATH") + "/src/golearn/"
+var path = os.Getenv("GOPATH") + "/src/learn/"
 
 // Обработчик главной страницы
 func handleMain(w http.ResponseWriter, r *http.Request) {

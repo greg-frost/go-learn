@@ -13,7 +13,7 @@ import (
 )
 
 // Путь и таймаут
-var path = os.Getenv("GOPATH") + "/src/golearn/download/"
+var path = os.Getenv("GOPATH") + "/src/learn/download/"
 var timeout = 1 * time.Second
 
 // Скачивание

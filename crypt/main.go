@@ -42,7 +42,7 @@ func main() {
 	/* Adler32 */
 
 	fmt.Println("Adler32:")
-	path := os.Getenv("GOPATH") + "/src/golearn/"
+	path := os.Getenv("GOPATH") + "/src/learn/"
 	adlerHash1, _ := getFileHash(path + "crypt/main.go")
 	adlerHash2, _ := getFileHash(path + "hello/main.go")
 	fmt.Println(adlerHash1, adlerHash2, adlerHash1 == adlerHash2)

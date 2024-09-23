@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	pb "golearn/grpc1/protos/hello"
+	pb "go-learn/grpc1/protos/hello"
 
 	"google.golang.org/grpc"
 )

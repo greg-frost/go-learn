@@ -12,7 +12,7 @@ func main() {
 	fmt.Println(" \n[ ПОДСЧЕТ СЛОВ ]\n ")
 
 	// Смена директории
-	path := os.Getenv("GOPATH") + "/src/golearn/words/"
+	path := os.Getenv("GOPATH") + "/src/learn/words/"
 	os.Chdir(path)
 
 	if len(os.Args) == 1 {

@@ -2,7 +2,7 @@ package graph
 
 //go:generate go run github.com/99designs/gqlgen generate
 
-import "golearn/graphql2/graph/model"
+import "go-learn/graphql2/graph/model"
 
 // Структура "обработчик"
 type Resolver struct {

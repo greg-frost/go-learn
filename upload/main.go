@@ -16,7 +16,7 @@ import (
 )
 
 // Путь и шаблон
-var path = os.Getenv("GOPATH") + "/src/golearn/upload/"
+var path = os.Getenv("GOPATH") + "/src/learn/upload/"
 var t = template.Must(template.ParseFiles(path + "form.html"))
 
 // Обработчик загрузки

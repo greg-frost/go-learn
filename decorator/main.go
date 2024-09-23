@@ -56,7 +56,7 @@ func openGzipFile(filename string) error {
 func main() {
 	fmt.Println(" \n[ ДЕКОРАТОР ]\n ")
 
-	path := os.Getenv("GOPATH") + "/src/golearn/"
+	path := os.Getenv("GOPATH") + "/src/learn/"
 
 	fmt.Println("Чтение файла:")
 	err := openFile(path + "hello/main.go")

@@ -18,7 +18,7 @@ type cacheFile struct {
 }
 
 // Путь, кэш и мьютекс
-var path = os.Getenv("GOPATH") + "/src/golearn/"
+var path = os.Getenv("GOPATH") + "/src/learn/"
 var cache = map[string]*cacheFile{}
 var mutex sync.RWMutex
 

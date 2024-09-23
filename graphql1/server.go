@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"golearn/graphql1/graph"
+	"go-learn/graphql1/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"

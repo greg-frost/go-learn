@@ -9,7 +9,7 @@ import (
 )
 
 // Путь и шаблон
-var path = os.Getenv("GOPATH") + "/src/golearn/form/"
+var path = os.Getenv("GOPATH") + "/src/learn/form/"
 var t = template.Must(template.ParseFiles(path + "form.html"))
 
 // Структура "страница"

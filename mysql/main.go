@@ -21,7 +21,7 @@ func main() {
 	start := time.Now()
 
 	// Подключение
-	conn := "root@tcp(127.0.0.1:3306)/golearn"
+	conn := "root@tcp(127.0.0.1:3306)/learn"
 	db, err := sql.Open("mysql", conn)
 	if err != nil {
 		log.Fatal(err)

@@ -13,7 +13,7 @@ func main() {
 	fmt.Println(" \n[ КОД ]\n ")
 
 	// Настройки
-	path := os.Getenv("GOPATH") + "/src/golearn/"
+	path := os.Getenv("GOPATH") + "/src/learn/"
 	skip := []string{".pb", "generated"}
 
 	var files, dirs, lines int

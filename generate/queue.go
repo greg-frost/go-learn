@@ -9,7 +9,7 @@ import (
 )
 
 // Путь и шаблон
-var path = os.Getenv("GOPATH") + "/src/golearn/generate/"
+var path = os.Getenv("GOPATH") + "/src/learn/generate/"
 var tpl = `package {{.Package}}
 
 // Структура "очередь"

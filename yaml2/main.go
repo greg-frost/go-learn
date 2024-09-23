@@ -43,7 +43,7 @@ func main() {
 	}{}
 
 	// Чтение конфигурации
-	path := os.Getenv("GOPATH") + "/src/golearn/yaml2/"
+	path := os.Getenv("GOPATH") + "/src/learn/yaml2/"
 	source, err := ioutil.ReadFile(path + "example.yml")
 	if err != nil {
 		log.Fatal(err)

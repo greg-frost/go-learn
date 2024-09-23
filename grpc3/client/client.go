@@ -9,7 +9,7 @@ import (
 	"math/rand"
 	"time"
 
-	pb "golearn/grpc3/protos/route"
+	pb "go-learn/grpc3/protos/route"
 
 	"google.golang.org/grpc"
 )

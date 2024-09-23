@@ -25,7 +25,7 @@ var (
 )
 
 // Путь
-var path = os.Getenv("GOPATH") + "/src/golearn/storage"
+var path = os.Getenv("GOPATH") + "/src/learn/storage"
 
 // Структура "локальный файл"
 type LocalFile struct {

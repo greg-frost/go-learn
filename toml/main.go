@@ -43,7 +43,7 @@ func main() {
 	}{}
 
 	// Чтение конфигурации
-	path := os.Getenv("GOPATH") + "/src/golearn/toml/"
+	path := os.Getenv("GOPATH") + "/src/learn/toml/"
 	if _, err := toml.DecodeFile(path+"example.toml", &config); err != nil {
 		log.Fatal(err)
 	}

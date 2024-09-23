@@ -7,7 +7,7 @@ import (
 	"log"
 	"net"
 
-	pb "golearn/grpc2/protos/hello"
+	pb "go-learn/grpc2/protos/hello"
 
 	"google.golang.org/grpc"
 )

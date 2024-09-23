@@ -80,7 +80,7 @@ func containsTest(s string) bool {
 func main() {
 	fmt.Println(" \n[ ФАЙЛЫ И ПАПКИ ]\n ")
 
-	path := os.Getenv("GOPATH") + "/src/golearn/"
+	path := os.Getenv("GOPATH") + "/src/learn/"
 	filename := "hello/main.go"
 
 	// Смена директории

@@ -8,7 +8,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"golearn/graphql1/graph/model"
+	"go-learn/graphql1/graph/model"
 	"math/big"
 	"time"
 )

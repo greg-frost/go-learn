@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"golearn/graphql2/auth"
-	"golearn/graphql2/graph"
+	"go-learn/graphql2/auth"
+	"go-learn/graphql2/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"

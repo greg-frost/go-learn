@@ -7,8 +7,8 @@ package graph
 import (
 	"context"
 	"fmt"
-	"golearn/graphql2/auth"
-	"golearn/graphql2/graph/model"
+	"go-learn/graphql2/auth"
+	"go-learn/graphql2/graph/model"
 	"sort"
 	"time"
 )

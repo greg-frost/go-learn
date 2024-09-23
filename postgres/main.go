@@ -21,7 +21,7 @@ func main() {
 	start := time.Now()
 
 	// Подключение
-	conn := "user=postgres password=admin dbname=golearn sslmode=disable"
+	conn := "user=postgres password=admin dbname=learn sslmode=disable"
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
 		log.Fatal(err)

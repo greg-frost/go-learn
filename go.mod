@@ -1,4 +1,4 @@
-module golearn
+module go-learn
 
 go 1.19
 

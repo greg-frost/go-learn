@@ -10,7 +10,7 @@ import (
 )
 
 // Корень скрипта
-var root = os.Getenv("GOPATH") + "/src/golearn/wiki/"
+var root = os.Getenv("GOPATH") + "/src/learn/wiki/"
 
 // Шаблоны страниц просмотра и редактирования
 var templates = template.Must(template.ParseFiles(
