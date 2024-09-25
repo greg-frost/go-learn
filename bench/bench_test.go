@@ -3,13 +3,16 @@ package bench
 import (
 	"bytes"
 	"fmt"
-	"os"
+	"path/filepath"
 	"testing"
 	"text/template"
+
+	"go-learn/base"
 )
 
 // Путь к файлу
-var filename = os.Getenv("GOPATH") + "/src/learn/bench/bench.go"
+var path = base.Dir("bench")
+var filename = filepath.Join(path, "bench.go")
 
 // "Черная дыра"
 var blackhole int
