@@ -7,7 +7,9 @@ import (
 	"hash/adler32"
 	"hash/crc32"
 	"io/ioutil"
-	"os"
+	"path/filepath"
+
+	"go-learn/base"
 )
 
 // Хэш содержимого файла
@@ -42,9 +44,9 @@ func main() {
 	/* Adler32 */
 
 	fmt.Println("Adler32:")
-	path := os.Getenv("GOPATH") + "/src/learn/"
-	adlerHash1, _ := getFileHash(path + "crypt/main.go")
-	adlerHash2, _ := getFileHash(path + "hello/main.go")
+	path := base.Dir("crypt/..")
+	adlerHash1, _ := getFileHash(filepath.Join(path, "crypt", "main.go"))
+	adlerHash2, _ := getFileHash(filepath.Join(path, "hello", "main.go"))
 	fmt.Println(adlerHash1, adlerHash2, adlerHash1 == adlerHash2)
 	fmt.Println()
 
