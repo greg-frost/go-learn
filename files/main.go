@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"go-learn/base"
 )
 
 var sep = "   "
@@ -80,7 +82,7 @@ func containsTest(s string) bool {
 func main() {
 	fmt.Println(" \n[ ФАЙЛЫ И ПАПКИ ]\n ")
 
-	path := os.Getenv("GOPATH") + "/src/learn/"
+	path := base.Dir("files/..")
 	filename := "hello/main.go"
 
 	// Смена директории
