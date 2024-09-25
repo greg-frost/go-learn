@@ -7,8 +7,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
+
+	"go-learn/base"
 )
 
 // Структура "файл кэша"
@@ -18,7 +21,7 @@ type cacheFile struct {
 }
 
 // Путь, кэш и мьютекс
-var path = os.Getenv("GOPATH") + "/src/learn/"
+var path = base.Dir("cacheserver/..")
 var cache = map[string]*cacheFile{}
 var mutex sync.RWMutex
 
@@ -32,7 +35,7 @@ func serveFiles(w http.ResponseWriter, r *http.Request) {
 		mutex.Lock()
 		defer mutex.Unlock()
 
-		filename := path + r.URL.Path
+		filename := filepath.Join(path, r.URL.Path)
 		f, err := os.Open(filename)
 		defer f.Close()
 		if err != nil {
