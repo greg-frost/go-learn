@@ -7,13 +7,15 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"go-learn/base"
 )
 
 func main() {
 	fmt.Println(" \n[ КОД ]\n ")
 
 	// Настройки
-	path := os.Getenv("GOPATH") + "/src/learn/"
+	path := base.Dir("code/..")
 	skip := []string{".pb", "generated"}
 
 	var files, dirs, lines int
