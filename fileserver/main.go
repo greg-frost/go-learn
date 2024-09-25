@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	//fs "github.com/Masterminds/go-fileserver"
+	"path/filepath"
+
+	"go-learn/base"
+	// fs "github.com/Masterminds/go-fileserver"
 )
 
 // Путь
-var path = os.Getenv("GOPATH") + "/src/learn/"
+var path = base.Dir("fileserver/..")
 
 // Обработчик главной страницы
 func handleMain(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, path+"server/main.go")
+	http.ServeFile(w, r, filepath.Join(path, "server", "main.go"))
 }
 
 func main() {
@@ -25,7 +27,7 @@ func main() {
 		"/test/",
 		http.StripPrefix(
 			"/test/",
-			http.FileServer(http.Dir(path+"test")),
+			http.FileServer(http.Dir(filepath.Join(path, "test"))),
 		),
 	)
 
@@ -40,5 +42,7 @@ func main() {
 	fmt.Println("Ожидаю обновлений...")
 	fmt.Println("(на http://localhost:8080)")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
-	//log.Fatal(http.ListenAndServe("localhost:8080", fs.FileServer(http.Dir(path+"test"))))
+	// log.Fatal(http.ListenAndServe("localhost:8080",
+	// 	fs.FileServer(http.Dir(filepath.Join(path, "test"))),
+	// ))
 }
