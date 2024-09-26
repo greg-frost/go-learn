@@ -1,4 +1,4 @@
-//go:generate ./queue MyInt
+//go:generate ../queue MyString
 package main
 
 import (
@@ -6,14 +6,14 @@ import (
 )
 
 // Пользовательский тип
-type MyInt int
+type MyString string
 
 func main() {
-	fmt.Println(" \n[ КОДОГЕНЕРАЦИЯ (MYINT) ]\n ")
+	fmt.Println(" \n[ КОДОГЕНЕРАЦИЯ (MYSTRING) ]\n ")
 
-	var one, two, three MyInt = 1, 2, 3
+	var one, two, three MyString = "one", "two", "three"
 
-	q := NewMyIntQueue()
+	q := NewMyStringQueue()
 	q.Insert(one)
 	q.Insert(two)
 	q.Insert(three)
