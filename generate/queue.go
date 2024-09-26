@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
+
+	"go-learn/base"
 )
 
 // Путь и шаблон
-var path = os.Getenv("GOPATH") + "/src/learn/generate/"
+var path = base.Dir("generate")
 var tpl = `package {{.Package}}
 
 // Структура "очередь"
@@ -48,7 +51,7 @@ func main() {
 	for i := 1; i < len(os.Args); i++ {
 		dest := strings.ToLower(os.Args[i]) + "_queue.go"
 
-		file, err := os.Create(path + dest)
+		file, err := os.Create(filepath.Join(path, dest))
 		if err != nil {
 			log.Printf("Не удалось создать %s: %s (пропуск)", dest, err)
 			continue
