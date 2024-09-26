@@ -8,10 +8,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"time"
 
+	"go-learn/base"
 	pb2 "go-learn/protobuf/v2/user"
 	pbp "go-learn/protobuf/v3/people"
 	pb3 "go-learn/protobuf/v3/user"
@@ -259,8 +261,8 @@ func main() {
 	}
 
 	fmt.Println("Запись в файл...")
-	path := os.Getenv("GOPATH") + "/src/learn/"
-	filename := path + "protobuf/file.txt"
+	path := base.Dir("protobuf")
+	filename := filepath.Join(path, "file.txt")
 	if err = ioutil.WriteFile(filename, out, 0644); err != nil {
 		log.Fatal(err)
 	}
