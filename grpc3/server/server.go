@@ -10,10 +10,11 @@ import (
 	"log"
 	"math"
 	"net"
-	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
+	"go-learn/base"
 	pb "go-learn/grpc3/protos/route"
 
 	"google.golang.org/grpc"
@@ -22,7 +23,7 @@ import (
 
 // Порт и путь
 var port = flag.Int("port", 8888, "Порт сервера")
-var path = os.Getenv("GOPATH") + "/src/learn/grpc3/"
+var path = base.Dir("grpc3")
 
 // Структура "сервер"
 type routeServer struct {
@@ -39,7 +40,7 @@ func NewRouteServer() *routeServer {
 	}
 
 	// Чтение файла
-	b, err := ioutil.ReadFile(path + "data/routes.json")
+	b, err := ioutil.ReadFile(filepath.Join(path, "data", "routes.json"))
 	if err != nil {
 		return rs
 	}
