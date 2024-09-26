@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
+	"path/filepath"
+
+	"go-learn/base"
 
 	ini "gopkg.in/gcfg.v1"
 )
@@ -27,8 +29,8 @@ func main() {
 	}{}
 
 	// Чтение конфигурации
-	path := os.Getenv("GOPATH") + "/src/learn/ini/"
-	err := ini.ReadFileInto(&config, path+"example.ini")
+	path := base.Dir("ini")
+	err := ini.ReadFileInto(&config, filepath.Join(path, "example.ini"))
 	if err != nil {
 		log.Fatalf("Не удалось прочитать ini-файл: %s", err)
 	}
