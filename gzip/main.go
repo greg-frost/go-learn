@@ -6,13 +6,15 @@ import (
 	"io"
 	"os"
 	"sync"
+
+	"go-learn/base"
 )
 
 func main() {
 	fmt.Println(" \n[ GZIP-КОМПРЕССИЯ ]\n ")
 
 	// Смена директории
-	path := os.Getenv("GOPATH") + "/src/learn/gzip/"
+	path := base.Dir("gzip")
 	os.Chdir(path)
 
 	if len(os.Args) == 1 {
