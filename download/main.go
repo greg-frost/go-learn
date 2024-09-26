@@ -7,13 +7,16 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	"go-learn/base"
 )
 
 // Путь и таймаут
-var path = os.Getenv("GOPATH") + "/src/learn/download/"
+var path = base.Dir("download")
 var timeout = 1 * time.Second
 
 // Скачивание
@@ -91,7 +94,7 @@ func main() {
 	fmt.Println("Идет скачивание...")
 
 	// Создание локального файла
-	filename := path + "file.zip"
+	filename := filepath.Join(path, "file.zip")
 	file, err := os.Create(filename)
 	if err != nil {
 		fmt.Println(err)
