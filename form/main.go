@@ -5,12 +5,14 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
+	"path/filepath"
+
+	"go-learn/base"
 )
 
 // Путь и шаблон
-var path = os.Getenv("GOPATH") + "/src/learn/form/"
-var t = template.Must(template.ParseFiles(path + "form.html"))
+var path = base.Dir("form")
+var t = template.Must(template.ParseFiles(filepath.Join(path, "form.html")))
 
 // Структура "страница"
 type Page struct {
