@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+
+	"go-learn/base"
 )
 
 // Чтение io.Reader
@@ -56,10 +59,10 @@ func openGzipFile(filename string) error {
 func main() {
 	fmt.Println(" \n[ ДЕКОРАТОР ]\n ")
 
-	path := os.Getenv("GOPATH") + "/src/learn/"
+	path := base.Dir("decorator/..")
 
 	fmt.Println("Чтение файла:")
-	err := openFile(path + "hello/main.go")
+	err := openFile(filepath.Join(path, "hello", "main.go"))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -67,7 +70,7 @@ func main() {
 	fmt.Println()
 
 	fmt.Println("Чтение архива:")
-	err = openGzipFile(path + "decorator/main.tar.gz")
+	err = openGzipFile(filepath.Join(path, "decorator", "main.tar.gz"))
 	if err != nil {
 		fmt.Println(err)
 	}
