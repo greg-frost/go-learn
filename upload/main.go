@@ -13,11 +13,13 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"go-learn/base"
 )
 
 // Путь и шаблон
-var path = os.Getenv("GOPATH") + "/src/learn/upload/"
-var t = template.Must(template.ParseFiles(path + "form.html"))
+var path = base.Dir("upload")
+var t = template.Must(template.ParseFiles(filepath.Join(path, "form.html")))
 
 // Обработчик загрузки
 func handleUpload(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +35,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer in.Close()
 
-	filename := path + h.Filename
+	filename := filepath.Join(path, h.Filename)
 	out, err := os.Create(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +80,7 @@ func handleMultipleUpload(w http.ResponseWriter, r *http.Request) {
 		}
 		defer in.Close()
 
-		filename := path + f.Filename
+		filename := filepath.Join(path, f.Filename)
 		out, err := os.Create(filename)
 		if err != nil {
 			log.Fatal(err)
@@ -138,7 +140,7 @@ func handleStreamUpload(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Файловое поле
-		filename = path + filename
+		filename = filepath.Join(path, filename)
 		out, err := os.Create(filename)
 		if err != nil {
 			log.Fatal(err)
