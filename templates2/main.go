@@ -6,12 +6,14 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
+	"path/filepath"
 	"time"
+
+	"go-learn/base"
 )
 
 // Путь и шаблоны
-var path = os.Getenv("GOPATH") + "/src/learn/templates2/tmpl/"
+var path = base.Dir("templates2/tmpl")
 var t = map[string]*template.Template{}
 var qc template.HTML
 
@@ -55,7 +57,7 @@ func parseTemplate(filenames ...string) *template.Template {
 	t := template.New(filenames[0])
 	t.Funcs(funcMap)
 	for i := 0; i < len(filenames); i++ {
-		filenames[i] = path + filenames[i]
+		filenames[i] = filepath.Join(path, filenames[i])
 	}
 	template.Must(t.ParseFiles(filenames...))
 	return t
