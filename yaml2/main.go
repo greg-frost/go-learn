@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
+	"path/filepath"
+
+	"go-learn/base"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -43,8 +45,8 @@ func main() {
 	}{}
 
 	// Чтение конфигурации
-	path := os.Getenv("GOPATH") + "/src/learn/yaml2/"
-	source, err := ioutil.ReadFile(path + "example.yml")
+	path := base.Dir("yaml2")
+	source, err := ioutil.ReadFile(filepath.Join(path, "example.yml"))
 	if err != nil {
 		log.Fatal(err)
 	}
