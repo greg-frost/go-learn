@@ -6,13 +6,15 @@ import (
 	"os"
 	"strings"
 	"sync"
+
+	"go-learn/base"
 )
 
 func main() {
 	fmt.Println(" \n[ ПОДСЧЕТ СЛОВ ]\n ")
 
 	// Смена директории
-	path := os.Getenv("GOPATH") + "/src/learn/words/"
+	path := base.Dir("words")
 	os.Chdir(path)
 
 	if len(os.Args) == 1 {
