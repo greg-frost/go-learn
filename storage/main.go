@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"go-learn/base"
 )
 
 // Интерфейс "файл"
@@ -25,7 +27,7 @@ var (
 )
 
 // Путь
-var path = os.Getenv("GOPATH") + "/src/learn/storage"
+var path = base.Dir("storage")
 
 // Структура "локальный файл"
 type LocalFile struct {
