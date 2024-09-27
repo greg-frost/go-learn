@@ -6,16 +6,19 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
+
+	"go-learn/base"
 )
 
-// Корень скрипта
-var root = os.Getenv("GOPATH") + "/src/learn/wiki/"
+// Путь
+var path = base.Dir("wiki")
 
 // Шаблоны страниц просмотра и редактирования
 var templates = template.Must(template.ParseFiles(
-	root+"tmpl/view.html",
-	root+"tmpl/edit.html",
+	filepath.Join(path, "tmpl", "view.html"),
+	filepath.Join(path, "tmpl", "edit.html"),
 ))
 
 // Регулярное выражение для проверки пути
@@ -29,13 +32,13 @@ type Page struct {
 
 // Сохранение страницы
 func savePage(p *Page) error {
-	filename := root + "data/" + p.Title + ".txt"
+	filename := filepath.Join(path, "data", p.Title+".txt")
 	return os.WriteFile(filename, p.Body, 0600)
 }
 
 // Загрузка страницы
 func loadPage(title string) (*Page, error) {
-	filename := root + "data/" + title + ".txt"
+	filename := filepath.Join(path, "data", title+".txt")
 	body, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
