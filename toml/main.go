@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
+	"path/filepath"
 	"time"
+
+	"go-learn/base"
 
 	"github.com/BurntSushi/toml"
 )
@@ -43,8 +45,8 @@ func main() {
 	}{}
 
 	// Чтение конфигурации
-	path := os.Getenv("GOPATH") + "/src/learn/toml/"
-	if _, err := toml.DecodeFile(path+"example.toml", &config); err != nil {
+	path := base.Dir("toml")
+	if _, err := toml.DecodeFile(filepath.Join(path, "example.toml"), &config); err != nil {
 		log.Fatal(err)
 	}
 
