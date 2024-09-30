@@ -75,6 +75,7 @@ type ComplexityRoot struct {
 		Genre       func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Related     func(childComplexity int, genre *model.Genre, limit *int, offset *int) int
 		URL         func(childComplexity int) int
 		User        func(childComplexity int) int
 	}
@@ -92,6 +93,8 @@ type SubscriptionResolver interface {
 }
 type VideoResolver interface {
 	User(ctx context.Context, obj *model.Video) (*model.User, error)
+
+	Related(ctx context.Context, obj *model.Video, genre *model.Genre, limit *int, offset *int) ([]*model.Video, error)
 }
 
 type executableSchema struct {
@@ -211,6 +214,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Video.Name(childComplexity), true
+
+	case "Video.related":
+		if e.complexity.Video.Related == nil {
+			break
+		}
+
+		args, err := ec.field_Video_related_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Video.Related(childComplexity, args["genre"].(*model.Genre), args["limit"].(*int), args["offset"].(*int)), true
 
 	case "Video.url":
 		if e.complexity.Video.URL == nil {
@@ -446,6 +461,39 @@ func (ec *executionContext) field_Query_videos_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Video_related_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.Genre
+	if tmp, ok := rawArgs["genre"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genre"))
+		arg0, err = ec.unmarshalOGenre2ᚖgoᚑlearnᚋgraphql2ᚋgraphᚋmodelᚐGenre(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["genre"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+		arg2, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg2
+	return args, nil
+}
+
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -537,6 +585,8 @@ func (ec *executionContext) fieldContext_Mutation_createVideo(ctx context.Contex
 				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
+			case "related":
+				return ec.fieldContext_Video_related(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Video", field.Name)
 		},
@@ -605,6 +655,8 @@ func (ec *executionContext) fieldContext_Query_video(ctx context.Context, field 
 				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
+			case "related":
+				return ec.fieldContext_Video_related(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Video", field.Name)
 		},
@@ -676,6 +728,8 @@ func (ec *executionContext) fieldContext_Query_videos(ctx context.Context, field
 				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
+			case "related":
+				return ec.fieldContext_Video_related(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Video", field.Name)
 		},
@@ -890,6 +944,8 @@ func (ec *executionContext) fieldContext_Subscription_videoPublished(_ context.C
 				return ec.fieldContext_Video_genre(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Video_createdAt(ctx, field)
+			case "related":
+				return ec.fieldContext_Video_related(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Video", field.Name)
 		},
@@ -1338,6 +1394,79 @@ func (ec *executionContext) fieldContext_Video_createdAt(_ context.Context, fiel
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Timestamp does not have child fields")
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Video_related(ctx context.Context, field graphql.CollectedField, obj *model.Video) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Video_related(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Video().Related(rctx, obj, fc.Args["genre"].(*model.Genre), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Video)
+	fc.Result = res
+	return ec.marshalNVideo2ᚕᚖgoᚑlearnᚋgraphql2ᚋgraphᚋmodelᚐVideoᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Video_related(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Video",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Video_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Video_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Video_description(ctx, field)
+			case "user":
+				return ec.fieldContext_Video_user(ctx, field)
+			case "url":
+				return ec.fieldContext_Video_url(ctx, field)
+			case "genre":
+				return ec.fieldContext_Video_genre(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Video_createdAt(ctx, field)
+			case "related":
+				return ec.fieldContext_Video_related(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Video", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Video_related_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -3468,6 +3597,42 @@ func (ec *executionContext) _Video(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "related":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Video_related(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

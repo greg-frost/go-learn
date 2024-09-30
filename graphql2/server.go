@@ -8,8 +8,10 @@ import (
 
 	"go-learn/graphql2/auth"
 	"go-learn/graphql2/graph"
+	"go-learn/graphql2/graph/model"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
@@ -27,6 +29,21 @@ func main() {
 		port = defaultPort
 	}
 
+	// Конфигурация
+	c := graph.Config{
+		Resolvers: &graph.Resolver{},
+	}
+
+	// Сложность запросов
+	countComplexity := func(childComplexity int, genre *model.Genre, limit, offset *int) int {
+		if limit == nil {
+			return childComplexity
+		}
+		return *limit * childComplexity
+	}
+	c.Complexity.Query.Videos = countComplexity
+	c.Complexity.Video.Related = countComplexity
+
 	// Роутер
 	router := chi.NewRouter()
 
@@ -34,14 +51,13 @@ func main() {
 	router.Use(auth.Middleware(nil))
 
 	// Сервер
-	srv := handler.NewDefaultServer(
-		graph.NewExecutableSchema(graph.Config{
-			Resolvers: &graph.Resolver{},
-		}),
-	)
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(c))
 
 	// Web-socket
 	srv.AddTransport(&transport.Websocket{})
+
+	// Лимит сложности запросов
+	srv.Use(extension.FixedComplexityLimit(1000))
 
 	// Обработчики
 	router.Handle("/", playground.Handler("GraphQL-сервер", "/query"))

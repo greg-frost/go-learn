@@ -81,6 +81,7 @@ func (r *queryResolver) Videos(ctx context.Context, genre *model.Genre, limit *i
 
 		// Фильтрация по жанру
 		if genre != nil && (video.Genre == nil || *genre != *video.Genre) {
+			n--
 			continue
 		}
 		videos = append(videos, &video)
@@ -111,10 +112,13 @@ func (r *subscriptionResolver) VideoPublished(ctx context.Context) (<-chan *mode
 
 	// Создание нового подписчика
 	videoCh := make(chan *model.Video, 1)
-	go func() {
-		<-ctx.Done()
-	}()
 	videoPublishedSubs[id] = videoCh
+
+	// Освобождение подписки
+	go func(id int) {
+		<-ctx.Done()
+		delete(videoPublishedSubs, id)
+	}(id)
 
 	return videoCh, nil
 }
@@ -129,6 +133,40 @@ func (r *videoResolver) User(ctx context.Context, obj *model.Video) (*model.User
 		}, nil
 	}
 	return &model.User{ID: obj.UserID}, nil
+}
+
+// Получение связанных видео
+func (r *videoResolver) Related(ctx context.Context, obj *model.Video, genre *model.Genre, limit *int, offset *int) ([]*model.Video, error) {
+	// Заданный или родительский жанр
+	if genre == nil {
+		genre = obj.Genre
+	}
+	// Увеличение лимита
+	if limit != nil {
+		*limit++
+	}
+
+	// Связанные видео
+	videos, err := r.Query().Videos(ctx, genre, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	// Исключение родительского видео
+	var hasParent bool
+	related := make([]*model.Video, 0, len(videos))
+	for _, video := range videos {
+		if video.ID == obj.ID {
+			hasParent = true
+			continue
+		}
+		related = append(related, video)
+	}
+	if !hasParent {
+		related = related[:len(related)-1]
+	}
+
+	return related, nil
 }
 
 // Mutation returns MutationResolver implementation.

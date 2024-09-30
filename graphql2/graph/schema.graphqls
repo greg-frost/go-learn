@@ -7,6 +7,7 @@ type Video {
     url: String!
     genre: Genre
     createdAt: Timestamp!
+    related(genre: Genre, limit: Int = 25, offset: Int = 0): [Video!]!
 }
 
 # Пользователь
