@@ -22,17 +22,18 @@ func main() {
 	}
 
 	// Объект Query
-	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
-	schemaConfig := graphql.SchemaConfig{Query: graphql.NewObject(rootQuery)}
+	Query := graphql.ObjectConfig{Name: "Query", Fields: fields}
+	schemaConfig := graphql.SchemaConfig{Query: graphql.NewObject(Query)}
 	schema, err := graphql.NewSchema(schemaConfig)
 	if err != nil {
 		log.Fatalf("не удалось создать новую схему: %v", err)
 	}
 
 	// Запрос
-	query := "{\n\thello\n}"
+	query := "{\n    hello\n}"
 	fmt.Printf("Запрос:\n%s\n\n", query)
 
+	// Выполнение
 	params := graphql.Params{Schema: schema, RequestString: query}
 	r := graphql.Do(params)
 	if len(r.Errors) > 0 {
@@ -40,6 +41,6 @@ func main() {
 	}
 
 	// Ответ
-	response, _ := json.MarshalIndent(r, "", "\t")
+	response, _ := json.MarshalIndent(r, "", "    ")
 	fmt.Printf("Ответ:\n%s\n", response)
 }
