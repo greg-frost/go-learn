@@ -3,11 +3,49 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"path/filepath"
+
+	"go-learn/base"
 
 	"github.com/graphql-go/graphql"
 )
+
+// Имя аргумента
+const arg = "key"
+
+// Получение поля из контекста
+func fieldFromContext(p graphql.ResolveParams) (interface{}, error) {
+	return p.Context.Value(p.Args[arg]), nil
+}
+
+// Список пользователей
+var users []*User
+
+// Структура "пользователь"
+type User struct {
+	ID     int
+	Name   string
+	Active bool
+}
+
+// Получение пользователей
+func ListUsers() ([]*User, error) {
+	return users, nil
+}
+
+// Получение пользователя по ID
+func GetUsersByID(id int) (*User, error) {
+	for _, u := range users {
+		if u.ID == id {
+			return u, nil
+		}
+	}
+	return nil, errors.New("пользователь не найден")
+}
 
 func main() {
 	fmt.Println(" \n[ GRAPHQL 3 (GRAPHQL-GO) ]\n ")
@@ -57,14 +95,6 @@ func main() {
 	fmt.Println("Использование контекста:")
 	fmt.Println()
 
-	// Имя аргумента
-	const arg = "key"
-
-	// Функция получения поля
-	fieldFromContext := func(p graphql.ResolveParams) (interface{}, error) {
-		return p.Context.Value(p.Args[arg]), nil
-	}
-
 	// Объект Query, конфигурация и схема
 	schema, err = graphql.NewSchema(graphql.SchemaConfig{
 		Query: graphql.NewObject(graphql.ObjectConfig{
@@ -98,4 +128,24 @@ func main() {
 	// Ответ
 	response, _ = json.MarshalIndent(r, "", "   ")
 	fmt.Printf("Ответ:\n%s\n\n", response)
+
+	/* Режим сервера */
+
+	fmt.Println("Режим сервера:")
+	fmt.Println()
+
+	path := base.Dir("graphql3")
+	jsonUsers, err := ioutil.ReadFile(filepath.Join(path, "users.json"))
+	if err != nil {
+		log.Fatalf("не удалось загрузить файл с пользователями: %v", err)
+
+	}
+	err = json.Unmarshal(jsonUsers, &users)
+	if err != nil {
+		log.Fatalf("не удалось обработать json-файл: %v", err)
+	}
+
+	for _, u := range users {
+		fmt.Println(*u)
+	}
 }
