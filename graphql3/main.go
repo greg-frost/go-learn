@@ -145,7 +145,62 @@ func main() {
 		log.Fatalf("не удалось обработать json-файл: %v", err)
 	}
 
-	for _, u := range users {
-		fmt.Println(*u)
-	}
+	// Поля
+	userType := graphql.NewObject(graphql.ObjectConfig{
+		Name: "User",
+		Fields: graphql.Fields{
+			"id": &graphql.Field{
+				Type: graphql.Int,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					if user, ok := p.Source.(*User); ok {
+						return user.ID, nil
+					}
+					return nil, nil
+				},
+			},
+			"name": &graphql.Field{
+				Type: graphql.String,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					if user, ok := p.Source.(*User); ok {
+						return user.Name, nil
+					}
+					return nil, nil
+				},
+			},
+			"active": &graphql.Field{
+				Type: graphql.Boolean,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					if user, ok := p.Source.(*User); ok {
+						return user.Active, nil
+					}
+					return nil, nil
+				},
+			},
+		},
+	})
+
+	// Схема
+	queryType := graphql.NewObject(graphql.ObjectConfig{
+		Name: "Query",
+		Fields: graphql.Fields{
+			"users": &graphql.Field{
+				Type: graphql.NewList(userType),
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return ListUsers()
+				},
+			},
+			"user": &graphql.Field{
+				Type: userType,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return GetUsersByID(p.Args["id"].(int))
+				},
+			},
+		},
+	})
+
 }
