@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"path/filepath"
 
 	"go-learn/base"
 
 	"github.com/graphql-go/graphql"
+	"github.com/graphql-go/handler"
 )
 
 // Имя аргумента
@@ -155,7 +157,7 @@ func main() {
 					if user, ok := p.Source.(*User); ok {
 						return user.ID, nil
 					}
-					return nil, nil
+					return nil, errors.New("недоступно поле - id")
 				},
 			},
 			"name": &graphql.Field{
@@ -164,7 +166,7 @@ func main() {
 					if user, ok := p.Source.(*User); ok {
 						return user.Name, nil
 					}
-					return nil, nil
+					return nil, errors.New("недоступно поле - name")
 				},
 			},
 			"active": &graphql.Field{
@@ -173,13 +175,13 @@ func main() {
 					if user, ok := p.Source.(*User); ok {
 						return user.Active, nil
 					}
-					return nil, nil
+					return nil, errors.New("недоступно поле - active")
 				},
 			},
 		},
 	})
 
-	// Схема
+	// Методы
 	queryType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Query",
 		Fields: graphql.Fields{
@@ -202,5 +204,27 @@ func main() {
 			},
 		},
 	})
+
+	// Схема
+	schema, err = graphql.NewSchema(graphql.SchemaConfig{
+		Query: queryType,
+	})
+	if err != nil {
+		log.Fatalf("не удалось создать новую схему: %v", err)
+	}
+
+	// Обработчик
+	h := handler.New(&handler.Config{
+		Schema:     &schema,
+		Pretty:     true,
+		GraphiQL:   false,
+		Playground: true,
+	})
+	http.Handle("/", h)
+
+	// Запуск сервера
+	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("(на http://localhost:8080)")
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 
 }
