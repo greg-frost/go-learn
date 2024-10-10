@@ -20,6 +20,29 @@ type Album struct {
 	Price  float32
 }
 
+// Получение списка альбомов по артисту
+func albumsByArtist(name string) ([]Album, error) {
+	var albums []Album
+
+	rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
+	if err != nil {
+		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a Album
+		if err := rows.Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
+			return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
+		}
+		albums = append(albums, a)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
+	}
+	return albums, nil
+}
+
 func main() {
 	fmt.Println(" \n[ БАЗА ДАННЫХ ]\n ")
 
@@ -33,11 +56,12 @@ func main() {
 		username = "root"
 	}
 	password := os.Getenv("DB_PASS")
+	var err error
 
 	// Вариант 1
 	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s",
 		username, password, addr, dbname)
-	db, err := sql.Open("mysql", conn)
+	db, err = sql.Open("mysql", conn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +77,7 @@ func main() {
 	// }
 
 	// Вариант 2
-	// db, err := sql.Open("mysql", cfg.FormatDSN())
+	// db, err = sql.Open("mysql", cfg.FormatDSN())
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
@@ -111,6 +135,18 @@ func main() {
 	}
 	inserted, _ := insert.RowsAffected()
 	fmt.Printf("Добавлены записи (%d)\n", inserted)
+	fmt.Println()
+
+	// Поиск альбомов по артисту
+	artist := "John Coltrane"
+	albums, err := albumsByArtist(artist)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Альбомы артиста %q:\n", artist)
+	for _, a := range albums {
+		fmt.Printf("   %d - %s ($%0.2f)\n", a.ID, a.Title, a.Price)
+	}
 	fmt.Println()
 
 	// Убаление таблицы
