@@ -43,6 +43,20 @@ func albumsByArtist(name string) ([]Album, error) {
 	return albums, nil
 }
 
+// Получение альбома по ID
+func albumByID(id int64) (Album, error) {
+	var a Album
+
+	row := db.QueryRow("SELECT * FROM album WHERE id = ?", id)
+	if err := row.Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
+		if err == sql.ErrNoRows {
+			return a, fmt.Errorf("albumById %d: нет такого альбома", id)
+		}
+		return a, fmt.Errorf("albumById %d: %v", id, err)
+	}
+	return a, nil
+}
+
 func main() {
 	fmt.Println(" \n[ БАЗА ДАННЫХ ]\n ")
 
@@ -56,6 +70,8 @@ func main() {
 		username = "root"
 	}
 	password := os.Getenv("DB_PASS")
+
+	sep := "   "
 	var err error
 
 	// Вариант 1
@@ -138,6 +154,9 @@ func main() {
 	fmt.Println()
 
 	// Поиск альбомов по артисту
+	fmt.Println("Поиск по артисту:")
+	fmt.Println()
+
 	artists := []string{"John Coltrane", "Jack Cocktail"}
 	for _, artist := range artists {
 		albums, err := albumsByArtist(artist)
@@ -146,13 +165,29 @@ func main() {
 		}
 		fmt.Printf("Альбомы артиста %q:\n", artist)
 		if len(albums) == 0 {
-			fmt.Println("   (не найдено)")
+			fmt.Println(sep + "(не найдено)")
 		}
 		for _, a := range albums {
-			fmt.Printf("   %d - %s ($%0.2f)\n", a.ID, a.Title, a.Price)
+			fmt.Printf("%s%d - %s ($%0.2f)\n", sep, a.ID, a.Title, a.Price)
 		}
-		fmt.Println()
 	}
+	fmt.Println()
+
+	// Поиск альбомов по ID
+	fmt.Println("Поиск по ID:")
+	fmt.Println()
+
+	ids := []int64{3, 6}
+	for _, id := range ids {
+		a, err := albumByID(id)
+		fmt.Printf("Альбом c ID = %d:\n", id)
+		if err != nil {
+			fmt.Println(sep + "(не найдено)")
+		} else {
+			fmt.Printf("%s%s, %s ($%0.2f)\n", sep, a.Title, a.Artist, a.Price)
+		}
+	}
+	fmt.Println()
 
 	// Убаление таблицы
 	_, err = db.Exec("DROP TABLE album")
