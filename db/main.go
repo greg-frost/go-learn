@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 // Дескриптор БД
@@ -67,27 +67,27 @@ func main() {
 	}
 
 	// Конфигурация
-	// cfg := mysql.Config{
-	// 	User:   username,
-	// 	Passwd: password,
-	// 	Net:    "tcp",
-	// 	Addr:   addr,
-	// 	DBName: dbname,
-	// 	// AllowNativePasswords: true,
-	// }
+	cfg := mysql.Config{
+		User:                 username,
+		Passwd:               password,
+		Net:                  "tcp",
+		Addr:                 addr,
+		DBName:               dbname,
+		AllowNativePasswords: true,
+	}
 
 	// Вариант 2
-	// db, err = sql.Open("mysql", cfg.FormatDSN())
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	db, err = sql.Open("mysql", cfg.FormatDSN())
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Вариант 3
-	// connector, err := mysql.NewConnector(&cfg)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// db = sql.OpenDB(connector)
+	connector, err := mysql.NewConnector(&cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	db = sql.OpenDB(connector)
 
 	defer db.Close()
 
@@ -138,16 +138,21 @@ func main() {
 	fmt.Println()
 
 	// Поиск альбомов по артисту
-	artist := "John Coltrane"
-	albums, err := albumsByArtist(artist)
-	if err != nil {
-		log.Fatal(err)
+	artists := []string{"John Coltrane", "Jack Cocktail"}
+	for _, artist := range artists {
+		albums, err := albumsByArtist(artist)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Альбомы артиста %q:\n", artist)
+		if len(albums) == 0 {
+			fmt.Println("   (не найдено)")
+		}
+		for _, a := range albums {
+			fmt.Printf("   %d - %s ($%0.2f)\n", a.ID, a.Title, a.Price)
+		}
+		fmt.Println()
 	}
-	fmt.Printf("Альбомы артиста %q:\n", artist)
-	for _, a := range albums {
-		fmt.Printf("   %d - %s ($%0.2f)\n", a.ID, a.Title, a.Price)
-	}
-	fmt.Println()
 
 	// Убаление таблицы
 	_, err = db.Exec("DROP TABLE album")
