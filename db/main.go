@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -43,6 +45,32 @@ func albumsByArtist(name string) ([]Album, error) {
 	return albums, nil
 }
 
+// Получение списка альбомов по артисту (с контекстом и таймаутом)
+func albumsByArtistContext(ctx context.Context, timeout time.Duration, name string) ([]Album, error) {
+	var albums []Album
+
+	queryCtx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	rows, err := db.QueryContext(queryCtx, "SELECT * FROM album WHERE artist = ?", name)
+	if err != nil {
+		return nil, fmt.Errorf("albumsByArtistContext %q: %v", name, err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a Album
+		if err := rows.Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
+			return nil, fmt.Errorf("albumsByArtistContext %q: %v", name, err)
+		}
+		albums = append(albums, a)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("albumsByArtistContext %q: %v", name, err)
+	}
+	return albums, nil
+}
+
 // Получение альбома по ID
 func albumByID(id int64) (Album, error) {
 	var a Album
@@ -53,6 +81,25 @@ func albumByID(id int64) (Album, error) {
 			return a, fmt.Errorf("albumById %d: нет такого альбома", id)
 		}
 		return a, fmt.Errorf("albumById %d: %v", id, err)
+	}
+	return a, nil
+}
+
+// Получение альбома по ID (подготовленный запрос)
+func albumByIDPrepared(id int64) (Album, error) {
+	stmt, err := db.Prepare("SELECT * FROM album WHERE id = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	//defer stmt.Close()
+
+	var a Album
+
+	if err := stmt.QueryRow(id).Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
+		if err == sql.ErrNoRows {
+			return a, fmt.Errorf("albumByIDPrepared %d: нет такого альбома", id)
+		}
+		return a, fmt.Errorf("albumByIDPrepared %d: %v", id, err)
 	}
 	return a, nil
 }
