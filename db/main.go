@@ -110,6 +110,22 @@ func albumByIDPrepared(id int64) (Album, error) {
 	return a, nil
 }
 
+// Добавление альбома
+func addAlbum(a Album) (int64, error) {
+	result, err := db.Exec(
+		"INSERT INTO album (title, artist, price) VALUES (?, ?, ?)",
+		a.Title, a.Artist, a.Price,
+	)
+	if err != nil {
+		return 0, fmt.Errorf("addAlbum: %v", err)
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("addAlbum: %v", err)
+	}
+	return id, nil
+}
+
 func main() {
 	fmt.Println(" \n[ БАЗА ДАННЫХ ]\n ")
 
@@ -272,6 +288,22 @@ func main() {
 		albumByIDPrepared(int64(i%5 + 1))
 	}
 	fmt.Printf("Подготовленные - %v\n\n", time.Now().Sub(start))
+
+	// Добавление альбома
+	fmt.Println("Новые альбомы:")
+
+	albums := []Album{
+		{Title: "Ariadna's Clue", Artist: "Greg Frost"},
+		{Title: "Cold Face, Your Grace", Artist: "Greg Frost"},
+	}
+	for _, a := range albums {
+		id, err := addAlbum(a)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%s%d - %s, %s ($%0.2f)\n", sep, id, a.Title, a.Artist, a.Price)
+	}
+	fmt.Println()
 
 	// Убаление таблицы
 	_, err = db.Exec("DROP TABLE album")
