@@ -14,6 +14,9 @@ import (
 // Дескриптор БД
 var db *sql.DB
 
+// Подготовленный запрос
+var stmt *sql.Stmt
+
 // Структура "альбом"
 type Album struct {
 	ID     int64
@@ -87,11 +90,14 @@ func albumByID(id int64) (Album, error) {
 
 // Получение альбома по ID (подготовленный запрос)
 func albumByIDPrepared(id int64) (Album, error) {
-	stmt, err := db.Prepare("SELECT * FROM album WHERE id = ?")
-	if err != nil {
-		log.Fatal(err)
+	if stmt == nil {
+		var err error
+		stmt, err = db.Prepare("SELECT * FROM album WHERE id = ?")
+		if err != nil {
+			log.Fatal(err)
+		}
+		//defer stmt.Close()
 	}
-	//defer stmt.Close()
 
 	var a Album
 
@@ -234,6 +240,25 @@ func main() {
 			fmt.Printf("%s%s, %s ($%0.2f)\n", sep, a.Title, a.Artist, a.Price)
 		}
 	}
+	fmt.Println()
+
+	// Подготовленные запросы
+	fmt.Println("Сравнение запросов:")
+	fmt.Println()
+
+	times := 1000
+
+	start := time.Now()
+	for i := 0; i < times; i++ {
+		albumByID(int64(i%5 + 1))
+	}
+	fmt.Println("Обычные:", time.Now().Sub(start))
+
+	start = time.Now()
+	for i := 0; i < times; i++ {
+		albumByIDPrepared(int64(i%5 + 1))
+	}
+	fmt.Println("Подготовленные:", time.Now().Sub(start))
 	fmt.Println()
 
 	// Убаление таблицы
