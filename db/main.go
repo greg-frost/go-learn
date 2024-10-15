@@ -242,24 +242,36 @@ func main() {
 	}
 	fmt.Println()
 
-	// Подготовленные запросы
-	fmt.Println("Сравнение запросов:")
+	// Отмена запросов
+	fmt.Println("Контекст и таймаут:")
+
+	_, err = albumsByArtistContext(
+		context.Background(),
+		100*time.Microsecond,
+		"Gerry Mulligan",
+	)
+	if err != nil {
+		fmt.Println("Запрос отменен...")
+	} else {
+		fmt.Println("Запрос выполнен!")
+	}
 	fmt.Println()
 
+	// Подготовленные запросы
+	fmt.Println("Сравнение запросов:")
 	times := 1000
 
 	start := time.Now()
 	for i := 0; i < times; i++ {
 		albumByID(int64(i%5 + 1))
 	}
-	fmt.Println("Обычные:", time.Now().Sub(start))
+	fmt.Printf("Обычные - %v\n", time.Now().Sub(start))
 
 	start = time.Now()
 	for i := 0; i < times; i++ {
 		albumByIDPrepared(int64(i%5 + 1))
 	}
-	fmt.Println("Подготовленные:", time.Now().Sub(start))
-	fmt.Println()
+	fmt.Printf("Подготовленные - %v\n\n", time.Now().Sub(start))
 
 	// Убаление таблицы
 	_, err = db.Exec("DROP TABLE album")
