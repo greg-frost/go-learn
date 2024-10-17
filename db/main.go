@@ -96,7 +96,6 @@ func albumByIDPrepared(id int64) (Album, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		//defer stmt.Close()
 	}
 
 	var a Album
@@ -134,6 +133,7 @@ func addAlbumTx(ctx context.Context, a Album) (int64, error) {
 	}
 	defer tx.Rollback()
 
+	// Добавление альбома
 	result, err := tx.ExecContext(
 		ctx, "INSERT INTO album (title, artist, price) VALUES (?, ?, ?)",
 		a.Title, a.Artist, a.Price,
@@ -146,6 +146,19 @@ func addAlbumTx(ctx context.Context, a Album) (int64, error) {
 		return 0, fmt.Errorf("addAlbumTx: %v", err)
 	}
 
+	// Добавление логов
+	_, err = tx.ExecContext(
+		ctx, "INSERT INTO log (event) VALUES (?)",
+		fmt.Sprintf(
+			"Добавлен альбом: %d - %s, %s ($%0.2f)",
+			id, a.Title, a.Artist, a.Price,
+		),
+	)
+	if err != nil {
+		return 0, fmt.Errorf("addAlbumTx: %v", err)
+	}
+
+	// Подтверждение транзакции
 	if err = tx.Commit(); err != nil {
 		return 0, fmt.Errorf("addAlbumTx: %v", err)
 	}
@@ -210,26 +223,41 @@ func main() {
 	fmt.Println("Успешное подключение")
 	fmt.Println()
 
-	// Удаление старой таблицы
+	// Удаление старых таблиц
 	_, err = db.Exec("DROP TABLE IF EXISTS album")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Старая таблица удалена")
+	_, err = db.Exec("DROP TABLE IF EXISTS log")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Старые таблицы удалены")
 
-	// Создание новой таблицы
+	// Создание новых таблиц
 	_, err = db.Exec(`
 		CREATE TABLE album (
 			id INT AUTO_INCREMENT NOT NULL,
 			title VARCHAR(128) NOT NULL,
 			artist VARCHAR(255) NOT NULL,
 			price DECIMAL(5,2) NOT NULL,
-			PRIMARY KEY (id))
+			PRIMARY KEY (id)
+		) ENGINE = InnoDB
 		`)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Новая таблица создана")
+	_, err = db.Exec(`
+		CREATE TABLE log (
+			id INT AUTO_INCREMENT NOT NULL,
+			event TEXT NOT NULL,
+			PRIMARY KEY (id)
+		) ENGINE = InnoDB
+		`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Новые таблицы созданы")
 
 	// Вставка записей
 	insert, err := db.Exec(`
@@ -332,10 +360,32 @@ func main() {
 	}
 	fmt.Println()
 
-	// Убаление таблицы
+	// Добавление альбома (с транзакцией)
+	fmt.Println("Добавление альбома:")
+
+	album := Album{Title: "(Third album)", Artist: "Greg Frost"}
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		7*time.Millisecond,
+	)
+	defer cancel()
+
+	_, err = addAlbumTx(ctx, album)
+	if err != nil {
+		fmt.Println("Транзакция отменена...")
+	} else {
+		fmt.Println("Транзакция выполнена!")
+	}
+	fmt.Println()
+
+	// Убаление таблиц
 	_, err = db.Exec("DROP TABLE album")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Таблица удалена")
+	_, err = db.Exec("DROP TABLE log")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Таблицы удалены")
 }
