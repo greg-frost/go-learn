@@ -126,6 +126,33 @@ func addAlbum(a Album) (int64, error) {
 	return id, nil
 }
 
+// Добавление альбома (с транзакцией)
+func addAlbumTx(ctx context.Context, a Album) (int64, error) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, fmt.Errorf("addAlbumTx: %v", err)
+	}
+	defer tx.Rollback()
+
+	result, err := tx.ExecContext(
+		ctx, "INSERT INTO album (title, artist, price) VALUES (?, ?, ?)",
+		a.Title, a.Artist, a.Price,
+	)
+	if err != nil {
+		return 0, fmt.Errorf("addAlbumTx: %v", err)
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("addAlbumTx: %v", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return 0, fmt.Errorf("addAlbumTx: %v", err)
+	}
+
+	return id, nil
+}
+
 func main() {
 	fmt.Println(" \n[ БАЗА ДАННЫХ ]\n ")
 
