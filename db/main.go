@@ -17,6 +17,12 @@ var db *sql.DB
 // Подготовленный запрос
 var stmt *sql.Stmt
 
+// Отступ
+const sep = "   "
+
+// Ошибка
+var err error
+
 // Структура "альбом"
 type Album struct {
 	ID     int64
@@ -91,7 +97,6 @@ func albumByID(id int64) (Album, error) {
 // Получение альбома по ID (подготовленный запрос)
 func albumByIDPrepared(id int64) (Album, error) {
 	if stmt == nil {
-		var err error
 		stmt, err = db.Prepare("SELECT * FROM album WHERE id = ?")
 		if err != nil {
 			log.Fatal(err)
@@ -179,9 +184,6 @@ func main() {
 		username = "root"
 	}
 	password := os.Getenv("DB_PASS")
-
-	sep := "   "
-	var err error
 
 	// Вариант 1
 	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s",
