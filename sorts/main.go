@@ -50,7 +50,17 @@ func arrSizes(a Array) (min, max int) {
 	return min, max
 }
 
-// Абстрактная сортиворка
+// Проверка отсортированности массива
+func isSorted(a Array) bool {
+	for i := 1; i < len(a); i++ {
+		if a[i] < a[i-1] {
+			return false
+		}
+	}
+	return true
+}
+
+// Абстрактная сортировка
 func Sort(fSort SortFunc, arr Array) (a Array, iterations, depth int, duration time.Duration) {
 	// Копирование массива
 	a = make(Array, len(arr))
@@ -67,16 +77,16 @@ func Sort(fSort SortFunc, arr Array) (a Array, iterations, depth int, duration t
 	return a, iterations, depth, duration
 }
 
-// Сортировка пузырьком №1 (продолжающаяся пока есть перестановки)
-func bubbleContSort(a Array) (_ Array, iterations, depth int) {
-	isKeepSorting := true
+// Сортировка пузырьком №1 (продолжающаяся, пока есть перестановки)
+func bubbleRunSort(a Array) (_ Array, iterations, depth int) {
+	isRunning := true
 
-	for isKeepSorting == true {
-		isKeepSorting = false
+	for isRunning {
+		isRunning = false
 		for i := 0; i < len(a)-1; i++ {
 			if a[i] > a[i+1] {
 				a[i], a[i+1] = a[i+1], a[i]
-				isKeepSorting = true
+				isRunning = true
 			}
 			iterations++
 		}
@@ -112,7 +122,7 @@ func insertSort(a Array) (_ Array, iterations, depth int) {
 		t = a[i]
 		copy(a[j+1:], a[j:i])
 		a[j] = t
-		iterations += 3
+		iterations += i - j + 1
 	}
 	return a, iterations, depth
 }
@@ -176,7 +186,7 @@ func quickSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Слияние двух массивов (по возрастанию)
+// Слияние двух массивов
 func merge(left, right Array) Array {
 	merged := make(Array, 0, len(left)+len(right))
 
@@ -354,7 +364,7 @@ func main() {
 		isSlow  bool
 		isMid   bool
 	}{
-		{"Сортировка пузырьком, продолжающаяся", bubbleContSort, true, false},
+		{"Сортировка пузырьком, продолжающаяся", bubbleRunSort, true, false},
 		{"Сортировка пузырьком, с вытеснением", bubblePopSort, true, false},
 		{"Сортировка вставками", insertSort, true, false},
 		{"Сортировка расческой", combSort, false, true},
@@ -375,5 +385,8 @@ func main() {
 		fmt.Println()
 		arrSort, iterations, depth, duration = Sort(sort.fSort, arr)
 		PrintSortReport(sort.caption, iterations, depth, duration, arrSort, printSize)
+		if !isSorted(arrSort) {
+			fmt.Println("(массив не отсортирован)")
+		}
 	}
 }
