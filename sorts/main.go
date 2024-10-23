@@ -109,6 +109,22 @@ func bubblePopSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Сортировка выбором
+func selectSort(a Array) (_ Array, iterations, depth int) {
+	for i := 0; i < len(a)-1; i++ {
+		k := i
+		for j := i + 1; j < len(a); j++ {
+			if a[j] < a[k] {
+				k = j
+			}
+			iterations++
+		}
+		a[i], a[k] = a[k], a[i]
+	}
+
+	return a, iterations, depth
+}
+
 // Сортировка вставками (с копированием)
 func insertCopySort(a Array) (_ Array, iterations, depth int) {
 	var t int
@@ -381,6 +397,7 @@ func main() {
 	}{
 		{"Сортировка пузырьком, продолжающаяся", bubbleRunSort, true, false},
 		{"Сортировка пузырьком, с вытеснением", bubblePopSort, true, false},
+		{"Сортировка выбором", selectSort, true, false},
 		{"Сортировка вставками, с копированием", insertCopySort, true, false},
 		{"Сортировка вставками, с перестановками", insertSwapSort, true, false},
 		{"Сортировка расческой", combSort, false, true},
