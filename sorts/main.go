@@ -109,8 +109,8 @@ func bubblePopSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Сортировка вставками
-func insertSort(a Array) (_ Array, iterations, depth int) {
+// Сортировка вставками (с копированием)
+func insertCopySort(a Array) (_ Array, iterations, depth int) {
 	var t int
 	for i := 1; i < len(a); i++ {
 		j := i
@@ -124,6 +124,21 @@ func insertSort(a Array) (_ Array, iterations, depth int) {
 		a[j] = t
 		iterations += i - j + 1
 	}
+	return a, iterations, depth
+}
+
+// Сортировка вставками (с перестановками)
+func insertSwapSort(a Array) (_ Array, iterations, depth int) {
+	for i := 1; i < len(a); i++ {
+		j := i
+		for j > 0 && a[j] < a[j-1] {
+			a[j], a[j-1] = a[j-1], a[j]
+			j--
+			iterations++
+		}
+		iterations++
+	}
+
 	return a, iterations, depth
 }
 
@@ -336,9 +351,9 @@ func main() {
 	min := 0
 	max := 1000
 
-	const printSize = 10    // размер фрагмента массива для печати
-	const slowCap = 10000   // лимит на размер для медленных сортировок
-	const midCap = 10000000 // лимит на размер для средних сортировок
+	const printSize = 10      // размер фрагмента массива для печати
+	const slowCap = 10_000    // лимит на размер для медленных сортировок
+	const midCap = 10_000_000 // лимит на размер для средних сортировок
 
 	var duration time.Duration
 
@@ -366,7 +381,8 @@ func main() {
 	}{
 		{"Сортировка пузырьком, продолжающаяся", bubbleRunSort, true, false},
 		{"Сортировка пузырьком, с вытеснением", bubblePopSort, true, false},
-		{"Сортировка вставками", insertSort, true, false},
+		{"Сортировка вставками, с копированием", insertCopySort, true, false},
+		{"Сортировка вставками, с перестановками", insertSwapSort, true, false},
 		{"Сортировка расческой", combSort, false, true},
 		{"Быстрая сортировка", quickSort, false, true},
 		{"Сортировка слиянием", mergeSort, false, true},
