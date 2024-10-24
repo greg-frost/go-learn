@@ -177,6 +177,48 @@ func combSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Погружение в кучу
+func sink(i int, a Array) int {
+	var iterations int
+	n := len(a)
+	k := i
+	j := 2*k + 1
+
+	for j < n {
+		if j < n-1 && a[j] < a[j+1] {
+			j++
+		}
+		if a[k] >= a[j] {
+			break
+		}
+
+		a[k], a[j] = a[j], a[k]
+		iterations++
+
+		k = j
+		j = 2*k + 1
+	}
+
+	return iterations
+}
+
+// Сортировка кучей
+func heapSort(a Array) (_ Array, iterations, depth int) {
+	n := len(a)
+
+	for i := (n - 1) / 2; i >= 0; i-- {
+		iterations += sink(i, a)
+	}
+
+	for n > 0 {
+		a[0], a[n-1] = a[n-1], a[0]
+		iterations += sink(0, a[:n-1])
+		n--
+	}
+
+	return a, iterations, depth
+}
+
 // Быстрая сортировка
 func quickSort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
@@ -401,6 +443,7 @@ func main() {
 		{"Сортировка вставками, с копированием", insertCopySort, true, false},
 		{"Сортировка вставками, с перестановками", insertSwapSort, true, false},
 		{"Сортировка расческой", combSort, false, true},
+		{"Сортировка кучей", heapSort, false, true},
 		{"Быстрая сортировка", quickSort, false, true},
 		{"Сортировка слиянием", mergeSort, false, true},
 		{"Сортировка подсчетом", countSort, false, false},
