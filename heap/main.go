@@ -41,7 +41,7 @@ func (h Heap) sinkMin(i int) {
 	j := 2*k + 1
 
 	for j < n {
-		if j < n-1 && h[j] > h[j+1] {
+		if j < n-1 && h[j+1] < h[j] {
 			j++
 		}
 		if h[k] <= h[j] {
@@ -60,7 +60,7 @@ func (h Heap) sinkMax(i int) {
 	j := 2*k + 1
 
 	for j < n {
-		if j < n-1 && h[j] < h[j+1] {
+		if j < n-1 && h[j+1] > h[j] {
 			j++
 		}
 		if h[k] >= h[j] {
@@ -75,7 +75,6 @@ func (h Heap) sinkMax(i int) {
 
 func (h Heap) Heapify() {
 	n := len(h)
-
 	for i := (n - 1) / 2; i >= 0; i-- {
 		h.sinkMin(i)
 	}
