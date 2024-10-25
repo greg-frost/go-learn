@@ -35,38 +35,65 @@ func (h *IntHeap) Pop() any {
 
 type Heap []int
 
-func (h *Heap) Push(v int) {
-	pos := 0
-	for pos < len(*h) && v > (*h)[pos] {
-		pos++
-	}
+func (h Heap) sinkMin(i int) {
+	n := len(h)
+	k := i
+	j := 2*k + 1
 
-	*h = append(*h, v)
+	for j < n {
+		if j < n-1 && h[j] > h[j+1] {
+			j++
+		}
+		if h[k] <= h[j] {
+			return
+		}
 
-	if pos < len(*h)-1 {
-		copy((*h)[pos+1:], (*h)[pos:])
-		(*h)[pos] = v
+		h[k], h[j] = h[j], h[k]
+		k = j
+		j = 2*k + 1
 	}
 }
 
-func (h *Heap) PopMin() (int, bool) {
+func (h Heap) sinkMax(i int) {
+	n := len(h)
+	k := i
+	j := 2*k + 1
+
+	for j < n {
+		if j < n-1 && h[j] < h[j+1] {
+			j++
+		}
+		if h[k] >= h[j] {
+			return
+		}
+
+		h[k], h[j] = h[j], h[k]
+		k = j
+		j = 2*k + 1
+	}
+}
+
+func (h Heap) Heapify() {
+	n := len(h)
+
+	for i := (n - 1) / 2; i >= 0; i-- {
+		h.sinkMin(i)
+	}
+}
+
+func (h *Heap) Push(v int) {
+	*h = append(*h, v)
+	h.Heapify()
+}
+
+func (h *Heap) Pop() (int, bool) {
 	if len(*h) == 0 {
 		return 0, false
 	}
 
 	v := (*h)[0]
 	*h = (*h)[1:]
-
-	return v, true
-}
-
-func (h *Heap) PopMax() (int, bool) {
-	if len(*h) == 0 {
-		return 0, false
-	}
-
-	v := (*h)[len(*h)-1]
-	*h = (*h)[:len(*h)-1]
+	h.Heapify()
 
 	return v, true
 }
@@ -141,17 +168,17 @@ func main() {
 
 	// Извлечение
 
-	v, ok := h2.PopMin()
+	v, ok := h2.Pop()
 	fmt.Println("Min:", v, ok)
 
-	v, ok = h2.PopMax()
-	fmt.Println("Max:", v, ok)
-
-	v, ok = h2.PopMin()
+	v, ok = h2.Pop()
 	fmt.Println("Min:", v, ok)
 
-	v, ok = h2.PopMax()
-	fmt.Println("Max:", v, ok)
+	v, ok = h2.Pop()
+	fmt.Println("Min:", v, ok)
+
+	v, ok = h2.Pop()
+	fmt.Println("Min:", v, ok)
 
 	// Состояние
 	fmt.Println()
