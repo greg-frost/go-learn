@@ -259,8 +259,8 @@ func quickSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Слияние двух массивов
-func merge(left, right Array) Array {
+// Слияние массивов (с копированием)
+func mergeCopy(left, right Array) Array {
 	merged := make(Array, 0, len(left)+len(right))
 
 	for len(left) > 0 && len(right) > 0 {
@@ -279,8 +279,8 @@ func merge(left, right Array) Array {
 	return merged
 }
 
-// Сортировка слиянием
-func mergeSort(a Array) (_ Array, iterations, depth int) {
+// Сортировка слиянием (с копированием)
+func mergeCopySort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
@@ -291,16 +291,70 @@ func mergeSort(a Array) (_ Array, iterations, depth int) {
 	copy(b, a[middle:])
 	a = a[0:middle]
 
-	iterations++
+	iterations += middle + len(a)
 	depth++
 
-	leftA, leftI, leftD := mergeSort(a)
-	rightA, rightI, rightD := mergeSort(b)
+	leftA, leftI, leftD := mergeCopySort(a)
+	rightA, rightI, rightD := mergeCopySort(b)
 
 	iterations += leftI + rightI
-	depth += leftD + rightD
+	depth += (leftD + rightD) / 2
 
-	return merge(leftA, rightA), iterations, depth
+	return mergeCopy(leftA, rightA), iterations, depth
+}
+
+// Слияние массивов (с перестановками)
+func mergeSwap(a Array, l, m, h int) {
+	c := make(Array, h-l+1)
+	for k := l; k <= h; k++ {
+		c[k-l] = a[k]
+	}
+
+	cm := m - l + 1
+	ch := h - l + 1
+	i, j := 0, cm
+
+	for k := l; k <= h; k++ {
+		if i >= cm {
+			a[k] = c[j]
+			j++
+		} else if j >= ch {
+			a[k] = c[i]
+			i++
+		} else if c[i] <= c[j] {
+			a[k] = c[i]
+			i++
+		} else {
+			a[k] = c[j]
+			j++
+		}
+	}
+}
+
+// Рекурсия сортировки слиянием (с перестановками)
+func mergeSortRecourse(a Array, l, h int) (iterations, depth int) {
+	var leftI, rightI, leftD, rightD int
+
+	if l < h {
+		m := l + (h-l)/2
+		leftI, leftD = mergeSortRecourse(a, l, m)
+		rightI, rightD = mergeSortRecourse(a, m+1, h)
+		mergeSwap(a, l, m, h)
+
+		iterations += h - l
+		depth++
+	}
+
+	iterations += h - l + leftI + rightI
+	depth += (leftD + rightD) / 2
+
+	return iterations, depth
+}
+
+// Сортировка слиянием (с перестановками)
+func mergeSwapSort(a Array) (_ Array, iterations, depth int) {
+	iterations, depth = mergeSortRecourse(a, 0, len(a)-1)
+	return a, iterations, depth
 }
 
 // Сортировка подсчетом
@@ -445,7 +499,8 @@ func main() {
 		{"Сортировка расческой", combSort, false, true},
 		{"Сортировка кучей", heapSort, false, true},
 		{"Быстрая сортировка", quickSort, false, true},
-		{"Сортировка слиянием", mergeSort, false, true},
+		{"Сортировка слиянием, с копированием", mergeCopySort, false, true},
+		{"Сортировка слиянием, с перестановками", mergeSwapSort, false, true},
 		{"Сортировка подсчетом", countSort, false, false},
 		{"Блочная сортировка", blockSort, false, true},
 	}
