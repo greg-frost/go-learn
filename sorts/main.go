@@ -345,7 +345,7 @@ func mergeSortRecourse(a Array, l, h int) (iterations, depth int) {
 		depth++
 	}
 
-	iterations += h - l + leftI + rightI
+	iterations += leftI + rightI
 	depth += (leftD + rightD) / 2
 
 	return iterations, depth
