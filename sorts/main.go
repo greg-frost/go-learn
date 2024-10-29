@@ -319,14 +319,9 @@ func mergeSwapSort(a Array) (_ Array, iterations, depth int) {
 
 // Выбор опорного элемента
 func pivot(l, h int) int {
-	// Первый
-	return l
-
-	// Средний
-	// return l + (h-l)/2
-
-	// Случайный
-	// return l + rand.Intn(h-l+1)
+	return l // Первый
+	// return l + (h-l)/2 // Средний
+	// return l + rand.Intn(h-l+1) // Случайный
 }
 
 // Быстрая сортировка (с копированием)
@@ -370,20 +365,28 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Разбиение быстрой сортировки (с перестановками)
-func quickSortPartition(a Array, l, h int) int {
+func quickSortPartition(a Array, l, h int) (int, int) {
 	p := pivot(l, h)
 	a[p], a[h] = a[h], a[p]
 
 	j := l
 	for i := l; i < h; i++ {
-		if a[i] < a[h] {
+		if a[i] <= a[h] {
 			a[i], a[j] = a[j], a[i]
 			j++
 		}
 	}
 	a[h], a[j] = a[j], a[h]
 
-	return j
+	pl, ph := j-1, j+1
+	for pl >= l && a[pl] == a[j] {
+		pl--
+	}
+	for ph <= h && a[ph] == a[j] {
+		ph++
+	}
+
+	return pl, ph
 }
 
 // Рекурсия быстрой сортировки (с перестановками)
@@ -391,11 +394,11 @@ func quickSortRecourse(a Array, l, h int) (iterations, depth int) {
 	var leftI, rightI, leftD, rightD int
 
 	if l < h {
-		p := quickSortPartition(a, l, h)
-		leftI, leftD = quickSortRecourse(a, l, p-1)
-		rightI, rightD = quickSortRecourse(a, p+1, h)
+		pl, ph := quickSortPartition(a, l, h)
+		leftI, leftD = quickSortRecourse(a, l, pl)
+		rightI, rightD = quickSortRecourse(a, ph, h)
 
-		iterations += h - l
+		iterations += (h - ph) + (pl - l)
 		depth++
 	}
 
