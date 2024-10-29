@@ -318,7 +318,7 @@ func mergeSwapSort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Выбор опорного элемента
-func pickPivot(l, h int) int {
+func pivot(l, h int) int {
 	// Первый
 	return l
 
@@ -329,13 +329,13 @@ func pickPivot(l, h int) int {
 	// return l + rand.Intn(h-l+1)
 }
 
-// Быстрая сортировка
-func quickSort(a Array) (_ Array, iterations, depth int) {
+// Быстрая сортировка (с копированием)
+func quickCopySort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
 
-	pivot := a[pickPivot(0, len(a)-1)]
+	p := a[pivot(0, len(a)-1)]
 
 	left := make(Array, 0, len(a)/2)
 	middle := make(Array, 0, len(a)/100)
@@ -343,19 +343,19 @@ func quickSort(a Array) (_ Array, iterations, depth int) {
 
 	for _, v := range a {
 		switch {
-		case v < pivot:
+		case v < p:
 			left = append(left, v)
-		case v == pivot:
+		case v == p:
 			middle = append(middle, v)
-		case v > pivot:
+		case v > p:
 			right = append(right, v)
 		}
 		iterations++
 	}
 	depth++
 
-	leftA, leftI, leftD := quickSort(left)
-	rightA, rightI, rightD := quickSort(right)
+	leftA, leftI, leftD := quickCopySort(left)
+	rightA, rightI, rightD := quickCopySort(right)
 
 	a = make(Array, 0, len(a))
 
@@ -366,6 +366,48 @@ func quickSort(a Array) (_ Array, iterations, depth int) {
 	iterations += leftI + rightI
 	depth += (leftD + rightD) / 2
 
+	return a, iterations, depth
+}
+
+// Разбиение быстрой сортировки (с перестановками)
+func quickSortPartition(a Array, l, h int) int {
+	p := pivot(l, h)
+	a[p], a[h] = a[h], a[p]
+
+	j := l
+	for i := l; i < h; i++ {
+		if a[i] < a[h] {
+			a[i], a[j] = a[j], a[i]
+			j++
+		}
+	}
+	a[h], a[j] = a[j], a[h]
+
+	return j
+}
+
+// Рекурсия быстрой сортировки (с перестановками)
+func quickSortRecourse(a Array, l, h int) (iterations, depth int) {
+	var leftI, rightI, leftD, rightD int
+
+	if l < h {
+		p := quickSortPartition(a, l, h)
+		leftI, leftD = quickSortRecourse(a, l, p-1)
+		rightI, rightD = quickSortRecourse(a, p+1, h)
+
+		iterations += h - l
+		depth++
+	}
+
+	iterations += leftI + rightI
+	depth += (leftD + rightD) / 2
+
+	return iterations, depth
+}
+
+// Быстрая сортировка (с перестановками)
+func quickSwapSort(a Array) (_ Array, iterations, depth int) {
+	iterations, depth = quickSortRecourse(a, 0, len(a)-1)
 	return a, iterations, depth
 }
 
@@ -513,7 +555,8 @@ func main() {
 		{"Сортировка кучей", heapSort, false, true},
 		{"Сортировка слиянием, с копированием", mergeCopySort, false, true},
 		{"Сортировка слиянием, с перестановками", mergeSwapSort, false, true},
-		{"Быстрая сортировка", quickSort, false, true},
+		{"Быстрая сортировка, с копированием", quickCopySort, false, true},
+		{"Быстрая сортировка, с перестановками", quickSwapSort, false, true},
 		{"Сортировка подсчетом", countSort, false, false},
 		{"Блочная сортировка", blockSort, false, true},
 	}
