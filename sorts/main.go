@@ -219,46 +219,6 @@ func heapSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Быстрая сортировка
-func quickSort(a Array) (_ Array, iterations, depth int) {
-	if len(a) <= 1 {
-		return a, iterations, depth
-	}
-
-	pivot := a[0]
-
-	left := make(Array, 0, len(a)/2)
-	middle := make(Array, 0, len(a)/100)
-	right := make(Array, 0, len(a)/2)
-
-	for _, v := range a {
-		switch {
-		case v < pivot:
-			left = append(left, v)
-		case v == pivot:
-			middle = append(middle, v)
-		case v > pivot:
-			right = append(right, v)
-		}
-		iterations++
-	}
-	depth++
-
-	leftA, leftI, leftD := quickSort(left)
-	rightA, rightI, rightD := quickSort(right)
-
-	a = make(Array, 0, len(a))
-
-	a = append(a, leftA...)
-	a = append(a, middle...)
-	a = append(a, rightA...)
-
-	iterations += leftI + rightI
-	depth += leftD + rightD
-
-	return a, iterations, depth
-}
-
 // Слияние массивов (с копированием)
 func mergeCopy(left, right Array) Array {
 	merged := make(Array, 0, len(left)+len(right))
@@ -357,6 +317,58 @@ func mergeSwapSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Выбор опорного элемента
+func pickPivot(l, h int) int {
+	// Первый
+	return l
+
+	// Средний
+	// return l + (h-l)/2
+
+	// Случайный
+	// return l + rand.Intn(h-l+1)
+}
+
+// Быстрая сортировка
+func quickSort(a Array) (_ Array, iterations, depth int) {
+	if len(a) <= 1 {
+		return a, iterations, depth
+	}
+
+	pivot := a[pickPivot(0, len(a)-1)]
+
+	left := make(Array, 0, len(a)/2)
+	middle := make(Array, 0, len(a)/100)
+	right := make(Array, 0, len(a)/2)
+
+	for _, v := range a {
+		switch {
+		case v < pivot:
+			left = append(left, v)
+		case v == pivot:
+			middle = append(middle, v)
+		case v > pivot:
+			right = append(right, v)
+		}
+		iterations++
+	}
+	depth++
+
+	leftA, leftI, leftD := quickSort(left)
+	rightA, rightI, rightD := quickSort(right)
+
+	a = make(Array, 0, len(a))
+
+	a = append(a, leftA...)
+	a = append(a, middle...)
+	a = append(a, rightA...)
+
+	iterations += leftI + rightI
+	depth += (leftD + rightD) / 2
+
+	return a, iterations, depth
+}
+
 // Сортировка подсчетом
 func countSort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
@@ -418,7 +430,7 @@ func blockSort(a Array) (_ Array, iterations, depth int) {
 				defer wg.Done()
 				_, bIterations, bDepth := combSort(b)
 				iterations += bIterations
-				depth += bDepth + 1
+				depth += bDepth
 			}(block)
 		}
 	}
@@ -429,6 +441,7 @@ func blockSort(a Array) (_ Array, iterations, depth int) {
 	for _, block := range blocks {
 		if len(block) > 0 {
 			a = append(a, block...)
+			iterations += len(block)
 		}
 	}
 
@@ -498,9 +511,9 @@ func main() {
 		{"Сортировка вставками, с перестановками", insertSwapSort, true, false},
 		{"Сортировка расческой", combSort, false, true},
 		{"Сортировка кучей", heapSort, false, true},
-		{"Быстрая сортировка", quickSort, false, true},
 		{"Сортировка слиянием, с копированием", mergeCopySort, false, true},
 		{"Сортировка слиянием, с перестановками", mergeSwapSort, false, true},
+		{"Быстрая сортировка", quickSort, false, true},
 		{"Сортировка подсчетом", countSort, false, false},
 		{"Блочная сортировка", blockSort, false, true},
 	}
