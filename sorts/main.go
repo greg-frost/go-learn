@@ -420,12 +420,12 @@ func countSort(a Array) (_ Array, iterations, depth int) {
 		return a, iterations, depth
 	}
 
-	_, max := arrSizes(a)
+	min, max := arrSizes(a)
 	iterations += len(a)
 
-	count := make([]int, max+1)
+	count := make([]int, max-min+1)
 	for _, v := range a {
-		count[v]++
+		count[v-min]++
 		iterations++
 	}
 
@@ -433,7 +433,7 @@ func countSort(a Array) (_ Array, iterations, depth int) {
 	for v, c := range count {
 		if c > 0 {
 			for i := 0; i < c; i++ {
-				a = append(a, v)
+				a = append(a, v+min)
 				iterations++
 			}
 			depth++
