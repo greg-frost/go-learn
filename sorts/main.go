@@ -330,7 +330,7 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 		return a, iterations, depth
 	}
 
-	p := a[pivot(0, len(a)-1)]
+	p := pivot(0, len(a)-1)
 
 	left := make(Array, 0, len(a)/2)
 	middle := make(Array, 0, len(a)/100)
@@ -338,11 +338,11 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 
 	for _, v := range a {
 		switch {
-		case v < p:
+		case v < a[p]:
 			left = append(left, v)
-		case v == p:
+		case v == a[p]:
 			middle = append(middle, v)
-		case v > p:
+		case v > a[p]:
 			right = append(right, v)
 		}
 		iterations++
@@ -353,7 +353,6 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 	rightA, rightI, rightD := quickCopySort(right)
 
 	a = make(Array, 0, len(a))
-
 	a = append(a, leftA...)
 	a = append(a, middle...)
 	a = append(a, rightA...)
@@ -365,7 +364,7 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Разбиение быстрой сортировки (с перестановками)
-func quickSortPartition(a Array, l, h int) (int, int) {
+func quickSortPartition(a Array, l, h int) (int, int, int) {
 	p := pivot(l, h)
 	a[p], a[h] = a[h], a[p]
 
@@ -378,15 +377,15 @@ func quickSortPartition(a Array, l, h int) (int, int) {
 	}
 	a[h], a[j] = a[j], a[h]
 
-	pl, ph := j-1, j+1
-	for pl >= l && a[pl] == a[j] {
-		pl--
+	jl, jh := j-1, j+1
+	for jl >= l && a[jl] == a[j] {
+		jl--
 	}
-	for ph <= h && a[ph] == a[j] {
-		ph++
+	for jh <= h && a[jh] == a[j] {
+		jh++
 	}
 
-	return pl, ph
+	return j, jl, jh
 }
 
 // Рекурсия быстрой сортировки (с перестановками)
@@ -394,7 +393,7 @@ func quickSortRecourse(a Array, l, h int) (iterations, depth int) {
 	var leftI, rightI, leftD, rightD int
 
 	if l < h {
-		pl, ph := quickSortPartition(a, l, h)
+		_, pl, ph := quickSortPartition(a, l, h)
 		leftI, leftD = quickSortRecourse(a, l, pl)
 		rightI, rightD = quickSortRecourse(a, ph, h)
 
