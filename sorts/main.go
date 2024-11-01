@@ -77,7 +77,7 @@ func Sort(fSort SortFunc, arr Array) (a Array, iterations, depth int, duration t
 	return a, iterations, depth, duration
 }
 
-// Сортировка пузырьком №1 (продолжающаяся, пока есть перестановки)
+// Сортировка пузырьком (продолжающаяся, пока есть перестановки)
 func bubbleRunSort(a Array) (_ Array, iterations, depth int) {
 	isRunning := true
 
@@ -95,7 +95,7 @@ func bubbleRunSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Сортировка пузырьком №2 (с вытеснением большего значения вверх)
+// Сортировка пузырьком (с вытеснением большего значения вверх)
 func bubblePopSort(a Array) (_ Array, iterations, depth int) {
 	for j := len(a) - 1; j > 0; j-- {
 		for i := 0; i < j; i++ {
@@ -177,6 +177,23 @@ func combSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Сортировка кучей
+func heapSort(a Array) (_ Array, iterations, depth int) {
+	n := len(a)
+
+	for i := (n - 1) / 2; i >= 0; i-- {
+		iterations += sink(i, a)
+	}
+
+	for n > 0 {
+		a[0], a[n-1] = a[n-1], a[0]
+		iterations += sink(0, a[:n-1])
+		n--
+	}
+
+	return a, iterations, depth
+}
+
 // Погружение в кучу
 func sink(i int, a Array) int {
 	var iterations int
@@ -202,43 +219,6 @@ func sink(i int, a Array) int {
 	return iterations
 }
 
-// Сортировка кучей
-func heapSort(a Array) (_ Array, iterations, depth int) {
-	n := len(a)
-
-	for i := (n - 1) / 2; i >= 0; i-- {
-		iterations += sink(i, a)
-	}
-
-	for n > 0 {
-		a[0], a[n-1] = a[n-1], a[0]
-		iterations += sink(0, a[:n-1])
-		n--
-	}
-
-	return a, iterations, depth
-}
-
-// Слияние массивов (с копированием)
-func mergeCopy(left, right Array) Array {
-	merged := make(Array, 0, len(left)+len(right))
-
-	for len(left) > 0 && len(right) > 0 {
-		if left[0] < right[0] {
-			merged = append(merged, left[0])
-			left = left[1:]
-		} else {
-			merged = append(merged, right[0])
-			right = right[1:]
-		}
-	}
-
-	merged = append(merged, left...)
-	merged = append(merged, right...)
-
-	return merged
-}
-
 // Сортировка слиянием (с копированием)
 func mergeCopySort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
@@ -261,6 +241,52 @@ func mergeCopySort(a Array) (_ Array, iterations, depth int) {
 	depth += (leftD + rightD) / 2
 
 	return mergeCopy(leftA, rightA), iterations, depth
+}
+
+// Слияние массивов (с копированием)
+func mergeCopy(left, right Array) Array {
+	merged := make(Array, 0, len(left)+len(right))
+
+	for len(left) > 0 && len(right) > 0 {
+		if left[0] < right[0] {
+			merged = append(merged, left[0])
+			left = left[1:]
+		} else {
+			merged = append(merged, right[0])
+			right = right[1:]
+		}
+	}
+
+	merged = append(merged, left...)
+	merged = append(merged, right...)
+
+	return merged
+}
+
+// Сортировка слиянием (с перестановками)
+func mergeSwapSort(a Array) (_ Array, iterations, depth int) {
+	iterations, depth = mergeSortRecourse(a, 0, len(a)-1)
+	return a, iterations, depth
+}
+
+// Рекурсия сортировки слиянием
+func mergeSortRecourse(a Array, l, h int) (iterations, depth int) {
+	var leftI, rightI, leftD, rightD int
+
+	if l < h {
+		m := l + (h-l)/2
+		leftI, leftD = mergeSortRecourse(a, l, m)
+		rightI, rightD = mergeSortRecourse(a, m+1, h)
+		mergeSwap(a, l, m, h)
+
+		iterations += h - l
+		depth++
+	}
+
+	iterations += leftI + rightI
+	depth += (leftD + rightD) / 2
+
+	return iterations, depth
 }
 
 // Слияние массивов (с перестановками)
@@ -289,39 +315,6 @@ func mergeSwap(a Array, l, m, h int) {
 			j++
 		}
 	}
-}
-
-// Рекурсия сортировки слиянием (с перестановками)
-func mergeSortRecourse(a Array, l, h int) (iterations, depth int) {
-	var leftI, rightI, leftD, rightD int
-
-	if l < h {
-		m := l + (h-l)/2
-		leftI, leftD = mergeSortRecourse(a, l, m)
-		rightI, rightD = mergeSortRecourse(a, m+1, h)
-		mergeSwap(a, l, m, h)
-
-		iterations += h - l
-		depth++
-	}
-
-	iterations += leftI + rightI
-	depth += (leftD + rightD) / 2
-
-	return iterations, depth
-}
-
-// Сортировка слиянием (с перестановками)
-func mergeSwapSort(a Array) (_ Array, iterations, depth int) {
-	iterations, depth = mergeSortRecourse(a, 0, len(a)-1)
-	return a, iterations, depth
-}
-
-// Выбор опорного элемента
-func pivot(l, h int) int {
-	return l // Первый
-	// return l + (h-l)/2 // Средний
-	// return l + rand.Intn(h-l+1) // Случайный
 }
 
 // Быстрая сортировка (с копированием)
@@ -363,7 +356,32 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Разбиение быстрой сортировки (с перестановками)
+// Быстрая сортировка (с перестановками)
+func quickSwapSort(a Array) (_ Array, iterations, depth int) {
+	iterations, depth = quickSortRecourse(a, 0, len(a)-1)
+	return a, iterations, depth
+}
+
+// Рекурсия быстрой сортировки
+func quickSortRecourse(a Array, l, h int) (iterations, depth int) {
+	var leftI, rightI, leftD, rightD int
+
+	if l < h {
+		_, pl, ph := quickSortPartition(a, l, h)
+		leftI, leftD = quickSortRecourse(a, l, pl)
+		rightI, rightD = quickSortRecourse(a, ph, h)
+
+		iterations += (h - ph) + (pl - l)
+		depth++
+	}
+
+	iterations += leftI + rightI
+	depth += (leftD + rightD) / 2
+
+	return iterations, depth
+}
+
+// Разбиение быстрой сортировки
 func quickSortPartition(a Array, l, h int) (int, int, int) {
 	p := pivot(l, h)
 	a[p], a[h] = a[h], a[p]
@@ -388,29 +406,11 @@ func quickSortPartition(a Array, l, h int) (int, int, int) {
 	return j, jl, jh
 }
 
-// Рекурсия быстрой сортировки (с перестановками)
-func quickSortRecourse(a Array, l, h int) (iterations, depth int) {
-	var leftI, rightI, leftD, rightD int
-
-	if l < h {
-		_, pl, ph := quickSortPartition(a, l, h)
-		leftI, leftD = quickSortRecourse(a, l, pl)
-		rightI, rightD = quickSortRecourse(a, ph, h)
-
-		iterations += (h - ph) + (pl - l)
-		depth++
-	}
-
-	iterations += leftI + rightI
-	depth += (leftD + rightD) / 2
-
-	return iterations, depth
-}
-
-// Быстрая сортировка (с перестановками)
-func quickSwapSort(a Array) (_ Array, iterations, depth int) {
-	iterations, depth = quickSortRecourse(a, 0, len(a)-1)
-	return a, iterations, depth
+// Выбор опорного элемента
+func pivot(l, h int) int {
+	return l // Первый
+	// return l + (h-l)/2 // Средний
+	// return l + rand.Intn(h-l+1) // Случайный
 }
 
 // Сортировка подсчетом
