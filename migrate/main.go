@@ -60,16 +60,13 @@ func (m *Migrator) ApplyMigrations(db *sql.DB) error {
 var path = base.Dir("migrate")
 
 //go:embed migrations/*.sql
-var migrationsFS embed.FS
+var fs embed.FS
 
 func main() {
 	fmt.Println(" \n[ GO-MIGRATE ]\n ")
 
 	// Создание мигратора
-	migrator := MustNewMigrator(
-		migrationsFS,
-		filepath.Join(path, "migrations"),
-	)
+	migrator := MustNewMigrator(fs, filepath.Join(path, "migrations"))
 
 	// Подключение к БД
 	dsn := "postgres://postgres:admin@localhost:5432/learn?sslmode=disable"
