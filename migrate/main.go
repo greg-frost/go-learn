@@ -5,6 +5,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"log"
 	"path/filepath"
 
 	"go-learn/base"
@@ -15,9 +16,6 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
 
-// Путь
-var path = base.Dir("migrate")
-
 // Структура "мигратор"
 type Migrator struct {
 	driver source.Driver
@@ -25,7 +23,7 @@ type Migrator struct {
 
 // Обязательное получение нового мигратора
 func MustNewMigrator(files embed.FS, dir string) *Migrator {
-	d, err := iofs.New(files, filepath.Join(path, dir))
+	d, err := iofs.New(files, dir)
 	if err != nil {
 		panic(err)
 	}
@@ -58,6 +56,34 @@ func (m *Migrator) ApplyMigrations(db *sql.DB) error {
 	return nil
 }
 
+// Путь
+var path = base.Dir("migrate")
+
+//go:embed migrations/*.sql
+var migrationsFS embed.FS
+
 func main() {
 	fmt.Println(" \n[ GO-MIGRATE ]\n ")
+
+	// Создание мигратора
+	migrator := MustNewMigrator(
+		migrationsFS,
+		filepath.Join(path, "migrations"),
+	)
+
+	// Подключение к БД
+	dsn := "postgres://postgres:admin@localhost:5432/learn?sslmode=disable"
+	conn, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	// Применение миграций
+	err = migrator.ApplyMigrations(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Миграции применены!")
 }
