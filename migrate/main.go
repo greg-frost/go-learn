@@ -92,6 +92,22 @@ func (m *Migrator) RevertMigrations(db *sql.DB) error {
 	return nil
 }
 
+// Миграция на произвольное число шагов (отрицательное, если вниз)
+func MigrateToSteps(dsn string, steps int) error {
+	// Получение мигратора
+	m, err := migrate.New("file:///"+migrations, dsn)
+	if err != nil {
+		return fmt.Errorf("не удалось создать экземпляр БД: %v", err)
+	}
+
+	// Миграция на число шагов
+	if err := m.Steps(steps); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		return fmt.Errorf("не удалось совершить миграцию: %v, число шагов: %d", err, steps)
+	}
+
+	return nil
+}
+
 func main() {
 	fmt.Println(" \n[ GO-MIGRATE ]\n ")
 
@@ -114,9 +130,16 @@ func main() {
 	fmt.Println("Миграции применены!")
 
 	// Откат миграций
-	err = migrator.RevertMigrations(conn)
+	// err = migrator.RevertMigrations(conn)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println("Миграции отменены...")
+
+	// Откат последней миграции
+	err = MigrateToSteps(dsn, -1)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Миграции отменены...")
+	fmt.Println("Последняя миграция отменена.")
 }
