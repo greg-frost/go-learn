@@ -17,6 +17,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Путь
+var path = base.Dir("migrate")
+
+// Миграции
+var migrations = filepath.Join(path, "migrations")
+
+//go:embed migrations/*.sql
+var fs embed.FS
+
 // Структура "мигратор"
 type Migrator struct {
 	driver source.Driver
@@ -49,7 +58,7 @@ func (m *Migrator) ApplyMigrations(db *sql.DB) error {
 	}
 	defer migrator.Close()
 
-	// Миграции
+	// Миграция вверх (до конца)
 	if err := migrator.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("не удалось применить миграцию: %v", err)
 	}
@@ -57,17 +66,37 @@ func (m *Migrator) ApplyMigrations(db *sql.DB) error {
 	return nil
 }
 
-// Путь
-var path = base.Dir("migrate")
+// Откат миграций
+func (m *Migrator) RevertMigrations(db *sql.DB) error {
+	// Получение драйвера БД
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		return fmt.Errorf("не удалось создать экземпляр БД: %v", err)
+	}
 
-//go:embed migrations/*.sql
-var fs embed.FS
+	// Получение мигратора (через БД)
+	migrator, err := migrate.NewWithDatabaseInstance(
+		"file:///"+migrations,
+		"postgres", driver,
+	)
+	if err != nil {
+		return fmt.Errorf("не удалось создать экземпляр мигратора: %v", err)
+	}
+	defer migrator.Close()
+
+	// Миграция вниз (до конца)
+	if err := migrator.Down(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		return fmt.Errorf("не удалось откатить миграцию: %v", err)
+	}
+
+	return nil
+}
 
 func main() {
 	fmt.Println(" \n[ GO-MIGRATE ]\n ")
 
 	// Создание мигратора
-	migrator := MustNewMigrator(fs, filepath.Join(path, "migrations"))
+	migrator := MustNewMigrator(fs, migrations)
 
 	// Подключение к БД
 	dsn := "postgres://postgres:admin@localhost:5432/learn?sslmode=disable"
@@ -82,6 +111,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Миграции применены!")
 
-	fmt.Printf("Миграции применены!")
+	// Откат миграций
+	err = migrator.RevertMigrations(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Миграции отменены...")
 }
