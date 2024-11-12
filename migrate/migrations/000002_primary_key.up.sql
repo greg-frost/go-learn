@@ -1,1 +1,2 @@
-ALTER TABLE users ADD PRIMARY KEY (id);
+ALTER TABLE users
+    ADD PRIMARY KEY (id);
