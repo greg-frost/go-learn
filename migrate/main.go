@@ -17,18 +17,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Путь
-var path = base.Dir("migrate")
-
-// Миграции
-var migrations = filepath.Join(path, "migrations")
-
-//go:embed migrations/*.sql
-var fs embed.FS
-
 // Структура "мигратор"
 type Migrator struct {
 	driver source.Driver
+	dir    string
 }
 
 // Обязательное получение нового мигратора
@@ -37,7 +29,10 @@ func MustNewMigrator(files embed.FS, dir string) *Migrator {
 	if err != nil {
 		panic(err)
 	}
-	return &Migrator{driver: d}
+	return &Migrator{
+		driver: d,
+		dir:    "file:///" + dir,
+	}
 }
 
 // Применение миграций
@@ -76,8 +71,7 @@ func (m *Migrator) RevertMigrations(db *sql.DB) error {
 
 	// Получение мигратора (через БД)
 	migrator, err := migrate.NewWithDatabaseInstance(
-		"file:///"+migrations,
-		"postgres", driver,
+		m.dir, "postgres", driver,
 	)
 	if err != nil {
 		return fmt.Errorf("не удалось создать экземпляр мигратора: %v", err)
@@ -93,26 +87,32 @@ func (m *Migrator) RevertMigrations(db *sql.DB) error {
 }
 
 // Миграция на произвольное число шагов (отрицательное, если вниз)
-func MigrateToSteps(dsn string, steps int) error {
+func (m *Migrator) MigrateToSteps(dsn string, steps int) error {
 	// Получение мигратора
-	m, err := migrate.New("file:///"+migrations, dsn)
+	migrator, err := migrate.New(m.dir, dsn)
 	if err != nil {
 		return fmt.Errorf("не удалось создать экземпляр БД: %v", err)
 	}
 
 	// Миграция на число шагов
-	if err := m.Steps(steps); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+	if err := migrator.Steps(steps); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("не удалось совершить миграцию: %v, число шагов: %d", err, steps)
 	}
 
 	return nil
 }
 
+// Путь
+var path = base.Dir("migrate")
+
+//go:embed migrations/*.sql
+var fs embed.FS
+
 func main() {
 	fmt.Println(" \n[ GO-MIGRATE ]\n ")
 
 	// Создание мигратора
-	migrator := MustNewMigrator(fs, migrations)
+	migrator := MustNewMigrator(fs, filepath.Join(path, "migrations"))
 
 	// Подключение к БД
 	dsn := "postgres://postgres:admin@localhost:5432/learn?sslmode=disable"
@@ -137,7 +137,7 @@ func main() {
 	// fmt.Println("Миграции отменены...")
 
 	// Откат последней миграции
-	err = MigrateToSteps(dsn, -1)
+	err = migrator.MigrateToSteps(dsn, -1)
 	if err != nil {
 		log.Fatal(err)
 	}
