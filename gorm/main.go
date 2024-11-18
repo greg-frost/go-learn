@@ -9,21 +9,32 @@ import (
 	"gorm.io/gorm"
 )
 
+// Структура "пользователь"
+type User struct {
+	gorm.Model
+	Name  string
+	Email string
+}
+
 func main() {
 	fmt.Println(" \n[ GORM ]\n ")
+
+	/* Подключение к БД */
+
+	// MySQL
+	dsn := "root@tcp(localhost:3306)/learn?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	// PostgreSQL
 	// dsn := "host=localhost user=postgres password=admin dbname=learn sslmode=disable"
 	// db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	// MySQL
-	dsn := "root@tcp(localhost:3306)/learn?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	_ = db
-
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Соединение установлено!")
+
+	// Создание таблицы пользователей (миграция)
+	db.AutoMigrate(&User{})
+	fmt.Println("Таблица пользователей создана.")
 }
