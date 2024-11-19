@@ -12,8 +12,9 @@ import (
 // Структура "пользователь"
 type User struct {
 	gorm.Model
-	Name  string
-	Email string
+	Name  string `gorm:"size:50"`
+	Email string `gorm:"type:varchar(100);uniqueIndex"`
+	Age   int    `gorm:"default:18"`
 }
 
 func main() {
@@ -34,7 +35,9 @@ func main() {
 	}
 	fmt.Println("Соединение установлено!")
 
-	// Создание таблицы пользователей (миграция)
+	/* Миграции */
+
+	// Таблица пользователей
 	db.AutoMigrate(&User{})
 	fmt.Println("Таблица пользователей создана.")
 }
