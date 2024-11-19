@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	// "gorm.io/driver/postgres"
 	"gorm.io/driver/mysql"
@@ -12,9 +13,18 @@ import (
 // Структура "пользователь"
 type User struct {
 	gorm.Model
-	Name  string `gorm:"size:50"`
-	Email string `gorm:"type:varchar(100);uniqueIndex"`
-	Age   int    `gorm:"default:18"`
+	Name     string    `gorm:"size:50"`
+	Email    string    `gorm:"type:varchar(100);unique"`
+	Age      int32     `gorm:"default:18"`
+	Sessions []Session `gorm:"foreignKey:UserID"`
+}
+
+// Структура "сессия"
+type Session struct {
+	gorm.Model
+	UserID  uint
+	Name    string    `gorm:"size:100;index"`
+	Expires time.Time `gorm:"index:idx_expires_at,sort:desc"`
 }
 
 func main() {
@@ -34,10 +44,13 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Соединение установлено!")
+	fmt.Println()
 
 	/* Миграции */
 
-	// Таблица пользователей
-	db.AutoMigrate(&User{})
+	// Пользователи и их сессии
+	db.AutoMigrate(&User{}, &Session{})
+
 	fmt.Println("Таблица пользователей создана.")
+	fmt.Println("Таблица пользовательских сессий создана.")
 }
