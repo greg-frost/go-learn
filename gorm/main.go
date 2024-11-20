@@ -23,20 +23,18 @@ type User struct {
 type Session struct {
 	gorm.Model
 	UserID  uint
-	Name    string    `gorm:"size:100;index"`
+	Device  string    `gorm:"size:100;index"`
 	Expires time.Time `gorm:"index:idx_expires_at,sort:desc"`
 }
 
 func main() {
 	fmt.Println(" \n[ GORM ]\n ")
 
-	/* Подключение к БД */
-
-	// MySQL
+	// Подключение к MySQL
 	dsn := "root@tcp(localhost:3306)/learn?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	// PostgreSQL
+	// Подключение к PostgreSQL
 	// dsn := "host=localhost user=postgres password=admin dbname=learn sslmode=disable"
 	// db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
@@ -46,11 +44,42 @@ func main() {
 	fmt.Println("Соединение установлено!")
 	fmt.Println()
 
-	/* Миграции */
-
-	// Пользователи и их сессии
+	// Создание таблиц (миграции)
 	db.AutoMigrate(&User{}, &Session{})
+	fmt.Println("Таблица пользователей создана")
+	fmt.Println("Таблица пользовательских сессий создана")
+	fmt.Println()
 
-	fmt.Println("Таблица пользователей создана.")
-	fmt.Println("Таблица пользовательских сессий создана.")
+	// Создание записей
+	user := User{
+		Name: "Greg Frost",
+		Age:  37,
+		Sessions: []Session{
+			{Device: "Gregory's PC", Expires: time.Now().Add(72 * time.Hour)},
+			{Device: "Greg's iPhone", Expires: time.Now().Add(24 * time.Hour)},
+		},
+	}
+	result := db.Create(&user)
+	if result.Error != nil {
+		log.Println(err)
+	}
+	fmt.Println("Новый пользователь добавлен")
+	fmt.Println("Сессии пользователя добавлены")
+	fmt.Println()
+
+	// Удаление записей
+	db.Delete(&user, 1)
+	fmt.Println("Пользователь удален")
+	// fmt.Println()
+
+	// Убаление таблиц
+	// db.Exec("DROP TABLE users")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// db.Exec("DROP TABLE sessions")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println("Таблицы удалены")
 }
