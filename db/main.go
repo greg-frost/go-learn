@@ -380,7 +380,7 @@ func main() {
 	}
 	fmt.Println()
 
-	// Убаление таблиц
+	// Удаление таблиц
 	_, err = db.Exec("DROP TABLE album")
 	if err != nil {
 		log.Fatal(err)
