@@ -50,10 +50,11 @@ func main() {
 	fmt.Println("Таблица пользовательских сессий создана")
 	fmt.Println()
 
-	// Создание записей
+	// Создание пользователя
 	user := User{
-		Name: "Greg Frost",
-		Age:  37,
+		Name:  "Greg Frost",
+		Email: "greg-frost@yandex.ru",
+		Age:   37,
 		Sessions: []Session{
 			{Device: "Gregory's PC", Expires: time.Now().Add(72 * time.Hour)},
 			{Device: "Greg's iPhone", Expires: time.Now().Add(24 * time.Hour)},
@@ -67,17 +68,29 @@ func main() {
 	fmt.Println("Сессии пользователя добавлены")
 	fmt.Println()
 
-	// Удаление записей
-	db.Delete(&user, 1)
+	// Создание нескольких пользователей
+	users := []User{
+		{Name: "Morozov Grigoriy", Email: "iam@nonexist.com", Age: 30},
+		{Name: "Testerov Tester", Email: "fromthe@void.net"},
+	}
+	result = db.Create(&users)
+	if result.Error != nil {
+		log.Println(err)
+	}
+	fmt.Println("Еще несколько пользователей добавлено")
+	fmt.Println()
+
+	// Удаление пользователя
+	db.Delete(&users, 3)
 	fmt.Println("Пользователь удален")
 	// fmt.Println()
 
-	// Убаление таблиц
-	// db.Exec("DROP TABLE users")
+	// Удаление таблиц
+	// db.Exec("TRUNCATE TABLE users")
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-	// db.Exec("DROP TABLE sessions")
+	// db.Exec("TRUNCATE TABLE sessions")
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
