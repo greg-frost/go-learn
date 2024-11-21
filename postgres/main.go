@@ -100,7 +100,7 @@ func main() {
 	}
 	fmt.Println()
 
-	// Убаление таблицы
+	// Удаление таблицы
 	drop, err := db.Query("DROP TABLE users")
 	if err != nil {
 		log.Fatal(err)
