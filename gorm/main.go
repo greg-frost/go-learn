@@ -8,6 +8,7 @@ import (
 	// "gorm.io/driver/postgres"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // Структура "пользователь"
@@ -30,13 +31,18 @@ type Session struct {
 func main() {
 	fmt.Println(" \n[ GORM ]\n ")
 
+	// Конфигурация
+	config := &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	}
+
 	// Подключение к MySQL
 	dsn := "root@tcp(localhost:3306)/learn?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), config)
 
 	// Подключение к PostgreSQL
 	// dsn := "host=localhost user=postgres password=admin dbname=learn sslmode=disable"
-	// db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// db, err := gorm.Open(postgres.Open(dsn), config)
 
 	if err != nil {
 		log.Fatal(err)
@@ -60,12 +66,12 @@ func main() {
 			{Device: "Greg's iPhone", Expires: time.Now().Add(24 * time.Hour)},
 		},
 	}
-	result := db.Create(&user)
-	if result.Error != nil {
-		log.Println(err)
+	if res := db.Create(&user); res.Error != nil {
+		log.Println(res.Error)
+	} else {
+		fmt.Println("Новый пользователь добавлен")
+		fmt.Println("Сессии пользователя добавлены")
 	}
-	fmt.Println("Новый пользователь добавлен")
-	fmt.Println("Сессии пользователя добавлены")
 	fmt.Println()
 
 	// Создание нескольких пользователей
@@ -73,11 +79,11 @@ func main() {
 		{Name: "Morozov Grigoriy", Email: "iam@nonexist.com", Age: 30},
 		{Name: "Testerov Tester", Email: "fromthe@void.net"},
 	}
-	result = db.Create(&users)
-	if result.Error != nil {
-		log.Println(err)
+	if res := db.Create(&users); res.Error != nil {
+		log.Println(res.Error)
+	} else {
+		fmt.Println("Еще несколько пользователей добавлено")
 	}
-	fmt.Println("Еще несколько пользователей добавлено")
 	fmt.Println()
 
 	// Удаление пользователя
@@ -86,11 +92,11 @@ func main() {
 	// fmt.Println()
 
 	// Удаление таблиц
-	// db.Exec("TRUNCATE TABLE users")
+	// db.Exec("DROP TABLE users")
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-	// db.Exec("TRUNCATE TABLE sessions")
+	// db.Exec("DROP TABLE sessions")
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
