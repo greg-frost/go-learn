@@ -56,7 +56,7 @@ func main() {
 	fmt.Println("Таблица пользовательских сессий создана")
 	fmt.Println()
 
-	// Создание пользователя
+	// Создание записи
 	user := User{
 		Name:  "Greg Frost",
 		Email: "greg-frost@yandex.ru",
@@ -74,7 +74,7 @@ func main() {
 	}
 	fmt.Println()
 
-	// Создание нескольких пользователей
+	// Создание нескольких записей
 	users := []User{
 		{Name: "Morozov Grigoriy", Email: "iam@nonexist.com", Age: 30},
 		{Name: "Testerov Tester", Email: "fromthe@void.net"},
@@ -86,13 +86,14 @@ func main() {
 	}
 	fmt.Println()
 
-	// Чтение пользователя
+	// Чтение записи
 	var firstUser User
 	db.First(&firstUser)
 	// db.Take(&firstUser)
-	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d, Sessions: %d\n\n",
-		firstUser.Name, firstUser.Email, firstUser.Age, len(firstUser.Sessions))
+	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\n\n",
+		firstUser.Name, firstUser.Email, firstUser.Age)
 
+	// Чтение всех записей
 	var allUsers []User
 	db.Find(&allUsers)
 	fmt.Println("Все пользователи:")
@@ -102,19 +103,19 @@ func main() {
 	}
 	fmt.Println()
 
-	// Удаление пользователя
+	// Удаление записи
 	db.Delete(&users, 3)
 	fmt.Println("Пользователь удален")
-	// fmt.Println()
+	fmt.Println()
 
 	// Удаление таблиц
-	// db.Exec("DROP TABLE users")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// db.Exec("DROP TABLE sessions")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println("Таблицы удалены")
+	db.Exec("DROP TABLE users")
+	if err != nil {
+		log.Fatal(err)
+	}
+	db.Exec("DROP TABLE sessions")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Таблицы удалены")
 }
