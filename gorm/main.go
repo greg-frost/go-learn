@@ -86,6 +86,22 @@ func main() {
 	}
 	fmt.Println()
 
+	// Чтение пользователя
+	var firstUser User
+	db.First(&firstUser)
+	// db.Take(&firstUser)
+	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d, Sessions: %d\n\n",
+		firstUser.Name, firstUser.Email, firstUser.Age, len(firstUser.Sessions))
+
+	var allUsers []User
+	db.Find(&allUsers)
+	fmt.Println("Все пользователи:")
+	for i := 0; i < len(allUsers); i++ {
+		fmt.Printf("Name: %s, Email: %s, Age: %d\n",
+			allUsers[i].Name, allUsers[i].Email, allUsers[i].Age)
+	}
+	fmt.Println()
+
 	// Удаление пользователя
 	db.Delete(&users, 3)
 	fmt.Println("Пользователь удален")
