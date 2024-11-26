@@ -119,6 +119,26 @@ func main() {
 	fmt.Println("Пользователь удален")
 	fmt.Println()
 
+	// Транзакции
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return
+	}
+
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
+		fmt.Println("Транзакция отменена")
+	} else {
+		tx.Commit()
+		fmt.Println("Транзакция выполнена")
+	}
+	fmt.Println()
+
 	// Удаление таблиц
 	db.Exec("DROP TABLE users")
 	if err != nil {
