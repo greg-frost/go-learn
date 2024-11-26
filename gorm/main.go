@@ -58,9 +58,8 @@ func main() {
 
 	// Создание записи
 	user := User{
-		Name:  "Greg Frost",
-		Email: "greg-frost@yandex.ru",
-		Age:   37,
+		Name: "Gregory Frost",
+		Age:  21,
 		Sessions: []Session{
 			{Device: "Gregory's PC", Expires: time.Now().Add(72 * time.Hour)},
 			{Device: "Greg's iPhone", Expires: time.Now().Add(24 * time.Hour)},
@@ -85,6 +84,18 @@ func main() {
 		fmt.Println("Еще несколько пользователей добавлено")
 	}
 	fmt.Println()
+
+	// Обновление записи
+	user.Email = "greg-frost@yandex.ru"
+	db.Model(&user).Updates(user) // Полностью
+
+	db.Model(&user).Updates(map[string]interface{}{ // Частично
+		"Name": "Greg Frost", "Age": 37,
+	})
+
+	// Обновление нескольких записей
+	db.Model(&User{}).Where("age < 30").
+		Updates(map[string]interface{}{"age": 21})
 
 	// Чтение записи
 	var firstUser User
