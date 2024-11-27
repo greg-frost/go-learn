@@ -99,14 +99,15 @@ func main() {
 
 	// Чтение записи
 	var firstUser User
-	db.First(&firstUser)
-	// db.Take(&firstUser)
+	db.First(&firstUser) // по ключу
+	// db.Take(&firstUser) // произвольно
 	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\n\n",
 		firstUser.Name, firstUser.Email, firstUser.Age)
 
 	// Чтение всех записей
 	var allUsers []User
-	db.Find(&allUsers)
+	db.Find(&allUsers) // только записи
+	// db.Preload("Sessions").Find(&allUsers) // связанные данные
 	fmt.Println("Все пользователи:")
 	for i := 0; i < len(allUsers); i++ {
 		fmt.Printf("Name: %s, Email: %s, Age: %d\n",
