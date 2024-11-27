@@ -115,6 +115,13 @@ func main() {
 	}
 	fmt.Println()
 
+	// Пагинация
+	var pageUsers []User
+	page, size := 2, 1
+	db.Order("age desc").Offset((page - 1) * size).Limit(size).Find(&pageUsers)
+	fmt.Printf("Средний пользователь (по возрасту):\nName: %s, Email: %s, Age: %d\n\n",
+		pageUsers[0].Name, pageUsers[0].Email, pageUsers[0].Age)
+
 	// Удаление записи
 	db.Delete(&users, 3)
 	fmt.Println("Пользователь удален")
