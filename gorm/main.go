@@ -89,6 +89,7 @@ func main() {
 		log.Println(res.Error)
 	} else {
 		fmt.Println("Новый пользователь добавлен")
+		fmt.Println("Профиль пользователя добавлен")
 		fmt.Println("Сессии пользователя добавлены")
 	}
 	fmt.Println()
