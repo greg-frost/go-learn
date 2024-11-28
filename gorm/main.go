@@ -17,7 +17,8 @@ type User struct {
 	Name     string    `gorm:"size:50"`
 	Email    string    `gorm:"type:varchar(100);unique"`
 	Age      int32     `gorm:"default:18"`
-	Sessions []Session `gorm:"foreignKey:UserID"`
+	Profile  Profile   // Has One
+	Sessions []Session // Has Many
 }
 
 // Структура "сессия"
@@ -26,6 +27,13 @@ type Session struct {
 	UserID  uint
 	Device  string    `gorm:"size:100;index"`
 	Expires time.Time `gorm:"index:idx_expires_at,sort:desc"`
+}
+
+// Структура "профиль"
+type Profile struct {
+	gorm.Model
+	UserID  uint
+	Caption string `gorm:"size:100"`
 }
 
 func main() {
@@ -51,20 +59,32 @@ func main() {
 	fmt.Println()
 
 	// Создание таблиц (миграции)
-	db.AutoMigrate(&User{}, &Session{})
+	db.AutoMigrate(&User{}, &Session{}, &Profile{})
 	fmt.Println("Таблица пользователей создана")
+	fmt.Println("Таблица пользовательских профилей создана")
 	fmt.Println("Таблица пользовательских сессий создана")
 	fmt.Println()
 
-	// Создание записи
+	/* Создание */
+
 	user := User{
 		Name: "Gregory Frost",
 		Age:  21,
-		Sessions: []Session{
-			{Device: "Gregory's PC", Expires: time.Now().Add(72 * time.Hour)},
-			{Device: "Greg's iPhone", Expires: time.Now().Add(24 * time.Hour)},
-		},
 	}
+
+	// Связь "Has One"
+	profile := Profile{
+		Caption: "Профиль пользователя",
+	}
+	user.Profile = profile
+
+	// Связь "Has Many"
+	sessions := []Session{
+		{Device: "Gregory's PC", Expires: time.Now().Add(72 * time.Hour)},
+		{Device: "Greg's iPhone", Expires: time.Now().Add(24 * time.Hour)},
+	}
+	user.Sessions = sessions
+
 	if res := db.Create(&user); res.Error != nil {
 		log.Println(res.Error)
 	} else {
@@ -73,7 +93,7 @@ func main() {
 	}
 	fmt.Println()
 
-	// Создание нескольких записей
+	// Несколько
 	users := []User{
 		{Name: "Morozov Grigoriy", Email: "iam@nonexist.com", Age: 30},
 		{Name: "Testerov Tester", Email: "fromthe@void.net"},
@@ -85,29 +105,47 @@ func main() {
 	}
 	fmt.Println()
 
-	// Обновление записи
-	user.Email = "greg-frost@yandex.ru"
-	db.Model(&user).Updates(user) // Полностью
+	/* Обновление */
 
-	db.Model(&user).Updates(map[string]interface{}{ // Частично
+	// Полностью
+	user.Email = "greg-frost@yandex.ru"
+	db.Model(&user).Updates(user)
+
+	// Частично
+	db.Model(&user).Updates(map[string]interface{}{
 		"Name": "Greg Frost", "Age": 37,
 	})
 
-	// Обновление нескольких записей
+	// Несколько
 	db.Model(&User{}).Where("age < 30").
 		Updates(map[string]interface{}{"age": 21})
 
-	// Чтение записи
-	var firstUser User
-	db.First(&firstUser) // Первый по ключу
-	// db.Take(&firstUser) // Первый попавшийся
-	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\n\n",
-		firstUser.Name, firstUser.Email, firstUser.Age)
+	/* Чтение записи */
 
-	// Чтение всех записей
+	var firstUser User
+
+	// Первый по ключу
+	// db.First(&firstUser)
+
+	// Первый попавшийся
+	// db.Take(&firstUser)
+
+	// Связанные данные
+	db.Preload("Profile").First(&firstUser)
+
+	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\nProfile: %s\n\n",
+		firstUser.Name, firstUser.Email, firstUser.Age, firstUser.Profile.Caption)
+
+	/* Чтение всех записей */
+
 	var allUsers []User
-	db.Find(&allUsers) // Только записи
-	// db.Preload("Sessions").Find(&allUsers) // Связанные данные
+
+	// Только записи
+	db.Find(&allUsers)
+
+	// Связанные данные
+	// db.Preload("Sessions").Find(&allUsers)
+
 	fmt.Println("Все пользователи:")
 	for i := 0; i < len(allUsers); i++ {
 		fmt.Printf("Name: %s, Email: %s, Age: %d\n",
@@ -127,7 +165,8 @@ func main() {
 	fmt.Println("Пользователь удален")
 	fmt.Println()
 
-	// Транзакции
+	/* Транзакции */
+
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -149,12 +188,7 @@ func main() {
 
 	// Удаление таблиц
 	db.Exec("DROP TABLE users")
-	if err != nil {
-		log.Fatal(err)
-	}
 	db.Exec("DROP TABLE sessions")
-	if err != nil {
-		log.Fatal(err)
-	}
+	db.Exec("DROP TABLE profiles")
 	fmt.Println("Таблицы удалены")
 }
