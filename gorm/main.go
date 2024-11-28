@@ -99,15 +99,15 @@ func main() {
 
 	// Чтение записи
 	var firstUser User
-	db.First(&firstUser) // по ключу
-	// db.Take(&firstUser) // произвольно
+	db.First(&firstUser) // Первый по ключу
+	// db.Take(&firstUser) // Первый попавшийся
 	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\n\n",
 		firstUser.Name, firstUser.Email, firstUser.Age)
 
 	// Чтение всех записей
 	var allUsers []User
-	db.Find(&allUsers) // только записи
-	// db.Preload("Sessions").Find(&allUsers) // связанные данные
+	db.Find(&allUsers) // Только записи
+	// db.Preload("Sessions").Find(&allUsers) // Связанные данные
 	fmt.Println("Все пользователи:")
 	for i := 0; i < len(allUsers); i++ {
 		fmt.Printf("Name: %s, Email: %s, Age: %d\n",
@@ -117,8 +117,8 @@ func main() {
 
 	// Пагинация
 	var pageUsers []User
-	page, size := 2, 1
-	db.Order("age desc").Offset((page - 1) * size).Limit(size).Find(&pageUsers)
+	page, limit := 2, 1
+	db.Order("age desc").Offset((page - 1) * limit).Limit(limit).Find(&pageUsers)
 	fmt.Printf("Средний пользователь (по возрасту):\nName: %s, Email: %s, Age: %d\n\n",
 		pageUsers[0].Name, pageUsers[0].Email, pageUsers[0].Age)
 
