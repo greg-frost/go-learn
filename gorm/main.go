@@ -36,6 +36,15 @@ type Profile struct {
 	Caption string `gorm:"size:100"`
 }
 
+// Структура "заказ"
+type Order struct {
+	gorm.Model
+	UserID   uint
+	Title    string `gorm:"size:100"`
+	Quantity int8   `gorm:"default:1"`
+	User     User   // Belongs To
+}
+
 func main() {
 	fmt.Println(" \n[ GORM ]\n ")
 
@@ -59,10 +68,11 @@ func main() {
 	fmt.Println()
 
 	// Создание таблиц (миграции)
-	db.AutoMigrate(&User{}, &Session{}, &Profile{})
+	db.AutoMigrate(&User{}, &Session{}, &Profile{}, &Order{})
 	fmt.Println("Таблица пользователей создана")
-	fmt.Println("Таблица пользовательских профилей создана")
 	fmt.Println("Таблица пользовательских сессий создана")
+	fmt.Println("Таблица пользовательских профилей создана")
+	fmt.Println("Таблица пользовательских заказов создана")
 	fmt.Println()
 
 	/* Создание */
@@ -74,7 +84,7 @@ func main() {
 
 	// Связь "Has One"
 	profile := Profile{
-		Caption: "Профиль пользователя",
+		Caption: "Platinum",
 	}
 	user.Profile = profile
 
@@ -85,14 +95,20 @@ func main() {
 	}
 	user.Sessions = sessions
 
+	// Добавление пользователя
 	if res := db.Create(&user); res.Error != nil {
 		log.Println(res.Error)
 	} else {
 		fmt.Println("Новый пользователь добавлен")
-		fmt.Println("Профиль пользователя добавлен")
 		fmt.Println("Сессии пользователя добавлены")
+		fmt.Println("Профиль пользователя добавлен")
+		fmt.Println("Заказ пользователя добавлен")
 	}
 	fmt.Println()
+
+	// Связь "Belongs To"
+	order := Order{Title: "Chosen", UserID: user.ID}
+	db.Create(&order)
 
 	// Несколько
 	users := []User{
@@ -124,6 +140,7 @@ func main() {
 	/* Чтение записи */
 
 	var firstUser User
+	var firstOrder Order
 
 	// Первый по ключу
 	// db.First(&firstUser)
@@ -136,6 +153,12 @@ func main() {
 
 	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\nProfile: %s\n\n",
 		firstUser.Name, firstUser.Email, firstUser.Age, firstUser.Profile.Caption)
+
+	// Заказ
+	db.Preload("User").First(&firstOrder)
+
+	fmt.Printf("Заказ первого пользователя:\nTitle: %s Quantity: %d Name: %s\n\n",
+		firstOrder.Title, firstOrder.Quantity, firstOrder.User.Name)
 
 	/* Чтение всех записей */
 
@@ -191,5 +214,6 @@ func main() {
 	db.Exec("DROP TABLE users")
 	db.Exec("DROP TABLE sessions")
 	db.Exec("DROP TABLE profiles")
+	db.Exec("DROP TABLE orders")
 	fmt.Println("Таблицы удалены")
 }
