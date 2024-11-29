@@ -19,6 +19,7 @@ type User struct {
 	Age      int32     `gorm:"default:18"`
 	Profile  Profile   // Has One
 	Sessions []Session // Has Many
+	Groups   []Group   `gorm:"many2many:user_groups"` // Many To Many
 }
 
 // Структура "сессия"
@@ -45,6 +46,14 @@ type Order struct {
 	User     User   // Belongs To
 }
 
+// Структура "группа"
+type Group struct {
+	gorm.Model
+	Title   string `gorm:"size:100"`
+	IsAdmin bool
+	Users   []User `gorm:"many2many:user_groups"` // Many To Many
+}
+
 func main() {
 	fmt.Println(" \n[ GORM ]\n ")
 
@@ -68,11 +77,12 @@ func main() {
 	fmt.Println()
 
 	// Создание таблиц (миграции)
-	db.AutoMigrate(&User{}, &Session{}, &Profile{}, &Order{})
+	db.AutoMigrate(&User{}, &Session{}, &Profile{}, &Order{}, &Group{})
 	fmt.Println("Таблица пользователей создана")
 	fmt.Println("Таблица пользовательских сессий создана")
 	fmt.Println("Таблица пользовательских профилей создана")
 	fmt.Println("Таблица пользовательских заказов создана")
+	fmt.Println("Таблица пользовательских групп создана")
 	fmt.Println()
 
 	/* Создание */
@@ -103,12 +113,18 @@ func main() {
 		fmt.Println("Сессии пользователя добавлены")
 		fmt.Println("Профиль пользователя добавлен")
 		fmt.Println("Заказ пользователя добавлен")
+		fmt.Println("Группа пользователя добавлена")
 	}
 	fmt.Println()
 
 	// Связь "Belongs To"
 	order := Order{Title: "Chosen", UserID: user.ID}
 	db.Create(&order)
+
+	// Связь "Many To Many"
+	group := Group{Title: "Guests"}
+	db.Create(&group)
+	db.Model(&user).Association("Groups").Append(&group)
 
 	// Несколько
 	users := []User{
@@ -149,10 +165,10 @@ func main() {
 	// db.Take(&firstUser)
 
 	// Связанные данные
-	db.Preload("Profile").First(&firstUser)
+	db.Preload("Profile").Preload("Groups").First(&firstUser)
 
-	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\nProfile: %s\n\n",
-		firstUser.Name, firstUser.Email, firstUser.Age, firstUser.Profile.Caption)
+	fmt.Printf("Первый пользователь:\nName: %s, Email: %s, Age: %d\nProfile: %s Groups: %d\n\n",
+		firstUser.Name, firstUser.Email, firstUser.Age, firstUser.Profile.Caption, len(firstUser.Groups))
 
 	// Заказ
 	db.Preload("User").First(&firstOrder)
@@ -215,5 +231,7 @@ func main() {
 	db.Exec("DROP TABLE sessions")
 	db.Exec("DROP TABLE profiles")
 	db.Exec("DROP TABLE orders")
+	db.Exec("DROP TABLE groups")
+	db.Exec("DROP TABLE user_groups")
 	fmt.Println("Таблицы удалены")
 }
