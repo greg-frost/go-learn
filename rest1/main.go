@@ -73,7 +73,7 @@ func processAlbums(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println(" \n[ REST ]\n ")
+	fmt.Println(" \n[ REST 1 (GO DOC) ]\n ")
 
 	// Обработчик
 	http.HandleFunc("/albums/", processAlbums)
