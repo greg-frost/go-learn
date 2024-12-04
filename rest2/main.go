@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	fmt.Println(" \n[ REST 2 (HABR) ]\n ")
+	fmt.Println(" \n[ REST 2 (TPROGER) ]\n ")
 }
