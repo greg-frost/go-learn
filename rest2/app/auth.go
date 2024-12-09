@@ -1,7 +1,8 @@
 package app
 
 import (
-	"fmt"
+	"context"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -28,7 +29,7 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 		tokenHeader := r.Header.Get("Authorization")
 
 		if tokenHeader == "" {
-			response = u.Message(false, "Missing auth token")
+			response = u.Message(false, "Missing header token")
 			w.WriteHeader(http.StatusForbidden)
 			u.Respond(w, response)
 			return
@@ -36,7 +37,7 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 
 		tokenParts := strings.Split(tokenHeader, " ")
 		if len(tokenParts) != 2 {
-			response = u.Message(false, "Invalid or malformed auth token")
+			response = u.Message(false, "Invalid or malformed header token")
 			w.WriteHeader(http.StatusForbidden)
 			u.Respond(w, response)
 			return
@@ -48,7 +49,23 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 		token, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("token_password")), nil
 		})
+		if err != nil {
+			response = u.Message(false, "Malformed jwt-token")
+			w.WriteHeader(http.StatusForbidden)
+			u.Respond(w, response)
+			return
+		}
 
-		fmt.Println(token, err)
+		if !token.Valid {
+			response = u.Message(false, "Invalid jwt-token")
+			w.WriteHeader(http.StatusForbidden)
+			u.Respond(w, response)
+			return
+		}
+
+		log.Println("UserID:", tk.UserID)
+		ctx := context.WithValue(r.Context(), "user", tk.UserID)
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
 	})
 }
