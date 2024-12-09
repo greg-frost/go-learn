@@ -16,6 +16,8 @@ import (
 // JWT-аутентификация
 var jwtAuthentication = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		// Пропуск некоторых эндпоинтов
 		skipAuth := []string{"/api/user/new", "/api/user/login"}
 		requestPath := r.URL.Path
 		for _, path := range skipAuth {
@@ -25,9 +27,11 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 			}
 		}
 
+		// Запрос и заголовок токена
 		response := make(map[string]interface{})
 		tokenHeader := r.Header.Get("Authorization")
 
+		// Пустой заголовок токена
 		if tokenHeader == "" {
 			response = u.Message(false, "Missing header token")
 			w.WriteHeader(http.StatusForbidden)
@@ -35,6 +39,7 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 			return
 		}
 
+		// Получение нужной части заголовка токена
 		tokenParts := strings.Split(tokenHeader, " ")
 		if len(tokenParts) != 2 {
 			response = u.Message(false, "Invalid or malformed header token")
@@ -43,9 +48,11 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 			return
 		}
 
+		// Структура токена
 		tokenPart := tokenParts[1]
 		tk := &models.Token{}
 
+		// Парсинг JWT-токена
 		token, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("token_password")), nil
 		})
@@ -56,6 +63,7 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 			return
 		}
 
+		// Неправильный токен
 		if !token.Valid {
 			response = u.Message(false, "Invalid jwt-token")
 			w.WriteHeader(http.StatusForbidden)
@@ -63,6 +71,7 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 			return
 		}
 
+		// Логирование, оборачивание контекста и пропуск далее
 		log.Println("UserID:", tk.UserID)
 		ctx := context.WithValue(r.Context(), "user", tk.UserID)
 		r = r.WithContext(ctx)
