@@ -16,7 +16,6 @@ import (
 // JWT-аутентификация
 var jwtAuthentication = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		// Пропуск некоторых эндпоинтов
 		skipAuth := []string{"/api/user/new", "/api/user/login"}
 		requestPath := r.URL.Path
@@ -72,7 +71,7 @@ var jwtAuthentication = func(next http.Handler) http.Handler {
 		}
 
 		// Логирование, оборачивание контекста и пропуск далее
-		log.Println("UserID:", tk.UserID)
+		log.Println("Auth (UserID):", tk.UserID)
 		ctx := context.WithValue(r.Context(), "user", tk.UserID)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
