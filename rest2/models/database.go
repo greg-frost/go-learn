@@ -11,7 +11,7 @@ import (
 )
 
 // Дескриптор БД
-var db = *gorm.DB
+var db *gorm.DB
 
 func init() {
 	// Загрузка переменных окружения

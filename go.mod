@@ -17,6 +17,8 @@ require (
 	github.com/graphql-go/graphql v0.8.1
 	github.com/graphql-go/handler v0.2.4
 	github.com/jessevdk/go-flags v1.5.0
+	github.com/jinzhu/gorm v1.9.16
+	github.com/joho/godotenv v1.5.1
 	github.com/kylelemons/go-gypsy v1.0.0
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.22.1

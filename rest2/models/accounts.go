@@ -2,7 +2,7 @@ package models
 
 import (
 	jwt "github.com/dgrijalva/jwt-go"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // Структура "токен"
@@ -16,7 +16,7 @@ type Account struct {
 	gorm.Model
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	Token    string `json:"token";sql:"-"`
+	Token    string `json:"token" sql:"-"`
 }
 
 // Структура "контакт"
