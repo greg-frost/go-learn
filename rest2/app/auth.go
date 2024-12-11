@@ -14,7 +14,7 @@ import (
 )
 
 // JWT-аутентификация
-var jwtAuthentication = func(next http.Handler) http.Handler {
+var JwtAuthentication = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Пропуск некоторых эндпоинтов
 		skipAuth := []string{"/api/user/new", "/api/user/login"}
