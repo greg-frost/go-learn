@@ -32,7 +32,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 		// Пустой заголовок токена
 		if tokenHeader == "" {
-			response = u.Message(false, "Missing header token")
+			response = u.Message(false, "Отсутствует заголовок-токен")
 			w.WriteHeader(http.StatusForbidden)
 			u.Respond(w, response)
 			return
@@ -41,7 +41,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 		// Получение нужной части заголовка токена
 		tokenParts := strings.Split(tokenHeader, " ")
 		if len(tokenParts) != 2 {
-			response = u.Message(false, "Invalid or malformed header token")
+			response = u.Message(false, "Неправильный или поврежденный заголовок-токен")
 			w.WriteHeader(http.StatusForbidden)
 			u.Respond(w, response)
 			return
@@ -56,7 +56,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 			return []byte(os.Getenv("token_password")), nil
 		})
 		if err != nil {
-			response = u.Message(false, "Malformed jwt-token")
+			response = u.Message(false, "Поврежденный jwt-токен")
 			w.WriteHeader(http.StatusForbidden)
 			u.Respond(w, response)
 			return
@@ -64,14 +64,14 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 		// Неправильный токен
 		if !token.Valid {
-			response = u.Message(false, "Invalid jwt-token")
+			response = u.Message(false, "Неправильный jwt-токен")
 			w.WriteHeader(http.StatusForbidden)
 			u.Respond(w, response)
 			return
 		}
 
 		// Логирование, оборачивание контекста и пропуск далее
-		log.Println("Auth (UserID):", tk.UserID)
+		log.Println("Аутентификация (UserID):", tk.UserID)
 		ctx := context.WithValue(r.Context(), "user", tk.UserID)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)

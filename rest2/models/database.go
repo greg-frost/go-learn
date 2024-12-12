@@ -41,6 +41,6 @@ func init() {
 }
 
 // Получение дескриптора БД
-func GetDB() *gorm.DB {
+func DB() *gorm.DB {
 	return db
 }
