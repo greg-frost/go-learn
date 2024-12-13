@@ -44,7 +44,7 @@ func (a *Account) Validate() (map[string]interface{}, bool) {
 		return u.Message(false, "Email-адрес уже занят"), false
 	}
 
-	return u.Message(true, "Валидация успешно выполнена"), true
+	return u.Message(true, "Валидация пройдена"), true
 }
 
 // Создание аккаунта
@@ -67,8 +67,35 @@ func (a *Account) Create() map[string]interface{} {
 	a.Token = tokenString
 	a.Password = ""
 
-	resp := u.Message(true, "Аккаунт успешно создан")
+	resp := u.Message(true, "Аккаунт создан")
 	resp["account"] = a
+	return resp
+}
+
+// Вход в аккаунт
+func Login(email, password string) map[string]interface{} {
+	account := &Account{}
+	err := DB().Table("accounts").Where("email=?", email).First(account).Error
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return u.Message(false, "Email-адрес не найден")
+		}
+		return u.Message(false, "Ошибка обращения к БД")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(password))
+	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+		return u.Message(false, "Неправильные email или пароль")
+	}
+	account.Password = ""
+
+	tk := &Token{UserID: account.ID}
+	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
+	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
+	account.Token = tokenString
+
+	resp := u.Message(true, "Вход выполнен")
+	resp["account"] = account
 	return resp
 }
 
