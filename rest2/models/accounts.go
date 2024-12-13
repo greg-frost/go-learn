@@ -1,12 +1,14 @@
 package models
 
 import (
+	"os"
 	"strings"
 
 	u "go-learn/rest2/utils"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Структура "токен"
@@ -42,7 +44,32 @@ func (a *Account) Validate() (map[string]interface{}, bool) {
 		return u.Message(false, "Email-адрес уже занят"), false
 	}
 
-	return u.Message(true, "OK"), true
+	return u.Message(true, "Валидация успешно выполнена"), true
+}
+
+// Создание аккаунта
+func (a *Account) Create() map[string]interface{} {
+	if resp, ok := a.Validate(); !ok {
+		return resp
+	}
+
+	passwordHash, _ := bcrypt.GenerateFromPassword([]byte(a.Password), bcrypt.DefaultCost)
+	a.Password = string(passwordHash)
+
+	DB().Create(a)
+	if a.ID <= 0 {
+		return u.Message(false, "Не удалось создать аккаунт")
+	}
+
+	tk := &Token{UserID: a.ID}
+	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
+	tokenString, _ := token.SignedString([]byte(os.Getenv("token_password")))
+	a.Token = tokenString
+	a.Password = ""
+
+	resp := u.Message(true, "Аккаунт успешно создан")
+	resp["account"] = a
+	return resp
 }
 
 // Получение пользователя
