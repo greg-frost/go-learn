@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"time"
 )
 
 // Сумма
@@ -170,6 +171,31 @@ func area(f figures) (func(float64) float64, bool) {
 	}
 }
 
+// Замыкание для подсчета количества вызовов
+func countCall(f func(string)) func(string) {
+	var count int
+	return func(s string) {
+		count++
+		fmt.Println("Кол-во вызовов:", count)
+		f(s)
+	}
+}
+
+// Замыкание для подсчета времени выполнения
+func metricCall(f func(string)) func(string) {
+	return func(s string) {
+		start := time.Now()
+		f(s)
+		fmt.Println("Время выполнения:", time.Now().Sub(start))
+	}
+}
+
+// Простая функция печати
+func myPrinter(s string) {
+	time.Sleep(10 * time.Millisecond)
+	fmt.Println(s)
+}
+
 // Отложенная функция
 func deferrer(d int, dp *int) {
 	fmt.Println("Отложенная функция:", d, *dp)
@@ -310,6 +336,22 @@ func main() {
 	myArea := ar(myX)
 	fmt.Printf("Фигура: %d, площадь: %2.2f\n\n", myFigure, myArea)
 
+	/* Отслеживание количества вызовов и времени выполнения */
+
+	fmt.Println("Количество вызовов функции:")
+
+	countedPrint := countCall(myPrinter)
+	countedPrint("Hello")
+	countedPrint("World")
+	fmt.Println()
+
+	fmt.Println("Время выполнения функции:")
+
+	metricPrint := metricCall(countedPrint)
+	metricPrint("Привет")
+	metricPrint("Мир")
+	fmt.Println()
+
 	/* Отложенные функции */
 
 	df := 10
@@ -318,4 +360,5 @@ func main() {
 
 	fmt.Println(intuitive())
 	fmt.Println(unintuitive())
+
 }
