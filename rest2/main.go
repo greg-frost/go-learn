@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"go-learn/rest2/app"
+	"go-learn/rest2/controllers"
 
 	"github.com/gorilla/mux"
 )
@@ -18,6 +19,12 @@ func main() {
 
 	// Аутентификация
 	router.Use(app.JwtAuthentication)
+
+	// Обработчики
+	router.HandleFunc("/api/user/new",
+		controllers.CreateAccount).Methods("POST")
+	router.HandleFunc("/api/user/login",
+		controllers.Authenticate).Methods("POST")
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
