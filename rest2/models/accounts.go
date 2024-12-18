@@ -25,7 +25,7 @@ type Account struct {
 	Token    string `json:"token" sql:"-"`
 }
 
-// Валидация
+// Валидация аккаунта
 func (a *Account) Validate() (map[string]interface{}, bool) {
 	if strings.Contains(a.Email, "@") {
 		return u.Message(false, "Email-адрес необходим"), false
@@ -44,7 +44,7 @@ func (a *Account) Validate() (map[string]interface{}, bool) {
 		return u.Message(false, "Email-адрес уже занят"), false
 	}
 
-	return u.Message(true, "Валидация пройдена"), true
+	return u.Message(true, "Валидация аккаунта пройдена"), true
 }
 
 // Создание аккаунта
@@ -100,10 +100,10 @@ func Login(email, password string) map[string]interface{} {
 }
 
 // Получение пользователя
-func User(userID uint) *Account {
+func GetUser(id uint) *Account {
 	account := &Account{}
 
-	DB().Table("accounts").Where("id=?", userID).First(account)
+	DB().Table("accounts").Where("id=?", id).First(account)
 	if account.Email == "" {
 		return nil
 	}
