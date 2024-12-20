@@ -102,7 +102,6 @@ func Login(email, password string) map[string]interface{} {
 // Получение пользователя
 func GetUser(id uint) *Account {
 	account := &Account{}
-
 	DB().Table("accounts").Where("id=?", id).First(account)
 	if account.Email == "" {
 		return nil

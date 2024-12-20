@@ -25,7 +25,7 @@ func (c *Contact) Validate() (map[string]interface{}, bool) {
 		return u.Message(false, "Телефон контакта необходим"), false
 	}
 
-	if c.UserID < 0 {
+	if c.UserID <= 0 {
 		return u.Message(false, "Пользователь не распознан"), false
 	}
 
@@ -48,7 +48,6 @@ func (c *Contact) Create() map[string]interface{} {
 // Получение контакта
 func GetContact(id uint) *Contact {
 	contact := &Contact{}
-
 	err := DB().Table("contacts").Where("id=?", id).First(contact).Error
 	if err != nil {
 		log.Println(err)
@@ -61,7 +60,6 @@ func GetContact(id uint) *Contact {
 // Получение контактов
 func GetContacts(user uint) []*Contact {
 	contacts := make([]*Contact, 0)
-
 	err := DB().Table("contacts").Where("user_id=?", user).Find(&contacts).Error
 	if err != nil {
 		log.Println(err)
