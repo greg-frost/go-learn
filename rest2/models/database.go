@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+
+	"go-learn/base"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -15,7 +18,9 @@ var db *gorm.DB
 
 func init() {
 	// Загрузка переменных окружения
-	err := godotenv.Load()
+	path := base.Dir("rest2")
+	env := filepath.Join(path, ".env")
+	err := godotenv.Load(env)
 	if err != nil {
 		log.Fatal(err)
 	}
