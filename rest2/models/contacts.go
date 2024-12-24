@@ -46,16 +46,16 @@ func (c *Contact) Create() map[string]interface{} {
 }
 
 // Получение контакта
-func GetContact(id uint) *Contact {
-	contact := &Contact{}
-	err := DB().Table("contacts").Where("id=?", id).First(contact).Error
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
+// func GetContact(id uint) *Contact {
+// 	contact := &Contact{}
+// 	err := DB().Table("contacts").Where("id=?", id).First(contact).Error
+// 	if err != nil {
+// 		log.Println(err)
+// 		return nil
+// 	}
 
-	return contact
-}
+// 	return contact
+// }
 
 // Получение контактов
 func GetContacts(user uint) []*Contact {
