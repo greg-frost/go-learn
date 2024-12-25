@@ -71,7 +71,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 		}
 
 		// Логирование, оборачивание контекста и пропуск далее
-		log.Println("Аутентификация (UserID):", tk.UserID)
+		log.Println("Auth UserID:", tk.UserID)
 		ctx := context.WithValue(r.Context(), "user", tk.UserID)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)

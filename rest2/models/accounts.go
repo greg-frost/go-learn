@@ -27,7 +27,7 @@ type Account struct {
 
 // Валидация аккаунта
 func (a *Account) Validate() (map[string]interface{}, bool) {
-	if strings.Contains(a.Email, "@") {
+	if !strings.Contains(a.Email, "@") {
 		return u.Message(false, "Email-адрес необходим"), false
 	}
 
