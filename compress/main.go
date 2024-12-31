@@ -1,9 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"compress/gzip"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -34,7 +35,8 @@ func main() {
 	srcSize := srcInfo.Size()
 
 	// Чтение исходного файл
-	srcBody, err := io.ReadAll(srcFile)
+	r := bufio.NewReader(srcFile)
+	srcBody, err := ioutil.ReadAll(r)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,8 +62,10 @@ func main() {
 	dstSize := dstInfo.Size()
 
 	// Вывод статистики
-	fmt.Printf("Исходный размер: %d байт\n", srcSize)
-	fmt.Printf("Сжатый размер: %d байт\n", dstSize)
+	fmt.Printf("Исходный размер: %2.1f Кб\n",
+		float64(srcSize)/1000)
+	fmt.Printf("Сжатый размер: %2.1f Кб\n",
+		float64(dstSize)/1000)
 	fmt.Printf("Степень сжатия: %2.2f%%\n",
 		float64(dstSize)/float64(srcSize)*100)
 }
