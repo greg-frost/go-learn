@@ -1,10 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"compress/gzip"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -35,8 +34,7 @@ func main() {
 	srcSize := srcInfo.Size()
 
 	// Чтение исходного файл
-	r := bufio.NewReader(srcFile)
-	srcBody, err := ioutil.ReadAll(r)
+	srcBody, err := io.ReadAll(srcFile)
 	if err != nil {
 		log.Fatal(err)
 	}
