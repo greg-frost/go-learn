@@ -7,8 +7,13 @@ import (
 	"time"
 )
 
-// Структура "промис"
-type Promise struct {
+// Интерфейс "в будущем"
+type Future interface {
+	Result() (string, error)
+}
+
+// Структура "в будущем"
+type InnerFuture struct {
 	once sync.Once
 	wg   sync.WaitGroup
 
@@ -19,7 +24,7 @@ type Promise struct {
 }
 
 // Результат промиса
-func (p *Promise) Result() (string, error) {
+func (p *InnerFuture) Result() (string, error) {
 	p.once.Do(func() {
 		p.wg.Add(1)
 		defer p.wg.Done()
@@ -34,7 +39,7 @@ func (p *Promise) Result() (string, error) {
 }
 
 // В будущем
-func Future(ctx context.Context, delay time.Duration) *Promise {
+func Promise(ctx context.Context, delay time.Duration) Future {
 	chRes := make(chan string)
 	chErr := make(chan error)
 
@@ -49,7 +54,7 @@ func Future(ctx context.Context, delay time.Duration) *Promise {
 		}
 	}()
 
-	return &Promise{chRes: chRes, chErr: chErr}
+	return &InnerFuture{chRes: chRes, chErr: chErr}
 }
 
 func main() {
@@ -57,7 +62,7 @@ func main() {
 
 	// Настройка
 	ctx := context.Background()
-	future := Future(ctx, 3*time.Second)
+	future := Promise(ctx, 3*time.Second)
 
 	// Работа
 
