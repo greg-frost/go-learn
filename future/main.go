@@ -23,7 +23,7 @@ type InnerFuture struct {
 	chErr <-chan error
 }
 
-// Результат промиса
+// Результат "в будущем"
 func (p *InnerFuture) Result() (string, error) {
 	p.once.Do(func() {
 		p.wg.Add(1)
@@ -38,7 +38,7 @@ func (p *InnerFuture) Result() (string, error) {
 	return p.res, p.err
 }
 
-// В будущем
+// Вызов функции "в будущем" (промис)
 func Promise(ctx context.Context, delay time.Duration) Future {
 	chRes := make(chan string)
 	chErr := make(chan error)
