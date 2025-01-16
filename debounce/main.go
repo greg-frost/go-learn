@@ -22,7 +22,7 @@ func Counter() Worker {
 
 // Антидребезг (первый запрос)
 func DebounceFirst(worker Worker, d time.Duration) Worker {
-	var treshold time.Time
+	var threshold time.Time
 	var res string
 	var err error
 	var m sync.Mutex
@@ -32,12 +32,12 @@ func DebounceFirst(worker Worker, d time.Duration) Worker {
 
 		// Увеличение периода
 		defer func() {
-			treshold = time.Now().Add(d)
+			threshold = time.Now().Add(d)
 			m.Unlock()
 		}()
 
 		// Если запрос попадает в период
-		if time.Now().Before(treshold) {
+		if time.Now().Before(threshold) {
 			return res, err
 		}
 
@@ -50,7 +50,7 @@ func DebounceFirst(worker Worker, d time.Duration) Worker {
 
 // Антидребезг (последний запрос)
 func DebounceLast(worker Worker, period time.Duration) Worker {
-	var treshold time.Time = time.Now()
+	var threshold time.Time = time.Now()
 	var ticker *time.Ticker
 	var res string
 	var err error
@@ -62,7 +62,7 @@ func DebounceLast(worker Worker, period time.Duration) Worker {
 		defer m.Unlock()
 
 		// Увеличение периода
-		treshold = time.Now().Add(period)
+		threshold = time.Now().Add(period)
 
 		once.Do(func() {
 			// Запуск таймера
@@ -83,7 +83,7 @@ func DebounceLast(worker Worker, period time.Duration) Worker {
 					// Получение последнего вызова
 					case <-ticker.C:
 						m.Lock()
-						if time.Now().After(treshold) {
+						if time.Now().After(threshold) {
 							res, err = worker(ctx)
 							m.Unlock()
 							return
