@@ -12,9 +12,9 @@ import (
 type Worker func(context.Context) (string, error)
 
 // Нестабильная функция
-func Unstable(treshold int) Worker {
+func Unstable(threshold int) Worker {
 	return func(context.Context) (string, error) {
-		if chance := rand.Intn(100); chance >= treshold {
+		if chance := rand.Intn(100); chance >= threshold {
 			return "OK", nil
 		}
 		return "", errors.New("Не работает")
