@@ -13,9 +13,9 @@ import (
 type Worker func(context.Context) (string, error)
 
 // Нестабильная функция
-func Unstable(treshold int) Worker {
+func Unstable(threshold int) Worker {
 	return func(context.Context) (string, error) {
-		if chance := rand.Intn(100); chance >= treshold {
+		if chance := rand.Intn(100); chance >= threshold {
 			return "OK", nil
 		}
 		return "", errors.New("Не работает")
@@ -23,7 +23,7 @@ func Unstable(treshold int) Worker {
 }
 
 // Размыкатель цепи
-func Breaker(worker Worker, treshold uint) Worker {
+func Breaker(worker Worker, threshold uint) Worker {
 	var failures int = 0
 	var lastAttempt = time.Now()
 	var m sync.RWMutex
@@ -32,7 +32,7 @@ func Breaker(worker Worker, treshold uint) Worker {
 		m.RLock()
 
 		// Число оставшихся попыток
-		f := failures - int(treshold)
+		f := failures - int(threshold)
 
 		// Сервис недоступен
 
