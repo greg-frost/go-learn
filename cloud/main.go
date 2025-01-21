@@ -76,6 +76,18 @@ func keyValueGetHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(value))
 }
 
+// Обработчик удаления значения
+func keyValueDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["key"]
+
+	err := Delete(key)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
 	fmt.Println(" \n[ GO CLOUD ]\n ")
 
@@ -85,6 +97,7 @@ func main() {
 	// Обработчики
 	r.HandleFunc("/v1/{key}", keyValuePutHandler).Methods("PUT")
 	r.HandleFunc("/v1/{key}", keyValueGetHandler).Methods("GET")
+	r.HandleFunc("/v1/{key}", keyValueDeleteHandler).Methods("DELETE")
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
