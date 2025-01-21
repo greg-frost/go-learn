@@ -44,23 +44,36 @@ func keyValuePutHandler(w http.ResponseWriter, r *http.Request) {
 
 	value, err := io.ReadAll(r.Body)
 	defer r.Body.Close()
-
 	if err != nil {
-		http.Error(w,
-			err.Error(),
-			http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = Put(key, string(value))
 	if err != nil {
-		http.Error(w,
-			err.Error(),
-			http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+// Обработчик получения значения
+func keyValueGetHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["key"]
+
+	value, err := Get(key)
+	if errors.Is(err, ErrKeyNotFound) {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte(value))
 }
 
 func main() {
@@ -71,6 +84,7 @@ func main() {
 
 	// Обработчики
 	r.HandleFunc("/v1/{key}", keyValuePutHandler).Methods("PUT")
+	r.HandleFunc("/v1/{key}", keyValueGetHandler).Methods("GET")
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
