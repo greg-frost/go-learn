@@ -6,34 +6,50 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/mux"
 )
 
 // Хранилище пар ключ/значение
-var store = make(map[string]string)
+var store = struct {
+	sync.RWMutex
+	m map[string]string
+}{m: make(map[string]string)}
 
 // Ошибка поиска ключа
 var ErrKeyNotFound = errors.New("ключ не найден")
 
 // Добавление значения по ключу
 func Put(key, value string) error {
-	store[key] = value
+	store.Lock()
+	defer store.Unlock()
+
+	store.m[key] = value
+
 	return nil
 }
 
 // Получение значения по ключу
 func Get(key string) (string, error) {
-	value, ok := store[key]
+	store.RLock()
+	defer store.RUnlock()
+
+	value, ok := store.m[key]
 	if !ok {
 		return "", ErrKeyNotFound
 	}
+
 	return value, nil
 }
 
 // Удаление значения по ключу
 func Delete(key string) error {
-	delete(store, key)
+	store.Lock()
+	defer store.Unlock()
+
+	delete(store.m, key)
+
 	return nil
 }
 
