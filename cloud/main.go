@@ -53,6 +53,26 @@ func Delete(key string) error {
 	return nil
 }
 
+// Интерфейс "регистратор транзакций"
+type TransactionLogger interface {
+	WritePut(key, value string)
+	WriteDelete(key string)
+}
+
+// Структура "регистратор транзакций в файл"
+type FileTransactionLogger struct {
+}
+
+// Запись транзакции добавления
+func (l *FileTransactionLogger) WritePut(key, value string) {
+
+}
+
+// Запись транзакции удаления
+func (l *FileTransactionLogger) WriteDelete(key string) {
+
+}
+
 // Обработчик добавления значения
 func handlePut(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
