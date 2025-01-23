@@ -54,7 +54,7 @@ func Delete(key string) error {
 }
 
 // Обработчик добавления значения
-func keyValuePutHandler(w http.ResponseWriter, r *http.Request) {
+func handlePut(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 
@@ -75,7 +75,7 @@ func keyValuePutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Обработчик получения значения
-func keyValueGetHandler(w http.ResponseWriter, r *http.Request) {
+func handleGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 
@@ -93,7 +93,7 @@ func keyValueGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Обработчик удаления значения
-func keyValueDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func handleDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 
@@ -111,9 +111,9 @@ func main() {
 	r := mux.NewRouter()
 
 	// Обработчики
-	r.HandleFunc("/v1/{key}", keyValuePutHandler).Methods("PUT")
-	r.HandleFunc("/v1/{key}", keyValueGetHandler).Methods("GET")
-	r.HandleFunc("/v1/{key}", keyValueDeleteHandler).Methods("DELETE")
+	r.HandleFunc("/v1/{key}", handlePut).Methods("PUT")
+	r.HandleFunc("/v1/{key}", handleGet).Methods("GET")
+	r.HandleFunc("/v1/{key}", handleDelete).Methods("DELETE")
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
