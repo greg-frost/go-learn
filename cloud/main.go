@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/gorilla/mux"
@@ -79,16 +80,35 @@ type TransactionLogger interface {
 
 // Структура "регистратор транзакций в файл"
 type FileTransactionLogger struct {
+	events       chan<- Event
+	errors       <-chan error
+	lastSequence uint64
+	file         *os.File
 }
 
 // Запись транзакции добавления
 func (l *FileTransactionLogger) WritePut(key, value string) {
-
+	l.events <- Event{EventType: EventPut, Key: key, Value: value}
 }
 
 // Запись транзакции удаления
 func (l *FileTransactionLogger) WriteDelete(key string) {
+	l.events <- Event{EventType: EventDelete, Key: key}
+}
 
+// Получение канала ошибок
+func (l *FileTransactionLogger) Err() <-chan error {
+	return l.errors
+}
+
+// Конструктор регистратора транзакций
+func NewFileTransactionLogger(filename string) (TransactionLogger, error) {
+	file, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0755)
+	if err != nil {
+		return nil, fmt.Errorf("не удалось открыть файл регистратора транзакций: %w", err)
+	}
+
+	return &FileTransactionLogger{file: file}, nil
 }
 
 // Обработчик добавления значения
