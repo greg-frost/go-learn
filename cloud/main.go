@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io"
@@ -101,8 +102,11 @@ func (l *FileTransactionLogger) Err() <-chan error {
 	return l.errors
 }
 
-// Размер буфера событий
-const EventsCapacity = 16
+// Параметры событий
+const (
+	EventsCapacity   = 16               // Размер буфера
+	EventsFileFormat = "%d\t%d\t%s\t%s" // Формат файла
+)
 
 // Запуск регистратора
 func (l *FileTransactionLogger) Run() {
@@ -116,7 +120,7 @@ func (l *FileTransactionLogger) Run() {
 		for e := range events {
 			l.lastSequence++
 
-			_, err := fmt.Fprintf(l.file, "%d\t%d\t%s\t%s\n",
+			_, err := fmt.Fprintf(l.file, EventsFileFormat+"\n",
 				l.lastSequence, e.EventType, e.Key, e.Value)
 			if err != nil {
 				errors <- err
@@ -124,6 +128,45 @@ func (l *FileTransactionLogger) Run() {
 			}
 		}
 	}()
+}
+
+// Чтение событий из регистратора
+func (l *FileTransactionLogger) ReadEvents() (<-chan Event, <-chan error) {
+	scanner := bufio.NewScanner(l.file)
+	events := make(chan Event)
+	errors := make(chan error, 1)
+
+	go func() {
+		var e Event
+		defer close(events)
+		defer close(errors)
+
+		for scanner.Scan() {
+			line := scanner.Text()
+
+			_, err := fmt.Sscanf(line, EventsFileFormat,
+				&e.Sequence, &e.EventType, &e.Key, &e.Value)
+			if err != nil {
+				errors <- fmt.Errorf("ошибка парсинга файла: %w", err)
+				return
+			}
+
+			if l.lastSequence >= e.Sequence {
+				errors <- fmt.Errorf("последовательность транзакций нарушена")
+				return
+			}
+			l.lastSequence = e.Sequence
+
+			events <- e
+		}
+
+		if err := scanner.Err(); err != nil {
+			errors <- fmt.Errorf("ошибка сканирования файла: %w", err)
+			return
+		}
+	}()
+
+	return events, errors
 }
 
 // Конструктор регистратора
