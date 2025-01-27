@@ -77,6 +77,10 @@ const (
 type TransactionLogger interface {
 	WritePut(key, value string)
 	WriteDelete(key string)
+	Err() <-chan error
+
+	Run()
+	Read() (<-chan Event, <-chan error)
 }
 
 // Структура "регистратор транзакций в файл"
@@ -130,8 +134,8 @@ func (l *FileTransactionLogger) Run() {
 	}()
 }
 
-// Чтение событий из регистратора
-func (l *FileTransactionLogger) ReadEvents() (<-chan Event, <-chan error) {
+// Чтение регистратора
+func (l *FileTransactionLogger) Read() (<-chan Event, <-chan error) {
 	scanner := bufio.NewScanner(l.file)
 	events := make(chan Event)
 	errors := make(chan error, 1)
