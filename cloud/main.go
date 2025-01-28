@@ -153,7 +153,7 @@ func (l *FileTransactionLogger) Read() (<-chan Event, <-chan error) {
 
 			_, err := fmt.Sscanf(line, EventsFileFormat,
 				&e.Sequence, &e.EventType, &e.Key, &e.Value)
-			if err != nil {
+			if err != nil && err != io.EOF {
 				errors <- fmt.Errorf("ошибка парсинга файла: %w", err)
 				return
 			}
@@ -240,6 +240,8 @@ func handlePut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+
+	logger.WritePut(key, string(value))
 }
 
 // Обработчик получения значения
@@ -270,10 +272,18 @@ func handleDelete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	logger.WriteDelete(key)
 }
 
 func main() {
 	fmt.Println(" \n[ GO CLOUD ]\n ")
+
+	// Регистрация транзакций
+	err := initializeTransactionLog()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Новый роутер
 	r := mux.NewRouter()
