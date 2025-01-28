@@ -8,7 +8,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
+
+	"go-learn/base"
 
 	"github.com/gorilla/mux"
 )
@@ -181,6 +184,41 @@ func NewFileTransactionLogger(filename string) (TransactionLogger, error) {
 	}
 
 	return &FileTransactionLogger{file: file}, nil
+}
+
+// Регистратор транзакций
+var logger TransactionLogger
+
+// Инициализация регистрации транзакций
+func initializeTransactionLog() error {
+	path := base.Dir("cloud")
+	filename := filepath.Join(path, "transaction.log")
+	var err error
+
+	logger, err = NewFileTransactionLogger(filename)
+	if err != nil {
+		return fmt.Errorf("не удалось создать регистратор транзакций: %w", err)
+	}
+
+	events, errors := logger.Read()
+	e, ok := Event{}, true
+
+	for ok && err == nil {
+		select {
+		case err, ok = <-errors:
+		case e, ok = <-events:
+			switch e.EventType {
+			case EventPut:
+				err = Put(e.Key, e.Value)
+			case EventDelete:
+				err = Delete(e.Key)
+			}
+		}
+	}
+
+	logger.Run()
+
+	return err
 }
 
 // Обработчик добавления значения
