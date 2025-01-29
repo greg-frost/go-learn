@@ -112,7 +112,7 @@ func (l *FileTransactionLogger) Err() <-chan error {
 // Параметры событий
 const (
 	EventsCapacity   = 16               // Размер буфера
-	EventsFileFormat = "%d\t%d\t%s\t%s" // Формат файла
+	EventsFileFormat = "%d\t%d\t%s\t%q" // Формат файла
 )
 
 // Запуск регистратора
