@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"errors"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"go-learn/base"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 // Хранилище пар ключ/значение
@@ -76,6 +78,12 @@ const (
 	EventDelete
 )
 
+// Параметры событий
+const (
+	EventsCapacity   = 16               // Размер буфера
+	EventsFileFormat = "%d\t%d\t%s\t%q" // Формат файла
+)
+
 // Интерфейс "регистратор транзакций"
 type TransactionLogger interface {
 	WritePut(key, value string)
@@ -109,12 +117,6 @@ func (l *FileTransactionLogger) Err() <-chan error {
 	return l.errors
 }
 
-// Параметры событий
-const (
-	EventsCapacity   = 16               // Размер буфера
-	EventsFileFormat = "%d\t%d\t%s\t%q" // Формат файла
-)
-
 // Запуск регистратора
 func (l *FileTransactionLogger) Run() {
 	events := make(chan Event, EventsCapacity)
@@ -137,7 +139,7 @@ func (l *FileTransactionLogger) Run() {
 	}()
 }
 
-// Чтение регистратора
+// Чтение событий
 func (l *FileTransactionLogger) Read() (<-chan Event, <-chan error) {
 	scanner := bufio.NewScanner(l.file)
 	events := make(chan Event)
@@ -184,6 +186,28 @@ func NewFileTransactionLogger(filename string) (TransactionLogger, error) {
 	}
 
 	return &FileTransactionLogger{file: file}, nil
+}
+
+// Структура "регистратор транзакций в БД"
+type PostgresTransactionLogger struct {
+	events chan<- Event
+	errors <-chan error
+	db     *sql.DB
+}
+
+// Запись транзакции добавления
+func (l *PostgresTransactionLogger) WritePut(key, value string) {
+	l.events <- Event{EventType: EventPut, Key: key, Value: value}
+}
+
+// Запись транзакции удаления
+func (l *PostgresTransactionLogger) WriteDelete(key string) {
+	l.events <- Event{EventType: EventDelete, Key: key}
+}
+
+// Получение канала ошибок
+func (l *PostgresTransactionLogger) Err() <-chan error {
+	return l.errors
 }
 
 // Регистратор транзакций
