@@ -216,7 +216,7 @@ var logger TransactionLogger
 // Инициализация регистрации транзакций
 func initializeTransactionLog() error {
 	path := base.Dir("cloud")
-	filename := filepath.Join(path, "transaction.log")
+	filename := filepath.Join(path, "data", "transaction.log")
 	var err error
 
 	logger, err = NewFileTransactionLogger(filename)
