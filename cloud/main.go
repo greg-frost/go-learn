@@ -195,6 +195,24 @@ type PostgresTransactionLogger struct {
 	db     *sql.DB
 }
 
+// Структура "параметры подключения к БД"
+type PostgresDBParams struct {
+	dbName   string
+	host     string
+	user     string
+	password string
+}
+
+// Проверка наличия необходимых таблиц
+func (l *PostgresTransactionLogger) verifyTablesExists() (bool, error) {
+	return false, nil
+}
+
+// Создание необходимых таблиц
+func (l *PostgresTransactionLogger) createTables() error {
+	return nil
+}
+
 // Запись транзакции добавления
 func (l *PostgresTransactionLogger) WritePut(key, value string) {
 	l.events <- Event{EventType: EventPut, Key: key, Value: value}
@@ -208,6 +226,26 @@ func (l *PostgresTransactionLogger) WriteDelete(key string) {
 // Получение канала ошибок
 func (l *PostgresTransactionLogger) Err() <-chan error {
 	return l.errors
+}
+
+// Конструктор регистратора
+func NewPostgresTransactionLogger(config PostgresDBParams) (*PostgresTransactionLogger, error) {
+	conn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s",
+		config.host, config.dbName, config.user, config.password)
+
+	db, err := sql.Open("postgres", conn)
+	if err != nil {
+		return nil, fmt.Errorf("не удалось подключиться к БД: %w", err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("не удалось установить соединение с БД: %w", err)
+	}
+
+	logger := &PostgresTransactionLogger{db: db}
+
+	return logger, nil
 }
 
 // Регистратор транзакций
