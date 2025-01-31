@@ -228,8 +228,17 @@ func (l *PostgresTransactionLogger) Err() <-chan error {
 	return l.errors
 }
 
+// Запуск регистратора
+func (l *PostgresTransactionLogger) Run() {
+}
+
+// Чтение событий
+func (l *PostgresTransactionLogger) Read() (<-chan Event, <-chan error) {
+	return nil, nil
+}
+
 // Конструктор регистратора
-func NewPostgresTransactionLogger(config PostgresDBParams) (*PostgresTransactionLogger, error) {
+func NewPostgresTransactionLogger(config PostgresDBParams) (TransactionLogger, error) {
 	conn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s",
 		config.host, config.dbName, config.user, config.password)
 
@@ -244,6 +253,16 @@ func NewPostgresTransactionLogger(config PostgresDBParams) (*PostgresTransaction
 	}
 
 	logger := &PostgresTransactionLogger{db: db}
+
+	exists, err := logger.verifyTablesExists()
+	if err != nil {
+		return nil, fmt.Errorf("не удалось проверить наличие таблиц: %w", err)
+	}
+	if !exists {
+		if err := logger.createTables(); err != nil {
+			return nil, fmt.Errorf("не удалось создать таблицы: %w", err)
+		}
+	}
 
 	return logger, nil
 }
