@@ -146,9 +146,10 @@ func (l *FileTransactionLogger) Read() (<-chan Event, <-chan error) {
 	errors := make(chan error, 1)
 
 	go func() {
-		var e Event
 		defer close(events)
 		defer close(errors)
+
+		var e Event
 
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -210,7 +211,7 @@ func (l *PostgresTransactionLogger) verifyTablesExists() (bool, error) {
 
 // Создание необходимых таблиц
 func (l *PostgresTransactionLogger) createTables() error {
-	return nil
+	return fmt.Errorf("не удалось создать необходимые таблицы")
 }
 
 // Запись транзакции добавления
@@ -254,7 +255,42 @@ func (l *PostgresTransactionLogger) Run() {
 
 // Чтение событий
 func (l *PostgresTransactionLogger) Read() (<-chan Event, <-chan error) {
-	return nil, nil
+	events := make(chan Event)
+	errors := make(chan error, 1)
+
+	go func() {
+		defer close(events)
+		defer close(errors)
+
+		query := `SELECT sequence, event_type, key, value
+			  FROM transactions ORDER BY sequence`
+
+		rows, err := l.db.Query(query)
+		if err != nil {
+			errors <- fmt.Errorf("ошибка SQL-запроса: %w", err)
+			return
+		}
+		defer rows.Close()
+
+		var e Event
+
+		for rows.Next() {
+			err = rows.Scan(&e.Sequence, &e.EventType, &e.Key, &e.Value)
+			if err != nil {
+				errors <- fmt.Errorf("ошибка чтения строки SQL-ответа: %w", err)
+				return
+			}
+
+			events <- e
+		}
+
+		if err := rows.Err(); err != nil {
+			errors <- fmt.Errorf("ошибка SQL-ответа: %w", err)
+			return
+		}
+	}()
+
+	return events, errors
 }
 
 // Конструктор регистратора
