@@ -230,6 +230,26 @@ func (l *PostgresTransactionLogger) Err() <-chan error {
 
 // Запуск регистратора
 func (l *PostgresTransactionLogger) Run() {
+	events := make(chan Event, EventsCapacity)
+	l.events = events
+
+	errors := make(chan error, 1)
+	l.errors = errors
+
+	go func() {
+		query := `INSERT INTO transactions
+				  (event_type, key, value)
+				  VALUES ($1, $2, $3)`
+
+		for e := range events {
+			_, err := l.db.Exec(query,
+				e.EventType, e.Key, e.Value)
+			if err != nil {
+				errors <- err
+				return
+			}
+		}
+	}()
 }
 
 // Чтение событий
