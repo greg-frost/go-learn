@@ -9,10 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"sync"
-
-	"go-learn/base"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -328,11 +325,22 @@ var logger TransactionLogger
 
 // Инициализация регистрации транзакций
 func initializeTransactionLog() error {
-	path := base.Dir("cloud")
-	filename := filepath.Join(path, "data", "transaction.log")
 	var err error
 
-	logger, err = NewFileTransactionLogger(filename)
+	// Регистрация в файл
+	// path := base.Dir("cloud")
+	// filename := filepath.Join(path, "data", "transaction.log")
+	// logger, err = NewFileTransactionLogger(filename)
+
+	// Регистрация в БД
+	params := PostgresDBParams{
+		dbName:   "learn",
+		host:     "localhost",
+		user:     "postgres",
+		password: "admin",
+	}
+	logger, err = NewPostgresTransactionLogger(params)
+
 	if err != nil {
 		return fmt.Errorf("не удалось создать регистратор транзакций: %w", err)
 	}
