@@ -208,7 +208,15 @@ func (l *PostgresTransactionLogger) verifyTablesExists() (bool, error) {
 
 // Создание необходимых таблиц
 func (l *PostgresTransactionLogger) createTables() error {
-	return fmt.Errorf("не удалось создать необходимые таблицы")
+	_, err := l.db.Exec(`
+		CREATE TABLE IF NOT EXISTS transactions (
+			sequence SERIAL PRIMARY KEY,
+			event_type INT,
+			key TEXT,
+			value TEXT
+		)
+	`)
+	return err
 }
 
 // Запись транзакции добавления
@@ -292,7 +300,7 @@ func (l *PostgresTransactionLogger) Read() (<-chan Event, <-chan error) {
 
 // Конструктор регистратора
 func NewPostgresTransactionLogger(config PostgresDBParams) (TransactionLogger, error) {
-	conn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s",
+	conn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable",
 		config.host, config.dbName, config.user, config.password)
 
 	db, err := sql.Open("postgres", conn)
