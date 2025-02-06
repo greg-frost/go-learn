@@ -203,19 +203,27 @@ type PostgresDBParams struct {
 
 // Проверка наличия необходимых таблиц
 func (l *PostgresTransactionLogger) verifyTablesExists() (bool, error) {
-	return false, nil
+	query := `SELECT EXISTS (SELECT true FROM information_schema.tables
+			  WHERE table_schema = 'public'	AND table_name = 'transactions')`
+
+	row := l.db.QueryRow(query)
+
+	var exists bool
+	if err := row.Scan(&exists); err != nil {
+		return false, fmt.Errorf("ошибка SQL-запроса: %w", err)
+	}
+
+	return exists, nil
 }
 
 // Создание необходимых таблиц
 func (l *PostgresTransactionLogger) createTables() error {
-	_, err := l.db.Exec(`
-		CREATE TABLE IF NOT EXISTS transactions (
-			sequence SERIAL PRIMARY KEY,
-			event_type INT,
-			key TEXT,
-			value TEXT
-		)
-	`)
+	query := `CREATE TABLE IF NOT EXISTS transactions
+			  (sequence SERIAL PRIMARY KEY, event_type INT, 
+			  key TEXT, value TEXT)`
+
+	_, err := l.db.Exec(query)
+
 	return err
 }
 
@@ -268,7 +276,7 @@ func (l *PostgresTransactionLogger) Read() (<-chan Event, <-chan error) {
 		defer close(errors)
 
 		query := `SELECT sequence, event_type, key, value
-			  FROM transactions ORDER BY sequence`
+			  	  FROM transactions ORDER BY sequence`
 
 		rows, err := l.db.Query(query)
 		if err != nil {
