@@ -9,7 +9,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
+
+	"go-learn/base"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -336,6 +339,9 @@ func NewPostgresTransactionLogger(config PostgresDBParams) (TransactionLogger, e
 	return logger, nil
 }
 
+// Путь
+var path = base.Dir("cloud")
+
 // Регистратор транзакций
 var logger TransactionLogger
 
@@ -344,7 +350,6 @@ func initializeTransactionLog() error {
 	var err error
 
 	// Регистрация в файл
-	// path := base.Dir("cloud")
 	// filename := filepath.Join(path, "data", "transaction.log")
 	// logger, err = NewFileTransactionLogger(filename)
 
@@ -457,5 +462,13 @@ func main() {
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
 	fmt.Println("(на http://localhost:8080)")
-	log.Fatal(http.ListenAndServe("localhost:8080", r))
+
+	// HTTP
+	// log.Fatal(http.ListenAndServe("localhost:8080", r))
+
+	// HTTPS
+	log.Fatal(http.ListenAndServeTLS("localhost:8080",
+		filepath.Join(path, "data", "cert.pem"),
+		filepath.Join(path, "data", "key.pem"),
+		r))
 }
