@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"sync"
 
 	"go-learn/base"
@@ -464,11 +463,11 @@ func main() {
 	fmt.Println("(на http://localhost:8080)")
 
 	// HTTP
-	// log.Fatal(http.ListenAndServe("localhost:8080", r))
+	log.Fatal(http.ListenAndServe("localhost:8080", r))
 
 	// HTTPS
-	log.Fatal(http.ListenAndServeTLS("localhost:8080",
-		filepath.Join(path, "data", "cert.pem"),
-		filepath.Join(path, "data", "key.pem"),
-		r))
+	// log.Fatal(http.ListenAndServeTLS("localhost:8080",
+	// 	filepath.Join(path, "data", "cert.pem"),
+	// 	filepath.Join(path, "data", "key.pem"),
+	// 	r))
 }
