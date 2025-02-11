@@ -16,7 +16,7 @@ func main() {
 	fmt.Println("Список:")
 	fmt.Println()
 
-	list := arraylist.New() // Массив
+	list := arraylist.New() // На основе массива
 
 	fmt.Println("Добавление элементов")
 	list.Add("a")
@@ -38,4 +38,27 @@ func main() {
 	fmt.Println("a, b, c:", ok)
 	ok = list.Contains("a", "b", "c", "d")
 	fmt.Println("a, b, c, d:", ok)
+
+	fmt.Println("Замена элементов местами")
+	list.Swap(0, 1)
+	list.Swap(0, 2)
+	fmt.Println(list.Values())
+
+	fmt.Println("Удаление элементов")
+	list.Remove(2)
+	list.Remove(1)
+	list.Remove(1)
+	fmt.Println(list.Values())
+
+	fmt.Println("Очистка всего списка")
+	fmt.Printf("( %-6s | %-6s )\n", "размер", "пустой")
+	fmt.Printf("  %-6d   %-6t\n", list.Size(), list.Empty())
+	list.Clear()
+	fmt.Printf("  %-6d   %-6t\n", list.Size(), list.Empty())
+
+	fmt.Println("Вставка элементов в начало")
+	list.Insert(0, "a")
+	list.Insert(0, "b")
+	list.Insert(0, "c")
+	fmt.Println(list.Values())
 }
