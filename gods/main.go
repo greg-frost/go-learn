@@ -50,15 +50,13 @@ func main() {
 	list.Remove(1)
 	fmt.Println(list.Values())
 
-	fmt.Println("Очистка всего списка")
-	fmt.Printf("( %-6s | %-6s )\n", "размер", "пустой")
-	fmt.Printf("  %-6d   %-6t\n", list.Size(), list.Empty())
-	list.Clear()
-	fmt.Printf("  %-6d   %-6t\n", list.Size(), list.Empty())
-
 	fmt.Println("Вставка элементов в начало")
-	list.Insert(0, "a")
 	list.Insert(0, "b")
-	list.Insert(0, "c")
+	list.Insert(0, "a")
 	fmt.Println(list.Values())
+
+	fmt.Println("Очистка всего списка")
+	fmt.Printf("размер: %d, пуст: %t\n", list.Size(), list.Empty())
+	list.Clear()
+	fmt.Printf("размер: %d, пуст: %t\n", list.Size(), list.Empty())
 }
