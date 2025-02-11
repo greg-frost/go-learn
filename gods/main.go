@@ -17,6 +17,8 @@ func main() {
 	fmt.Println()
 
 	list := arraylist.New() // На основе массива
+	// list := singlylinkedlist.New() // На основе связного списка
+	// list := doublylinkedlist.New() // На основе двусвязного списка
 
 	fmt.Println("Добавление элементов")
 	list.Add("a")
