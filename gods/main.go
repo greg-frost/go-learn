@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/emirpasic/gods/lists/arraylist"
+	"github.com/emirpasic/gods/sets/hashset"
 	"github.com/emirpasic/gods/utils"
 )
 
@@ -12,6 +13,8 @@ func main() {
 
 	var value interface{}
 	var ok bool
+
+	/* Список (List) */
 
 	fmt.Println("Список:")
 	fmt.Println()
@@ -57,8 +60,39 @@ func main() {
 	list.Insert(0, "a")
 	fmt.Println(list.Values())
 
-	fmt.Println("Очистка всего списка")
+	fmt.Println("Полная очистка")
 	fmt.Printf("размер: %d, пуст: %t\n", list.Size(), list.Empty())
 	list.Clear()
 	fmt.Printf("размер: %d, пуст: %t\n", list.Size(), list.Empty())
+	fmt.Println()
+
+	/* Множество (Set) */
+
+	fmt.Println("Множество:")
+	fmt.Println()
+
+	set := hashset.New() // На основе хеш-таблицы (случайный порядок)
+
+	fmt.Println("Добавление элементов")
+	set.Add(1)
+	set.Add(2, 2, 3, 4, 5)
+	fmt.Println(set.Values())
+
+	fmt.Println("Наличие элементов (всех)")
+	ok = set.Contains(1)
+	fmt.Println("1:", ok)
+	ok = set.Contains(2, 5)
+	fmt.Println("2, 5:", ok)
+	ok = set.Contains(3, 6)
+	fmt.Println("3, 6:", ok)
+
+	fmt.Println("Удаление элементов")
+	set.Remove(4)
+	set.Remove(2, 3, 4)
+	fmt.Println(set.Values())
+
+	fmt.Println("Полная очистка")
+	fmt.Printf("размер: %d, пуст: %t\n", set.Size(), set.Empty())
+	set.Clear()
+	fmt.Printf("размер: %d, пуст: %t\n", set.Size(), set.Empty())
 }
