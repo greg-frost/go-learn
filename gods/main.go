@@ -72,10 +72,12 @@ func main() {
 	fmt.Println()
 
 	set := hashset.New() // На основе хеш-таблицы (случайный порядок)
+	// set := treeset.NewWithIntComparator() // На основе дерева (упорядочено)
+	// set := linkedhashset.New() // На основе хеш-таблицы и списка (в порядке вставки)
 
 	fmt.Println("Добавление элементов")
 	set.Add(1)
-	set.Add(2, 2, 3, 4, 5)
+	set.Add(2, 2, 5, 4, 3)
 	fmt.Println(set.Values())
 
 	fmt.Println("Наличие элементов (всех)")
