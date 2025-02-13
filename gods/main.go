@@ -106,6 +106,7 @@ func main() {
 	fmt.Println()
 
 	stack := arraystack.New() // На основе массива
+	// stack := linkedliststack.New() // На основе связного списка
 
 	fmt.Println("Добавление элементов")
 	stack.Push(1)
