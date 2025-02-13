@@ -5,6 +5,7 @@ import (
 
 	"github.com/emirpasic/gods/lists/arraylist"
 	"github.com/emirpasic/gods/sets/hashset"
+	"github.com/emirpasic/gods/stacks/arraystack"
 	"github.com/emirpasic/gods/utils"
 )
 
@@ -97,4 +98,33 @@ func main() {
 	fmt.Printf("размер: %d, пуст: %t\n", set.Size(), set.Empty())
 	set.Clear()
 	fmt.Printf("размер: %d, пуст: %t\n", set.Size(), set.Empty())
+	fmt.Println()
+
+	/* Стек (Stack) */
+
+	fmt.Println("Стек:")
+	fmt.Println()
+
+	stack := arraystack.New() // На основе массива
+
+	fmt.Println("Добавление элементов")
+	stack.Push(1)
+	stack.Push(2)
+	fmt.Println(stack.Values())
+
+	fmt.Println("Просмотр и извлечение")
+	value, ok = stack.Peek()
+	fmt.Println("Peek:", value, ok)
+	value, ok = stack.Pop()
+	fmt.Println("Pop:", value, ok)
+	value, ok = stack.Pop()
+	fmt.Println("Pop:", value, ok)
+	value, ok = stack.Pop()
+	fmt.Println("Pop:", value, ok)
+
+	fmt.Println("Полная очистка")
+	stack.Push(3)
+	fmt.Printf("размер: %d, пуст: %t\n", stack.Size(), stack.Empty())
+	stack.Clear()
+	fmt.Printf("размер: %d, пуст: %t\n", stack.Size(), stack.Empty())
 }
