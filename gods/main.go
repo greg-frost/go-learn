@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/emirpasic/gods/lists/arraylist"
+	"github.com/emirpasic/gods/maps/hashmap"
 	"github.com/emirpasic/gods/sets/hashset"
 	"github.com/emirpasic/gods/stacks/arraystack"
 	"github.com/emirpasic/gods/utils"
@@ -128,4 +129,37 @@ func main() {
 	fmt.Printf("размер: %d, пуст: %t\n", stack.Size(), stack.Empty())
 	stack.Clear()
 	fmt.Printf("размер: %d, пуст: %t\n", stack.Size(), stack.Empty())
+	fmt.Println()
+
+	/* Карта (Map) */
+
+	fmt.Println("Карта:")
+	fmt.Println()
+
+	m := hashmap.New() // На основе хеш-таблицы (случайный порядок)
+
+	fmt.Println("Добавление элементов")
+	m.Put(1, "x")
+	m.Put(2, "b")
+	m.Put(1, "a")
+	m.Put(3, "c")
+	b, _ := m.ToJSON()
+	fmt.Println(string(b))
+
+	fmt.Println("Получение по ключу")
+	value, ok = m.Get(2)
+	fmt.Println("2:", value, ok)
+	value, ok = m.Get(4)
+	fmt.Println("4:", value, ok)
+
+	fmt.Println("Ключи и значения")
+	fmt.Println(m.Keys(), m.Values())
+	fmt.Println("Удаление элементов")
+	m.Remove(3)
+	fmt.Println(m.Values())
+
+	fmt.Println("Полная очистка")
+	fmt.Printf("размер: %d, пуст: %t\n", m.Size(), m.Empty())
+	m.Clear()
+	fmt.Printf("размер: %d, пуст: %t\n", m.Size(), m.Empty())
 }
