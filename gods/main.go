@@ -137,12 +137,14 @@ func main() {
 	fmt.Println()
 
 	m := hashmap.New() // На основе хеш-таблицы (случайный порядок)
+	// m := treemap.NewWithIntComparator() // На основе дерева (упорядочено)
+	// m := linkedhashmap.New() // На основе хеш-таблицы и списка (в порядке вставки)
 
 	fmt.Println("Добавление элементов")
-	m.Put(1, "x")
 	m.Put(2, "b")
-	m.Put(1, "a")
 	m.Put(3, "c")
+	m.Put(1, "x")
+	m.Put(1, "a")
 	b, _ := m.ToJSON()
 	fmt.Println(string(b))
 
