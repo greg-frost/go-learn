@@ -139,12 +139,18 @@ func main() {
 	m := hashmap.New() // На основе хеш-таблицы (случайный порядок)
 	// m := treemap.NewWithIntComparator() // На основе дерева (упорядочено)
 	// m := linkedhashmap.New() // На основе хеш-таблицы и списка (в порядке вставки)
+	// m := hashbidimap.New() // На основе хеш-таблицы (двусторонняя связь ключ/значение, случайный порядок)
+	// m := treebidimap.NewWith( // На основе дерева (двусторонняя связь ключ/значение, упорядочено)
+	// 	utils.IntComparator,
+	// 	utils.StringComparator,
+	// )
 
 	fmt.Println("Добавление элементов")
 	m.Put(2, "b")
 	m.Put(3, "c")
 	m.Put(1, "x")
 	m.Put(1, "a")
+	// m.Put(3, "a") // Переопределение ключа значением (для двусторонних карт)
 	b, _ := m.ToJSON()
 	fmt.Println(string(b))
 
@@ -153,6 +159,13 @@ func main() {
 	fmt.Println("2:", value, ok)
 	value, ok = m.Get(4)
 	fmt.Println("4:", value, ok)
+
+	// Только для двусторонних карт
+	// fmt.Println("Получение по значению")
+	// value, ok = m.GetKey("a")
+	// fmt.Println("a:", value, ok)
+	// value, ok = m.GetKey("c")
+	// fmt.Println("c:", value, ok)
 
 	fmt.Println("Ключи и значения")
 	fmt.Println(m.Keys(), m.Values())
