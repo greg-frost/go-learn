@@ -7,6 +7,7 @@ import (
 	"github.com/emirpasic/gods/maps/hashmap"
 	"github.com/emirpasic/gods/sets/hashset"
 	"github.com/emirpasic/gods/stacks/arraystack"
+	"github.com/emirpasic/gods/trees/redblacktree"
 	"github.com/emirpasic/gods/utils"
 )
 
@@ -171,6 +172,7 @@ func main() {
 
 	fmt.Println("Ключи и значения")
 	fmt.Println(m.Keys(), m.Values())
+
 	fmt.Println("Удаление элементов")
 	m.Remove(3)
 	fmt.Println(m.Values())
@@ -179,4 +181,44 @@ func main() {
 	fmt.Printf("размер: %d, пуст: %t\n", m.Size(), m.Empty())
 	m.Clear()
 	fmt.Printf("размер: %d, пуст: %t\n", m.Size(), m.Empty())
+	fmt.Println()
+
+	/* Дерево (Tree) */
+
+	fmt.Println("Дерево:")
+	fmt.Println()
+
+	tree := redblacktree.NewWithIntComparator() // Красно-черное дерево
+
+	fmt.Println("Добавление элементов")
+	tree.Put(1, "x")
+	tree.Put(2, "b")
+	tree.Put(1, "a")
+	tree.Put(3, "c")
+	b, _ = tree.ToJSON()
+	fmt.Println(string(b), "...")
+	tree.Put(4, "d")
+	tree.Put(5, "e")
+	tree.Put(6, "f")
+
+	fmt.Println("Получение по ключу")
+	value, ok = tree.Get(3)
+	fmt.Println("3:", value, ok)
+	value, ok = tree.Get(7)
+	fmt.Println("7:", value, ok)
+
+	fmt.Println("Ключи и значения")
+	fmt.Println(tree.Keys(), tree.Values())
+
+	fmt.Print(tree)
+
+	fmt.Println("Удаление элементов")
+	tree.Remove(2)
+
+	fmt.Print(tree)
+
+	fmt.Println("Полная очистка")
+	fmt.Printf("размер: %d, пуст: %t\n", tree.Size(), tree.Empty())
+	tree.Clear()
+	fmt.Printf("размер: %d, пуст: %t\n", tree.Size(), tree.Empty())
 }
