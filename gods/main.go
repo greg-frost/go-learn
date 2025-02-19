@@ -189,6 +189,7 @@ func main() {
 	fmt.Println()
 
 	tree := redblacktree.NewWithIntComparator() // Красно-черное дерево
+	// tree := avltree.NewWithIntComparator() // АВЛ-дерево
 
 	fmt.Println("Добавление элементов")
 	tree.Put(1, "x")
@@ -216,6 +217,9 @@ func main() {
 	tree.Remove(2)
 
 	fmt.Print(tree)
+
+	fmt.Println("Пограничные элементы")
+	fmt.Printf("минимум: %v, максимум: %v\n", tree.Left(), tree.Right())
 
 	fmt.Println("Полная очистка")
 	fmt.Printf("размер: %d, пуст: %t\n", tree.Size(), tree.Empty())
