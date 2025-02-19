@@ -190,6 +190,7 @@ func main() {
 
 	tree := redblacktree.NewWithIntComparator() // Красно-черное дерево
 	// tree := avltree.NewWithIntComparator() // АВЛ-дерево
+	// tree := btree.NewWithIntComparator(3) // B-дерево (BTree)
 
 	fmt.Println("Добавление элементов")
 	tree.Put(1, "x")
@@ -201,6 +202,9 @@ func main() {
 	tree.Put(4, "d")
 	tree.Put(5, "e")
 	tree.Put(6, "f")
+	// Еще один элемент для наглядности
+	// (только для B-дерева)
+	// tree.Put(7, "g")
 
 	fmt.Println("Получение по ключу")
 	value, ok = tree.Get(3)
@@ -218,8 +222,16 @@ func main() {
 
 	fmt.Print(tree)
 
-	fmt.Println("Пограничные элементы")
-	fmt.Printf("минимум: %v, максимум: %v\n", tree.Left(), tree.Right())
+	fmt.Println("Дополнительные свойства")
+	// Только для черно-красных и АВЛ-деревьев
+	fmt.Println("мин. ключ:", tree.Left())
+	fmt.Println("макс. ключ:", tree.Right())
+	// Только для B-дерева
+	// fmt.Println("высота:", tree.Height())
+	// fmt.Println("мин. ключ:", tree.LeftKey())
+	// fmt.Println("макс. ключ:", tree.RightKey())
+	// fmt.Println("мин. значение:", tree.LeftValue())
+	// fmt.Println("макс. значение:", tree.RightValue())
 
 	fmt.Println("Полная очистка")
 	fmt.Printf("размер: %d, пуст: %t\n", tree.Size(), tree.Empty())
