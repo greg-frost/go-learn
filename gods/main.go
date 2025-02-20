@@ -251,7 +251,11 @@ func main() {
 	fmt.Println("----")
 	fmt.Println()
 
-	heap := binaryheap.NewWithIntComparator() // На основе дерева (минимальная куча)
+	// На основе дерева
+	heap := binaryheap.NewWithIntComparator() // Минимальная куча
+	// heap := binaryheap.NewWith(func(a, b interface{}) int { // Максимальная куча
+	// 	return -utils.IntComparator(a, b)
+	// })
 
 	fmt.Println("Добавление элементов")
 	heap.Push(2, 3)
