@@ -7,6 +7,7 @@ import (
 	"github.com/emirpasic/gods/maps/hashmap"
 	"github.com/emirpasic/gods/sets/hashset"
 	"github.com/emirpasic/gods/stacks/arraystack"
+	"github.com/emirpasic/gods/trees/binaryheap"
 	"github.com/emirpasic/gods/trees/redblacktree"
 	"github.com/emirpasic/gods/utils"
 )
@@ -19,7 +20,8 @@ func main() {
 
 	/* Список (List) */
 
-	fmt.Println("Список:")
+	fmt.Println("Список")
+	fmt.Println("------")
 	fmt.Println()
 
 	list := arraylist.New() // На основе массива
@@ -71,7 +73,8 @@ func main() {
 
 	/* Множество (Set) */
 
-	fmt.Println("Множество:")
+	fmt.Println("Множество")
+	fmt.Println("---------")
 	fmt.Println()
 
 	set := hashset.New() // На основе хеш-таблицы (случайный порядок)
@@ -97,14 +100,15 @@ func main() {
 	fmt.Println(set.Values())
 
 	fmt.Println("Полная очистка")
-	fmt.Printf("размер: %d, пуст: %t\n", set.Size(), set.Empty())
+	fmt.Printf("размер: %d, пусто: %t\n", set.Size(), set.Empty())
 	set.Clear()
-	fmt.Printf("размер: %d, пуст: %t\n", set.Size(), set.Empty())
+	fmt.Printf("размер: %d, пусто: %t\n", set.Size(), set.Empty())
 	fmt.Println()
 
 	/* Стек (Stack) */
 
-	fmt.Println("Стек:")
+	fmt.Println("Стек")
+	fmt.Println("----")
 	fmt.Println()
 
 	stack := arraystack.New() // На основе массива
@@ -134,7 +138,8 @@ func main() {
 
 	/* Карта (Map) */
 
-	fmt.Println("Карта:")
+	fmt.Println("Карта")
+	fmt.Println("-----")
 	fmt.Println()
 
 	m := hashmap.New() // На основе хеш-таблицы (случайный порядок)
@@ -178,14 +183,15 @@ func main() {
 	fmt.Println(m.Values())
 
 	fmt.Println("Полная очистка")
-	fmt.Printf("размер: %d, пуст: %t\n", m.Size(), m.Empty())
+	fmt.Printf("размер: %d, пуста: %t\n", m.Size(), m.Empty())
 	m.Clear()
-	fmt.Printf("размер: %d, пуст: %t\n", m.Size(), m.Empty())
+	fmt.Printf("размер: %d, пуста: %t\n", m.Size(), m.Empty())
 	fmt.Println()
 
 	/* Дерево (Tree) */
 
-	fmt.Println("Дерево:")
+	fmt.Println("Дерево")
+	fmt.Println("------")
 	fmt.Println()
 
 	tree := redblacktree.NewWithIntComparator() // Красно-черное дерево
@@ -234,7 +240,39 @@ func main() {
 	// fmt.Println("макс. значение:", tree.RightValue())
 
 	fmt.Println("Полная очистка")
-	fmt.Printf("размер: %d, пуст: %t\n", tree.Size(), tree.Empty())
+	fmt.Printf("размер: %d, пусто: %t\n", tree.Size(), tree.Empty())
 	tree.Clear()
-	fmt.Printf("размер: %d, пуст: %t\n", tree.Size(), tree.Empty())
+	fmt.Printf("размер: %d, пусто: %t\n", tree.Size(), tree.Empty())
+	fmt.Println()
+
+	/* Куча (Heap) */
+
+	fmt.Println("Куча")
+	fmt.Println("----")
+	fmt.Println()
+
+	heap := binaryheap.NewWithIntComparator() // На основе дерева (минимальная куча)
+
+	fmt.Println("Добавление элементов")
+	heap.Push(2, 3)
+	heap.Push(1)
+	fmt.Println(heap.Values())
+
+	fmt.Println("Просмотр и извлечение")
+	value, ok = heap.Peek()
+	fmt.Println("Peek:", value, ok)
+	value, ok = heap.Pop()
+	fmt.Println("Pop:", value, ok)
+	value, ok = heap.Pop()
+	fmt.Println("Pop:", value, ok)
+	value, ok = heap.Pop()
+	fmt.Println("Pop:", value, ok)
+	value, ok = heap.Pop()
+	fmt.Println("Pop:", value, ok)
+
+	fmt.Println("Полная очистка")
+	heap.Push(1)
+	fmt.Printf("размер: %d, пуста: %t\n", heap.Size(), heap.Empty())
+	heap.Clear()
+	fmt.Printf("размер: %d, пуста: %t\n", heap.Size(), heap.Empty())
 }
