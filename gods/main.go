@@ -148,9 +148,7 @@ func main() {
 	// m := linkedhashmap.New() // На основе хеш-таблицы и списка (в порядке вставки)
 	// m := hashbidimap.New() // На основе хеш-таблицы (двусторонняя карта, случайный порядок)
 	// m := treebidimap.NewWith( // На основе дерева (двусторонняя карта, упорядочено)
-	// 	utils.IntComparator,
-	// 	utils.StringComparator,
-	// )
+	// 	utils.IntComparator, utils.StringComparator)
 
 	fmt.Println("Добавление элементов")
 	m.Put(2, "b")
@@ -289,6 +287,7 @@ func main() {
 	fmt.Println()
 
 	queue := arrayqueue.New() // На основе массива
+	// queue := linkedlistqueue.New() // На основе связного списка
 
 	fmt.Println("Добавление элементов")
 	queue.Enqueue(1)
