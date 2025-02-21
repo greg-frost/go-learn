@@ -5,6 +5,7 @@ import (
 
 	"github.com/emirpasic/gods/lists/arraylist"
 	"github.com/emirpasic/gods/maps/hashmap"
+	"github.com/emirpasic/gods/queues/arrayqueue"
 	"github.com/emirpasic/gods/sets/hashset"
 	"github.com/emirpasic/gods/stacks/arraystack"
 	"github.com/emirpasic/gods/trees/binaryheap"
@@ -279,4 +280,34 @@ func main() {
 	fmt.Printf("размер: %d, пуста: %t\n", heap.Size(), heap.Empty())
 	heap.Clear()
 	fmt.Printf("размер: %d, пуста: %t\n", heap.Size(), heap.Empty())
+	fmt.Println()
+
+	/* Очередь (Queue) */
+
+	fmt.Println("Очередь")
+	fmt.Println("-------")
+	fmt.Println()
+
+	queue := arrayqueue.New() // На основе массива
+
+	fmt.Println("Добавление элементов")
+	queue.Enqueue(1)
+	queue.Enqueue(2)
+	fmt.Println(queue.Values())
+
+	fmt.Println("Просмотр и извлечение")
+	value, ok = queue.Peek()
+	fmt.Println("Peek:", value, ok)
+	value, ok = queue.Dequeue()
+	fmt.Println("Dequeue:", value, ok)
+	value, ok = queue.Dequeue()
+	fmt.Println("Dequeue:", value, ok)
+	value, ok = queue.Dequeue()
+	fmt.Println("Dequeue:", value, ok)
+
+	fmt.Println("Полная очистка")
+	queue.Enqueue(3)
+	fmt.Printf("размер: %d, пуста: %t\n", queue.Size(), queue.Empty())
+	queue.Clear()
+	fmt.Printf("размер: %d, пуста: %t\n", queue.Size(), queue.Empty())
 }
