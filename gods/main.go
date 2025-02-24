@@ -5,7 +5,7 @@ import (
 
 	"github.com/emirpasic/gods/lists/arraylist"
 	"github.com/emirpasic/gods/maps/hashmap"
-	"github.com/emirpasic/gods/queues/circularbuffer"
+	"github.com/emirpasic/gods/queues/arrayqueue"
 	"github.com/emirpasic/gods/sets/hashset"
 	"github.com/emirpasic/gods/stacks/arraystack"
 	"github.com/emirpasic/gods/trees/binaryheap"
@@ -289,9 +289,9 @@ func main() {
 	fmt.Println("-------")
 	fmt.Println()
 
-	// queue := arrayqueue.New() // На основе массива
+	queue := arrayqueue.New() // На основе массива
 	// queue := linkedlistqueue.New() // На основе связного списка
-	queue := circularbuffer.New(3) // Кольцевой буфер
+	// queue := circularbuffer.New(3) // Кольцевой буфер
 
 	fmt.Println("Добавление элементов")
 	queue.Enqueue(1)
@@ -300,8 +300,8 @@ func main() {
 	fmt.Println(queue.Values())
 	// Еще один элемент для наглядности
 	// (только для кольцевого буфера)
-	queue.Enqueue(4)
-	fmt.Println(queue.Values())
+	// queue.Enqueue(4)
+	// fmt.Println(queue.Values())
 
 	fmt.Println("Просмотр и извлечение")
 	value, ok = queue.Peek()
