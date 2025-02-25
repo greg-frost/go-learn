@@ -337,9 +337,11 @@ func main() {
 	byPrority := func(a, b interface{}) int {
 		priorityA := a.(Element).priority
 		priorityB := b.(Element).priority
-		return -utils.IntComparator(priorityA, priorityB)
+		return -utils.IntComparator(priorityA, priorityB) // Чем выше приоритет, тем важнее значение
+		// return utils.IntComparator(priorityA, priorityB) // Чем ниже приоритет, тем важнее значение
 	}
 
+	// На основе очереди
 	pqueue := priorityqueue.NewWith(byPrority)
 
 	a := Element{name: "a", priority: 1}
