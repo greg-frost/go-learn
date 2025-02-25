@@ -6,6 +6,7 @@ import (
 	"github.com/emirpasic/gods/lists/arraylist"
 	"github.com/emirpasic/gods/maps/hashmap"
 	"github.com/emirpasic/gods/queues/arrayqueue"
+	"github.com/emirpasic/gods/queues/priorityqueue"
 	"github.com/emirpasic/gods/sets/hashset"
 	"github.com/emirpasic/gods/stacks/arraystack"
 	"github.com/emirpasic/gods/trees/binaryheap"
@@ -320,4 +321,52 @@ func main() {
 	fmt.Printf("размер: %d, пуста: %t\n", queue.Size(), queue.Empty())
 	queue.Clear()
 	fmt.Printf("размер: %d, пуста: %t\n", queue.Size(), queue.Empty())
+	fmt.Println()
+
+	/* Очередь с приоритетом (Priority Queue) */
+
+	fmt.Println("Приоритет")
+	fmt.Println("---------")
+	fmt.Println()
+
+	type Element struct {
+		name     string
+		priority int
+	}
+
+	byPrority := func(a, b interface{}) int {
+		priorityA := a.(Element).priority
+		priorityB := b.(Element).priority
+		return -utils.IntComparator(priorityA, priorityB)
+	}
+
+	pqueue := priorityqueue.NewWith(byPrority)
+
+	a := Element{name: "a", priority: 1}
+	b := Element{name: "b", priority: 2}
+	c := Element{name: "c", priority: 3}
+
+	fmt.Println("Добавление элементов")
+	pqueue.Enqueue(a)
+	pqueue.Enqueue(b)
+	pqueue.Enqueue(c)
+	fmt.Println(pqueue.Values())
+
+	fmt.Println("Просмотр и извлечение")
+	value, ok = pqueue.Peek()
+	fmt.Println("Peek:", value, ok)
+	value, ok = pqueue.Dequeue()
+	fmt.Println("Dequeue:", value, ok)
+	value, ok = pqueue.Dequeue()
+	fmt.Println("Dequeue:", value, ok)
+	value, ok = pqueue.Dequeue()
+	fmt.Println("Dequeue:", value, ok)
+	value, ok = pqueue.Dequeue()
+	fmt.Println("Dequeue:", value, ok)
+
+	fmt.Println("Полная очистка")
+	pqueue.Enqueue(c)
+	fmt.Printf("размер: %d, пуста: %t\n", pqueue.Size(), pqueue.Empty())
+	pqueue.Clear()
+	fmt.Printf("размер: %d, пуста: %t\n", pqueue.Size(), pqueue.Empty())
 }
