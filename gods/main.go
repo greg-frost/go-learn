@@ -161,8 +161,8 @@ func main() {
 	// Переопределение ключа значением
 	// (только для двусторонних карт)
 	// m.Put(3, "a")
-	b, _ := m.ToJSON()
-	fmt.Println(string(b))
+	json, _ := m.ToJSON()
+	fmt.Println(string(json))
 
 	fmt.Println("Получение по ключу")
 	value, ok = m.Get(2)
@@ -205,8 +205,8 @@ func main() {
 	tree.Put(2, "b")
 	tree.Put(1, "a")
 	tree.Put(3, "c")
-	b, _ = tree.ToJSON()
-	fmt.Println(string(b), "...")
+	json, _ = tree.ToJSON()
+	fmt.Println(string(json), "...")
 	tree.Put(4, "d")
 	tree.Put(5, "e")
 	tree.Put(6, "f")
