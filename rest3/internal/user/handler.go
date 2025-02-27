@@ -3,7 +3,7 @@ package user
 import (
 	"net/http"
 
-	"go-learn/rest4/internal/handlers"
+	"go-learn/rest3/internal/handlers"
 
 	"github.com/julienschmidt/httprouter"
 )

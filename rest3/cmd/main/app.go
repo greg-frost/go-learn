@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"time"
 
-	"go-learn/rest4/internal/user"
+	"go-learn/rest3/internal/user"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	fmt.Println(" \n[ REST 4 (ART DEVELOPMENT) ]\n ")
+	fmt.Println(" \n[ REST 3 (ART DEVELOPMENT) ]\n ")
 
 	log.Print("create router")
 	router := httprouter.New()
