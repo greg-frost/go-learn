@@ -1,7 +1,8 @@
-FROM ubuntu:20.04
+FROM scratch
 
-RUN apt-get update && apt-get install --yes nginx
+COPY cloud .
+COPY *.pem .
 
-EXPOSE 80
+EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/cloud"]
