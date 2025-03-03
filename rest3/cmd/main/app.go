@@ -13,12 +13,12 @@ import (
 )
 
 func main() {
-	fmt.Println(" \n[ REST 3 (ART DEVELOPMENT) ]\n ")
+	fmt.Println(" \n[ REST 3 (ART OF DEVELOPMENT) ]\n ")
 
-	log.Print("create router")
+	log.Print("Создание роутера")
 	router := httprouter.New()
 
-	log.Print("register user handler")
+	log.Print("Регистрация обработчиков")
 	handler := user.NewHandler()
 	handler.Register(router)
 
@@ -26,7 +26,7 @@ func main() {
 }
 
 func start(router *httprouter.Router) {
-	log.Print("start application")
+	log.Print("Запуск приложения")
 
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
@@ -39,6 +39,7 @@ func start(router *httprouter.Router) {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Print("listen http://localhost:8080")
+	log.Print("Ожидаю обновлений...")
+	log.Print("(на http://localhost:8080)")
 	log.Fatal(server.Serve(listener))
 }
