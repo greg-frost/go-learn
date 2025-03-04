@@ -8,15 +8,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-var _ handlers.Handler = &handler{}
+var _ handlers.Handler = new(handler)
 
 const (
 	usersURL = "/users"
 	userURL  = "/users/:uuid"
 )
 
-type handler struct {
-}
+type handler struct{}
 
 func NewHandler() handlers.Handler {
 	return &handler{}
@@ -33,30 +32,30 @@ func (h *handler) Register(router *httprouter.Router) {
 
 func (h *handler) GetList(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.WriteHeader(200)
-	w.Write([]byte("(list of users)"))
+	w.Write([]byte("Список пользователей"))
 }
 
 func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.WriteHeader(201)
-	w.Write([]byte("(create user)"))
+	w.Write([]byte("Создание пользователя"))
 }
 
 func (h *handler) GetUserByID(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.WriteHeader(200)
-	w.Write([]byte("(get user by id)"))
+	w.Write([]byte("Получение пользователя по ID"))
 }
 
 func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.WriteHeader(204)
-	w.Write([]byte("(fully update user)"))
+	w.Write([]byte("Полное обновление пользователя"))
 }
 
 func (h *handler) PartiallyUpdateUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.WriteHeader(204)
-	w.Write([]byte("(partially update user)"))
+	w.Write([]byte("Частичное обновление пользователя"))
 }
 
 func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.WriteHeader(204)
-	w.Write([]byte("(delete user)"))
+	w.Write([]byte("Удаление пользователя"))
 }

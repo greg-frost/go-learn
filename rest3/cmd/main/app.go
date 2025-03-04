@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	fmt.Println(" \n[ REST 3 (ART OF DEVELOPMENT) ]\n ")
+	fmt.Println(" \n[ REST 3 (THE ART OF DEVELOPMENT) ]\n ")
 
 	log.Print("Создание роутера")
 	router := httprouter.New()
