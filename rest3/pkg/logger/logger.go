@@ -12,7 +12,31 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Путь
 var path = base.Dir("rest3")
+
+// Структура "хук райтера"
+type WriterHook struct {
+	Writer    []io.Writer
+	LogLevels []logrus.Level
+}
+
+// Запись логов в райтеры
+func (hook *WriterHook) Fire(entry *logrus.Entry) error {
+	line, err := entry.String()
+	if err != nil {
+		return err
+	}
+	for _, w := range hook.Writer {
+		w.Write([]byte(line))
+	}
+	return nil
+}
+
+// Подучение уровней логирования
+func (hook *WriterHook) Levels() []logrus.Level {
+	return hook.LogLevels
+}
 
 // Инициализация логгера
 func Init() {
