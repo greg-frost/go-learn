@@ -62,14 +62,21 @@ func Init() {
 	}
 
 	// Файл
-	allFile, err := os.OpenFile(filepath.Join(path, "logs/all.log"),
+	file, err := os.OpenFile(filepath.Join(path, "logs/all.log"),
 		os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0640)
 	if err != nil {
 		panic(err)
 	}
 
-	// Отключение вывода
+	// Отключение дефолтного вывода
 	l.SetOutput(io.Discard)
 
-	fmt.Println(allFile)
+	// Регистрация хуков
+	l.AddHook(&WriterHook{
+		Writer:    []io.Writer{file, os.Stdout},
+		LogLevels: logrus.AllLevels,
+	})
+
+	// Уровень логирования
+	l.SetLevel(logrus.TraceLevel)
 }
