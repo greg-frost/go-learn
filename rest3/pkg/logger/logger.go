@@ -38,8 +38,26 @@ func (hook *WriterHook) Levels() []logrus.Level {
 	return hook.LogLevels
 }
 
+// Запись логгера
+var e *logrus.Entry
+
+// Структура "логгер"
+type Logger struct {
+	*logrus.Entry
+}
+
+// Получение логгера
+func GetLogger() Logger {
+	return Logger{e}
+}
+
+// Получение логгера с полем
+func (l *Logger) GetLoggerWithField(k string, v interface{}) Logger {
+	return Logger{l.WithField(k, v)}
+}
+
 // Инициализация логгера
-func Init() {
+func init() {
 	// Создание
 	l := logrus.New()
 
@@ -71,7 +89,11 @@ func Init() {
 	// Отключение дефолтного вывода
 	l.SetOutput(io.Discard)
 
-	// Регистрация хуков
+	// Мультирайтер ...
+	// multi := io.MultiWriter(os.Stdout, file)
+	// l.SetOutput(multi)
+
+	// ... или хуки
 	l.AddHook(&WriterHook{
 		Writer:    []io.Writer{file, os.Stdout},
 		LogLevels: logrus.AllLevels,
@@ -79,4 +101,7 @@ func Init() {
 
 	// Уровень логирования
 	l.SetLevel(logrus.TraceLevel)
+
+	// Сохранение логгера
+	e = logrus.NewEntry(l)
 }
