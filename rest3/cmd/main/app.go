@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"time"
 
 	"go-learn/rest3/internal/user"
+	"go-learn/rest3/pkg/logger"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -15,12 +15,15 @@ import (
 func main() {
 	fmt.Println(" \n[ REST 3 (THE ART OF DEVELOPMENT) ]\n ")
 
+	// Получение логгера
+	log := logger.GetLogger()
+
 	// Создание роутера
-	log.Print("Создание роутера")
+	log.Info("Создание роутера")
 	router := httprouter.New()
 
 	// Регистрация обработчиков
-	log.Print("Регистрация обработчиков")
+	log.Info("Регистрация обработчиков")
 	handler := user.NewHandler()
 	handler.Register(router)
 
@@ -30,7 +33,9 @@ func main() {
 
 // Запуск сервера
 func startServer(router *httprouter.Router) {
-	log.Print("Запуск сервера")
+	log := logger.GetLogger()
+
+	log.Info("Запуск сервера")
 
 	// Адрес и порт
 	listener, err := net.Listen("tcp", ":8080")
@@ -46,7 +51,7 @@ func startServer(router *httprouter.Router) {
 	}
 
 	// Запуск
-	log.Print("Ожидаю обновлений...")
-	log.Print("(на http://localhost:8080)")
-	log.Fatal(server.Serve(listener))
+	log.Info("Ожидаю обновлений...")
+	log.Info("(на http://localhost:8080)")
+	log.Error(server.Serve(listener))
 }
