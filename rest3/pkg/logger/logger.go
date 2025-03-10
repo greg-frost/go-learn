@@ -47,12 +47,12 @@ type Logger struct {
 }
 
 // Получение логгера
-func GetLogger() Logger {
+func New() Logger {
 	return Logger{e}
 }
 
 // Получение логгера с полем
-func (l *Logger) GetLoggerWithField(k string, v interface{}) Logger {
+func (l *Logger) NewWithField(k string, v interface{}) Logger {
 	return Logger{l.WithField(k, v)}
 }
 

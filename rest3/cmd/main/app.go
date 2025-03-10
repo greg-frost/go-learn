@@ -16,7 +16,7 @@ func main() {
 	fmt.Println(" \n[ REST 3 (THE ART OF DEVELOPMENT) ]\n ")
 
 	// Получение логгера
-	log := logger.GetLogger()
+	log := logger.New()
 
 	// Создание роутера
 	log.Info("Создание роутера")
@@ -33,7 +33,7 @@ func main() {
 
 // Запуск сервера
 func startServer(router *httprouter.Router) {
-	log := logger.GetLogger()
+	log := logger.New()
 
 	log.Info("Запуск сервера")
 
@@ -53,5 +53,5 @@ func startServer(router *httprouter.Router) {
 	// Запуск
 	log.Info("Ожидаю обновлений...")
 	log.Info("(на http://localhost:8080)")
-	log.Error(server.Serve(listener))
+	log.Fatal(server.Serve(listener))
 }
