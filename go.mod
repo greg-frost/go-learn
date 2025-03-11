@@ -24,6 +24,7 @@ require (
 	github.com/kylelemons/go-gypsy v1.0.0
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.22.1
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/ugorji/go/codec v1.2.12
 	github.com/vektah/gqlparser/v2 v2.5.16
@@ -73,7 +74,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
-	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/urfave/cli/v2 v2.27.2 // indirect
