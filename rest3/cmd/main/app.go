@@ -24,7 +24,7 @@ func main() {
 
 	// Регистрация обработчиков
 	log.Info("Регистрация обработчиков")
-	handler := user.NewHandler()
+	handler := user.NewHandler(log)
 	handler.Register(router)
 
 	// Запуск сервера
