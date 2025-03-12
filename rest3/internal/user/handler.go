@@ -10,7 +10,7 @@ import (
 )
 
 // Проверка соответствия интерфейсу
-var _ handlers.Handler = new(handler)
+var _ handlers.Handler = &handler{}
 
 const (
 	usersURL = "/users"       // URL списка пользователей
