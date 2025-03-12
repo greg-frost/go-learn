@@ -22,7 +22,7 @@ type handler struct {
 	logger logger.Logger
 }
 
-// Конструктор обработчик
+// Конструктор обработчика
 func NewHandler(logger logger.Logger) handlers.Handler {
 	return &handler{logger: logger}
 }

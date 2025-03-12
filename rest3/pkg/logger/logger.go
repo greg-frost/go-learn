@@ -38,7 +38,7 @@ func (hook *WriterHook) Levels() []logrus.Level {
 	return hook.LogLevels
 }
 
-// Запись логгера
+// Экземпляр (синглтон)
 var e *logrus.Entry
 
 // Структура "логгер"
@@ -46,17 +46,17 @@ type Logger struct {
 	*logrus.Entry
 }
 
-// Получение логгера
+// Конструктор
 func New() Logger {
 	return Logger{e}
 }
 
-// Получение логгера с полем
+// Конструктор с полем
 func (l *Logger) NewWithField(k string, v interface{}) Logger {
 	return Logger{l.WithField(k, v)}
 }
 
-// Инициализация логгера
+// Инициализация
 func init() {
 	// Создание
 	l := logrus.New()

@@ -12,7 +12,7 @@ import (
 
 // Структура "конфигурация"
 type Config struct {
-	IsDebug *bool `yaml:"is_debug" env:"IS_DEBUG"`
+	IsDebug *bool `yaml:"is_debug" env:"IS_DEBUG" env-required:"true"`
 	Listen  struct {
 		Type   string `yaml:"type" env:"TYPE" env-default:"port"`
 		BindIP string `yaml:"bind_ip" env:"BIND_IP" env-default:"127.0.0.1"`
@@ -20,7 +20,7 @@ type Config struct {
 	} `yaml:"listen" env:"LISTEN"`
 }
 
-// Экземпляр конфигурации
+// Экземпляр (синглтон)
 var instance *Config
 
 // Однократное выполнение
@@ -29,7 +29,7 @@ var once sync.Once
 // Путь
 var path = base.Dir("rest3")
 
-// Конструктор конфигурации
+// Конструктор
 func New() *Config {
 	once.Do(func() {
 		log := logger.New()
