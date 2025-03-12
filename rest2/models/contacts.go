@@ -1,8 +1,9 @@
 package models
 
 import (
-	u "go-learn/rest2/utils"
 	"log"
+
+	u "go-learn/rest2/utils"
 
 	"github.com/jinzhu/gorm"
 )
