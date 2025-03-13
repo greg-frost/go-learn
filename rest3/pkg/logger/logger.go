@@ -52,8 +52,8 @@ func New() *Logger {
 }
 
 // Конструктор с полем
-func (l *Logger) NewWithField(k string, v interface{}) Logger {
-	return Logger{l.WithField(k, v)}
+func (l *Logger) NewWithField(k string, v interface{}) *Logger {
+	return &Logger{l.WithField(k, v)}
 }
 
 // Инициализация
