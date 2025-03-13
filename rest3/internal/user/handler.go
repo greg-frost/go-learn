@@ -19,11 +19,11 @@ const (
 
 // Структура "обработчик"
 type handler struct {
-	logger logger.Logger
+	logger *logger.Logger
 }
 
 // Конструктор обработчика
-func NewHandler(logger logger.Logger) handlers.Handler {
+func NewHandler(logger *logger.Logger) handlers.Handler {
 	return &handler{logger: logger}
 }
 

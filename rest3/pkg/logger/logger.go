@@ -47,8 +47,8 @@ type Logger struct {
 }
 
 // Конструктор
-func New() Logger {
-	return Logger{e}
+func New() *Logger {
+	return &Logger{e}
 }
 
 // Конструктор с полем
