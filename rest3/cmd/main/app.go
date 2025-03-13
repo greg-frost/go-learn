@@ -4,19 +4,28 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"path/filepath"
 	"time"
 
+	"go-learn/base"
+	"go-learn/rest3/internal/config"
 	"go-learn/rest3/internal/user"
 	"go-learn/rest3/pkg/logger"
 
 	"github.com/julienschmidt/httprouter"
 )
 
+// Путь
+var path = base.Dir("rest3")
+
 func main() {
 	fmt.Println(" \n[ REST 3 (THE ART OF DEVELOPMENT) ]\n ")
 
 	// Получение логгера
 	log := logger.New()
+
+	// Получение конфигурации
+	cfg := config.New()
 
 	// Создание роутера
 	log.Info("Создание роутера")
@@ -28,19 +37,34 @@ func main() {
 	handler.Register(router)
 
 	// Запуск сервера
-	startServer(router)
+	startServer(router, cfg)
 }
 
 // Запуск сервера
-func startServer(router *httprouter.Router) {
+func startServer(router *httprouter.Router, cfg *config.Config) {
 	log := logger.New()
-
 	log.Info("Запуск сервера")
 
-	// Адрес и порт
-	listener, err := net.Listen("tcp", ":8080")
-	if err != nil {
-		panic(err)
+	var listener net.Listener
+	var err error
+
+	// Прослушивание соединений
+	if cfg.Listen.Type == "sock" { // Сокет
+		log.Info("Создание сокета")
+		socketPath := filepath.Join(path, "cmd", "main", "app.sock")
+		log.Debugf("Путь к сокету: %s", socketPath)
+
+		log.Info("Прослушивание сокета")
+		listener, err = net.Listen("unix", socketPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else { // Порт
+		log.Info("Прослушивание порта")
+		listener, err = net.Listen("tcp", cfg.Listen.BindIP+":"+cfg.Listen.Port)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	// Настройка
