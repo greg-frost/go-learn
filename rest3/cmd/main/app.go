@@ -56,15 +56,19 @@ func startServer(router *httprouter.Router, cfg *config.Config) {
 
 		log.Info("Прослушивание сокета")
 		listener, err = net.Listen("unix", socketPath)
-		if err != nil {
-			log.Fatal(err)
-		}
+
+		log.Info("Ожидаю обновлений...")
+		log.Infof("(на unix socket: %s)", socketPath)
 	} else { // Порт
 		log.Info("Прослушивание порта")
-		listener, err = net.Listen("tcp", cfg.Listen.BindIP+":"+cfg.Listen.Port)
-		if err != nil {
-			log.Fatal(err)
-		}
+		listener, err = net.Listen("tcp",
+			fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
+
+		log.Info("Ожидаю обновлений...")
+		log.Infof("(на http://%s:%s)", cfg.Listen.BindIP, cfg.Listen.Port)
+	}
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// Настройка
@@ -75,7 +79,5 @@ func startServer(router *httprouter.Router, cfg *config.Config) {
 	}
 
 	// Запуск
-	log.Info("Ожидаю обновлений...")
-	log.Info("(на http://localhost:8080)")
 	log.Fatal(server.Serve(listener))
 }
