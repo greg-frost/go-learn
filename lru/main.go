@@ -11,15 +11,11 @@ var cache *lru.Cache
 
 // Инициализация
 func init() {
-	var err error
-	cache, err = lru.NewWithEvict(2,
+	cache, _ = lru.NewWithEvict(2,
 		func(key, value interface{}) {
-			fmt.Printf("[ вытеснено: key=%v value=%v ]\n", key, value)
+			fmt.Printf("[ вытеснено: %v -> %v ]\n", key, value)
 		},
 	)
-	if err != nil {
-		panic(err)
-	}
 }
 
 func main() {

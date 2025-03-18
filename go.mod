@@ -17,6 +17,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/graphql-go/graphql v0.8.1
 	github.com/graphql-go/handler v0.2.4
+	github.com/hashicorp/golang-lru v1.0.2
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/jinzhu/gorm v1.9.16
@@ -60,7 +61,6 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
