@@ -9,9 +9,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// Проверка соответствия интерфейсу
-var _ handlers.Handler = &handler{}
-
 const (
 	usersURL = "/users"       // URL списка пользователей
 	userURL  = "/users/:uuid" // URL конкретного пользователя
