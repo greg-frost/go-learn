@@ -35,7 +35,7 @@ func New() *Config {
 		log := logger.New()
 		log.Info("Чтение конфигурации приложения")
 
-		instance = &Config{}
+		instance = new(Config)
 		if err := cleanenv.ReadConfig(filepath.Join(path, "config.yaml"), instance); err != nil {
 			help, _ := cleanenv.GetDescription(instance, nil)
 			log.Info(help)
