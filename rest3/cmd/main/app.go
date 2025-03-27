@@ -46,6 +46,7 @@ func startServer(router *httprouter.Router, cfg *config.Config) {
 	log.Info("Запуск сервера")
 
 	var listener net.Listener
+	var caption string
 	var err error
 
 	// Прослушивание соединений
@@ -57,15 +58,13 @@ func startServer(router *httprouter.Router, cfg *config.Config) {
 		log.Info("Прослушивание сокета")
 		listener, err = net.Listen("unix", socketPath)
 
-		log.Info("Ожидаю обновлений...")
-		log.Infof("(на unix socket: %s)", socketPath)
+		caption = fmt.Sprintf("(на unix socket: %s)", socketPath)
 	} else { // Порт
 		log.Info("Прослушивание порта")
 		listener, err = net.Listen("tcp",
 			fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
 
-		log.Info("Ожидаю обновлений...")
-		log.Infof("(на http://%s:%s)", cfg.Listen.BindIP, cfg.Listen.Port)
+		caption = fmt.Sprintf("(на http://%s:%s)", cfg.Listen.BindIP, cfg.Listen.Port)
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -79,5 +78,7 @@ func startServer(router *httprouter.Router, cfg *config.Config) {
 	}
 
 	// Запуск
+	log.Info("Ожидаю обновлений...")
+	log.Info(caption)
 	log.Fatal(server.Serve(listener))
 }
