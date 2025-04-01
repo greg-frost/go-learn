@@ -7,6 +7,7 @@ import (
 	"go-learn/rest3/internal/user"
 	"go-learn/rest3/pkg/logger"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -37,14 +38,35 @@ func (d *db) Create(ctx context.Context, user user.User) (string, error) {
 	oid, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
 		d.logger.Trace(user)
-		return "", fmt.Errorf("не удалось получить ObjectID пользователя: %w", err)
+		return "", fmt.Errorf("не удалось получить ObjectID пользователя: %w, oid: %v", err, oid)
 	}
 	return oid.Hex(), nil
 }
 
 // Поиск конкретного пользователя
 func (d *db) FindOne(ctx context.Context, id string) (user.User, error) {
-	return user.User{}, nil
+	var u user.User
+
+	d.logger.Debug("Получение ObjectID пользователя")
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return u, fmt.Errorf("не удалось получить ObjectID пользователя: %w, hex: %s", err, id)
+	}
+
+	d.logger.Debug("Поиск пользователя")
+	filter := bson.M{"_id": oid}
+	result := d.collection.FindOne(ctx, filter)
+	if err := result.Err(); err != nil {
+		// TODO 404
+		return u, fmt.Errorf("не удалось получить пользователя: %w, id: %s", err, id)
+	}
+
+	d.logger.Debug("Декодирование пользователя")
+	if err := result.Decode(&u); err != nil {
+		return u, fmt.Errorf("не удалось декодировать пользователя: %w", err)
+	}
+
+	return u, nil
 }
 
 // Обновление пользователя
