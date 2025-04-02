@@ -71,6 +71,41 @@ func (d *db) FindOne(ctx context.Context, id string) (user.User, error) {
 
 // Обновление пользователя
 func (d *db) Update(ctx context.Context, user user.User) error {
+	d.logger.Debug("Получение ObjectID пользователя")
+	oid, err := primitive.ObjectIDFromHex(user.ID)
+	if err != nil {
+		return fmt.Errorf("не удалось получить ObjectID пользователя: %w, hex: %s", err, user.ID)
+	}
+
+	d.logger.Debug("Обновление пользователя")
+
+	filter := bson.M{"_id": oid}
+
+	userBytes, err := bson.Marshal(user)
+	if err != nil {
+		return fmt.Errorf("не удалось сериализовать пользователя: %w, id: %s", err, user.ID)
+	}
+
+	var updateUserObj bson.M
+	err = bson.Unmarshal(userBytes, &updateUserObj)
+	if err != nil {
+		return fmt.Errorf("не удалось десериализовать пользователя: %w, id: %s", err, user.ID)
+	}
+	delete(updateUserObj, "_id")
+
+	update := bson.M{"set": updateUserObj}
+
+	result, err := d.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return fmt.Errorf("не удалось обновить пользователя: %w, id: %s", err, user.ID)
+	}
+	if result.MatchedCount == 0 {
+		// TODO ErrEntityNotFound
+		return fmt.Errorf("пользователь не обновлен: %w, id: %s", err, user.ID)
+	}
+
+	d.logger.Tracef("matched: %d, modified: %d", result.MatchedCount, result.ModifiedCount)
+
 	return nil
 }
 
