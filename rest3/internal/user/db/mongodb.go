@@ -102,7 +102,6 @@ func (d *db) Update(ctx context.Context, user user.User) error {
 		// TODO ErrEntityNotFound
 		return fmt.Errorf("пользователь не найден: %w, id: %s", err, user.ID)
 	}
-
 	d.logger.Tracef("matched: %d, modified: %d", result.MatchedCount, result.ModifiedCount)
 
 	return nil
@@ -110,5 +109,23 @@ func (d *db) Update(ctx context.Context, user user.User) error {
 
 // Удаление пользователя
 func (d *db) Delete(ctx context.Context, id string) error {
+	d.logger.Debug("Получение ObjectID пользователя")
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("не удалось получить ObjectID пользователя: %w, hex: %s", err, id)
+	}
+
+	d.logger.Debug("Удаление пользователя")
+	filter := bson.M{"_id": oid}
+	result, err := d.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("не удалось удалить пользователя: %w, id: %s", err, id)
+	}
+	if result.DeletedCount == 0 {
+		// TODO ErrEntityNotFound
+		return fmt.Errorf("пользователь не найден: %w, id: %s", err, id)
+	}
+	d.logger.Tracef("deleted: %d", result.DeletedCount)
+
 	return nil
 }
