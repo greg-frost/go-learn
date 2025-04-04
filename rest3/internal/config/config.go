@@ -18,6 +18,15 @@ type Config struct {
 		BindIP string `yaml:"bind_ip" env:"BIND_IP" env-default:"127.0.0.1"`
 		Port   string `yaml:"port" env:"PORT" env-default:"8080"`
 	} `yaml:"listen" env:"LISTEN"`
+	MongoDB struct {
+		Host       string `yaml:"host" env:"HOST"`
+		Port       string `yaml:"port" env:"PORT"`
+		Database   string `yaml:"database" env:"DATABASE"`
+		AuthDB     string `yaml:"auth_db" env:"AUTH_DB"`
+		Username   string `yaml:"username" env:"USERNAME"`
+		Password   string `yaml:"password" env:"PASSWORD"`
+		Collection string `yaml:"collection" env:"COLLECTION"`
+	} `yaml:"mongodb" env:"MONGODB"`
 }
 
 // Экземпляр (синглтон)
