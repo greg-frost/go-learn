@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package user3;
 
 option go_package = ".";
