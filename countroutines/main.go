@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
+	"log"
 	"runtime"
 	"time"
 )
@@ -14,8 +14,8 @@ var counter int
 // Канал
 var ch = make(chan byte)
 
-// Аргумент
-var n = flag.Int("n", 1e6, "Количество горутин, которые нужно создать")
+// Параметр
+var n = flag.Int("n", 1e5, "Количество горутин, которые нужно создать")
 
 // Горутина
 func f() {
@@ -28,8 +28,7 @@ func main() {
 
 	flag.Parse()
 	if *n <= 0 {
-		fmt.Fprintf(os.Stderr, "неверное количество горутин")
-		os.Exit(1)
+		log.Fatal("Неверное количество горутин")
 	}
 
 	// Ограничение свободных потоков ОС до 1
@@ -52,11 +51,10 @@ func main() {
 	runtime.ReadMemStats(&m1)
 
 	if counter != *n {
-		fmt.Fprintf(os.Stderr, "не удалось запустить все горутины")
-		os.Exit(1)
+		log.Fatal("Не удалось запустить все горутины")
 	}
 
-	fmt.Printf("Итого горутин: %d\n", *n)
+	fmt.Printf("Горутин: %d\n", *n)
 	fmt.Printf("Для каждой:\n")
 	fmt.Printf("  Память: %.2f байт\n", float64(m1.Sys-m0.Sys)/float64(*n))
 	fmt.Printf("  Время:  %f µs\n", float64(t1-t0)/float64(*n)/1000)
