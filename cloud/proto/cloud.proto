@@ -24,3 +24,9 @@ message DeleteRequest {
 }
 
 message DeleteResponse {}
+
+service Cloud {
+	rpc Get(GetRequest) returns (GetResponse);
+	rpc Put(PutRequest) returns (PutResponse);
+	rpc Delete(DeleteRequest) returns (DeleteResponse);
+}
