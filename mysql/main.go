@@ -109,6 +109,5 @@ func main() {
 	defer drop.Close()
 	fmt.Println("Таблица удалена")
 
-	end := time.Now()
-	fmt.Println("Время выполнения:", end.Sub(start))
+	fmt.Println("Время выполнения:", time.Since(start))
 }
