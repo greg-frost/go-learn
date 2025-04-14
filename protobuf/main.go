@@ -223,7 +223,7 @@ func main() {
 		body, _ = json.Marshal(jsonUser)
 		json.Unmarshal(body, &jsonUser)
 	}
-	fmt.Println("JSON:", time.Now().Sub(start))
+	fmt.Println("JSON:", time.Since(start))
 
 	// Protobuf v2
 	pbv2User = newUserPb2()
@@ -232,7 +232,7 @@ func main() {
 		body, _ = proto.Marshal(&pbv2User)
 		proto.Unmarshal(body, &pbv2User)
 	}
-	fmt.Println("Protobuf v2:", time.Now().Sub(start))
+	fmt.Println("Protobuf v2:", time.Since(start))
 
 	// Protobuf v3
 	pbv3User = newUserPb3()
@@ -241,7 +241,7 @@ func main() {
 		body, _ = proto.Marshal(&pbv3User)
 		proto.Unmarshal(body, &pbv3User)
 	}
-	fmt.Println("Protobuf v3:", time.Now().Sub(start))
+	fmt.Println("Protobuf v3:", time.Since(start))
 	fmt.Println()
 
 	/* Сложный пример */
