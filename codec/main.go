@@ -39,7 +39,7 @@ func main() {
 
 	fmt.Println("Кодирование:")
 	fmt.Println(string(out))
-	fmt.Println("Заняло", time.Now().Sub(start))
+	fmt.Println("Заняло", time.Since(start))
 	fmt.Println()
 
 	// Декодирование
@@ -52,5 +52,5 @@ func main() {
 	}
 	fmt.Println("Декодирование:")
 	fmt.Printf("%+v\n", u2)
-	fmt.Println("Заняло", time.Now().Sub(start))
+	fmt.Println("Заняло", time.Since(start))
 }
