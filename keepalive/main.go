@@ -46,7 +46,7 @@ func main() {
 	}
 	fmt.Println("Запрос 1:")
 	fmt.Println("Получено", recieved, "байт")
-	fmt.Println("Заняло", time.Now().Sub(start))
+	fmt.Println("Заняло", time.Since(start))
 	fmt.Println()
 
 	// Запрос 2
@@ -66,5 +66,5 @@ func main() {
 	}
 	fmt.Println("Запрос 1:")
 	fmt.Println("Получено", recieved, "байт")
-	fmt.Println("Заняло", time.Now().Sub(start))
+	fmt.Println("Заняло", time.Since(start))
 }
