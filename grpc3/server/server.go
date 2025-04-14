@@ -80,17 +80,16 @@ func (s *routeServer) ListFeatures(rect *pb.Rectangle, stream pb.Route_ListFeatu
 func (s *routeServer) RecordRoute(stream pb.Route_RecordRouteServer) error {
 	var pointCount, featureCount, distance int32
 	var prev *pb.Point
-	startTime := time.Now()
+	start := time.Now()
 
 	for {
 		point, err := stream.Recv()
 		if err == io.EOF {
-			endTime := time.Now()
 			return stream.SendAndClose(&pb.RouteSummary{
 				PointCount:   pointCount,
 				FeatureCount: featureCount,
 				Distance:     distance,
-				ElapsedTime:  int32(endTime.Sub(startTime).Seconds()),
+				ElapsedTime:  int32(time.Since(start).Seconds()),
 			})
 		}
 		if err != nil {
