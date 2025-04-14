@@ -186,7 +186,7 @@ func metricCall(f func(string)) func(string) {
 	return func(s string) {
 		start := time.Now()
 		f(s)
-		fmt.Println("Время выполнения:", time.Now().Sub(start))
+		fmt.Println("Время выполнения:", time.Since(start))
 	}
 }
 
