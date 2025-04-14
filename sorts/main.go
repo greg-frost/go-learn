@@ -16,7 +16,7 @@ type SortFunc func(Array) (Array, int, int)
 
 // Замер времени выполнения
 func metricTime(start time.Time) time.Duration {
-	return time.Now().Sub(start)
+	return time.Since(start)
 }
 
 // Генерация массива случайных чисел
