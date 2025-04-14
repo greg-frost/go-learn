@@ -338,13 +338,13 @@ func main() {
 	for i := 0; i < times; i++ {
 		albumByID(int64(i%5 + 1))
 	}
-	fmt.Printf("Обычные - %v\n", time.Now().Sub(start))
+	fmt.Printf("Обычные - %v\n", time.Since(start))
 
 	start = time.Now()
 	for i := 0; i < times; i++ {
 		albumByIDPrepared(int64(i%5 + 1))
 	}
-	fmt.Printf("Подготовленные - %v\n\n", time.Now().Sub(start))
+	fmt.Printf("Подготовленные - %v\n\n", time.Since(start))
 
 	// Добавление альбома
 	fmt.Println("Новые альбомы:")
