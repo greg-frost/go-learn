@@ -134,7 +134,7 @@ func main() {
 	for i := 1; i <= times; i++ {
 		logger.Print(i)
 		if i == 1000 || i == 10000 || i == 100000 || i == 1000000 {
-			fmt.Printf("%7d: %v\n", i, time.Now().Sub(start))
+			fmt.Printf("%7d: %v\n", i, time.Since(start))
 		}
 	}
 	fmt.Println()
@@ -152,7 +152,7 @@ func main() {
 	for i := 1; i <= times; i++ {
 		logger.Print(i)
 		if i == 1000 || i == 10000 || i == 100000 || i == 1000000 {
-			fmt.Printf("%7d: %v\n", i, time.Now().Sub(start))
+			fmt.Printf("%7d: %v\n", i, time.Since(start))
 		}
 	}
 }
