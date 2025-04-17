@@ -17,4 +17,4 @@ COPY --from=build /src/*.pem .
 
 EXPOSE 8080
 
-CMD ["/cloud"]
+CMD ["/keyvalue"]
