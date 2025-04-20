@@ -6,7 +6,7 @@ COPY . /src
 
 WORKDIR /src
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o cloud
+RUN CGO_ENABLED=0 GOOS=linux go build -o keyvalue
 
 # Этап 2: Сборка
 
