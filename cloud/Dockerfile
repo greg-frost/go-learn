@@ -6,15 +6,15 @@ COPY . /src
 
 WORKDIR /src
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o cloud
+RUN CGO_ENABLED=0 GOOS=linux go build -o cloud_kvs
 
 # Этап 2: Сборка
 
 FROM scratch
 
-COPY --from=build /src/cloud .
+COPY --from=build /src/cloud_keyvalue .
 COPY --from=build /src/*.pem .
 
 EXPOSE 8080
 
-CMD ["/cloud"]
+CMD ["/cloud_kvs"]
