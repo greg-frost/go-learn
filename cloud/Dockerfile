@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o cloud_kvs
 
 FROM scratch
 
-COPY --from=build /src/cloud_keyvalue .
+COPY --from=build /src/cloud_kvs .
 COPY --from=build /src/*.pem .
 
 EXPOSE 8080
