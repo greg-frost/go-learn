@@ -51,6 +51,7 @@ func main() {
 	startServer(router, fmt.Sprintf("%s:%d", *addr, *port))
 }
 
+// Запуск сервера
 func startServer(router *mux.Router, connAddr string) {
 	listener, err := net.Listen("tcp", connAddr)
 	if err != nil {

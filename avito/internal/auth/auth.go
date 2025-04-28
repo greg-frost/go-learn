@@ -12,6 +12,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+// JWT-аутентификация
 var JwtAuthentication = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		skipAuth := []string{"/dummyLogin", "/register", "/login"}
@@ -23,7 +24,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 			}
 		}
 
-		token, err := ParseToken(r.Header.Get("Authorization"))
+		token, err := parseToken(r.Header.Get("Authorization"))
 		if err != nil {
 			u.RespondWithError(w, model.Error{
 				Code:    http.StatusForbidden,
@@ -39,7 +40,8 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 	})
 }
 
-func ParseToken(tokenHeader string) (*model.Token, error) {
+// Парсинг токена
+func parseToken(tokenHeader string) (*model.Token, error) {
 	if tokenHeader == "" {
 		return nil, errors.New("empty auth token")
 	}

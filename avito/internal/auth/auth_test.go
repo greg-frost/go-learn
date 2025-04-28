@@ -25,34 +25,6 @@ func init() {
 	guestToken, _ = guest.SignedString()
 }
 
-func TestParseToken(t *testing.T) {
-	tests := []struct {
-		test    string
-		header  string
-		isError bool
-	}{
-		{"Employee", "Bearer " + employeeToken, false},
-		{"Moderator", "Bearer " + moderatorToken, false},
-		{"Guest", "Bearer " + guestToken, false},
-		{"EmployeeWithoutBearer", employeeToken, true},
-		{"ModeratorWithoutBearer", moderatorToken, true},
-		{"MalformedCrop", "Bearer " + employeeToken[1:len(employeeToken)-1], true},
-		{"MalformedExtend", "Bearer pre" + moderatorToken + "post", true},
-		{"ThreeParts", "Super Bearer " + employeeToken, true},
-		{"Invalid", "letMyIn!!!", true},
-		{"Empty", "", true},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
-			_, err := ParseToken(tt.header)
-			if isError := err != nil; isError != tt.isError {
-				t.Errorf("%s: want error, got none", tt.header)
-			}
-		})
-	}
-}
-
 func TestJwtAuthentication(t *testing.T) {
 	ok := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -87,6 +59,34 @@ func TestJwtAuthentication(t *testing.T) {
 
 			if rec.Code != tt.code {
 				t.Errorf("%s: want code %d, got code %d", tt.path, tt.code, rec.Code)
+			}
+		})
+	}
+}
+
+func TestParseToken(t *testing.T) {
+	tests := []struct {
+		test    string
+		header  string
+		isError bool
+	}{
+		{"Employee", "Bearer " + employeeToken, false},
+		{"Moderator", "Bearer " + moderatorToken, false},
+		{"Guest", "Bearer " + guestToken, false},
+		{"EmployeeWithoutBearer", employeeToken, true},
+		{"ModeratorWithoutBearer", moderatorToken, true},
+		{"MalformedCrop", "Bearer " + employeeToken[1:len(employeeToken)-1], true},
+		{"MalformedExtend", "Bearer pre" + moderatorToken + "post", true},
+		{"ThreeParts", "Super Bearer " + employeeToken, true},
+		{"Invalid", "letMyIn!!!", true},
+		{"Empty", "", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			_, err := parseToken(tt.header)
+			if isError := err != nil; isError != tt.isError {
+				t.Errorf("%s: want error, got none", tt.header)
 			}
 		})
 	}

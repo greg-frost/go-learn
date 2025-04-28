@@ -124,6 +124,7 @@ func TestIntegration(t *testing.T) {
 	t.Log("Reception closed")
 }
 
+// Получение токена
 func getToken(role string) (string, error) {
 	body := `{"role": "` + role + `"}`
 	rec := httptest.NewRecorder()
@@ -141,6 +142,7 @@ func getToken(role string) (string, error) {
 	return token, nil
 }
 
+// Создание ПВЗ
 func createPVZ(token, city string) (string, error) {
 	body := `{"city": "` + city + `"}`
 	rec := httptest.NewRecorder()
@@ -160,6 +162,7 @@ func createPVZ(token, city string) (string, error) {
 	return pvz.ID, nil
 }
 
+// Создание приемки
 func createReception(token, pvzID string) (string, error) {
 	body := `{"pvzId": "` + pvzID + `"}`
 	rec := httptest.NewRecorder()
@@ -179,6 +182,7 @@ func createReception(token, pvzID string) (string, error) {
 	return reception.ID, nil
 }
 
+// Добавление товара
 func createProduct(token, productType, pvzID string) (string, error) {
 	body := `{"type": "` + productType + `", "pvzId": "` + pvzID + `"}`
 	rec := httptest.NewRecorder()
@@ -198,6 +202,7 @@ func createProduct(token, productType, pvzID string) (string, error) {
 	return product.ID, nil
 }
 
+// Удаление последнего товара
 func deleteLastProduct(token, pvzID string) error {
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(
@@ -213,6 +218,7 @@ func deleteLastProduct(token, pvzID string) error {
 	return nil
 }
 
+// Закрытие активной приемки
 func closeLastReception(token, pvzID string) error {
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(
@@ -228,6 +234,7 @@ func closeLastReception(token, pvzID string) error {
 	return nil
 }
 
+// Получение ошибки
 func getError(rec *httptest.ResponseRecorder) model.Error {
 	var err model.Error
 	json.NewDecoder(rec.Body).Decode(&err)
@@ -235,6 +242,7 @@ func getError(rec *httptest.ResponseRecorder) model.Error {
 	return err
 }
 
+// Случайный город
 func randomCity() string {
 	cities := []model.City{
 		model.CityMoscow,
@@ -245,6 +253,7 @@ func randomCity() string {
 	return string(cities[i])
 }
 
+// Случайный тип товара
 func randomType() string {
 	types := []model.Type{
 		model.TypeElectronics,

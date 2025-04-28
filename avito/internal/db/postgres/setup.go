@@ -8,6 +8,7 @@ import (
 	"go-learn/avito/internal/model"
 )
 
+// Подготовка БД
 func setup(db *sql.DB) error {
 	if err := createEnums(db); err != nil {
 		return err
@@ -18,6 +19,7 @@ func setup(db *sql.DB) error {
 	return nil
 }
 
+// Создание типов перечислений
 func createEnums(db *sql.DB) error {
 	enums := map[string][]interface{}{
 		"pvz_city": {
@@ -67,6 +69,7 @@ func createEnums(db *sql.DB) error {
 	return nil
 }
 
+// Создание таблиц
 func createTables(db *sql.DB) error {
 	tables := []string{
 		`CREATE TABLE IF NOT EXISTS pvz (

@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// Структура "параметры соединения"
 type ConnectionParams struct {
 	Host     string
 	DbName   string
@@ -13,6 +14,7 @@ type ConnectionParams struct {
 	Port     string
 }
 
+// Подключение к БД
 func connect(params ConnectionParams) (*sql.DB, error) {
 	if params.Host == "" {
 		params.Host = "localhost"

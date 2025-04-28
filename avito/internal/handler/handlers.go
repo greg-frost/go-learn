@@ -15,14 +15,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Структура "обработчик"
 type handler struct {
 	storage storage.Storage
 }
 
+// Конструктор обработчика
 func NewHandler(storage storage.Storage) Handler {
 	return &handler{storage: storage}
 }
 
+// Регистрация эндпоинтов в обработчике
 func (h *handler) Register(router *mux.Router) {
 	router.HandleFunc("/dummyLogin", h.DummyLogin).Methods("POST")
 	router.HandleFunc("/pvz", h.CreatePVZ).Methods("POST")
@@ -33,6 +36,7 @@ func (h *handler) Register(router *mux.Router) {
 	router.HandleFunc("/", h.GetSummary).Methods("GET")
 }
 
+// Псевдо-логин (получение токена)
 func (h *handler) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	var user model.UserDTO
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -65,6 +69,7 @@ func (h *handler) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, http.StatusOK, tokenString)
 }
 
+// Создание ПВЗ
 func (h *handler) CreatePVZ(w http.ResponseWriter, r *http.Request) {
 	role := u.GetRoleFromContext(r.Context())
 	if role != model.RoleModerator {
@@ -111,6 +116,7 @@ func (h *handler) CreatePVZ(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, http.StatusCreated, newPVZ)
 }
 
+// Создание приемки
 func (h *handler) CreateReception(w http.ResponseWriter, r *http.Request) {
 	role := u.GetRoleFromContext(r.Context())
 	if role != model.RoleEmployee {
@@ -168,6 +174,7 @@ func (h *handler) CreateReception(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, http.StatusCreated, newReception)
 }
 
+// Закрытие последней (активной) приемки
 func (h *handler) CloseLastReception(w http.ResponseWriter, r *http.Request) {
 	role := u.GetRoleFromContext(r.Context())
 	if role != model.RoleEmployee {
@@ -202,6 +209,7 @@ func (h *handler) CloseLastReception(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, http.StatusOK, lastReception)
 }
 
+// Добавление товара
 func (h *handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	role := u.GetRoleFromContext(r.Context())
 	if role != model.RoleEmployee {
@@ -260,6 +268,7 @@ func (h *handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, http.StatusCreated, newProduct)
 }
 
+// Удаление последнего добавленного товара
 func (h *handler) DeleteLastProduct(w http.ResponseWriter, r *http.Request) {
 	role := u.GetRoleFromContext(r.Context())
 	if role != model.RoleEmployee {
@@ -303,13 +312,14 @@ func (h *handler) DeleteLastProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 const (
-	summaryPageDefault  = 1
-	summaryPageMin      = 1
-	summaryLimitDefault = 10
-	summaryLimitMin     = 1
-	summaryLimitMax     = 30
+	summaryPageDefault  = 1  // Значение номера страницы по умолчанию
+	summaryPageMin      = 1  // Минимальное значение номера страницы
+	summaryLimitDefault = 10 // Ограничение выборки по умолчанию
+	summaryLimitMin     = 1  // Минимальное значение ограничения выборки
+	summaryLimitMax     = 30 // Максимальное значение ограничения выборки
 )
 
+// Получение сводной информации
 func (h *handler) GetSummary(w http.ResponseWriter, r *http.Request) {
 	role := u.GetRoleFromContext(r.Context())
 	if role != model.RoleEmployee && role != model.RoleModerator {

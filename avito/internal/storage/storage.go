@@ -6,6 +6,7 @@ import (
 	"go-learn/avito/internal/model"
 )
 
+// Интерфейс "хранилище"
 type Storage interface {
 	CreatePVZ(pvz model.PVZ) error
 	FindPVZ(pvzID string) (model.PVZ, error)

@@ -11,10 +11,12 @@ import (
 	"github.com/lib/pq"
 )
 
+// Структура "хранилище"
 type storage struct {
 	db *sql.DB
 }
 
+// Конструктор хранилища
 func NewStorage(params ConnectionParams) (s.Storage, error) {
 	db, err := connect(params)
 	if err != nil {
@@ -28,6 +30,7 @@ func NewStorage(params ConnectionParams) (s.Storage, error) {
 	return &storage{db: db}, nil
 }
 
+// Создание ПВЗ
 func (s *storage) CreatePVZ(pvz model.PVZ) error {
 	_, err := s.db.Exec(`
 		INSERT INTO pvz(id, registration_date, city)
@@ -40,6 +43,7 @@ func (s *storage) CreatePVZ(pvz model.PVZ) error {
 	return err
 }
 
+// Поиск ПВЗ
 func (s *storage) FindPVZ(pvzID string) (model.PVZ, error) {
 	var pvz model.PVZ
 	row := s.db.QueryRow(`
@@ -52,6 +56,7 @@ func (s *storage) FindPVZ(pvzID string) (model.PVZ, error) {
 	return pvz, err
 }
 
+// Список ПВЗ
 func (s *storage) ListPVZ(page, limit int, startDate, endDate time.Time, filterByDate bool) (
 	[]model.PVZ, error) {
 	results := make([]model.PVZ, 0, limit)
@@ -97,6 +102,7 @@ func (s *storage) ListPVZ(page, limit int, startDate, endDate time.Time, filterB
 	return results, nil
 }
 
+// Удаление ПВЗ
 func (s *storage) DeletePVZ(pvzID string) error {
 	_, err := s.db.Exec(`
 		DELETE FROM pvz
@@ -107,6 +113,7 @@ func (s *storage) DeletePVZ(pvzID string) error {
 	return err
 }
 
+// Создание приемки
 func (s *storage) CreateReception(reception model.Reception) error {
 	_, err := s.db.Exec(`
 		INSERT INTO reception(id, datetime, pvz_id, status)
@@ -120,6 +127,7 @@ func (s *storage) CreateReception(reception model.Reception) error {
 	return err
 }
 
+// Поиск последней приемки
 func (s *storage) FindLastReception(pvzID string) (model.Reception, error) {
 	var reception model.Reception
 	row := s.db.QueryRow(`
@@ -137,6 +145,7 @@ func (s *storage) FindLastReception(pvzID string) (model.Reception, error) {
 	return reception, err
 }
 
+// Список приемок
 func (s *storage) ListReceptions(pvzIDs []string, startDate, endDate time.Time) (
 	map[string][]model.Reception, error) {
 	results := make(map[string][]model.Reception, len(pvzIDs))
@@ -171,6 +180,7 @@ func (s *storage) ListReceptions(pvzIDs []string, startDate, endDate time.Time) 
 	return results, nil
 }
 
+// Закрытие приемки
 func (s *storage) CloseReception(receptionID string) error {
 	_, err := s.db.Exec(`
 		UPDATE reception
@@ -183,6 +193,7 @@ func (s *storage) CloseReception(receptionID string) error {
 	return err
 }
 
+// Удаление приемки
 func (s *storage) DeleteReception(receptionID string) error {
 	_, err := s.db.Exec(`
 		DELETE FROM reception
@@ -193,6 +204,7 @@ func (s *storage) DeleteReception(receptionID string) error {
 	return err
 }
 
+// Создание товара
 func (s *storage) CreateProduct(product model.Product) error {
 	_, err := s.db.Exec(`
 		INSERT INTO product(id, datetime, type, reception_id)
@@ -206,6 +218,7 @@ func (s *storage) CreateProduct(product model.Product) error {
 	return err
 }
 
+// Поиск последнего товара
 func (s *storage) FindLastProduct(receptionID string) (model.Product, error) {
 	var product model.Product
 	row := s.db.QueryRow(`
@@ -223,6 +236,7 @@ func (s *storage) FindLastProduct(receptionID string) (model.Product, error) {
 	return product, err
 }
 
+// Список товаров
 func (s *storage) ListProducts(receptionsIDs []string) (
 	map[string][]model.Product, error) {
 	results := make(map[string][]model.Product, len(receptionsIDs))
@@ -254,6 +268,7 @@ func (s *storage) ListProducts(receptionsIDs []string) (
 	return results, nil
 }
 
+// Удаление товара
 func (s *storage) DeleteProduct(productID string) error {
 	_, err := s.db.Exec(`
 		DELETE FROM product

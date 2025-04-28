@@ -10,32 +10,35 @@ import (
 	"github.com/google/uuid"
 )
 
-type storage struct{}
-
+// ПВЗ
 var PVZ = model.PVZ{
 	ID:               uuid.NewString(),
 	RegistrationDate: time.Now(),
 	City:             model.CityMoscow,
 }
 
+// ПВЗ с активной приемкой
 var PvzInProgress = model.PVZ{
 	ID:               uuid.NewString(),
 	RegistrationDate: time.Now(),
 	City:             model.CitySaintPetersburg,
 }
 
+// ПВЗ с закрытой приемкой
 var PvzClosed = model.PVZ{
 	ID:               uuid.NewString(),
 	RegistrationDate: time.Now(),
 	City:             model.CityKazan,
 }
 
+// ПВЗ с товарами
 var PvzWithProducts = model.PVZ{
 	ID:               uuid.NewString(),
 	RegistrationDate: time.Now(),
 	City:             model.CityMoscow,
 }
 
+// Активная приемка
 var ReceptionInProgress = model.Reception{
 	ID:       uuid.NewString(),
 	DateTime: time.Now(),
@@ -43,6 +46,7 @@ var ReceptionInProgress = model.Reception{
 	Status:   model.StatusInProgress,
 }
 
+// Закрытая приемка
 var ReceptionClosed = model.Reception{
 	ID:       uuid.NewString(),
 	DateTime: time.Now(),
@@ -50,6 +54,7 @@ var ReceptionClosed = model.Reception{
 	Status:   model.StatusClose,
 }
 
+// Приемка с товарами
 var ReceptionWithProducts = model.Reception{
 	ID:       uuid.NewString(),
 	DateTime: time.Now(),
@@ -57,6 +62,7 @@ var ReceptionWithProducts = model.Reception{
 	Status:   model.StatusInProgress,
 }
 
+// Товар
 var Product = model.Product{
 	ID:          uuid.NewString(),
 	DateTime:    time.Now(),
@@ -64,6 +70,7 @@ var Product = model.Product{
 	Type:        model.TypeElectronics,
 }
 
+// Массив ПВЗ
 var PVZs = []model.PVZ{
 	PVZ,
 	PvzInProgress,
@@ -76,12 +83,14 @@ var PVZs = []model.PVZ{
 	},
 }
 
+// Массив приемок
 var Receptions = []model.Reception{
 	ReceptionInProgress,
 	ReceptionClosed,
 	ReceptionWithProducts,
 }
 
+// Массив товаров
 var Products = []model.Product{
 	Product,
 	Product,
@@ -105,14 +114,20 @@ var Products = []model.Product{
 	},
 }
 
+// Структура "хранилище"
+type storage struct{}
+
+// Конструктор хранилища
 func NewStorage() s.Storage {
 	return &storage{}
 }
 
+// Создание ПВЗ
 func (s *storage) CreatePVZ(pvz model.PVZ) error {
 	return nil
 }
 
+// Поиск ПВЗ
 func (s *storage) FindPVZ(pvzID string) (model.PVZ, error) {
 	switch pvzID {
 	case PVZ.ID:
@@ -128,6 +143,7 @@ func (s *storage) FindPVZ(pvzID string) (model.PVZ, error) {
 	}
 }
 
+// Список ПВЗ
 func (s *storage) ListPVZ(page, limit int, startDate, endDate time.Time, filterByDate bool) (
 	[]model.PVZ, error) {
 	results := make([]model.PVZ, 0, limit)
@@ -161,6 +177,7 @@ func (s *storage) ListPVZ(page, limit int, startDate, endDate time.Time, filterB
 	return results, nil
 }
 
+// Удаление ПВЗ
 func (s *storage) DeletePVZ(pvzID string) error {
 	for _, pvz := range PVZs {
 		if pvzID == pvz.ID {
@@ -170,10 +187,12 @@ func (s *storage) DeletePVZ(pvzID string) error {
 	return errors.New("no pvzs to delete")
 }
 
+// Создание приемки
 func (s *storage) CreateReception(reception model.Reception) error {
 	return nil
 }
 
+// Поиск последней приемки
 func (s *storage) FindLastReception(pvzID string) (model.Reception, error) {
 	switch pvzID {
 	case PVZ.ID:
@@ -189,6 +208,7 @@ func (s *storage) FindLastReception(pvzID string) (model.Reception, error) {
 	}
 }
 
+// Список приемок
 func (s *storage) ListReceptions(pvzIDs []string, startDate, endDate time.Time) (
 	map[string][]model.Reception, error) {
 	results := make(map[string][]model.Reception, len(pvzIDs))
@@ -205,6 +225,7 @@ func (s *storage) ListReceptions(pvzIDs []string, startDate, endDate time.Time) 
 	return results, nil
 }
 
+// Закрытие приемки
 func (s *storage) CloseReception(receptionID string) error {
 	if receptionID != ReceptionInProgress.ID &&
 		receptionID != ReceptionWithProducts.ID {
@@ -213,6 +234,7 @@ func (s *storage) CloseReception(receptionID string) error {
 	return nil
 }
 
+// Удаление приемки
 func (s *storage) DeleteReception(receptionID string) error {
 	for _, reception := range Receptions {
 		if receptionID == reception.ID {
@@ -222,10 +244,12 @@ func (s *storage) DeleteReception(receptionID string) error {
 	return errors.New("no receptions to delete")
 }
 
+// Создание товара
 func (s *storage) CreateProduct(product model.Product) error {
 	return nil
 }
 
+// Поиск последнего товара
 func (s *storage) FindLastProduct(receptionID string) (model.Product, error) {
 	if receptionID != ReceptionInProgress.ID &&
 		receptionID != ReceptionWithProducts.ID {
@@ -237,6 +261,7 @@ func (s *storage) FindLastProduct(receptionID string) (model.Product, error) {
 	return Product, nil
 }
 
+// Список товаров
 func (s *storage) ListProducts(receptionsIDs []string) (
 	map[string][]model.Product, error) {
 	results := make(map[string][]model.Product, len(receptionsIDs))
@@ -251,6 +276,7 @@ func (s *storage) ListProducts(receptionsIDs []string) (
 	return results, nil
 }
 
+// Удаление товара
 func (s *storage) DeleteProduct(productID string) error {
 	for _, product := range Products {
 		if productID == product.ID {
