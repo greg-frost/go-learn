@@ -139,7 +139,7 @@ func (s *storage) FindPVZ(pvzID string) (model.PVZ, error) {
 	case PvzWithProducts.ID:
 		return PvzWithProducts, nil
 	default:
-		return model.PVZ{}, errors.New("pvz not found")
+		return model.PVZ{}, errors.New("ПВЗ не найден")
 	}
 }
 
@@ -184,7 +184,7 @@ func (s *storage) DeletePVZ(pvzID string) error {
 			return nil
 		}
 	}
-	return errors.New("no pvzs to delete")
+	return errors.New("нет ПВЗ для удаления")
 }
 
 // Создание приемки
@@ -204,7 +204,7 @@ func (s *storage) FindLastReception(pvzID string) (model.Reception, error) {
 	case PvzWithProducts.ID:
 		return ReceptionWithProducts, nil
 	default:
-		return model.Reception{}, errors.New("pvz not found")
+		return model.Reception{}, errors.New("ПВЗ не найден")
 	}
 }
 
@@ -229,7 +229,7 @@ func (s *storage) ListReceptions(pvzIDs []string, startDate, endDate time.Time) 
 func (s *storage) CloseReception(receptionID string) error {
 	if receptionID != ReceptionInProgress.ID &&
 		receptionID != ReceptionWithProducts.ID {
-		return errors.New("no reception in progress")
+		return errors.New("нет активной приемки")
 	}
 	return nil
 }
@@ -241,7 +241,7 @@ func (s *storage) DeleteReception(receptionID string) error {
 			return nil
 		}
 	}
-	return errors.New("no receptions to delete")
+	return errors.New("нет приемки для удаления")
 }
 
 // Создание товара
@@ -253,10 +253,10 @@ func (s *storage) CreateProduct(product model.Product) error {
 func (s *storage) FindLastProduct(receptionID string) (model.Product, error) {
 	if receptionID != ReceptionInProgress.ID &&
 		receptionID != ReceptionWithProducts.ID {
-		return model.Product{}, errors.New("no reception in progress")
+		return model.Product{}, errors.New("нет активной приемки")
 	}
 	if receptionID != ReceptionWithProducts.ID {
-		return model.Product{}, errors.New("product not found")
+		return model.Product{}, errors.New("нет товаров для удаления")
 	}
 	return Product, nil
 }
@@ -283,5 +283,5 @@ func (s *storage) DeleteProduct(productID string) error {
 			return nil
 		}
 	}
-	return errors.New("no products to delete")
+	return errors.New("нет товара для удаления")
 }

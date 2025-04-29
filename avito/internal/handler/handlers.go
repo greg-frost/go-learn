@@ -42,7 +42,7 @@ func (h *handler) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "invalid request",
+			Message: "неправильный запрос",
 		})
 		return
 	}
@@ -51,7 +51,7 @@ func (h *handler) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	if !role.Valid() {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "invalid role",
+			Message: "неправильная роль",
 		})
 		return
 	}
@@ -61,7 +61,7 @@ func (h *handler) DummyLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "token was not created",
+			Message: "токен не был создан",
 		})
 		return
 	}
@@ -75,7 +75,7 @@ func (h *handler) CreatePVZ(w http.ResponseWriter, r *http.Request) {
 	if role != model.RoleModerator {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusForbidden,
-			Message: "only for moderators",
+			Message: "только для модераторов",
 		})
 		return
 	}
@@ -84,7 +84,7 @@ func (h *handler) CreatePVZ(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&pvz); err != nil {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "invalid request",
+			Message: "неправильный запрос",
 		})
 		return
 	}
@@ -93,7 +93,7 @@ func (h *handler) CreatePVZ(w http.ResponseWriter, r *http.Request) {
 	if !city.Valid() {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "invalid city",
+			Message: "неправильный город",
 		})
 		return
 	}
@@ -105,10 +105,10 @@ func (h *handler) CreatePVZ(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.storage.CreatePVZ(newPVZ); err != nil {
-		log.Println("pvz insert error:", err)
+		log.Println("ошибка создания ПВЗ:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "pvz was not created",
+			Message: "ПВЗ не был создан",
 		})
 		return
 	}
@@ -122,7 +122,7 @@ func (h *handler) CreateReception(w http.ResponseWriter, r *http.Request) {
 	if role != model.RoleEmployee {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusForbidden,
-			Message: "only for employees",
+			Message: "только для сотрудников",
 		})
 		return
 	}
@@ -131,7 +131,7 @@ func (h *handler) CreateReception(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&reception); err != nil {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "invalid request",
+			Message: "неправильный запрос",
 		})
 		return
 	}
@@ -141,7 +141,7 @@ func (h *handler) CreateReception(w http.ResponseWriter, r *http.Request) {
 	if _, err := h.storage.FindPVZ(pvzID); err != nil {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "pvz not found",
+			Message: "ПВЗ не найден",
 		})
 		return
 	}
@@ -150,7 +150,7 @@ func (h *handler) CreateReception(w http.ResponseWriter, r *http.Request) {
 	if lastReception.Status == model.StatusInProgress {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "other reception already in progress",
+			Message: "другая приемка активна",
 		})
 		return
 	}
@@ -163,10 +163,10 @@ func (h *handler) CreateReception(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.storage.CreateReception(newReception); err != nil {
-		log.Println("reception insert error:", err)
+		log.Println("ошибка создания приемки:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "reception was not created",
+			Message: "приемка не была создана",
 		})
 		return
 	}
@@ -180,7 +180,7 @@ func (h *handler) CloseLastReception(w http.ResponseWriter, r *http.Request) {
 	if role != model.RoleEmployee {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusForbidden,
-			Message: "only for employees",
+			Message: "только для сотрудников",
 		})
 		return
 	}
@@ -191,16 +191,16 @@ func (h *handler) CloseLastReception(w http.ResponseWriter, r *http.Request) {
 	if lastReception.Status != model.StatusInProgress {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "no reception in progress",
+			Message: "нет активной приемки",
 		})
 		return
 	}
 
 	if err := h.storage.CloseReception(lastReception.ID); err != nil {
-		log.Println("reception update error:", err)
+		log.Println("ошибка обновления приемки:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "reception was not closed",
+			Message: "приемка не была закрыта",
 		})
 		return
 	}
@@ -215,7 +215,7 @@ func (h *handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	if role != model.RoleEmployee {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusForbidden,
-			Message: "only for employees",
+			Message: "только для сотрудников",
 		})
 		return
 	}
@@ -224,7 +224,7 @@ func (h *handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "invalid request",
+			Message: "неправильный запрос",
 		})
 		return
 	}
@@ -233,7 +233,7 @@ func (h *handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	if !productType.Valid() {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "invalid type",
+			Message: "неправильный тип",
 		})
 		return
 	}
@@ -244,7 +244,7 @@ func (h *handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	if lastReception.Status != model.StatusInProgress {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "no reception in progress",
+			Message: "нет активной приемки",
 		})
 		return
 	}
@@ -257,10 +257,10 @@ func (h *handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.storage.CreateProduct(newProduct); err != nil {
-		log.Println("product insert error:", err)
+		log.Println("ошибка добавления товара:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "product was not created",
+			Message: "товар не был добавлен",
 		})
 		return
 	}
@@ -274,7 +274,7 @@ func (h *handler) DeleteLastProduct(w http.ResponseWriter, r *http.Request) {
 	if role != model.RoleEmployee {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusForbidden,
-			Message: "only for employees",
+			Message: "только для сотрудников",
 		})
 		return
 	}
@@ -285,7 +285,7 @@ func (h *handler) DeleteLastProduct(w http.ResponseWriter, r *http.Request) {
 	if lastReception.Status != model.StatusInProgress {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "no reception in progress",
+			Message: "нет активной приемки",
 		})
 		return
 	}
@@ -294,16 +294,16 @@ func (h *handler) DeleteLastProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusBadRequest,
-			Message: "no products to delete",
+			Message: "нет товаров для удаления",
 		})
 		return
 	}
 
 	if err := h.storage.DeleteProduct(lastProduct.ID); err != nil {
-		log.Println("product delete error:", err)
+		log.Println("ошибка удаления товара:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "product was not deleted",
+			Message: "товар не был удален",
 		})
 		return
 	}
@@ -325,7 +325,7 @@ func (h *handler) GetSummary(w http.ResponseWriter, r *http.Request) {
 	if role != model.RoleEmployee && role != model.RoleModerator {
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusForbidden,
-			Message: "only for employees and moderators",
+			Message: "только для сотрудников и модераторов",
 		})
 		return
 	}
@@ -367,10 +367,10 @@ func (h *handler) GetSummary(w http.ResponseWriter, r *http.Request) {
 
 	pvzs, err := h.storage.ListPVZ(page, limit, startDate, endDate, filterByDate)
 	if err != nil {
-		log.Println("summary pvzs select error:", err)
+		log.Println("ошибка выдачи суммарной информации по ПВЗ:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "internal server error",
+			Message: "внутренняя ошибка сервера",
 		})
 		return
 	}
@@ -381,10 +381,10 @@ func (h *handler) GetSummary(w http.ResponseWriter, r *http.Request) {
 
 	receptions, err := h.storage.ListReceptions(pvzIDs, startDate, endDate)
 	if err != nil {
-		log.Println("summary receptions select error:", err)
+		log.Println("ошибка выдачи суммарной информации по приемкам:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "internal server error",
+			Message: "внутренняя ошибка сервера",
 		})
 		return
 	}
@@ -397,10 +397,10 @@ func (h *handler) GetSummary(w http.ResponseWriter, r *http.Request) {
 
 	products, err := h.storage.ListProducts(receptionsIDs)
 	if err != nil {
-		log.Println("summary products select error:", err)
+		log.Println("ошибка выдачи суммарной информации по товарам:", err)
 		u.RespondWithError(w, model.Error{
 			Code:    http.StatusInternalServerError,
-			Message: "internal server error",
+			Message: "внутренняя ошибка сервера",
 		})
 		return
 	}

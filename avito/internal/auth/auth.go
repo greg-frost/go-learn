@@ -43,12 +43,12 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 // Парсинг токена
 func parseToken(tokenHeader string) (*model.Token, error) {
 	if tokenHeader == "" {
-		return nil, errors.New("empty auth token")
+		return nil, errors.New("пустой токен авторизации")
 	}
 
 	tokenParts := strings.Split(tokenHeader, " ")
 	if len(tokenParts) != 2 {
-		return nil, errors.New("malformed auth token")
+		return nil, errors.New("неверный или поврежденный токен авторизации")
 	}
 
 	tk := new(model.Token)
@@ -57,10 +57,10 @@ func parseToken(tokenHeader string) (*model.Token, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
-		return nil, errors.New("malformed jwt token")
+		return nil, errors.New("неверный или поврежденный jwt-токен")
 	}
 	if !token.Valid {
-		return nil, errors.New("invalid jwt token")
+		return nil, errors.New("неверный jwt-токен")
 	}
 
 	return tk, nil

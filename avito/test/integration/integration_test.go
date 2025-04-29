@@ -55,46 +55,46 @@ func init() {
 }
 
 func TestIntegration(t *testing.T) {
-	t.Log("Started")
+	t.Log("Начато")
 
 	moderatorToken, err := getToken("moderator")
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("Moderator token recieved:", "..."+
+	t.Log("Токен модератора получен:", "..."+
 		moderatorToken[len(moderatorToken)-16:])
 
 	pvzID, err := createPVZ(moderatorToken, randomCity())
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("PVZ created:", pvzID)
+	t.Log("ПВЗ создан:", pvzID)
 
 	defer func() {
 		err := s.DeletePVZ(pvzID)
 		if err != nil {
-			t.Fatalf("PVZ with data was not deleted (ID: %s)", pvzID)
+			t.Fatalf("ПВЗ и информация не были удалены (ID: %s)", pvzID)
 		}
 
-		t.Log("Products deleted")
-		t.Log("Reception deleted")
-		t.Log("PVZ deleted")
+		t.Log("Товары удалены")
+		t.Log("Приемка удалена")
+		t.Log("ПВЗ удален")
 
-		t.Log("Ended")
+		t.Log("Закончено")
 	}()
 
 	employeeToken, err := getToken("employee")
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("Employee token recieved:", "..."+
+	t.Log("Токен сотрудника получен:", "..."+
 		employeeToken[len(employeeToken)-16:])
 
 	receptionID, err := createReception(employeeToken, pvzID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("Reception created:", receptionID)
+	t.Log("Приемка создана:", receptionID)
 
 	productsCount := 50
 	for i := 0; i < productsCount; i++ {
@@ -103,25 +103,25 @@ func TestIntegration(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	t.Log("Products created count:", productsCount)
+	t.Log("Число добавленных товаров:", productsCount)
 
 	productID, err := createProduct(employeeToken, randomType(), pvzID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("One more product created:", productID)
+	t.Log("Еще один товар добавлен:", productID)
 
 	err = deleteLastProduct(employeeToken, pvzID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("Last product deleted")
+	t.Log("Последний добавленный товар удален")
 
 	err = closeLastReception(employeeToken, pvzID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("Reception closed")
+	t.Log("Приемка закрыта")
 }
 
 // Получение токена
@@ -134,7 +134,7 @@ func getToken(role string) (string, error) {
 
 	r.ServeHTTP(rec, req)
 	if rec.Code != 200 {
-		return "", fmt.Errorf("no token recieved for role %s: %w", role, getError(rec))
+		return "", fmt.Errorf("не получен токен для роли %s: %w", role, getError(rec))
 	}
 
 	var token string
@@ -154,7 +154,7 @@ func createPVZ(token, city string) (string, error) {
 
 	r.ServeHTTP(rec, req)
 	if rec.Code != 201 {
-		return "", fmt.Errorf("no pvz created for city %s: %w", city, getError(rec))
+		return "", fmt.Errorf("не создан ПВЗ для города %s: %w", city, getError(rec))
 	}
 
 	var pvz model.PVZ
@@ -174,7 +174,7 @@ func createReception(token, pvzID string) (string, error) {
 
 	r.ServeHTTP(rec, req)
 	if rec.Code != 201 {
-		return "", fmt.Errorf("no reception created for pvzId %s: %w", pvzID, getError(rec))
+		return "", fmt.Errorf("не создана приемка для ПВЗ %s: %w", pvzID, getError(rec))
 	}
 
 	var reception model.Reception
@@ -194,7 +194,7 @@ func createProduct(token, productType, pvzID string) (string, error) {
 
 	r.ServeHTTP(rec, req)
 	if rec.Code != 201 {
-		return "", fmt.Errorf("no product created for pvzId %s: %w", pvzID, getError(rec))
+		return "", fmt.Errorf("не добавлен товар для ПВЗ %s: %w", pvzID, getError(rec))
 	}
 
 	var product model.Product
@@ -212,7 +212,7 @@ func deleteLastProduct(token, pvzID string) error {
 
 	r.ServeHTTP(rec, req)
 	if rec.Code != 200 {
-		return fmt.Errorf("no product deleted for pvzId %s: %w", pvzID, getError(rec))
+		return fmt.Errorf("не удален товар для ПВЗ %s: %w", pvzID, getError(rec))
 	}
 
 	return nil
@@ -228,7 +228,7 @@ func closeLastReception(token, pvzID string) error {
 
 	r.ServeHTTP(rec, req)
 	if rec.Code != 200 {
-		return fmt.Errorf("no reception closed for pvzId %s: %w", pvzID, getError(rec))
+		return fmt.Errorf("не закрыта приемка для ПВЗ %s: %w", pvzID, getError(rec))
 	}
 
 	return nil

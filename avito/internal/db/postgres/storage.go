@@ -20,11 +20,11 @@ type storage struct {
 func NewStorage(params ConnectionParams) (s.Storage, error) {
 	db, err := connect(params)
 	if err != nil {
-		return nil, fmt.Errorf("db connect error: %w", err)
+		return nil, fmt.Errorf("ошибка соединения с БД: %w", err)
 	}
 
 	if err = setup(db); err != nil {
-		return nil, fmt.Errorf("db setup error: %w", err)
+		return nil, fmt.Errorf("ошибка подготовки БД: %w", err)
 	}
 
 	return &storage{db: db}, nil

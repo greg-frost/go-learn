@@ -58,7 +58,7 @@ func TestJwtAuthentication(t *testing.T) {
 			handler.ServeHTTP(rec, req)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", tt.path, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", tt.path, tt.code, rec.Code)
 			}
 		})
 	}
@@ -86,7 +86,7 @@ func TestParseToken(t *testing.T) {
 		t.Run(tt.test, func(t *testing.T) {
 			_, err := parseToken(tt.header)
 			if isError := err != nil; isError != tt.isError {
-				t.Errorf("%s: want error, got none", tt.header)
+				t.Errorf("%s: ожидается ошибка, но не получена", tt.header)
 			}
 		})
 	}

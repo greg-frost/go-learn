@@ -23,10 +23,10 @@ func init() {
 }
 
 func main() {
-	fmt.Println(" \n[ AVITO INTERNSHIP ]\n ")
+	fmt.Println(" \n[ AVITO-СТАЖИРОВКА ]\n ")
 
-	addr := flag.String("addr", "localhost", "server address")
-	port := flag.Int("port", 8080, "server port")
+	addr := flag.String("addr", "localhost", "адрес сервера")
+	port := flag.Int("port", 8080, "порт сервера")
 	flag.Parse()
 
 	router := mux.NewRouter()
@@ -64,7 +64,7 @@ func startServer(router *mux.Router, connAddr string) {
 		ReadTimeout:  10 * time.Second,
 	}
 
-	fmt.Println("Listening for connections...")
-	fmt.Println("(on http://" + connAddr + ")")
+	fmt.Println("Ожидаю подключений...")
+	fmt.Println("(на http://" + connAddr + ")")
 	log.Fatal(server.Serve(listener))
 }

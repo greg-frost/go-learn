@@ -70,7 +70,7 @@ func TestDummyLogin(t *testing.T) {
 			r.ServeHTTP(rec, req)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", tt.body, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", tt.body, tt.code, rec.Code)
 			}
 		})
 	}
@@ -107,7 +107,7 @@ func TestCreatePVZ(t *testing.T) {
 			r.ServeHTTP(rec, req)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", tt.body, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", tt.body, tt.code, rec.Code)
 			}
 		})
 	}
@@ -144,7 +144,7 @@ func TestCreateReception(t *testing.T) {
 			r.ServeHTTP(rec, req)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", tt.body, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", tt.body, tt.code, rec.Code)
 			}
 		})
 	}
@@ -178,7 +178,7 @@ func TestCloseLastReception(t *testing.T) {
 			r.ServeHTTP(rec, req)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", tt.pvzID, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", tt.pvzID, tt.code, rec.Code)
 			}
 		})
 	}
@@ -221,7 +221,7 @@ func TestCreateProduct(t *testing.T) {
 			r.ServeHTTP(rec, req)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", tt.body, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", tt.body, tt.code, rec.Code)
 			}
 		})
 	}
@@ -256,7 +256,7 @@ func TestDeleteLastProduct(t *testing.T) {
 			r.ServeHTTP(rec, req)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", tt.pvzID, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", tt.pvzID, tt.code, rec.Code)
 			}
 		})
 	}
@@ -307,10 +307,10 @@ func TestGetSummary(t *testing.T) {
 			count := len(results)
 
 			if rec.Code != tt.code {
-				t.Errorf("%s: want code %d, got code %d", "/"+tt.query, tt.code, rec.Code)
+				t.Errorf("%s: ожидается код %d, получен %d", "/"+tt.query, tt.code, rec.Code)
 			}
 			if count != tt.count {
-				t.Errorf("%s: want count %d, got count %d", "/"+tt.query, tt.count, count)
+				t.Errorf("%s: ожидается количество %d, получено %d", "/"+tt.query, tt.count, count)
 			}
 		})
 	}
