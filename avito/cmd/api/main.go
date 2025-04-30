@@ -17,7 +17,7 @@ import (
 )
 
 func init() {
-	os.Setenv("DB_NAME", "avito")
+	os.Setenv("DB_NAME", "learn")
 	os.Setenv("DB_USER", "postgres")
 	os.Setenv("DB_PASS", "admin")
 }
