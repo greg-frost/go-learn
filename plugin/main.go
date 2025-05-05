@@ -19,7 +19,7 @@ func main() {
 
 	// Путь к плагину
 	if len(os.Args) != 2 {
-		log.Fatal("пример использования: run plugin/main.go animal")
+		log.Fatal("пример: go run main.go animal")
 	}
 	name := os.Args[1]
 	module := fmt.Sprintf("%s/%s/%s.so", base.Dir("plugin"), name, name)
