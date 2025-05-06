@@ -1,4 +1,4 @@
-package client
+package main
 
 import (
 	"context"
@@ -45,16 +45,23 @@ func main() {
 	case "get":
 		r, err := client.Get(ctx, &pb.GetRequest{Key: key})
 		if err != nil {
-			log.Fatalf("не удалось получить значение для ключа %s: %v", key, err)
+			log.Fatalf("не удалось получить значение ключа %s: %v", key, err)
 		}
-		log.Printf("Get %s: %s", key, r.Value)
+		log.Printf("Get %s: %q", key, r.Value)
 	case "put":
 		_, err := client.Put(ctx, &pb.PutRequest{Key: key, Value: value})
 		if err != nil {
-			log.Fatalf("не удалось сохранить ключ %s: %v", key, err)
+			log.Fatalf("не удалось сохранить значение %q ключа %s: %v", value, key, err)
 		}
-		log.Printf("Put %s", key)
+		log.Printf("Put %s: %q", key, value)
+	case "delete":
+		_, err := client.Delete(ctx, &pb.DeleteRequest{Key: key})
+		if err != nil {
+			log.Fatalf("не удалось удалить значение ключа %s: %v", key, err)
+		}
+		log.Printf("Delete %s", key)
 	default:
-		log.Fatal("пример: go run client.go [get|put] KEY VALUE")
+		fmt.Println("Синтаксис: go run ... [get|put|delete] KEY (VALUE)")
+		return
 	}
 }
