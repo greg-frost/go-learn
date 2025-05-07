@@ -18,7 +18,7 @@ type server struct {
 
 // Получение значения
 func (s *server) Get(ctx context.Context, r *pb.GetRequest) (*pb.GetResponse, error) {
-	log.Printf("Получен запрос GET key=%v", r.Key)
+	log.Printf("GET %v", r.Key)
 
 	// value, err := Get(r.Key)
 	var value string
@@ -29,7 +29,7 @@ func (s *server) Get(ctx context.Context, r *pb.GetRequest) (*pb.GetResponse, er
 
 // Сохранение значения
 func (s *server) Put(ctx context.Context, r *pb.PutRequest) (*pb.PutResponse, error) {
-	log.Printf("Получен запрос PUT key=%v value=%v", r.Key, r.Value)
+	log.Printf("PUT %v = %q", r.Key, r.Value)
 
 	// err := Put(r.Key, r.Value)
 	var err error
@@ -39,7 +39,7 @@ func (s *server) Put(ctx context.Context, r *pb.PutRequest) (*pb.PutResponse, er
 
 // Удаление значения
 func (s *server) Delete(ctx context.Context, r *pb.DeleteRequest) (*pb.DeleteResponse, error) {
-	log.Printf("Получен запрос DELETE key=%v", r.Key)
+	log.Printf("DELETE %v", r.Key)
 
 	// err := Delete(r.Key)
 	var err error

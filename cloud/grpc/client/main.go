@@ -47,19 +47,19 @@ func main() {
 		if err != nil {
 			log.Fatalf("не удалось получить значение ключа %s: %v", key, err)
 		}
-		log.Printf("Get %s: %q", key, r.Value)
+		log.Printf("GET %s: %q", key, r.Value)
 	case "put":
 		_, err := client.Put(ctx, &pb.PutRequest{Key: key, Value: value})
 		if err != nil {
 			log.Fatalf("не удалось сохранить значение %q ключа %s: %v", value, key, err)
 		}
-		log.Printf("Put %s: %q", key, value)
+		log.Printf("PUT %s: %q", key, value)
 	case "delete":
 		_, err := client.Delete(ctx, &pb.DeleteRequest{Key: key})
 		if err != nil {
 			log.Fatalf("не удалось удалить значение ключа %s: %v", key, err)
 		}
-		log.Printf("Delete %s", key)
+		log.Printf("DELETE %s", key)
 	default:
 		fmt.Println("Синтаксис: go run ... [get|put|delete] KEY (VALUE)")
 		return
