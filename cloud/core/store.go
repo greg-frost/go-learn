@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"log"
 	"sync"
 )
 
@@ -11,34 +12,6 @@ type KeyValueStore struct {
 	mu       sync.RWMutex
 	transact TransactionLogger
 }
-
-// Интерфейс "регистратор транзакций"
-type TransactionLogger interface {
-	WritePut(key, value string)
-	WriteDelete(key string)
-	Err() <-chan error
-
-	Run()
-	Read() (<-chan Event, <-chan error)
-}
-
-// Структура "событие"
-type Event struct {
-	Sequence  uint64
-	EventType EventType
-	Key       string
-	Value     string
-}
-
-// Тип события
-type EventType byte
-
-// Виды типов событий
-const (
-	_                  = iota
-	EventPut EventType = iota
-	EventDelete
-)
 
 // Ошибка поиска ключа
 var ErrKeyNotFound = errors.New("ключ не найден")
@@ -84,4 +57,39 @@ func (store *KeyValueStore) Delete(key string) error {
 	store.transact.WriteDelete(key)
 
 	return nil
+}
+
+// Восстановление хранилища из транзакций
+func (store *KeyValueStore) Restore() error {
+	events, errors := store.transact.Read()
+	e, ok := Event{}, true
+	var count int
+	var err error
+
+	for ok && err == nil {
+		select {
+		case err, ok = <-errors:
+		case e, ok = <-events:
+			switch e.EventType {
+			case EventPut:
+				err = store.Put(e.Key, e.Value)
+				count++
+			case EventDelete:
+				err = store.Delete(e.Key)
+				count++
+			}
+		}
+	}
+
+	log.Printf("Восстановлено событий: %d", count)
+
+	store.transact.Run()
+
+	go func() {
+		for err := range store.transact.Err() {
+			log.Print(err)
+		}
+	}()
+
+	return err
 }
