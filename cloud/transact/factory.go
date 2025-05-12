@@ -3,23 +3,17 @@ package transact
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
-	"go-learn/base"
 	"go-learn/cloud/core"
 )
-
-// Путь
-var path = base.Dir("cloud")
 
 // Конструктор регистратора
 func NewTransactionLogger(loggerType string) (core.TransactionLogger, error) {
 	switch loggerType {
 	case "file":
 		return NewFileTransactionLogger(
-			filepath.Join(path, os.Getenv("TLOG_FILENAME")),
+			os.Getenv("TLOG_FILE"),
 		)
-
 	case "postgres":
 		return NewPostgresTransactionLogger(
 			PostgresDBParams{
@@ -30,6 +24,6 @@ func NewTransactionLogger(loggerType string) (core.TransactionLogger, error) {
 			},
 		)
 	default:
-		return nil, fmt.Errorf("регистратора транзакций %s не существует", loggerType)
+		return nil, fmt.Errorf("нет регистратора транзакций %s", loggerType)
 	}
 }
