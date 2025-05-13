@@ -16,6 +16,11 @@ type restFrontEnd struct {
 	store *core.KeyValueStore
 }
 
+// Конструктор REST-фронтэнда
+func NewRestFrontEnd() *restFrontEnd {
+	return new(restFrontEnd)
+}
+
 // Получение значения
 func (f *restFrontEnd) handleGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

@@ -17,6 +17,11 @@ type grpcFrontEnd struct {
 	pb.UnimplementedCloudServer
 }
 
+// Конструктор gRPC-фронтэнда
+func NewGrpcFrontEnd() *grpcFrontEnd {
+	return new(grpcFrontEnd)
+}
+
 // Получение значения
 func (f *grpcFrontEnd) Get(ctx context.Context, r *pb.GetRequest) (*pb.GetResponse, error) {
 	value, err := f.store.Get(r.Key)
