@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"go-learn/cloud/core"
+
+	_ "github.com/lib/pq"
 )
 
 // Структура "регистратор транзакций в БД"
