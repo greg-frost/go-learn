@@ -32,6 +32,7 @@ func main() {
 	fmt.Println(" \n[ GO CLOUD ]\n ")
 
 	// Регистратор транзакций
+	fmt.Println("Регистратор транзакций:", os.Getenv("TLOG_TYPE"))
 	tl, err := transact.NewTransactionLogger(os.Getenv("TLOG_TYPE"))
 	if err != nil {
 		log.Fatal(err)
@@ -39,9 +40,12 @@ func main() {
 
 	// Хранилище пар ключ-значение
 	store := core.NewKeyValueStore(tl)
-	//store.Restore()
+	restored, _ := store.Restore()
+
+	fmt.Printf("Восстановлено транзакций: %d\n\n", restored)
 
 	// Фронтэнд
+	fmt.Println("Фронтэнд:", os.Getenv("FRONTEND_TYPE"))
 	fe, err := frontend.NewFrontEnd(os.Getenv("FRONTEND_TYPE"))
 	if err != nil {
 		log.Fatal(err)

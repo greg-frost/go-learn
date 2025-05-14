@@ -38,29 +38,43 @@ func (store *KeyValueStore) Get(key string) (string, error) {
 }
 
 // Добавление значения по ключу
-func (store *KeyValueStore) Put(key, value string) error {
+func (store *KeyValueStore) put(key, value string) error {
 	store.mu.Lock()
 	defer store.mu.Unlock()
 
 	store.m[key] = value
+
+	return nil
+}
+
+// Добавление значения и запись транзакции
+func (store *KeyValueStore) Put(key, value string) error {
+	store.put(key, value)
 	store.transact.WritePut(key, value)
 
 	return nil
 }
 
 // Удаление значения по ключу
-func (store *KeyValueStore) Delete(key string) error {
+func (store *KeyValueStore) delete(key string) error {
 	store.mu.Lock()
 	defer store.mu.Unlock()
 
 	delete(store.m, key)
+
+	return nil
+}
+
+// Удаление значения и запись транзакции
+func (store *KeyValueStore) Delete(key string) error {
+	store.delete(key)
 	store.transact.WriteDelete(key)
 
 	return nil
 }
 
 // Восстановление хранилища из транзакций
-func (store *KeyValueStore) Restore() error {
+func (store *KeyValueStore) Restore() (int, error) {
 	events, errors := store.transact.Read()
 	e, ok := Event{}, true
 	var count int
@@ -72,16 +86,14 @@ func (store *KeyValueStore) Restore() error {
 		case e, ok = <-events:
 			switch e.EventType {
 			case EventPut:
-				err = store.Put(e.Key, e.Value)
+				err = store.put(e.Key, e.Value)
 				count++
 			case EventDelete:
-				err = store.Delete(e.Key)
+				err = store.delete(e.Key)
 				count++
 			}
 		}
 	}
-
-	log.Printf("Восстановлено событий: %d", count)
 
 	store.transact.Run()
 
@@ -91,5 +103,5 @@ func (store *KeyValueStore) Restore() error {
 		}
 	}()
 
-	return err
+	return count, err
 }
