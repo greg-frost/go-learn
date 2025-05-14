@@ -80,8 +80,8 @@ func (f *restFrontEnd) Start(kvs *core.KeyValueStore) error {
 	r := mux.NewRouter()
 
 	// Обработчики
-	r.HandleFunc("/v1/{key}", f.handlePut).Methods("PUT")
 	r.HandleFunc("/v1/{key}", f.handleGet).Methods("GET")
+	r.HandleFunc("/v1/{key}", f.handlePut).Methods("PUT")
 	r.HandleFunc("/v1/{key}", f.handleDelete).Methods("DELETE")
 
 	// Запуск сервера

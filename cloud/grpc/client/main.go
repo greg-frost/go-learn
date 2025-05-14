@@ -28,10 +28,10 @@ func main() {
 	}
 	defer conn.Close()
 
-	// Получение клиента
+	// Новый клиент
 	client := pb.NewCloudClient(conn)
 
-	// Чтение параметров
+	// Параметры и настройки
 	var action, key, value string
 	if len(os.Args) > 2 {
 		action, key = os.Args[1], os.Args[2]
@@ -40,26 +40,31 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	// Выполнение действия
 	switch action {
+	// Получение значения
 	case "get":
 		r, err := client.Get(ctx, &pb.GetRequest{Key: key})
 		if err != nil {
 			log.Fatalf("не удалось получить значение ключа %s: %v", key, err)
 		}
 		log.Printf("GET %s: %q", key, r.Value)
+
+	// Запись значения
 	case "put":
 		_, err := client.Put(ctx, &pb.PutRequest{Key: key, Value: value})
 		if err != nil {
 			log.Fatalf("не удалось сохранить значение %q ключа %s: %v", value, key, err)
 		}
 		log.Printf("PUT %s: %q", key, value)
+
+	// Удаление значения
 	case "delete":
 		_, err := client.Delete(ctx, &pb.DeleteRequest{Key: key})
 		if err != nil {
 			log.Fatalf("не удалось удалить значение ключа %s: %v", key, err)
 		}
 		log.Printf("DELETE %s", key)
+
 	default:
 		fmt.Println("Синтаксис: go run ... [get|put|delete] KEY (VALUE)")
 		return
