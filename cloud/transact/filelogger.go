@@ -10,7 +10,7 @@ import (
 )
 
 // Структура "регистратор транзакций в файл"
-type FileTransactionLogger struct {
+type fileTransactionLogger struct {
 	events       chan<- core.Event
 	errors       <-chan error
 	lastSequence uint64
@@ -24,22 +24,22 @@ const (
 )
 
 // Запись транзакции добавления
-func (l *FileTransactionLogger) WritePut(key, value string) {
+func (l *fileTransactionLogger) WritePut(key, value string) {
 	l.events <- core.Event{EventType: core.EventPut, Key: key, Value: value}
 }
 
 // Запись транзакции удаления
-func (l *FileTransactionLogger) WriteDelete(key string) {
+func (l *fileTransactionLogger) WriteDelete(key string) {
 	l.events <- core.Event{EventType: core.EventDelete, Key: key}
 }
 
 // Получение канала ошибок
-func (l *FileTransactionLogger) Err() <-chan error {
+func (l *fileTransactionLogger) Err() <-chan error {
 	return l.errors
 }
 
 // Запуск регистратора
-func (l *FileTransactionLogger) Run() {
+func (l *fileTransactionLogger) Run() {
 	events := make(chan core.Event, FileEventsCapacity)
 	l.events = events
 
@@ -61,7 +61,7 @@ func (l *FileTransactionLogger) Run() {
 }
 
 // Чтение событий
-func (l *FileTransactionLogger) Read() (<-chan core.Event, <-chan error) {
+func (l *fileTransactionLogger) Read() (<-chan core.Event, <-chan error) {
 	scanner := bufio.NewScanner(l.file)
 	events := make(chan core.Event)
 	errors := make(chan error, 1)
@@ -101,11 +101,11 @@ func (l *FileTransactionLogger) Read() (<-chan core.Event, <-chan error) {
 }
 
 // Конструктор регистратора
-func NewFileTransactionLogger(filename string) (core.TransactionLogger, error) {
+func newFileTransactionLogger(filename string) (core.TransactionLogger, error) {
 	file, err := os.OpenFile(filename, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0755)
 	if err != nil {
 		return nil, fmt.Errorf("не удалось открыть файл регистратора транзакций: %w", err)
 	}
 
-	return &FileTransactionLogger{file: file}, nil
+	return &fileTransactionLogger{file: file}, nil
 }

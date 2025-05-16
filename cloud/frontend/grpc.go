@@ -6,7 +6,7 @@ import (
 	"net"
 
 	"go-learn/cloud/core"
-	pb "go-learn/cloud/grpc/proto"
+	pb "go-learn/cloud/frontend/grpc/proto"
 
 	"google.golang.org/grpc"
 )
@@ -18,7 +18,7 @@ type grpcFrontEnd struct {
 }
 
 // Конструктор gRPC-фронтэнда
-func NewGrpcFrontEnd() *grpcFrontEnd {
+func newGrpcFrontEnd() *grpcFrontEnd {
 	return new(grpcFrontEnd)
 }
 

@@ -17,7 +17,7 @@ type restFrontEnd struct {
 }
 
 // Конструктор REST-фронтэнда
-func NewRestFrontEnd() *restFrontEnd {
+func newRestFrontEnd() *restFrontEnd {
 	return new(restFrontEnd)
 }
 
@@ -94,8 +94,8 @@ func (f *restFrontEnd) Start(kvs *core.KeyValueStore) error {
 	// HTTPS
 	// path := base.Dir("cloud")
 	// err := http.ListenAndServeTLS("localhost:8080",
-	// 	filepath.Join(path, "data", "cert.pem"),
-	// 	filepath.Join(path, "data", "key.pem"),
+	// 	filepath.Join(path, "frontend", "rest", "cert.pem"),
+	// 	filepath.Join(path, "frontend", "rest", "key.pem"),
 	// 	r)
 
 	return err

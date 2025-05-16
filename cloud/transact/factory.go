@@ -11,12 +11,12 @@ import (
 func NewTransactionLogger(loggerType string) (core.TransactionLogger, error) {
 	switch loggerType {
 	case "file":
-		return NewFileTransactionLogger(
+		return newFileTransactionLogger(
 			os.Getenv("TLOG_FILE"),
 		)
 	case "postgres":
-		return NewPostgresTransactionLogger(
-			PostgresDBParams{
+		return newPostgresTransactionLogger(
+			postgresDBParams{
 				dbName:   os.Getenv("TLOG_DB_NAME"),
 				host:     os.Getenv("TLOG_DB_HOST"),
 				user:     os.Getenv("TLOG_DB_USER"),

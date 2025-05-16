@@ -10,14 +10,14 @@ import (
 )
 
 // Структура "регистратор транзакций в БД"
-type PostgresTransactionLogger struct {
+type postgresTransactionLogger struct {
 	events chan<- core.Event
 	errors <-chan error
 	db     *sql.DB
 }
 
 // Структура "параметры подключения к БД"
-type PostgresDBParams struct {
+type postgresDBParams struct {
 	dbName   string
 	host     string
 	user     string
@@ -28,7 +28,7 @@ type PostgresDBParams struct {
 const PostgresEventsCapacity = 16
 
 // Проверка наличия необходимых таблиц
-func (l *PostgresTransactionLogger) verifyTablesExists() (bool, error) {
+func (l *postgresTransactionLogger) verifyTablesExists() (bool, error) {
 	query := `SELECT EXISTS (SELECT true FROM information_schema.tables
 			  WHERE table_schema = 'public'	AND table_name = 'transactions')`
 
@@ -43,7 +43,7 @@ func (l *PostgresTransactionLogger) verifyTablesExists() (bool, error) {
 }
 
 // Создание необходимых таблиц
-func (l *PostgresTransactionLogger) createTables() error {
+func (l *postgresTransactionLogger) createTables() error {
 	query := `CREATE TABLE IF NOT EXISTS transactions
 			  (sequence SERIAL PRIMARY KEY, event_type INT, 
 			  key TEXT, value TEXT)`
@@ -54,22 +54,22 @@ func (l *PostgresTransactionLogger) createTables() error {
 }
 
 // Запись транзакции добавления
-func (l *PostgresTransactionLogger) WritePut(key, value string) {
+func (l *postgresTransactionLogger) WritePut(key, value string) {
 	l.events <- core.Event{EventType: core.EventPut, Key: key, Value: value}
 }
 
 // Запись транзакции удаления
-func (l *PostgresTransactionLogger) WriteDelete(key string) {
+func (l *postgresTransactionLogger) WriteDelete(key string) {
 	l.events <- core.Event{EventType: core.EventDelete, Key: key}
 }
 
 // Получение канала ошибок
-func (l *PostgresTransactionLogger) Err() <-chan error {
+func (l *postgresTransactionLogger) Err() <-chan error {
 	return l.errors
 }
 
 // Запуск регистратора
-func (l *PostgresTransactionLogger) Run() {
+func (l *postgresTransactionLogger) Run() {
 	events := make(chan core.Event, PostgresEventsCapacity)
 	l.events = events
 
@@ -93,7 +93,7 @@ func (l *PostgresTransactionLogger) Run() {
 }
 
 // Чтение событий
-func (l *PostgresTransactionLogger) Read() (<-chan core.Event, <-chan error) {
+func (l *postgresTransactionLogger) Read() (<-chan core.Event, <-chan error) {
 	events := make(chan core.Event)
 	errors := make(chan error, 1)
 
@@ -133,7 +133,7 @@ func (l *PostgresTransactionLogger) Read() (<-chan core.Event, <-chan error) {
 }
 
 // Конструктор регистратора
-func NewPostgresTransactionLogger(config PostgresDBParams) (core.TransactionLogger, error) {
+func newPostgresTransactionLogger(config postgresDBParams) (core.TransactionLogger, error) {
 	conn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable",
 		config.host, config.dbName, config.user, config.password)
 
@@ -147,7 +147,7 @@ func NewPostgresTransactionLogger(config PostgresDBParams) (core.TransactionLogg
 		return nil, fmt.Errorf("не удалось установить соединение с БД: %w", err)
 	}
 
-	logger := &PostgresTransactionLogger{db: db}
+	logger := &postgresTransactionLogger{db: db}
 
 	exists, err := logger.verifyTablesExists()
 	if err != nil {
