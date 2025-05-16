@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	pb "go-learn/cloud/grpc/proto"
+	pb "go-learn/cloud/frontend/grpc/proto"
 
 	"google.golang.org/grpc"
 )
