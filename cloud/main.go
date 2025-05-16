@@ -19,8 +19,8 @@ func init() {
 	os.Setenv("TLOG_TYPE", "file")
 	os.Setenv("FRONTEND_TYPE", "rest")
 
-	os.Setenv("TLOG_FILE", filepath.Join(
-		path, "data", "transaction.log"))
+	os.Setenv("TLOG_FILE", filepath.Join(path,
+		"transact", "filelogger", "transaction.log"))
 
 	os.Setenv("TLOG_DB_NAME", "learn")
 	os.Setenv("TLOG_DB_HOST", "localhost")
@@ -32,21 +32,22 @@ func main() {
 	fmt.Println(" \n[ GO CLOUD ]\n ")
 
 	// Регистратор транзакций
-	fmt.Println("Регистратор транзакций:", os.Getenv("TLOG_TYPE"))
-	tl, err := transact.NewTransactionLogger(os.Getenv("TLOG_TYPE"))
+	tlogType := os.Getenv("TLOG_TYPE")
+	fmt.Println("Регистратор транзакций:", tlogType)
+	tl, err := transact.NewTransactionLogger(tlogType)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Хранилище пар ключ-значение
+	// Хранилище пар ключ/значение
 	store := core.NewKeyValueStore(tl)
 	restored, _ := store.Restore()
-
 	fmt.Printf("Восстановлено транзакций: %d\n\n", restored)
 
 	// Фронтэнд
-	fmt.Println("Фронтэнд:", os.Getenv("FRONTEND_TYPE"))
-	fe, err := frontend.NewFrontEnd(os.Getenv("FRONTEND_TYPE"))
+	frontendType := os.Getenv("FRONTEND_TYPE")
+	fmt.Println("Фронтэнд:", frontendType)
+	fe, err := frontend.NewFrontEnd(frontendType)
 	if err != nil {
 		log.Fatal(err)
 	}
