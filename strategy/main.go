@@ -64,7 +64,7 @@ func main() {
 	fmt.Println(" \n[ СТРАТЕГИЯ ]\n ")
 
 	product := "Товар"
-	payWay := "cash"
+	payWay := "card"
 
 	// Тип оплаты
 	var payment Payment
