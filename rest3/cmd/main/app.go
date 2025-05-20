@@ -76,14 +76,12 @@ func startServer(router *httprouter.Router, cfg *config.Config) {
 
 		log.Info("Прослушивание сокета")
 		listener, err = net.Listen("unix", socketPath)
-
 		caption = fmt.Sprintf("(на unix socket: %s)", socketPath)
 	} else { // Порт
 		log.Info("Прослушивание порта")
-		listener, err = net.Listen("tcp",
-			fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
-
-		caption = fmt.Sprintf("(на http://%s:%s)", cfg.Listen.BindIP, cfg.Listen.Port)
+		serverAddr := fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port)
+		listener, err = net.Listen("tcp", serverAddr)
+		caption = fmt.Sprintf("(на http://%s)", serverAddr)
 	}
 	if err != nil {
 		log.Fatal(err)

@@ -22,20 +22,20 @@ type WriterHook struct {
 }
 
 // Запись логов в райтеры
-func (hook *WriterHook) Fire(entry *logrus.Entry) error {
+func (h *WriterHook) Fire(entry *logrus.Entry) error {
 	line, err := entry.String()
 	if err != nil {
 		return err
 	}
-	for _, w := range hook.Writer {
+	for _, w := range h.Writer {
 		w.Write([]byte(line))
 	}
 	return nil
 }
 
 // Подучение уровней логирования
-func (hook *WriterHook) Levels() []logrus.Level {
-	return hook.LogLevels
+func (h *WriterHook) Levels() []logrus.Level {
+	return h.LogLevels
 }
 
 // Экземпляр (синглтон)
@@ -74,17 +74,17 @@ func init() {
 	}
 
 	// Папка
-	err := os.MkdirAll(filepath.Join(path, "logs"), 0644)
-	if err != nil {
-		panic(err)
-	}
+	// err := os.MkdirAll(filepath.Join(path, "logs"), 0644)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	// Файл
-	file, err := os.OpenFile(filepath.Join(path, "logs/all.log"),
-		os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0640)
-	if err != nil {
-		panic(err)
-	}
+	// file, err := os.OpenFile(filepath.Join(path, "logs/all.log"),
+	// 	os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0640)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	// Отключение дефолтного вывода
 	l.SetOutput(io.Discard)
@@ -95,7 +95,10 @@ func init() {
 
 	// ... или хуки
 	l.AddHook(&WriterHook{
-		Writer:    []io.Writer{file, os.Stdout},
+		Writer: []io.Writer{
+			os.Stdout,
+			// file,
+		},
 		LogLevels: logrus.AllLevels,
 	})
 
