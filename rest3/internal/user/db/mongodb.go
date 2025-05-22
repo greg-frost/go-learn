@@ -73,6 +73,28 @@ func (d *db) FindOne(ctx context.Context, id string) (user.User, error) {
 	return u, nil
 }
 
+// Поиск всех пользователей
+func (d *db) FindAll(ctx context.Context) ([]user.User, error) {
+	var u []user.User
+
+	d.logger.Debug("Поиск пользователей")
+	filter := bson.M{}
+	cursor, err := d.collection.Find(ctx, filter)
+	if err != nil {
+		return u, fmt.Errorf("не удалось получить пользователей: %w", err)
+	}
+
+	d.logger.Debug("Декодирование пользователей")
+	if err := cursor.All(ctx, &u); err != nil {
+		return u, fmt.Errorf("не удалось декодировать пользователей: %w", err)
+	}
+	if cursor.Err() != nil {
+		return u, fmt.Errorf("не удалось прочитать пользователей: %w", cursor.Err())
+	}
+
+	return u, nil
+}
+
 // Обновление пользователя
 func (d *db) Update(ctx context.Context, user user.User) error {
 	d.logger.Debug("Получение ObjectID пользователя")
