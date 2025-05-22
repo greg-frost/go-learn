@@ -82,6 +82,18 @@ func main() {
 	}
 	log.Info("Поиск пользователя:", one)
 
+	count := 3
+	for i := 0; i < count; i++ {
+		storage.Create(context.Background(), u)
+	}
+	log.Info("Создание пользователей:", count)
+
+	all, err := storage.FindAll(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Info("Поиск всех пользователей:", all)
+
 	// Создание роутера
 	log.Info("Создание роутера")
 	router := httprouter.New()
