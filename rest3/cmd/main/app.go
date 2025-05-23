@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -11,8 +10,6 @@ import (
 	"go-learn/base"
 	"go-learn/rest3/internal/config"
 	"go-learn/rest3/internal/user"
-	"go-learn/rest3/internal/user/db"
-	"go-learn/rest3/pkg/client/mongodb"
 	"go-learn/rest3/pkg/logger"
 
 	"github.com/julienschmidt/httprouter"
@@ -31,68 +28,65 @@ func main() {
 	cfg := config.New()
 
 	// БД (MongoDB)
-	mongodbClient, err := mongodb.NewClient(
-		context.Background(),
-		cfg.MongoDB.Host,
-		cfg.MongoDB.Port,
-		cfg.MongoDB.Username,
-		cfg.MongoDB.Password,
-		cfg.MongoDB.Database,
-		cfg.MongoDB.AuthDB,
-	)
-	if err != nil {
-		panic(err)
-	}
-	storage := db.NewStorage(mongodbClient, cfg.MongoDB.Collection, log)
+	// mongodbClient, err := mongodb.NewClient(
+	// 	context.Background(),
+	// 	cfg.MongoDB.Host, cfg.MongoDB.Port,
+	// 	cfg.MongoDB.Username, cfg.MongoDB.Password,
+	// 	cfg.MongoDB.Database, cfg.MongoDB.AuthDB,
+	// )
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// storage := db.NewStorage(mongodbClient, cfg.MongoDB.Collection, log)
 
-	u := user.User{
-		Username:     "greg_frost",
-		Email:        "noreply@example.com",
-		PasswordHash: "1234567890abcdef",
-	}
+	// u := user.User{
+	// 	Username:     "greg_frost",
+	// 	Email:        "noreply@example.com",
+	// 	PasswordHash: "1234567890abcdef",
+	// }
 
-	uID, err := storage.Create(context.Background(), u)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Info("Создание пользователя:", uID)
+	// uID, err := storage.Create(context.Background(), u)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Info("Создание пользователя:", uID)
 
-	one, err := storage.FindOne(context.Background(), uID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Info("Поиск пользователя:", one)
+	// one, err := storage.FindOne(context.Background(), uID)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Info("Поиск пользователя:", one)
 
-	one.Email = "reply@example.com"
-	err = storage.Update(context.Background(), one)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Info("Обновление пользователя:", one)
+	// one.Email = "reply@example.com"
+	// err = storage.Update(context.Background(), one)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Info("Обновление пользователя:", one)
 
-	err = storage.Delete(context.Background(), uID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Info("Удаление пользователя:", uID)
+	// err = storage.Delete(context.Background(), uID)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Info("Удаление пользователя:", uID)
 
-	one, err = storage.FindOne(context.Background(), uID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Info("Поиск пользователя:", one)
+	// one, err = storage.FindOne(context.Background(), uID)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Info("Поиск пользователя:", one)
 
-	count := 3
-	for i := 0; i < count; i++ {
-		storage.Create(context.Background(), u)
-	}
-	log.Info("Создание пользователей:", count)
+	// count := 3
+	// for i := 0; i < count; i++ {
+	// 	storage.Create(context.Background(), u)
+	// }
+	// log.Info("Создание пользователей:", count)
 
-	all, err := storage.FindAll(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Info("Поиск всех пользователей:", all)
+	// all, err := storage.FindAll(context.Background())
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Info("Поиск всех пользователей:", all)
 
 	// Создание роутера
 	log.Info("Создание роутера")
