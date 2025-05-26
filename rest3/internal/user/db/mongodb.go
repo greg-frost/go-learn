@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"go-learn/rest3/internal/apperror"
 	"go-learn/rest3/internal/user"
 	"go-learn/rest3/pkg/logger"
 
@@ -59,8 +60,8 @@ func (d *db) FindOne(ctx context.Context, id string) (user.User, error) {
 	result := d.collection.FindOne(ctx, filter)
 	if err := result.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			// TODO ErrEntityNotFound
-			return u, fmt.Errorf("пользователь не найден: %w, id: %s", err, id)
+			return u, apperror.ErrNotFound
+			// return u, fmt.Errorf("пользователь не найден: %w, id: %s", err, id)
 		}
 		return u, fmt.Errorf("не удалось получить пользователя: %w, id: %s", err, id)
 	}
@@ -121,8 +122,8 @@ func (d *db) Update(ctx context.Context, user user.User) error {
 		return fmt.Errorf("не удалось обновить пользователя: %w, id: %s", err, user.ID)
 	}
 	if result.MatchedCount == 0 {
-		// TODO ErrEntityNotFound
-		return fmt.Errorf("пользователь не найден: %w, id: %s", err, user.ID)
+		return apperror.ErrNotFound
+		// return fmt.Errorf("пользователь не найден: %w, id: %s", err, user.ID)
 	}
 	d.logger.Tracef("matched: %d, modified: %d", result.MatchedCount, result.ModifiedCount)
 
@@ -144,8 +145,8 @@ func (d *db) Delete(ctx context.Context, id string) error {
 		return fmt.Errorf("не удалось удалить пользователя: %w, id: %s", err, id)
 	}
 	if result.DeletedCount == 0 {
-		// TODO ErrEntityNotFound
-		return fmt.Errorf("пользователь не найден: %w, id: %s", err, id)
+		return apperror.ErrNotFound
+		// return fmt.Errorf("пользователь не найден: %w, id: %s", err, id)
 	}
 	d.logger.Tracef("deleted: %d", result.DeletedCount)
 
