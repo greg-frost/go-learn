@@ -14,5 +14,5 @@ type Service struct {
 
 // Создание пользователя
 func (s *Service) Create(ctx context.Context, dto CreateUserDTO) (User, error) {
-	panic("not implemented")
+	panic("не реализовано")
 }

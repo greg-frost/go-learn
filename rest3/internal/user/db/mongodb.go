@@ -28,23 +28,6 @@ func NewStorage(database *mongo.Database, collection string, logger *logger.Logg
 	}
 }
 
-// Создание пользователя
-func (d *db) Create(ctx context.Context, user user.User) (string, error) {
-	d.logger.Debug("Создание пользователя")
-	result, err := d.collection.InsertOne(ctx, user)
-	if err != nil {
-		return "", fmt.Errorf("не удалось создать пользователя: %w", err)
-	}
-
-	d.logger.Debug("Получение ObjectID пользователя")
-	oid, ok := result.InsertedID.(primitive.ObjectID)
-	if !ok {
-		d.logger.Trace(user)
-		return "", fmt.Errorf("не удалось получить ObjectID пользователя: %w, oid: %v", err, oid)
-	}
-	return oid.Hex(), nil
-}
-
 // Поиск конкретного пользователя
 func (d *db) FindOne(ctx context.Context, id string) (user.User, error) {
 	var u user.User
@@ -94,6 +77,23 @@ func (d *db) FindAll(ctx context.Context) ([]user.User, error) {
 	}
 
 	return u, nil
+}
+
+// Создание пользователя
+func (d *db) Create(ctx context.Context, user user.User) (string, error) {
+	d.logger.Debug("Создание пользователя")
+	result, err := d.collection.InsertOne(ctx, user)
+	if err != nil {
+		return "", fmt.Errorf("не удалось создать пользователя: %w", err)
+	}
+
+	d.logger.Debug("Получение ObjectID пользователя")
+	oid, ok := result.InsertedID.(primitive.ObjectID)
+	if !ok {
+		d.logger.Trace(user)
+		return "", fmt.Errorf("не удалось получить ObjectID пользователя: %w, oid: %v", err, oid)
+	}
+	return oid.Hex(), nil
 }
 
 // Обновление пользователя
