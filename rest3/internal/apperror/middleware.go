@@ -14,6 +14,8 @@ func Middleware(next appHandler) http.HandlerFunc {
 		var appErr *AppError
 		err := next(w, r)
 		if err != nil {
+			w.Header().Set("Content-Type", "application/json")
+
 			if errors.As(err, &appErr) {
 				if errors.Is(err, ErrNotFound) {
 					w.WriteHeader(http.StatusNotFound)
@@ -32,7 +34,7 @@ func Middleware(next appHandler) http.HandlerFunc {
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			w.Write(systemError(err).Marshal())
 		}
 	}
 }

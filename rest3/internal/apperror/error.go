@@ -4,8 +4,8 @@ import "encoding/json"
 
 // Ошибки
 var (
+	ErrNotAuth  = NewAppError(nil, "не авторизовано", "user not authorized", "US-000002")
 	ErrNotFound = NewAppError(nil, "не найдено", "entity not found", "US-000003")
-	ErrNotAuth  = NewAppError(nil, "не авторизовано", "user not authorized", "US-000004")
 )
 
 // Структура "ошибка приложения"
@@ -43,4 +43,9 @@ func (e *AppError) Marshal() []byte {
 		panic(err)
 	}
 	return b
+}
+
+// Системная ошибка
+func systemError(err error) *AppError {
+	return NewAppError(err, "внутренняя системная ошибка", err.Error(), "US-000001")
 }
