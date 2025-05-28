@@ -12,8 +12,8 @@ var (
 type AppError struct {
 	Err     error  `json:"-"`
 	Message string `json:"message"`
-	Reason  string `json:"reason"`
-	Code    string `json:"code"`
+	Reason  string `json:"reason,omitempty"`
+	Code    string `json:"code,omitempty"`
 }
 
 // Конструктор ошибки
