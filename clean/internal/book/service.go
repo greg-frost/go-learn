@@ -6,6 +6,7 @@ import "context"
 type Service interface {
 	GetBookByUUID(ctx context.Context, uuid string) (*Book, error)
 	GetAllBooks(ctx context.Context, limit, offset int) ([]*Book, error)
+	CreateBook(ctx context.Context, dto *CreateBookDTO) (*Book, error)
 }
 
 // Структура "сервис"
@@ -26,4 +27,14 @@ func (s *service) GetBookByUUID(ctx context.Context, uuid string) (*Book, error)
 // Получение всех книг
 func (s *service) GetAllBooks(ctx context.Context, limit, offset int) ([]*Book, error) {
 	return s.storage.GetAll(ctx, limit, offset)
+}
+
+// Создание книги
+func (s *service) CreateBook(ctx context.Context, dto *CreateBookDTO) (*Book, error) {
+	book := &Book{
+		Title:  dto.Title,
+		Author: dto.Author,
+		Year:   dto.Year,
+	}
+	return s.storage.Create(ctx, book)
 }
