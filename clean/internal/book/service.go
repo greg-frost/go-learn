@@ -16,7 +16,9 @@ type service struct {
 
 // Конструктор сервиса
 func NewService(storage Storage) Service {
-	return &service{storage: storage}
+	return &service{
+		storage: storage,
+	}
 }
 
 // Получение книги по ID
