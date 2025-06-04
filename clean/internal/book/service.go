@@ -1,6 +1,10 @@
 package book
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 // Интерфейс "сервис"
 type Service interface {
@@ -34,9 +38,23 @@ func (s *service) GetAllBooks(ctx context.Context, limit, offset int) ([]*Book, 
 // Создание книги
 func (s *service) CreateBook(ctx context.Context, dto *CreateBookDTO) (*Book, error) {
 	book := &Book{
+		UUID:   uuid.NewString(),
 		Title:  dto.Title,
 		Author: dto.Author,
 		Year:   dto.Year,
 	}
 	return s.storage.Create(ctx, book)
+}
+
+// Обновление книги
+func (s *service) UpdateBook(ctx context.Context, dto *UpdateBookDTO) (*Book, error) {
+	book := &Book{
+		UUID:   dto.UUID,
+		Title:  dto.Title,
+		Author: dto.Author,
+		Year:   dto.Year,
+		Busy:   dto.Busy,
+		User:   dto.User,
+	}
+	return s.storage.Update(ctx, book)
 }
