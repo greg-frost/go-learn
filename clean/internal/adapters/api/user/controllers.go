@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"go-learn/clean/internal/adapters"
-	"go-learn/clean/internal/user"
+	"go-learn/clean/internal/adapters/api"
+	"go-learn/clean/internal/domain/user"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -23,7 +23,7 @@ type handler struct {
 }
 
 // Конструктор обработчика
-func NewHandler(service user.Service) adapters.Handler {
+func NewHandler(service user.Service) api.Handler {
 	return &handler{
 		service: service,
 	}
