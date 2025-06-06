@@ -5,34 +5,35 @@ import (
 	"errors"
 
 	"go-learn/clean/internal/domain/user"
+	"go-learn/clean/pkg/client/memory"
 )
 
 // Структура "хранилище"
 type storage struct {
-	m map[string]*user.User
+	client *memory.Client
 }
 
 // Конструктор хранилища
 func NewStorage() user.Storage {
 	return &storage{
-		m: make(map[string]*user.User),
+		client: memory.NewClient(),
 	}
 }
 
 // Получение конкретного пользователя
 func (s *storage) GetOne(ctx context.Context, uuid string) (*user.User, error) {
-	user, ok := s.m[uuid]
+	value, ok := s.client.Retrieve(uuid)
 	if !ok {
 		return nil, errors.New("не найдено")
 	}
-	return user, nil
+	return value.(*user.User), nil
 }
 
 // Получение всех пользователей
 func (s *storage) GetAll(ctx context.Context, limit, offset int) ([]*user.User, error) {
 	users := make([]*user.User, 0, limit)
-	for _, user := range s.m {
-		users = append(users, user)
+	for _, value := range s.client.Values() {
+		users = append(users, value.(*user.User))
 	}
 	if offset > len(users) {
 		offset = len(users)
@@ -46,24 +47,27 @@ func (s *storage) GetAll(ctx context.Context, limit, offset int) ([]*user.User, 
 
 // Создание пользователя
 func (s *storage) Create(ctx context.Context, user *user.User) (*user.User, error) {
-	s.m[user.UUID] = user
+	if ok := s.client.Store(user.UUID, user); !ok {
+		return nil, errors.New("не сохранено")
+	}
 	return user, nil
 }
 
 // Обновление пользователя
 func (s *storage) Update(ctx context.Context, user *user.User) (*user.User, error) {
-	if _, ok := s.m[user.UUID]; !ok {
+	if _, ok := s.client.Retrieve(user.UUID); !ok {
 		return nil, errors.New("не найдено")
 	}
-	s.m[user.UUID] = user
+	if ok := s.client.Store(user.UUID, user); !ok {
+		return nil, errors.New("не обновлено")
+	}
 	return user, nil
 }
 
 // Удаление пользователя
 func (s *storage) Delete(ctx context.Context, user *user.User) error {
-	if _, ok := s.m[user.UUID]; !ok {
-		return errors.New("не найдено")
+	if ok := s.client.Remove(user.UUID); !ok {
+		return errors.New("не удалено")
 	}
-	delete(s.m, user.UUID)
 	return nil
 }
