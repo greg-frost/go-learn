@@ -22,7 +22,7 @@ func NewStorage() user.Storage {
 
 // Получение конкретного пользователя
 func (s *storage) GetOne(ctx context.Context, uuid string) (*user.User, error) {
-	value, ok := s.client.Retrieve(uuid)
+	value, ok := s.client.Get(uuid)
 	if !ok {
 		return nil, errors.New("не найдено")
 	}
@@ -47,7 +47,7 @@ func (s *storage) GetAll(ctx context.Context, limit, offset int) ([]*user.User, 
 
 // Создание пользователя
 func (s *storage) Create(ctx context.Context, user *user.User) (*user.User, error) {
-	if ok := s.client.Store(user.UUID, user); !ok {
+	if ok := s.client.Put(user.UUID, user); !ok {
 		return nil, errors.New("не сохранено")
 	}
 	return user, nil
@@ -55,10 +55,10 @@ func (s *storage) Create(ctx context.Context, user *user.User) (*user.User, erro
 
 // Обновление пользователя
 func (s *storage) Update(ctx context.Context, user *user.User) (*user.User, error) {
-	if _, ok := s.client.Retrieve(user.UUID); !ok {
+	if _, ok := s.client.Get(user.UUID); !ok {
 		return nil, errors.New("не найдено")
 	}
-	if ok := s.client.Store(user.UUID, user); !ok {
+	if ok := s.client.Put(user.UUID, user); !ok {
 		return nil, errors.New("не обновлено")
 	}
 	return user, nil
@@ -66,7 +66,7 @@ func (s *storage) Update(ctx context.Context, user *user.User) (*user.User, erro
 
 // Удаление пользователя
 func (s *storage) Delete(ctx context.Context, user *user.User) error {
-	if ok := s.client.Remove(user.UUID); !ok {
+	if ok := s.client.Delete(user.UUID); !ok {
 		return errors.New("не удалено")
 	}
 	return nil

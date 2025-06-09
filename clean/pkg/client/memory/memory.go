@@ -16,7 +16,7 @@ func NewClient() *Client {
 }
 
 // Получение
-func (c *Client) Retrieve(key string) (interface{}, bool) {
+func (c *Client) Get(key string) (interface{}, bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
@@ -25,7 +25,7 @@ func (c *Client) Retrieve(key string) (interface{}, bool) {
 }
 
 // Сохранение
-func (c *Client) Store(key string, value interface{}) bool {
+func (c *Client) Put(key string, value interface{}) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -34,7 +34,7 @@ func (c *Client) Store(key string, value interface{}) bool {
 }
 
 // Удаление
-func (c *Client) Remove(key string) bool {
+func (c *Client) Delete(key string) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 

@@ -22,7 +22,7 @@ func NewStorage() book.Storage {
 
 // Получение конкретной книги
 func (s *storage) GetOne(ctx context.Context, uuid string) (*book.Book, error) {
-	value, ok := s.client.Retrieve(uuid)
+	value, ok := s.client.Get(uuid)
 	if !ok {
 		return nil, errors.New("не найдено")
 	}
@@ -47,7 +47,7 @@ func (s *storage) GetAll(ctx context.Context, limit, offset int) ([]*book.Book, 
 
 // Создание книги
 func (s *storage) Create(ctx context.Context, book *book.Book) (*book.Book, error) {
-	if ok := s.client.Store(book.UUID, book); !ok {
+	if ok := s.client.Put(book.UUID, book); !ok {
 		return nil, errors.New("не сохранено")
 	}
 	return book, nil
@@ -55,10 +55,10 @@ func (s *storage) Create(ctx context.Context, book *book.Book) (*book.Book, erro
 
 // Обновление книги
 func (s *storage) Update(ctx context.Context, book *book.Book) (*book.Book, error) {
-	if _, ok := s.client.Retrieve(book.UUID); !ok {
+	if _, ok := s.client.Get(book.UUID); !ok {
 		return nil, errors.New("не найдено")
 	}
-	if ok := s.client.Store(book.UUID, book); !ok {
+	if ok := s.client.Put(book.UUID, book); !ok {
 		return nil, errors.New("не обновлено")
 	}
 	return book, nil
@@ -66,7 +66,7 @@ func (s *storage) Update(ctx context.Context, book *book.Book) (*book.Book, erro
 
 // Удаление книги
 func (s *storage) Delete(ctx context.Context, book *book.Book) error {
-	if ok := s.client.Remove(book.UUID); !ok {
+	if ok := s.client.Delete(book.UUID); !ok {
 		return errors.New("не удалено")
 	}
 	return nil
