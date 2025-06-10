@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"go-learn/clean/internal/adapters/api"
-	"go-learn/clean/internal/domain/book"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -19,11 +18,11 @@ const (
 
 // Структура "обработчик"
 type handler struct {
-	service book.Service
+	service Service
 }
 
 // Конструктор обработчика
-func NewHandler(service book.Service) api.Handler {
+func NewHandler(service Service) api.Handler {
 	return &handler{
 		service: service,
 	}

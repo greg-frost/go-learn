@@ -3,15 +3,10 @@ package book
 import (
 	"context"
 
+	// "go-learn/clean/internal/adapters/api/book"
+
 	"github.com/google/uuid"
 )
-
-// Интерфейс "сервис"
-type Service interface {
-	GetBookByUUID(ctx context.Context, uuid string) (*Book, error)
-	GetAllBooks(ctx context.Context, limit, offset int) ([]*Book, error)
-	CreateBook(ctx context.Context, dto *CreateBookDTO) (*Book, error)
-}
 
 // Структура "сервис"
 type service struct {
@@ -19,7 +14,7 @@ type service struct {
 }
 
 // Конструктор сервиса
-func NewService(storage Storage) Service {
+func NewService(storage Storage) *service {
 	return &service{
 		storage: storage,
 	}
