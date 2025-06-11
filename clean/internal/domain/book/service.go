@@ -3,8 +3,6 @@ package book
 import (
 	"context"
 
-	// "go-learn/clean/internal/adapters/api/book"
-
 	"github.com/google/uuid"
 )
 
@@ -44,12 +42,20 @@ func (s *service) CreateBook(ctx context.Context, dto *CreateBookDTO) (*Book, er
 // Обновление книги
 func (s *service) UpdateBook(ctx context.Context, dto *UpdateBookDTO) (*Book, error) {
 	book := &Book{
-		UUID:   dto.UUID,
-		Title:  dto.Title,
-		Author: dto.Author,
-		Year:   dto.Year,
-		Busy:   dto.Busy,
-		User:   dto.User,
+		UUID:    dto.UUID,
+		Title:   dto.Title,
+		Author:  dto.Author,
+		Year:    dto.Year,
+		Busy:    dto.Busy,
+		OwnerID: dto.OwnerID,
 	}
 	return s.storage.Update(ctx, book)
+}
+
+// Удаление книги
+func (s *service) DeleteBook(ctx context.Context, dto *DeleteBookDTO) error {
+	book := &Book{
+		UUID: dto.UUID,
+	}
+	return s.storage.Delete(ctx, book)
 }

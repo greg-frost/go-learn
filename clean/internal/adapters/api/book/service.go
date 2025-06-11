@@ -11,4 +11,6 @@ type Service interface {
 	GetBookByUUID(ctx context.Context, uuid string) (*book.Book, error)
 	GetAllBooks(ctx context.Context, limit, offset int) ([]*book.Book, error)
 	CreateBook(ctx context.Context, dto *book.CreateBookDTO) (*book.Book, error)
+	UpdateBook(ctx context.Context, dto *book.UpdateBookDTO) (*book.Book, error)
+	DeleteBook(ctx context.Context, dto *book.DeleteBookDTO) error
 }
