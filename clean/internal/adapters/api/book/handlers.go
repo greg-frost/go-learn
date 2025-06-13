@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	booksURL = "/books"          // URL конкретной книги
-	bookURL  = "/books/:book_id" // URL списка книг
+	booksURL = "/books"          // URL списка книг
+	bookURL  = "/books/:book_id" // URL конкретной книги
 )
 
 // Структура "обработчик"
@@ -30,8 +30,18 @@ func NewHandler(service Service) api.Handler {
 
 // Регистрация маршрутов
 func (h *handler) Register(router *httprouter.Router) {
-	router.GET(booksURL, h.GetAllBooks)
 	router.GET(bookURL, h.GetBookByUUID)
+	router.GET(booksURL, h.GetAllBooks)
+}
+
+// Получение конкретной книги
+func (h *handler) GetBookByUUID(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	uuid := params.ByName("book_id")
+	book, _ := h.service.GetBookByUUID(context.Background(), uuid)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(book)
 }
 
 // Получение всех книг
@@ -40,15 +50,7 @@ func (h *handler) GetAllBooks(w http.ResponseWriter, r *http.Request, params htt
 	offset, _ := strconv.Atoi(r.URL.Query().Get("offset"))
 	books, _ := h.service.GetAllBooks(context.Background(), limit, offset)
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(books)
-}
-
-// Получение конкретной книги
-func (h *handler) GetBookByUUID(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	uuid := params.ByName("book_id")
-	book, _ := h.service.GetBookByUUID(context.Background(), uuid)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(book)
 }
