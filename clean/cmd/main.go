@@ -21,17 +21,17 @@ func main() {
 	// Роутер
 	router := httprouter.New()
 
-	// Книги
-	bookStorage := bstorage.NewStorage()
-	bookService := bservice.NewService(bookStorage)
-	bookHandler := bhandler.NewHandler(bookService)
-	bookHandler.Register(router)
-
 	// Авторы
 	authorStorage := astorage.NewStorage()
 	authorService := aservice.NewService(authorStorage)
 	authorHandler := ahandler.NewHandler(authorService)
 	authorHandler.Register(router)
+
+	// Книги
+	bookStorage := bstorage.NewStorage()
+	bookService := bservice.NewService(bookStorage, authorService)
+	bookHandler := bhandler.NewHandler(bookService)
+	bookHandler.Register(router)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
