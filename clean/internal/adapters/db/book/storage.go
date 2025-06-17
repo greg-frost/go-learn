@@ -65,8 +65,8 @@ func (s *storage) Update(ctx context.Context, book *book.Book) (*book.Book, erro
 }
 
 // Удаление книги
-func (s *storage) Delete(ctx context.Context, book *book.Book) error {
-	if ok := s.client.Delete(book.UUID); !ok {
+func (s *storage) Delete(ctx context.Context, uuid string) error {
+	if ok := s.client.Delete(uuid); !ok {
 		return errors.New("не удалено")
 	}
 	return nil

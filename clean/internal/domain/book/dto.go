@@ -16,8 +16,3 @@ type UpdateBookDTO struct {
 	Busy       bool   `json:"busy"`
 	OwnerUUID  string `json:"owner_uuid"`
 }
-
-// Структура "удаление книги"
-type DeleteBookDTO struct {
-	UUID string `json:"uuid"`
-}

@@ -12,7 +12,7 @@ type Service interface {
 	GetAllAuthors(ctx context.Context, limit, offset int) ([]*Author, error)
 	CreateAuthor(ctx context.Context, dto *CreateAuthorDTO) (*Author, error)
 	UpdateAuthor(ctx context.Context, dto *UpdateAuthorDTO) (*Author, error)
-	DeleteAuthor(ctx context.Context, dto *DeleteAuthorDTO) error
+	DeleteAuthor(ctx context.Context, uuid string) error
 }
 
 // Структура "сервис"
@@ -58,9 +58,6 @@ func (s *service) UpdateAuthor(ctx context.Context, dto *UpdateAuthorDTO) (*Auth
 }
 
 // Удаление автора
-func (s *service) DeleteAuthor(ctx context.Context, dto *DeleteAuthorDTO) error {
-	author := &Author{
-		UUID: dto.UUID,
-	}
-	return s.storage.Delete(ctx, author)
+func (s *service) DeleteAuthor(ctx context.Context, uuid string) error {
+	return s.storage.Delete(ctx, uuid)
 }

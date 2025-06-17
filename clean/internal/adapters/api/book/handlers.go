@@ -1,7 +1,6 @@
 package book
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -42,18 +41,40 @@ func (h *handler) Register(router *httprouter.Router) {
 // Получение конкретной книги
 func (h *handler) GetBookByUUID(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	uuid := params.ByName("book_id")
-	book, _ := h.service.GetBookByUUID(context.Background(), uuid)
+	book, err := h.service.GetBookByUUID(r.Context(), uuid)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "ошибка поиска книги: %v", err)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(book)
 }
 
+const (
+	limitDefault  = 10 // Ограничение выборки по умолчанию
+	offsetDefault = 0  // Смещение выборки по умолчанию
+)
+
 // Получение всех книг
 func (h *handler) GetAllBooks(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
-	offset, _ := strconv.Atoi(r.URL.Query().Get("offset"))
-	books, _ := h.service.GetAllBooks(context.Background(), limit, offset)
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err != nil || limit < 0 {
+		limit = limitDefault
+	}
+	offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
+	if err != nil || offset < 0 {
+		offset = offsetDefault
+	}
+
+	books, err := h.service.GetAllBooks(r.Context(), limit, offset)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "ошибка поиска книг: %v", err)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -106,10 +127,9 @@ func (h *handler) UpdateBook(w http.ResponseWriter, r *http.Request, params http
 
 // Удаление книги
 func (h *handler) DeleteBook(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	var bookDTO *book.DeleteBookDTO
-	bookDTO.UUID = params.ByName("book_id")
+	uuid := params.ByName("book_id")
 
-	err := h.service.DeleteBook(r.Context(), bookDTO)
+	err := h.service.DeleteBook(r.Context(), uuid)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "ошибка удаления книги: %v", err)

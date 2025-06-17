@@ -12,8 +12,3 @@ type UpdateAuthorDTO struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
 }
-
-// Структура "удаление автора"
-type DeleteAuthorDTO struct {
-	UUID string `json:"uuid"`
-}

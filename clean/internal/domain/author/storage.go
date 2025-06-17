@@ -8,5 +8,5 @@ type Storage interface {
 	GetAll(ctx context.Context, limit, offset int) ([]*Author, error)
 	Create(ctx context.Context, author *Author) (*Author, error)
 	Update(ctx context.Context, author *Author) (*Author, error)
-	Delete(ctx context.Context, author *Author) error
+	Delete(ctx context.Context, uuid string) error
 }

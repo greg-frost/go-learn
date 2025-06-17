@@ -65,9 +65,6 @@ func (s *service) UpdateBook(ctx context.Context, dto *UpdateBookDTO) (*Book, er
 }
 
 // Удаление книги
-func (s *service) DeleteBook(ctx context.Context, dto *DeleteBookDTO) error {
-	book := &Book{
-		UUID: dto.UUID,
-	}
-	return s.storage.Delete(ctx, book)
+func (s *service) DeleteBook(ctx context.Context, uuid string) error {
+	return s.storage.Delete(ctx, uuid)
 }
