@@ -7,6 +7,10 @@ import (
 )
 
 // Интерфейс "сервис"
+// Замечание:
+// Здесь, в качестве альтернативы сервису "Книги",
+// интерфейс находится ближе к месту определения,
+// что позволяет возвращать его в конструкторе сервиса
 type Service interface {
 	GetAuthorByUUID(ctx context.Context, uuid string) (*Author, error)
 	GetAllAuthors(ctx context.Context, limit, offset int) ([]*Author, error)
