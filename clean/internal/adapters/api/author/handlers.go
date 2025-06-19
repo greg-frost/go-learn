@@ -83,14 +83,14 @@ func (h *handler) GetAllAuthors(w http.ResponseWriter, r *http.Request, params h
 
 // Создание автора
 func (h *handler) CreateAuthor(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	var authorDTO *author.CreateAuthorDTO
-	if err := json.NewDecoder(r.Body).Decode(authorDTO); err != nil {
+	var authorDTO author.CreateAuthorDTO
+	if err := json.NewDecoder(r.Body).Decode(&authorDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "ошибка парсинга данных: %v", err)
 		return
 	}
 
-	author, err := h.service.CreateAuthor(r.Context(), authorDTO)
+	author, err := h.service.CreateAuthor(r.Context(), &authorDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "ошибка создания автора: %v", err)
@@ -104,15 +104,15 @@ func (h *handler) CreateAuthor(w http.ResponseWriter, r *http.Request, params ht
 
 // Обновление автора
 func (h *handler) UpdateAuthor(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	var authorDTO *author.UpdateAuthorDTO
-	if err := json.NewDecoder(r.Body).Decode(authorDTO); err != nil {
+	var authorDTO author.UpdateAuthorDTO
+	if err := json.NewDecoder(r.Body).Decode(&authorDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "ошибка парсинга данных: %v", err)
 		return
 	}
 	authorDTO.UUID = params.ByName("author_id")
 
-	author, err := h.service.UpdateAuthor(r.Context(), authorDTO)
+	author, err := h.service.UpdateAuthor(r.Context(), &authorDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "ошибка обновления автора: %v", err)

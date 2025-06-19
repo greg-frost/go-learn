@@ -83,14 +83,14 @@ func (h *handler) GetAllBooks(w http.ResponseWriter, r *http.Request, params htt
 
 // Создание книги
 func (h *handler) CreateBook(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	var bookDTO *book.CreateBookDTO
-	if err := json.NewDecoder(r.Body).Decode(bookDTO); err != nil {
+	var bookDTO book.CreateBookDTO
+	if err := json.NewDecoder(r.Body).Decode(&bookDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "ошибка парсинга данных: %v", err)
 		return
 	}
 
-	book, err := h.service.CreateBook(r.Context(), bookDTO)
+	book, err := h.service.CreateBook(r.Context(), &bookDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "ошибка создания книги: %v", err)
@@ -104,15 +104,15 @@ func (h *handler) CreateBook(w http.ResponseWriter, r *http.Request, params http
 
 // Обновление книги
 func (h *handler) UpdateBook(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	var bookDTO *book.UpdateBookDTO
-	if err := json.NewDecoder(r.Body).Decode(bookDTO); err != nil {
+	var bookDTO book.UpdateBookDTO
+	if err := json.NewDecoder(r.Body).Decode(&bookDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "ошибка парсинга данных: %v", err)
 		return
 	}
 	bookDTO.UUID = params.ByName("book_id")
 
-	book, err := h.service.UpdateBook(r.Context(), bookDTO)
+	book, err := h.service.UpdateBook(r.Context(), &bookDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "ошибка обновления книги: %v", err)

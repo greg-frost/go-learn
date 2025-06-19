@@ -2,6 +2,7 @@ package book
 
 import (
 	"context"
+	"errors"
 
 	"go-learn/clean/internal/domain/author"
 
@@ -40,7 +41,7 @@ func (s *service) GetAllBooks(ctx context.Context, limit, offset int) ([]*Book, 
 func (s *service) CreateBook(ctx context.Context, dto *CreateBookDTO) (*Book, error) {
 	author, err := s.authorService.GetAuthorByUUID(ctx, dto.AuthorUUID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("автор не найден")
 	}
 	book := &Book{
 		UUID:   uuid.NewString(),
@@ -55,7 +56,7 @@ func (s *service) CreateBook(ctx context.Context, dto *CreateBookDTO) (*Book, er
 func (s *service) UpdateBook(ctx context.Context, dto *UpdateBookDTO) (*Book, error) {
 	author, err := s.authorService.GetAuthorByUUID(ctx, dto.AuthorUUID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("автор не найден")
 	}
 	book := &Book{
 		UUID:      dto.UUID,
