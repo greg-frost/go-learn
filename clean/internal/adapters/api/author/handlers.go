@@ -53,7 +53,8 @@ func (h *handler) GetAuthorByUUID(w http.ResponseWriter, r *http.Request, params
 	json.NewEncoder(w).Encode(author)
 }
 
-const limitDefault = 10 // Ограничение выборки по умолчанию
+// Ограничение выборки по умолчанию
+const limitDefault = 10
 
 // Получение всех авторов
 func (h *handler) GetAllAuthors(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

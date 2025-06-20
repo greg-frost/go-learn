@@ -53,7 +53,8 @@ func (h *handler) GetBookByUUID(w http.ResponseWriter, r *http.Request, params h
 	json.NewEncoder(w).Encode(book)
 }
 
-const limitDefault = 10 // Ограничение выборки по умолчанию
+// Ограничение выборки по умолчанию
+const limitDefault = 10
 
 // Получение всех книг
 func (h *handler) GetAllBooks(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
