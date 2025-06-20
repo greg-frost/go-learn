@@ -53,10 +53,7 @@ func (h *handler) GetAuthorByUUID(w http.ResponseWriter, r *http.Request, params
 	json.NewEncoder(w).Encode(author)
 }
 
-const (
-	limitDefault  = 10 // Ограничение выборки по умолчанию
-	offsetDefault = 0  // Смещение выборки по умолчанию
-)
+const limitDefault = 10 // Ограничение выборки по умолчанию
 
 // Получение всех авторов
 func (h *handler) GetAllAuthors(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -66,7 +63,7 @@ func (h *handler) GetAllAuthors(w http.ResponseWriter, r *http.Request, params h
 	}
 	offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
 	if err != nil || offset < 0 {
-		offset = offsetDefault
+		offset = 0
 	}
 
 	authors, err := h.service.GetAllAuthors(r.Context(), limit, offset)

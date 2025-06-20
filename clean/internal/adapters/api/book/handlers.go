@@ -53,10 +53,7 @@ func (h *handler) GetBookByUUID(w http.ResponseWriter, r *http.Request, params h
 	json.NewEncoder(w).Encode(book)
 }
 
-const (
-	limitDefault  = 10 // Ограничение выборки по умолчанию
-	offsetDefault = 0  // Смещение выборки по умолчанию
-)
+const limitDefault = 10 // Ограничение выборки по умолчанию
 
 // Получение всех книг
 func (h *handler) GetAllBooks(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -66,7 +63,7 @@ func (h *handler) GetAllBooks(w http.ResponseWriter, r *http.Request, params htt
 	}
 	offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
 	if err != nil || offset < 0 {
-		offset = offsetDefault
+		offset = 0
 	}
 
 	books, err := h.service.GetAllBooks(r.Context(), limit, offset)
