@@ -24,7 +24,7 @@ func main() {
 	author.Handler.Register(router)
 
 	// Книги
-	book, err := composites.NewBookComposite(author.Service)
+	book, err := composites.NewBookComposite(author)
 	if err != nil {
 		log.Fatal(err)
 	}

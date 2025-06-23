@@ -4,7 +4,6 @@ import (
 	handler "go-learn/clean/internal/adapters/api"
 	api "go-learn/clean/internal/adapters/api/book"
 	storage "go-learn/clean/internal/adapters/db/book"
-	service "go-learn/clean/internal/domain/author"
 	domain "go-learn/clean/internal/domain/book"
 )
 
@@ -16,9 +15,9 @@ type BookComposite struct {
 }
 
 // Конструктор композита
-func NewBookComposite(authorService service.Service) (*BookComposite, error) {
+func NewBookComposite(author *AuthorComposite) (*BookComposite, error) {
 	storage := storage.NewStorage()
-	service := domain.NewService(storage, authorService)
+	service := domain.NewService(storage, author.Service)
 	handler := api.NewHandler(service)
 
 	return &BookComposite{
