@@ -61,4 +61,15 @@ func main() {
 	fmt.Println("Чтение значения:")
 	value, ok = other.Get("key")
 	fmt.Printf("key = %s (%t)\n", value, ok)
+
+	fmt.Println("Удаление значения:")
+	other.Delete("key")
+	fmt.Println("key -- value")
+	fmt.Println()
+
+	// Первый синглтон
+	fmt.Println("Первый экземпляр")
+	fmt.Println("Чтение значения:")
+	value, ok = singleton.Get("key")
+	fmt.Printf("key = %q (%t)\n", value, ok)
 }
