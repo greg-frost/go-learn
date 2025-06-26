@@ -17,18 +17,18 @@ func main() {
 	router := httprouter.New()
 
 	// Авторы
-	author, err := composites.NewAuthorComposite()
+	authors, err := composites.NewAuthorComposite()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("композит авторов: %v", err)
 	}
-	author.Handler.Register(router)
+	authors.Handler.Register(router)
 
 	// Книги
-	book, err := composites.NewBookComposite(author)
+	books, err := composites.NewBookComposite(authors)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("композит книг: %v", err)
 	}
-	book.Handler.Register(router)
+	books.Handler.Register(router)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
