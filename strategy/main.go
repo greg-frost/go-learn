@@ -7,7 +7,7 @@ import (
 
 // Интерфейс "оплата"
 type Payment interface {
-	Pay() error
+	Pay(amount int) error
 }
 
 // Структура "оплата картой"
@@ -25,60 +25,74 @@ func NewCardPayment(number, cvv int) Payment {
 }
 
 // Оплата картой
-func (p *cardPayment) Pay() error {
+func (p *cardPayment) Pay(amount int) error {
 	fmt.Println("Оплата картой...")
 	return nil
 }
 
 // Структура "оплата наличными"
 type cashPayment struct {
-	money map[int]int
+	passport string
 }
 
 // Конструктор оплаты наличными
-func NewCashPayment(money map[int]int) Payment {
+func NewCashPayment(passport string) Payment {
 	return &cashPayment{
-		money: money,
+		passport: passport,
 	}
 }
 
 // Оплата наличными
-func (p *cashPayment) Pay() error {
+func (p *cashPayment) Pay(amount int) error {
 	fmt.Println("Оплата наличными...")
 	return nil
 }
 
-// Обработка заказа
-func processOrder(product string, payment Payment) error {
-	fmt.Println("Обработка заказа...")
+// Структура "обработчик заказов"
+type orderProcessor struct {
+	payment Payment
+}
 
-	err := payment.Pay()
+// Конструктор обработчика заказов
+func NewOrderProcessor(payment Payment) *orderProcessor {
+	return &orderProcessor{
+		payment: payment,
+	}
+}
+
+// Обработка заказа
+func (op *orderProcessor) processOrder(product string, amount int) error {
+	fmt.Println("Обработка заказа...")
+	err := op.payment.Pay(amount)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 func main() {
 	fmt.Println(" \n[ СТРАТЕГИЯ ]\n ")
 
-	product := "Товар"
-	payWay := "card"
+	const (
+		product = "Товар"
+		payWay  = "cash"
+		amount  = 1000
+	)
 
-	// Тип оплаты
+	// Выбор типа оплаты
 	var payment Payment
 	switch payWay {
 	case "card":
 		payment = NewCardPayment(1234567890, 123)
 	case "cash":
-		payment = NewCashPayment(map[int]int{5000: 1, 1000: 2, 500: 1})
+		payment = NewCashPayment("1234-567890")
 	default:
 		log.Fatalf("нет такого типа оплаты: %s", payWay)
 	}
 
 	// Обработка заказа
-	err := processOrder(product, payment)
+	op := NewOrderProcessor(payment)
+	err := op.processOrder(product, amount)
 	if err != nil {
 		log.Fatal(err)
 	}
