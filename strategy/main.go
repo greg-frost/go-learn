@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
 )
 
 // Интерфейс "оплата"
@@ -26,7 +27,11 @@ func NewCardPayment(number, cvv int) Payment {
 
 // Оплата картой
 func (p *cardPayment) Pay(amount int) error {
-	fmt.Println("Оплата картой...")
+	card := []byte(strconv.Itoa(p.number))
+	for i := 0; i < len(card)-4; i++ {
+		card[i] = '*'
+	}
+	fmt.Printf("Оплата картой: %s\n", string(card))
 	return nil
 }
 
@@ -44,7 +49,7 @@ func NewCashPayment(passport string) Payment {
 
 // Оплата наличными
 func (p *cashPayment) Pay(amount int) error {
-	fmt.Println("Оплата наличными...")
+	fmt.Printf("Оплата наличными: %d руб.\n", amount)
 	return nil
 }
 
@@ -62,7 +67,7 @@ func NewOrderProcessor(payment Payment) *orderProcessor {
 
 // Обработка заказа
 func (op *orderProcessor) processOrder(product string, amount int) error {
-	fmt.Println("Обработка заказа...")
+	fmt.Println("Обработка заказа:", product)
 	err := op.payment.Pay(amount)
 	if err != nil {
 		return err
@@ -75,7 +80,7 @@ func main() {
 
 	const (
 		product = "Товар"
-		payWay  = "cash"
+		payWay  = "card"
 		amount  = 1000
 	)
 
@@ -96,5 +101,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("OK!")
+	fmt.Println("OK: Оплата прошла успешно!")
 }
