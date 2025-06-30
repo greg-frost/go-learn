@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	fmt.Println(" \n[ НАБЛЮДАТЕЛЬ ]\n ")
+	fmt.Println(" \n[ ЗАКРЫТИЕ ]\n ")
 
 	// Каналы
 	msg := make(chan int)
