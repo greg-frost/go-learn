@@ -15,8 +15,8 @@ import (
 
 // Интерфейс "файл"
 type File interface {
-	Load(string) (io.ReadCloser, error)
-	Save(string, io.ReadSeeker) error
+	Load(path string) (io.ReadCloser, error)
+	Save(path string, body io.ReadSeeker) error
 }
 
 // Общие ошибки
@@ -96,7 +96,7 @@ func main() {
 
 	// Сохранение
 	fmt.Println("Сохранение...")
-	filename := "data/file.txt"
+	filename := filepath.Join("data", "file.txt")
 	err = store.Save(filename, body)
 	if err != nil {
 		log.Fatal(err)
