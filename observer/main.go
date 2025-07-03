@@ -9,11 +9,16 @@ type Observable interface {
 	AddObserver(observer Observer)
 	RemoveObserver(observer Observer)
 	NotifyObservers()
+	Header() string
+	Body() string
+	Footer() string
 }
 
 // Интерфейс "наблюдатель"
 type Observer interface {
 	Update()
+	UpdatePush(header, body, footer string)
+	UpdatePull(observable Observable)
 }
 
 // Структура "страница"
@@ -48,7 +53,9 @@ func (p *page) RemoveObserver(observer Observer) {
 // Оповещение наблюдателей
 func (p *page) NotifyObservers() {
 	for _, observer := range p.observers {
-		observer.Update()
+		// observer.Update()
+		// observer.UpdatePush(p.header, p.body, p.footer)
+		observer.UpdatePull(p)
 	}
 }
 
@@ -89,6 +96,20 @@ func (b *browser) Update() {
 	fmt.Println("Браузер: Рендеринг страницы")
 }
 
+// Обновление состояния браузера (Push)
+func (b *browser) UpdatePush(header, body, footer string) {
+	fmt.Printf("Браузер: <%s> <%s> <%s>\n", header, body, footer)
+}
+
+// Обновление состояния браузера (Pull)
+func (b *browser) UpdatePull(observable Observable) {
+	fmt.Printf("Браузер: <%s> <%s> <%s>\n",
+		observable.Header(),
+		observable.Body(),
+		observable.Footer(),
+	)
+}
+
 // Структура "логгер"
 type logger struct{}
 
@@ -100,6 +121,20 @@ func NewLogger() *logger {
 // Обновление состояния логгера
 func (l *logger) Update() {
 	fmt.Println("Логгер: Логирование страницы")
+}
+
+// Обновление состояния логгера (Push)
+func (b *logger) UpdatePush(header, body, footer string) {
+	fmt.Printf("Логгер: %s, %s, %s\n", header, body, footer)
+}
+
+// Обновление состояния логгера (Pull)
+func (b *logger) UpdatePull(observable Observable) {
+	fmt.Printf("Логгер: %s, %s, %s\n",
+		observable.Header(),
+		observable.Body(),
+		observable.Footer(),
+	)
 }
 
 func main() {
