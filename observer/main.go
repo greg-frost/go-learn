@@ -36,13 +36,13 @@ func (p *page) AddObserver(observer Observer) {
 
 // Удаление наблюдателя
 func (p *page) RemoveObserver(observer Observer) {
-	observers := make([]Observer, 0, len(p.observers))
-	for _, o := range p.observers {
-		if o != observer {
-			observers = append(observers, o)
+	for i, o := range p.observers {
+		if o == observer {
+			copy(p.observers[i:], p.observers[i+1:])
+			p.observers = p.observers[:len(p.observers)-1]
+			break
 		}
 	}
-	p.observers = observers
 }
 
 // Оповещение наблюдателей
@@ -105,24 +105,37 @@ func (l *logger) Update() {
 func main() {
 	fmt.Println(" \n[ НАБЛЮДАТЕЛЬ ]\n ")
 
-	// Страница, бразузер и логгер
+	// Страница
+	fmt.Println("Создание и изменение страницы")
 	page := NewPage()
+	page.Change("Голова", "Тело", "Ноги")
+	fmt.Println()
+
+	// Браузер и логгер
 	browser := NewBrowser()
 	logger := NewLogger()
 
 	// Добавление наблюдателей
-	fmt.Println("Добавление браузера и логгера...")
+	fmt.Println("Добавление браузера и логгера")
 	page.AddObserver(browser)
 	page.AddObserver(logger)
 
-	// Изменение страницы
-	page.Change("Голова", "Тело", "Ноги")
+	fmt.Println("Изменение страницы")
+	page.Change("Голова", "Тело", "Футер")
 	fmt.Println()
 
-	// Удаление наблюдателя
-	fmt.Println("Удаление логгера...")
+	// Удаление логгера
+	fmt.Println("Удаление логгера")
 	page.RemoveObserver(logger)
 
-	// Очередное изменение страницы
+	fmt.Println("Изменение страницы")
 	page.Change("Header", "Body", "Footer")
+	fmt.Println()
+
+	// Удаление браузера
+	fmt.Println("Удаление браузера")
+	page.RemoveObserver(browser)
+
+	fmt.Println("Изменение страницы")
+	page.Change("Head", "Body", "Foot")
 }
