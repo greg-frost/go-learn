@@ -23,7 +23,7 @@ type Observer interface {
 
 // Структура "страница"
 type page struct {
-	observers []Observer
+	observers map[Observer]bool
 	header    string
 	body      string
 	footer    string
@@ -31,28 +31,24 @@ type page struct {
 
 // Конструктор страницы
 func NewPage() *page {
-	return new(page)
+	return &page{
+		observers: make(map[Observer]bool),
+	}
 }
 
 // Добавление наблюдателя
 func (p *page) AddObserver(observer Observer) {
-	p.observers = append(p.observers, observer)
+	p.observers[observer] = true
 }
 
 // Удаление наблюдателя
 func (p *page) RemoveObserver(observer Observer) {
-	for i, o := range p.observers {
-		if o == observer {
-			copy(p.observers[i:], p.observers[i+1:])
-			p.observers = p.observers[:len(p.observers)-1]
-			break
-		}
-	}
+	delete(p.observers, observer)
 }
 
 // Оповещение наблюдателей
 func (p *page) NotifyObservers() {
-	for _, observer := range p.observers {
+	for observer := range p.observers {
 		// observer.Update()
 		// observer.UpdatePush(p.header, p.body, p.footer)
 		observer.UpdatePull(p)
