@@ -2,18 +2,26 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
 // Структура "синглтон"
 type singleton struct {
 	store map[string]string
+	mu    sync.RWMutex
 }
 
 // Экземпляр синглтона
 var instance *singleton
 
+// Мьютекс
+var m sync.Mutex
+
 // Получение единственного экземпляра
 func GetInstance() *singleton {
+	m.Lock()
+	defer m.Unlock()
+
 	if instance == nil {
 		instance = &singleton{
 			store: make(map[string]string),
@@ -24,17 +32,26 @@ func GetInstance() *singleton {
 
 // Чтение значения
 func (s *singleton) Get(key string) (string, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
 	value, ok := s.store[key]
 	return value, ok
 }
 
 // Запись значения
 func (s *singleton) Put(key, value string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	s.store[key] = value
 }
 
 // Удаление значения
 func (s *singleton) Delete(key string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	delete(s.store, key)
 }
 
@@ -55,7 +72,7 @@ func main() {
 	fmt.Println()
 
 	// Второй синглтон
-	fmt.Println("Первый экземпляр")
+	fmt.Println("Второй экземпляр")
 	other := GetInstance()
 
 	fmt.Println("Чтение значения:")
