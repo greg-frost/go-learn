@@ -10,12 +10,6 @@ type Decorable interface {
 	Description() string
 }
 
-// Интерфейс "декоратор"
-type Decorator interface {
-	Decorable
-	Decorate(decorator Decorable)
-}
-
 // Структура "работа"
 type Job struct {
 	cost        float32
@@ -59,9 +53,10 @@ type Tax struct {
 	description string
 }
 
-// Конструктор "налога"
-func NewTax(cost float32, description string) Decorator {
+// Конструктор налога
+func NewTax(cost float32, description string, decorator Decorable) Decorable {
 	return &Tax{
+		decorator:   decorator,
 		cost:        cost,
 		description: description,
 	}
@@ -77,11 +72,6 @@ func (t *Tax) Description() string {
 	return t.decorator.Description() + " - " + t.description
 }
 
-// Декорирование налога
-func (t *Tax) Decorate(decorator Decorable) {
-	t.decorator = decorator
-}
-
 // Структура "премия"
 type Bonus struct {
 	decorator   Decorable
@@ -90,8 +80,9 @@ type Bonus struct {
 }
 
 // Конструктор премии
-func NewBonus(cost float32, description string) Decorator {
+func NewBonus(cost float32, description string, decorator Decorable) Decorable {
 	return &Bonus{
+		decorator:   decorator,
 		cost:        cost,
 		description: description,
 	}
@@ -105,11 +96,6 @@ func (b *Bonus) Cost() float32 {
 // Описание премии
 func (b *Bonus) Description() string {
 	return b.decorator.Description() + " + " + b.description
-}
-
-// Декорирование премии
-func (b *Bonus) Decorate(decorator Decorable) {
-	b.decorator = decorator
 }
 
 // Структура "гарантия"
@@ -131,10 +117,8 @@ func main() {
 
 	// Работа, налог, премия
 	job := NewJob(250000, "Go-разработчик")
-	tax := NewTax(0.13, "Подоходный налог")
-	tax.Decorate(job)
-	bonus := NewBonus(0.05, "Премия")
-	bonus.Decorate(tax)
+	tax := NewTax(0.13, "Подоходный налог", job)
+	bonus := NewBonus(0.05, "Премия", tax)
 
 	fmt.Println("Работа")
 	fmt.Printf("Зарплата: %.2f руб.\n", bonus.Cost())
