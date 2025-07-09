@@ -35,16 +35,52 @@ func (j *Job) Description() string {
 }
 
 // Структура "машина"
-// type Car struct {
-// 	cost        float32
-// 	description string
-// }
+type Car struct {
+	cost        float32
+	description string
+}
+
+// Конструктор машины
+func NewCar(cost float32, description string) Decorable {
+	return &Car{
+		cost:        cost,
+		description: description,
+	}
+}
+
+// Стоимость машины
+func (c *Car) Cost() float32 {
+	return c.cost
+}
+
+// Описание машины
+func (c *Car) Description() string {
+	return c.description
+}
 
 // Структура "дом"
-// type Home struct {
-// 	cost        float32
-// 	description string
-// }
+type House struct {
+	cost        float32
+	description string
+}
+
+// Конструктор дома
+func NewHouse(cost float32, description string) Decorable {
+	return &House{
+		cost:        cost,
+		description: description,
+	}
+}
+
+// Стоимость дома
+func (h *House) Cost() float32 {
+	return h.cost
+}
+
+// Описание дома
+func (h *House) Description() string {
+	return h.description
+}
 
 // Структура "налог"
 type Tax struct {
@@ -99,18 +135,56 @@ func (b *Bonus) Description() string {
 }
 
 // Структура "гарантия"
-// type Warranty struct {
-//  decorator   Decorable
-// 	cost        float32
-// 	description string
-// }
+type Warranty struct {
+	decorator   Decorable
+	cost        float32
+	description string
+}
+
+// Конструктор гарантии
+func NewWarranty(cost float32, description string, decorator Decorable) Decorable {
+	return &Warranty{
+		decorator:   decorator,
+		cost:        cost,
+		description: description,
+	}
+}
+
+// Стоимость гарантии
+func (w *Warranty) Cost() float32 {
+	return w.decorator.Cost() - w.cost*w.decorator.Cost()
+}
+
+// Описание гарантии
+func (w *Warranty) Description() string {
+	return w.decorator.Description() + " - " + w.description
+}
 
 // Структура "страховка"
-// type Insurance struct {
-//  decorator   Decorable
-// 	cost        float32
-// 	description string
-// }
+type Insurance struct {
+	decorator   Decorable
+	cost        float32
+	description string
+}
+
+// Конструктор страховки
+func NewInsurance(cost float32, description string, decorator Decorable) Decorable {
+	return &Insurance{
+		decorator:   decorator,
+		cost:        cost,
+		description: description,
+	}
+}
+
+// Стоимость страховки
+func (i *Insurance) Cost() float32 {
+	return i.decorator.Cost() - i.cost*i.decorator.Cost()
+}
+
+// Описание страховки
+func (i *Insurance) Description() string {
+	return i.decorator.Description() + " - " + i.description
+}
 
 func main() {
 	fmt.Println(" \n[ ДЕКОРАТОР ]\n ")
