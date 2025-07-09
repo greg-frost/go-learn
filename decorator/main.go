@@ -100,12 +100,12 @@ func NewTax(cost float32, description string, decorator Decorable) Decorable {
 
 // Стоимость налога
 func (t *Tax) Cost() float32 {
-	return t.decorator.Cost() - t.cost*t.decorator.Cost()
+	return t.decorator.Cost() + t.cost*t.decorator.Cost()
 }
 
 // Описание налога
 func (t *Tax) Description() string {
-	return t.decorator.Description() + " - " + t.description
+	return t.decorator.Description() + " / " + t.description
 }
 
 // Структура "премия"
@@ -131,7 +131,7 @@ func (b *Bonus) Cost() float32 {
 
 // Описание премии
 func (b *Bonus) Description() string {
-	return b.decorator.Description() + " + " + b.description
+	return b.decorator.Description() + " / " + b.description
 }
 
 // Структура "гарантия"
@@ -152,12 +152,12 @@ func NewWarranty(cost float32, description string, decorator Decorable) Decorabl
 
 // Стоимость гарантии
 func (w *Warranty) Cost() float32 {
-	return w.decorator.Cost() - w.cost*w.decorator.Cost()
+	return w.decorator.Cost() + w.cost*w.decorator.Cost()
 }
 
 // Описание гарантии
 func (w *Warranty) Description() string {
-	return w.decorator.Description() + " - " + w.description
+	return w.decorator.Description() + " / " + w.description
 }
 
 // Структура "страховка"
@@ -178,12 +178,12 @@ func NewInsurance(cost float32, description string, decorator Decorable) Decorab
 
 // Стоимость страховки
 func (i *Insurance) Cost() float32 {
-	return i.decorator.Cost() - i.cost*i.decorator.Cost()
+	return i.decorator.Cost() + i.cost*i.decorator.Cost()
 }
 
 // Описание страховки
 func (i *Insurance) Description() string {
-	return i.decorator.Description() + " - " + i.description
+	return i.decorator.Description() + " / " + i.description
 }
 
 func main() {
@@ -191,10 +191,30 @@ func main() {
 
 	// Работа, налог, премия
 	job := NewJob(250000, "Go-разработчик")
-	tax := NewTax(0.13, "Подоходный налог", job)
-	bonus := NewBonus(0.05, "Премия", tax)
+	job = NewTax(-0.13, "Подоходный налог", job)
+	job = NewBonus(0.05, "Премия", job)
 
 	fmt.Println("Работа")
-	fmt.Printf("Зарплата: %.2f руб.\n", bonus.Cost())
-	fmt.Println("Описание:", bonus.Description())
+	fmt.Printf("Зарплата: %.2f руб.\n", job.Cost())
+	fmt.Println("Описание:", job.Description())
+	fmt.Println()
+
+	// Машина, гарантия, страховка
+	car := NewCar(1250000, "Jaguar XR")
+	car = NewWarranty(0.02, "Доп. гарантия", car)
+	car = NewInsurance(0.03, "Страховка ОСАГО", car)
+
+	fmt.Println("Машина")
+	fmt.Printf("Стоимость: %.2f руб.\n", car.Cost())
+	fmt.Println("Описание:", car.Description())
+	fmt.Println()
+
+	// Дом, налоги
+	house := NewHouse(5000000, "Таунхаус")
+	house = NewTax(0.05, "Налог на недвижимость", house)
+	house = NewTax(0.025, "Земельный налог", house)
+
+	fmt.Println("Дом")
+	fmt.Printf("Стоимость: %.2f руб.\n", house.Cost())
+	fmt.Println("Описание:", house.Description())
 }
