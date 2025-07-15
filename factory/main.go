@@ -27,12 +27,12 @@ func NewWindows(name string, version int) OS {
 
 // Запуск Windows
 func (w *Windows) Run() {
-	fmt.Printf("%s %d: запуск...\n", w.Name, w.Version)
+	fmt.Printf("%s %d: запуск\n", w.Name, w.Version)
 }
 
 // Остановка Windows
 func (w *Windows) Stop() {
-	fmt.Printf("%s %d: остановка...\n", w.Name, w.Version)
+	fmt.Printf("%s %d: остановка\n", w.Name, w.Version)
 }
 
 // Структура "Linux"
@@ -51,12 +51,12 @@ func NewLinux(name string, version float32) OS {
 
 // Запуск Linux
 func (l *Linux) Run() {
-	fmt.Printf("%s %.2f: запуск...\n", l.Name, l.Version)
+	fmt.Printf("%s %.2f: запуск\n", l.Name, l.Version)
 }
 
 // Остановка Linux
 func (l *Linux) Stop() {
-	fmt.Printf("%s %.2f: остановка...\n", l.Name, l.Version)
+	fmt.Printf("%s %.2f: остановка\n", l.Name, l.Version)
 }
 
 // Структура "MacOS"
@@ -75,12 +75,12 @@ func NewMacOS(name string, version float32) OS {
 
 // Запуск MacOS
 func (m *MacOS) Run() {
-	fmt.Printf("%s %.1f: запуск...\n", m.Name, m.Version)
+	fmt.Printf("%s %.1f: запуск\n", m.Name, m.Version)
 }
 
 // Остановка MacOS
 func (m *MacOS) Stop() {
-	fmt.Printf("%s %.1f: остановка...\n", m.Name, m.Version)
+	fmt.Printf("%s %.1f: остановка\n", m.Name, m.Version)
 }
 
 // Простая фабрика
@@ -128,12 +128,12 @@ func NewGo(name string, version float32) OS {
 
 // Запуск Go
 func (g *Go) Run() {
-	fmt.Printf("%s %.2f: запуск...\n", g.Name, g.Version)
+	fmt.Printf("%s %.2f: запуск\n", g.Name, g.Version)
 }
 
 // Остановка Go
 func (g *Go) Stop() {
-	fmt.Printf("%s %.2f: остановка...\n", g.Name, g.Version)
+	fmt.Printf("%s %.2f: остановка\n", g.Name, g.Version)
 }
 
 // Структура "PHP"
@@ -152,12 +152,12 @@ func NewPHP(name string, version float32) OS {
 
 // Запуск PHP
 func (p *PHP) Run() {
-	fmt.Printf("%s %.2f: запуск...\n", p.Name, p.Version)
+	fmt.Printf("%s %.2f: запуск\n", p.Name, p.Version)
 }
 
 // Остановка PHP
 func (p *PHP) Stop() {
-	fmt.Printf("%s %.2f: остановка...\n", p.Name, p.Version)
+	fmt.Printf("%s %.2f: остановка\n", p.Name, p.Version)
 }
 
 // Интерфейс "база данных"
@@ -182,12 +182,12 @@ func NewPostrgeSQL(name string, version float32) OS {
 
 // Запуск PostrgeSQL
 func (p *PostrgeSQL) Run() {
-	fmt.Printf("%s %.2f: запуск...\n", p.Name, p.Version)
+	fmt.Printf("%s %.2f: запуск\n", p.Name, p.Version)
 }
 
 // Остановка PostrgeSQL
 func (p *PostrgeSQL) Stop() {
-	fmt.Printf("%s %.2f: остановка...\n", p.Name, p.Version)
+	fmt.Printf("%s %.2f: остановка\n", p.Name, p.Version)
 }
 
 // Структура "MySQL"
@@ -206,22 +206,27 @@ func NewMySQL(name string, version float32) OS {
 
 // Запуск MySQL
 func (m *MySQL) Run() {
-	fmt.Printf("%s %.2f: запуск...\n", m.Name, m.Version)
+	fmt.Printf("%s %.2f: запуск\n", m.Name, m.Version)
 }
 
 // Остановка MySQL
 func (m *MySQL) Stop() {
-	fmt.Printf("%s %.2f: остановка...\n", m.Name, m.Version)
+	fmt.Printf("%s %.2f: остановка\n", m.Name, m.Version)
 }
 
 func main() {
 	fmt.Println(" \n[ ФАБРИКА ]\n ")
 
-	// Простая фабрика
+	/* Простая фабрика */
+
 	fmt.Println("Простая фабрика:")
 	fmt.Println()
-	os := SimpleFactory("Windows")
+
+	osType := "Windows"
+	os := SimpleFactory(osType)
+
+	fmt.Printf("( %s )\n", osType)
 	os.Run()
-	fmt.Println("Выполнение операций...")
+	fmt.Println("Выполнение операций")
 	os.Stop()
 }
