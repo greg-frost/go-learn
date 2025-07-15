@@ -99,6 +99,121 @@ func SimpleFactory(os string) OS {
 	}
 }
 
+// Структура "сервер"
+type Server struct {
+	os       OS
+	language Language
+	database Database
+}
+
+// Интерфейс "язык"
+type Language interface {
+	Run()
+	Stop()
+}
+
+// Структура "Go"
+type Go struct {
+	Name    string
+	Version float32
+}
+
+// Конструктор Go
+func NewGo(name string, version float32) OS {
+	return &Go{
+		Name:    name,
+		Version: version,
+	}
+}
+
+// Запуск Go
+func (g *Go) Run() {
+	fmt.Printf("%s %.2f: запуск...\n", g.Name, g.Version)
+}
+
+// Остановка Go
+func (g *Go) Stop() {
+	fmt.Printf("%s %.2f: остановка...\n", g.Name, g.Version)
+}
+
+// Структура "PHP"
+type PHP struct {
+	Name    string
+	Version float32
+}
+
+// Конструктор PHP
+func NewPHP(name string, version float32) OS {
+	return &PHP{
+		Name:    name,
+		Version: version,
+	}
+}
+
+// Запуск PHP
+func (p *PHP) Run() {
+	fmt.Printf("%s %.2f: запуск...\n", p.Name, p.Version)
+}
+
+// Остановка PHP
+func (p *PHP) Stop() {
+	fmt.Printf("%s %.2f: остановка...\n", p.Name, p.Version)
+}
+
+// Интерфейс "база данных"
+type Database interface {
+	Run()
+	Stop()
+}
+
+// Структура "PostrgeSQL"
+type PostrgeSQL struct {
+	Name    string
+	Version float32
+}
+
+// Конструктор PostrgeSQL
+func NewPostrgeSQL(name string, version float32) OS {
+	return &PostrgeSQL{
+		Name:    name,
+		Version: version,
+	}
+}
+
+// Запуск PostrgeSQL
+func (p *PostrgeSQL) Run() {
+	fmt.Printf("%s %.2f: запуск...\n", p.Name, p.Version)
+}
+
+// Остановка PostrgeSQL
+func (p *PostrgeSQL) Stop() {
+	fmt.Printf("%s %.2f: остановка...\n", p.Name, p.Version)
+}
+
+// Структура "MySQL"
+type MySQL struct {
+	Name    string
+	Version float32
+}
+
+// Конструктор MySQL
+func NewMySQL(name string, version float32) OS {
+	return &MySQL{
+		Name:    name,
+		Version: version,
+	}
+}
+
+// Запуск MySQL
+func (m *MySQL) Run() {
+	fmt.Printf("%s %.2f: запуск...\n", m.Name, m.Version)
+}
+
+// Остановка MySQL
+func (m *MySQL) Stop() {
+	fmt.Printf("%s %.2f: остановка...\n", m.Name, m.Version)
+}
+
 func main() {
 	fmt.Println(" \n[ ФАБРИКА ]\n ")
 
