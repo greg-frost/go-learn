@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Интерфейс "ОС"
+// Интерфейс "операционная система"
 type OS interface {
 	Run()
 	Stop()
@@ -99,14 +99,7 @@ func SimpleFactory(os string) OS {
 	}
 }
 
-// Структура "сервер"
-type Server struct {
-	os       OS
-	language Language
-	database Database
-}
-
-// Интерфейс "язык"
+// Интерфейс "язык программирования"
 type Language interface {
 	Run()
 	Stop()
@@ -152,12 +145,12 @@ func NewPHP(name string, version float32) OS {
 
 // Запуск PHP
 func (p *PHP) Run() {
-	fmt.Printf("%s %.2f: запуск\n", p.Name, p.Version)
+	fmt.Printf("%s %.1f: запуск\n", p.Name, p.Version)
 }
 
 // Остановка PHP
 func (p *PHP) Stop() {
-	fmt.Printf("%s %.2f: остановка\n", p.Name, p.Version)
+	fmt.Printf("%s %.1f: остановка\n", p.Name, p.Version)
 }
 
 // Интерфейс "база данных"
@@ -169,11 +162,11 @@ type Database interface {
 // Структура "PostrgeSQL"
 type PostrgeSQL struct {
 	Name    string
-	Version float32
+	Version int
 }
 
 // Конструктор PostrgeSQL
-func NewPostrgeSQL(name string, version float32) OS {
+func NewPostrgeSQL(name string, version int) OS {
 	return &PostrgeSQL{
 		Name:    name,
 		Version: version,
@@ -182,12 +175,12 @@ func NewPostrgeSQL(name string, version float32) OS {
 
 // Запуск PostrgeSQL
 func (p *PostrgeSQL) Run() {
-	fmt.Printf("%s %.2f: запуск\n", p.Name, p.Version)
+	fmt.Printf("%s %d: запуск\n", p.Name, p.Version)
 }
 
 // Остановка PostrgeSQL
 func (p *PostrgeSQL) Stop() {
-	fmt.Printf("%s %.2f: остановка\n", p.Name, p.Version)
+	fmt.Printf("%s %d: остановка\n", p.Name, p.Version)
 }
 
 // Структура "MySQL"
@@ -206,12 +199,101 @@ func NewMySQL(name string, version float32) OS {
 
 // Запуск MySQL
 func (m *MySQL) Run() {
-	fmt.Printf("%s %.2f: запуск\n", m.Name, m.Version)
+	fmt.Printf("%s %.1f: запуск\n", m.Name, m.Version)
 }
 
 // Остановка MySQL
 func (m *MySQL) Stop() {
-	fmt.Printf("%s %.2f: остановка\n", m.Name, m.Version)
+	fmt.Printf("%s %.1f: остановка\n", m.Name, m.Version)
+}
+
+// Интерфейс "сервер"
+type Server interface {
+	Run()
+	Stop()
+}
+
+// Структура "сервер"
+type server struct {
+	os       OS
+	language Language
+	database Database
+}
+
+// Конструктор сервера
+func NewServer(factory Factory) Server {
+	return &server{
+		os:       factory.CreateOS(),
+		language: factory.CreateLanguage(),
+		database: factory.CreateDatabase(),
+	}
+}
+
+// Запуск сервера
+func (s *server) Run() {
+	s.os.Run()
+	s.language.Run()
+	s.database.Run()
+}
+
+// Остановка сервера
+func (s *server) Stop() {
+	s.database.Stop()
+	s.language.Stop()
+	s.os.Stop()
+}
+
+// Интерфейс "фабрика"
+type Factory interface {
+	CreateOS() OS
+	CreateLanguage() Language
+	CreateDatabase() Database
+}
+
+// Структура "фабрика Go"
+type GoFactory struct{}
+
+// Конструктор фабрики Go
+func NewGoFactory() Factory {
+	return &GoFactory{}
+}
+
+// Создание операционной системы
+func (*GoFactory) CreateOS() OS {
+	return NewLinux("Linux", 24.04)
+}
+
+// Создание языка программирования
+func (*GoFactory) CreateLanguage() Language {
+	return NewGo("Go", 1.20)
+}
+
+// Создание базы данных
+func (*GoFactory) CreateDatabase() Database {
+	return NewPostrgeSQL("PostgreSQL", 17)
+}
+
+// Структура "фабрика PHP"
+type PhpFactory struct{}
+
+// Конструктор фабрики PHP
+func NewPhpFactory() Factory {
+	return &PhpFactory{}
+}
+
+// Создание операционной системы
+func (*PhpFactory) CreateOS() OS {
+	return NewMacOS("Mac OS", 15.5)
+}
+
+// Создание языка программирования
+func (*PhpFactory) CreateLanguage() Language {
+	return NewPHP("PHP", 8.4)
+}
+
+// Создание базы данных
+func (*PhpFactory) CreateDatabase() Database {
+	return NewMySQL("MySQL", 9.3)
 }
 
 func main() {
@@ -224,9 +306,19 @@ func main() {
 
 	osType := "Windows"
 	os := SimpleFactory(osType)
-
-	fmt.Printf("( %s )\n", osType)
 	os.Run()
 	fmt.Println("Выполнение операций")
 	os.Stop()
+	fmt.Println()
+
+	/* Абстрактная фабрика */
+
+	fmt.Println("Абстрактная фабрика:")
+	fmt.Println()
+
+	factory := NewPhpFactory()
+	server := NewServer(factory)
+	server.Run()
+	fmt.Println("Выполнение операций")
+	server.Stop()
 }
