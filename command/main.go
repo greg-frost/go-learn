@@ -77,7 +77,7 @@ type ComputerOnCommand struct {
 }
 
 // Конструктор команды включения компьютера
-func NewComputerOnCommand(computer *Computer) *ComputerOnCommand {
+func NewComputerOnCommand(computer *Computer) Command {
 	return &ComputerOnCommand{
 		Computer: computer,
 	}
@@ -94,7 +94,7 @@ type ComputerOffCommand struct {
 }
 
 // Конструктор команды выключения компьютера
-func NewComputerOffCommand(computer *Computer) *ComputerOffCommand {
+func NewComputerOffCommand(computer *Computer) Command {
 	return &ComputerOffCommand{
 		Computer: computer,
 	}
@@ -103,16 +103,118 @@ func NewComputerOffCommand(computer *Computer) *ComputerOffCommand {
 // Выполнение команды выключения компьютера
 func (c *ComputerOffCommand) Execute() {
 	c.Computer.CancelAll()
-	c.Computer.TurnOn()
+	c.Computer.TurnOff()
+}
+
+// Структура "принтер"
+type Printer struct {
+	Name string
+}
+
+// Конструктор принтера
+func NewPrinter(name string) *Printer {
+	return &Printer{
+		Name: name,
+	}
+}
+
+// Включение принтера
+func (c *Printer) TurnOn() {
+	fmt.Printf("Принтер %s: включение\n", c.Name)
+}
+
+// Разогрев принтера
+func (c *Printer) WarmUp() {
+	fmt.Printf("Принтер %s: разогрев барабана\n", c.Name)
+}
+
+// Загрузка бумаги в принтер
+func (c *Printer) LoadPaper() {
+	fmt.Printf("Принтер %s: загрузка бумаги\n", c.Name)
+}
+
+// Печать в принтере
+func (c *Printer) Print() {
+	fmt.Printf("Принтер %s: печать\n", c.Name)
+}
+
+// Очистка очереди печати принтера
+func (c *Printer) ClearQueue() {
+	fmt.Printf("Принтер %s: очистка очереди печати\n", c.Name)
+}
+
+// Выключение принтера
+func (c *Printer) TurnDown() {
+	fmt.Printf("Принтер %s: выключение\n", c.Name)
+}
+
+// Структура "команда включения принтера"
+type PrinterOnCommand struct {
+	Printer *Printer
+}
+
+// Конструктор команды включения принтера
+func NewPrinterOnCommand(printer *Printer) Command {
+	return &PrinterOnCommand{
+		Printer: printer,
+	}
+}
+
+// Выполнение команды включения принтера
+func (c *PrinterOnCommand) Execute() {
+	c.Printer.TurnOn()
+	c.Printer.WarmUp()
+	c.Printer.LoadPaper()
+}
+
+// Структура "команда печати для принтера"
+type PrinterPrintCommand struct {
+	Printer *Printer
+}
+
+// Конструктор команды печати для принтера
+func NewPrinterPrintCommand(printer *Printer) Command {
+	return &PrinterPrintCommand{
+		Printer: printer,
+	}
+}
+
+// Выполнение команды печати для принтера
+func (c *PrinterPrintCommand) Execute() {
+	c.Printer.Print()
+}
+
+// Структура "команда выключения принтера"
+type PrinterOffCommand struct {
+	Printer *Printer
+}
+
+// Конструктор команды выключения принтера
+func NewPrinterOffCommand(printer *Printer) Command {
+	return &PrinterOffCommand{
+		Printer: printer,
+	}
+}
+
+// Выполнение команды выключения принтера
+func (c *PrinterOffCommand) Execute() {
+	c.Printer.ClearQueue()
+	c.Printer.TurnDown()
 }
 
 func main() {
 	fmt.Println(" \n[ КОМАНДА ]\n ")
 
-	queue := NewQueue()
+	// Компьютер и принтер
 	computer := NewComputer("GregoryPC")
+	printer := NewPrinter("Xerox Phaser 3117")
 
+	// Очередь команд
+	queue := NewQueue()
 	queue.Add(NewComputerOnCommand(computer))
+	queue.Add(NewPrinterOnCommand(printer))
+	queue.Add(NewPrinterPrintCommand(printer))
+	queue.Add(NewPrinterOffCommand(printer))
 	queue.Add(NewComputerOffCommand(computer))
 	queue.Execute()
 }
