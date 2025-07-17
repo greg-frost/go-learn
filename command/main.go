@@ -9,27 +9,39 @@ type Command interface {
 	Execute()
 }
 
-// Тип "очередь команд"
-type Queue []Command
+// Структура "очередь команд"
+type Queue struct {
+	Commands []Command
+}
+
+// Конструктор очереди команд
+func NewQueue() *Queue {
+	return new(Queue)
+}
 
 // Добавление команды
 func (q *Queue) Add(command Command) {
-	*q = append(*q, command)
+	q.Commands = append(q.Commands, command)
 }
 
 // Удаление последней команды
-func (q *Queue) Remove() {
-	if len(*q) > 0 {
-		*q = (*q)[:len(*q)-1]
+func (q *Queue) RemoveLast() {
+	if len(q.Commands) > 0 {
+		q.Commands = q.Commands[:len(q.Commands)-1]
 	}
+}
+
+// Очистка очереди
+func (q *Queue) ClearAll() {
+	q.Commands = nil
 }
 
 // Выполнение всех команд
 func (q *Queue) Execute() {
-	for _, command := range *q {
+	for _, command := range q.Commands {
 		command.Execute()
 	}
-	*q = nil // Обнуление очереди
+	q.ClearAll()
 }
 
 // Структура "компьютер"
@@ -97,9 +109,9 @@ func (c *ComputerOffCommand) Execute() {
 func main() {
 	fmt.Println(" \n[ КОМАНДА ]\n ")
 
+	queue := NewQueue()
 	computer := NewComputer("GregoryPC")
 
-	var queue Queue
 	queue.Add(NewComputerOnCommand(computer))
 	queue.Add(NewComputerOffCommand(computer))
 	queue.Execute()
