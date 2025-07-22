@@ -57,16 +57,53 @@ func NewBinaryAdapter(littleEndian *LittleEndian) Binary {
 
 // Байты адаптера "от старшего к младшему"
 func (a *BinaryAdapter) BigEndian() []byte {
-	b := a.littleEndian.LittleEndian()
-	left, right := 0, len(b)
+	le := a.littleEndian.LittleEndian()
+	b := make([]byte, len(le))
+	copy(b, le)
+
+	left, right := 0, len(b)-1
 	for left < right {
 		b[left], b[right] = b[right], b[left]
 		left++
 		right--
 	}
+
 	return b
+}
+
+// Структура "сеть"
+type Network struct {
+	binary Binary
+}
+
+// Констурктор сети
+func NewNetwork(binary Binary) *Network {
+	return &Network{
+		binary: binary,
+	}
+}
+
+// Обработка байт (big-endian)
+func (n *Network) ProcessBytes() string {
+	return string(n.binary.BigEndian())
 }
 
 func main() {
 	fmt.Println(" \n[ АДАПТЕР ]\n ")
+
+	// Число 21, записанное с использованием разных порядков байт
+	bigEndian := NewBigEndian([]byte{'0', '0', '0', '1', '0', '1', '0', '1'})
+	littleEndian := NewLittleEndian([]byte{'1', '0', '1', '0', '1', '0', '0', '0'})
+
+	// Старшеконечный порядок
+	network := NewNetwork(bigEndian)
+	fmt.Println("BigEndian:", network.ProcessBytes())
+
+	// Адаптер (младшеконечного к старшеконечному)
+	adapter := NewBinaryAdapter(littleEndian)
+	networkAdapted := NewNetwork(adapter)
+	fmt.Println("BE Adapter:", networkAdapted.ProcessBytes())
+
+	// Младшеконечный порядок
+	fmt.Println("LittleEndian:", string(littleEndian.LittleEndian()))
 }
