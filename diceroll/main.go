@@ -23,17 +23,17 @@ func main() {
 	for {
 		fmt.Scanln(&input)
 
-		input = strings.TrimSpace(strings.ToLower(input))
+		input = strings.ToLower(input)
 		if input != "" {
 			d := strings.Split(input, "d")
 			if len(d) != 2 {
 				return
 			}
-			n, err = strconv.Atoi(strings.TrimSpace(d[0]))
+			n, err = strconv.Atoi(d[0])
 			if err != nil {
 				return
 			}
-			m, err = strconv.Atoi(strings.TrimSpace(d[1]))
+			m, err = strconv.Atoi(d[1])
 			if err != nil {
 				return
 			}
