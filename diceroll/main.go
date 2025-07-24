@@ -8,15 +8,17 @@ import (
 )
 
 func main() {
-	fmt.Println(" \n[ КУБИК ]\n ")
-
-	var input string
-	var n, m int
-	var err error
+	fmt.Println(" \n[ БРОСОК КУБИКОВ ]\n ")
 
 	fmt.Println("Введите два числа в формате {N}d{M},")
 	fmt.Println("Enter для повторного броска,")
 	fmt.Println("Ctrl+C для выхода:")
+
+	var (
+		input string
+		n, m  int
+		err   error
+	)
 
 	for {
 		fmt.Scanln(&input)
@@ -27,17 +29,17 @@ func main() {
 			if len(d) != 2 {
 				return
 			}
-			n, err = strconv.Atoi(d[0])
+			n, err = strconv.Atoi(strings.TrimSpace(d[0]))
 			if err != nil {
 				return
 			}
-			m, err = strconv.Atoi(d[1])
+			m, err = strconv.Atoi(strings.TrimSpace(d[1]))
 			if err != nil {
 				return
 			}
 		}
 
 		res := n + rand.Intn(n*m-n+1)
-		fmt.Printf("Бросаем кубик %dd%d... Выпало: %d\n", n, m, res)
+		fmt.Printf("Бросаем кубики %dd%d... Выпало: %d\n", n, m, res)
 	}
 }
