@@ -78,12 +78,12 @@ func (c *Player) Pause() {
 	fmt.Printf("Плеер %s: пауза диска %q\n", c.Name, c.Disk)
 }
 
-// Остановка трека в плеера
+// Остановка трека в плеере
 func (c *Player) Stop() {
 	fmt.Printf("Плеер %s: остановка диска %q\n", c.Name, c.Disk)
 }
 
-// Очистка очереди плеера
+// Очистка очереди проигрывания плеера
 func (c *Player) Clear() {
 	fmt.Printf("Плеер %s: очистка очереди проигрывания\n", c.Name)
 }
