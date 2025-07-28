@@ -123,17 +123,43 @@ func (f *Facade) StopFirstAlbum() {
 	f.Computer.TurnOff()
 }
 
+// Проиграть второй альбом
+func (f *Facade) PlaySecondAlbum() {
+	f.Computer.TurnOn()
+	f.Player.SetVolume(9)
+	f.Player.InsertDisk("Cold Face, Your Grace")
+	f.Player.Play()
+}
+
+// Остановить второй альбом
+func (f *Facade) StopSecondAlbum() {
+	f.Player.Pause()
+	f.Player.Stop()
+	f.Player.EjectDisk()
+	f.Player.SetVolume(0)
+	f.Computer.CancelAll()
+	f.Computer.TurnOff()
+}
+
 func main() {
 	fmt.Println(" \n[ ФАСАД ]\n ")
 
-	// Компьютер и плеер
+	// Компьютер, плеер и фасад
 	computer := NewComputer("GregoryPC")
 	player := NewPlayer("Vinyl")
-
-	// Фасад
 	facade := NewFacade(computer, player)
 
 	// Первый альбом
 	facade.PlayFirstAlbum()
 	facade.StopFirstAlbum()
+	fmt.Println()
+
+	// Другие компьютер, плеер и фасад
+	computer = NewComputer("Notebook")
+	player = NewPlayer("CD")
+	facade = NewFacade(computer, player)
+
+	// Второй альбом
+	facade.PlaySecondAlbum()
+	facade.StopSecondAlbum()
 }
