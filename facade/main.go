@@ -88,9 +88,39 @@ func (c *Player) Clear() {
 	fmt.Printf("Плеер %s: очистка очереди проигрывания\n", c.Name)
 }
 
-// Включение плеера
+// Выключение плеера
 func (c *Player) TurnOff() {
 	fmt.Printf("Плеер %s: включение\n", c.Name)
+}
+
+type Facade struct {
+	Computer *Computer
+	Player   *Player
+}
+
+func NewFacade(computer *Computer, player *Player) *Facade {
+	return &Facade{
+		Computer: computer,
+		Player:   player,
+	}
+}
+
+// Проиграть первый альбом
+func (f *Facade) PlayFirstAlbum() {
+	f.Computer.TurnOn()
+	f.Player.SetVolume(8)
+	f.Player.InsertDisk("Нить Ариадны")
+	f.Player.Play()
+}
+
+// Остановить первый альбом
+func (f *Facade) StopFirstAlbum() {
+	f.Player.Pause()
+	f.Player.Stop()
+	f.Player.EjectDisk()
+	f.Player.SetVolume(0)
+	f.Computer.CancelAll()
+	f.Computer.TurnOff()
 }
 
 func main() {
@@ -100,17 +130,10 @@ func main() {
 	computer := NewComputer("GregoryPC")
 	player := NewPlayer("Vinyl")
 
-	// Включение музыки
-	computer.TurnOn()
-	player.SetVolume(10)
-	player.InsertDisk("Нить Ариадны")
-	player.Play()
+	// Фасад
+	facade := NewFacade(computer, player)
 
-	// Выключение музыки
-	player.Pause()
-	player.Stop()
-	player.EjectDisk()
-	player.SetVolume(0)
-	computer.CancelAll()
-	computer.TurnOff()
+	// Первый альбом
+	facade.PlayFirstAlbum()
+	facade.StopFirstAlbum()
 }
