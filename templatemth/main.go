@@ -29,6 +29,7 @@ func (c *Collection) Add(values ...int) {
 func (c *Collection) Sort() {
 	for j := 1; j < len(c.elements); j++ {
 		for i := j - 1; i >= 0; i-- {
+			// Шаблонный метод
 			if c.comparator.Compare(c.elements[i], c.elements[j]) > 0 {
 				c.Swap(i, j)
 				j = i
