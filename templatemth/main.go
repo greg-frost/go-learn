@@ -72,6 +72,25 @@ func (*AscComparator) Compare(a, b int) int {
 	}
 }
 
+// Сравниватель по убыванию
+type DescComparator struct{}
+
+// Конструктор сравнивателя по убыванию
+func NewDescComparator() Comparator {
+	return new(DescComparator)
+}
+
+// Сравнение по убыванию
+func (*DescComparator) Compare(a, b int) int {
+	if a < b {
+		return 1
+	} else if a > b {
+		return -1
+	} else {
+		return 0
+	}
+}
+
 func main() {
 	fmt.Println(" \n[ ШАБЛОННЫЙ МЕТОД ]\n ")
 
@@ -81,6 +100,17 @@ func main() {
 	collection.Add(5, 7, 1, 2, 6, 3, 4, 9, 8, 10)
 
 	fmt.Println("Сортировка по возрастанию")
+	fmt.Println("До сортировки:   ", collection.Values())
+	collection.Sort()
+	fmt.Println("После сортировки:", collection.Values())
+	fmt.Println()
+
+	// Сортировка по убыванию
+	comparator = NewDescComparator()
+	collection = NewCollection(comparator)
+	collection.Add(15, 1, 22, 16, 32, 64, 3, 50)
+
+	fmt.Println("Сортировка по убыванию")
 	fmt.Println("До сортировки:   ", collection.Values())
 	collection.Sort()
 	fmt.Println("После сортировки:", collection.Values())
