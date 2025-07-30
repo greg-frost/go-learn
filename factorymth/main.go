@@ -6,7 +6,7 @@ import (
 
 // Интерфейс "операционная система"
 type OS interface {
-	Factory(version float32)
+	Create(version float32)
 	Run()
 	Stop()
 }
@@ -25,7 +25,7 @@ func NewWindows() OS {
 }
 
 // Создание Windows
-func (w *Windows) Factory(version float32) {
+func (w *Windows) Create(version float32) {
 	w.Version = version
 	fmt.Printf("%s %.0f: создание\n", w.Name, w.Version)
 }
@@ -54,7 +54,7 @@ func NewLinux() OS {
 }
 
 // Создание Linux
-func (l *Linux) Factory(version float32) {
+func (l *Linux) Create(version float32) {
 	l.Version = version
 	fmt.Printf("%s %.2f: создание\n", l.Name, l.Version)
 }
@@ -83,7 +83,7 @@ func NewMacOS() OS {
 }
 
 // Создание MacOS
-func (m *MacOS) Factory(version float32) {
+func (m *MacOS) Create(version float32) {
 	m.Version = version
 	fmt.Printf("%s %.1f: создание\n", m.Name, m.Version)
 }
@@ -112,7 +112,7 @@ func NewServer(os OS) *server {
 
 // Запуск сервера
 func (s *server) Run(version float32) {
-	s.os.Factory(version)
+	s.os.Create(version) // Фабричный метод
 	s.os.Run()
 }
 
