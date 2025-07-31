@@ -10,16 +10,21 @@ type Array struct {
 }
 
 // Конструктор массива
-func NewArray(values []string) *Array {
-	return &Array{
-		values: values,
+func NewArray() *Array {
+	return new(Array)
+}
+
+// Добавление элементов
+func (a *Array) Add(elements ...string) {
+	for _, value := range elements {
+		a.values = append(a.values, value)
 	}
 }
 
 // Получение итератора для массива
 func (a *Array) GetIterator() Iterator {
 	return &ArrayIterator{
-		values: &a.values,
+		values: a.values,
 	}
 }
 
@@ -31,40 +36,44 @@ type Iterator interface {
 
 // Структура "итератор массива"
 type ArrayIterator struct {
-	values *[]string
+	values []string
 	pos    int
 }
 
 // Получение следующего элемента
 func (i *ArrayIterator) Next() string {
-	if i.pos == len(*i.values) {
+	if i.pos == len(i.values) {
 		return ""
 	}
-	next := (*i.values)[i.pos]
+	next := (i.values)[i.pos]
 	i.pos++
 	return next
 }
 
 // Проверка существования следующего элемента
 func (i *ArrayIterator) HasNext() bool {
-	return i.pos < len(*i.values)
+	return i.pos < len(i.values)
 }
 
 // Печать итератора
 func Print(it Iterator) {
-	for it.HasNext() {
-		value := it.Next()
-		fmt.Print(value, " ")
+	if it.HasNext() {
+		for it.HasNext() {
+			value := it.Next()
+			fmt.Print(value, " ")
+		}
+		fmt.Println()
 	}
-	fmt.Println()
 }
 
 func main() {
 	fmt.Println(" \n[ ИТЕРАТОР ]\n ")
 
 	// Итератор массива
-	array := NewArray([]string{"Hello", "Hell", "World"})
-	iterator := array.GetIterator()
+	array := NewArray()
+	array.Add("Hello", "Hell", "World")
 	fmt.Println("Массив:")
-	Print(iterator)
+	iterator := array.GetIterator()
+	Print(iterator) // Будет напечатано
+	Print(iterator) // Будет проигнорировано
 }
