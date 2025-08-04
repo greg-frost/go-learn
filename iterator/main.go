@@ -15,10 +15,8 @@ func NewArray() *Array {
 }
 
 // Добавление элементов
-func (a *Array) Add(elements ...string) {
-	for _, value := range elements {
-		a.values = append(a.values, value)
-	}
+func (a *Array) Add(values ...string) {
+	a.values = append(a.values, values...)
 }
 
 // Получение итератора для массива
@@ -42,12 +40,12 @@ type ArrayIterator struct {
 
 // Получение следующего элемента
 func (i *ArrayIterator) Next() string {
-	if i.pos == len(i.values) {
+	if !i.HasNext() {
 		return ""
 	}
-	next := (i.values)[i.pos]
+	value := i.values[i.pos]
 	i.pos++
-	return next
+	return value
 }
 
 // Проверка существования следующего элемента
@@ -59,8 +57,7 @@ func (i *ArrayIterator) HasNext() bool {
 func Print(it Iterator) {
 	if it.HasNext() {
 		for it.HasNext() {
-			value := it.Next()
-			fmt.Print(value, " ")
+			fmt.Print(it.Next(), " ")
 		}
 		fmt.Println()
 	}
