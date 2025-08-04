@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 // Интерфейс "итератор"
@@ -109,6 +110,57 @@ func (i *ListIterator) HasNext() bool {
 	return i.curr != nil
 }
 
+// Структура "хеш-таблица"
+type Hash struct {
+	values map[string]string
+}
+
+// Конструктор хеш-таблицы
+func NewHash() *Hash {
+	return &Hash{
+		values: make(map[string]string),
+	}
+}
+
+// Добавление элементов
+func (a *Hash) Add(values ...string) {
+	for _, value := range values {
+		a.values[strings.ToLower(value)] = value
+	}
+}
+
+// Получение итератора для хеш-таблицы
+func (h *Hash) GetIterator() Iterator {
+	values := make([]string, 0, len(h.values))
+	for _, value := range h.values {
+		values = append(values, value)
+	}
+	return &HashIterator{
+		values: values,
+	}
+}
+
+// Структура "итератор хеш-таблицы"
+type HashIterator struct {
+	values []string
+	pos    int
+}
+
+// Получение следующего элемента
+func (i *HashIterator) Next() string {
+	if !i.HasNext() {
+		return ""
+	}
+	value := i.values[i.pos]
+	i.pos++
+	return value
+}
+
+// Проверка существования следующего элемента
+func (i *HashIterator) HasNext() bool {
+	return i.pos < len(i.values)
+}
+
 // Печать итератора
 func Print(it Iterator) {
 	if it.HasNext() {
@@ -136,4 +188,11 @@ func main() {
 	list.Add("Goodbye", "Cruel", "World")
 	fmt.Println("Список:")
 	Print(list.GetIterator())
+	fmt.Println()
+
+	// Итератор хеш-таблицы
+	hash := NewHash()
+	hash.Add("Random", "Hashed", "Strings")
+	fmt.Println("Хеш-таблица:")
+	Print(hash.GetIterator())
 }
