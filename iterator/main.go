@@ -106,7 +106,7 @@ func (i *ListIterator) Next() string {
 
 // Проверка существования следующего элемента
 func (i *ListIterator) HasNext() bool {
-	return i.curr.next != nil
+	return i.curr != nil
 }
 
 // Печать итератора
@@ -132,7 +132,7 @@ func main() {
 	fmt.Println()
 
 	// Итератор списка
-	list := NewArray()
+	list := NewList()
 	list.Add("Goodbye", "Cruel", "World")
 	fmt.Println("Список:")
 	Print(list.GetIterator())
