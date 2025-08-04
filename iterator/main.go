@@ -75,10 +75,9 @@ func NewList() *List {
 func (l *List) Add(values ...string) {
 	curr := l.head
 	for _, value := range values {
-		next := &Node{
+		curr.next = &Node{
 			value: value,
 		}
-		curr.next = next
 		curr = curr.next
 	}
 }
@@ -86,13 +85,13 @@ func (l *List) Add(values ...string) {
 // Получение итератора для списка
 func (l *List) GetIterator() Iterator {
 	return &ListIterator{
-		head: l.head.next,
+		curr: l.head.next,
 	}
 }
 
 // Структура "итератор списка"
 type ListIterator struct {
-	head *Node
+	curr *Node
 }
 
 // Получение следующего элемента
@@ -100,14 +99,14 @@ func (i *ListIterator) Next() string {
 	if !i.HasNext() {
 		return ""
 	}
-	value := i.head.value
-	i.head = i.head.next
+	value := i.curr.value
+	i.curr = i.curr.next
 	return value
 }
 
 // Проверка существования следующего элемента
 func (i *ListIterator) HasNext() bool {
-	return i.head.next != nil
+	return i.curr.next != nil
 }
 
 // Печать итератора
