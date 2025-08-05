@@ -40,18 +40,18 @@ type ArrayIterator struct {
 }
 
 // Получение следующего элемента
-func (i *ArrayIterator) Next() string {
-	if !i.HasNext() {
+func (ai *ArrayIterator) Next() string {
+	if !ai.HasNext() {
 		return ""
 	}
-	value := i.values[i.pos]
-	i.pos++
+	value := ai.values[ai.pos]
+	ai.pos++
 	return value
 }
 
 // Проверка существования следующего элемента
-func (i *ArrayIterator) HasNext() bool {
-	return i.pos < len(i.values)
+func (ai *ArrayIterator) HasNext() bool {
+	return ai.pos < len(ai.values)
 }
 
 // Структура "список"
@@ -96,18 +96,18 @@ type ListIterator struct {
 }
 
 // Получение следующего элемента
-func (i *ListIterator) Next() string {
-	if !i.HasNext() {
+func (li *ListIterator) Next() string {
+	if !li.HasNext() {
 		return ""
 	}
-	value := i.curr.value
-	i.curr = i.curr.next
+	value := li.curr.value
+	li.curr = li.curr.next
 	return value
 }
 
 // Проверка существования следующего элемента
-func (i *ListIterator) HasNext() bool {
-	return i.curr != nil
+func (li *ListIterator) HasNext() bool {
+	return li.curr != nil
 }
 
 // Структура "хеш-таблица"
@@ -123,9 +123,9 @@ func NewHash() *Hash {
 }
 
 // Добавление элементов
-func (a *Hash) Add(values ...string) {
+func (h *Hash) Add(values ...string) {
 	for _, value := range values {
-		a.values[strings.ToLower(value)] = value
+		h.values[strings.ToLower(value)] = value
 	}
 }
 
@@ -147,18 +147,18 @@ type HashIterator struct {
 }
 
 // Получение следующего элемента
-func (i *HashIterator) Next() string {
-	if !i.HasNext() {
+func (hi *HashIterator) Next() string {
+	if !hi.HasNext() {
 		return ""
 	}
-	value := i.values[i.pos]
-	i.pos++
+	value := hi.values[hi.pos]
+	hi.pos++
 	return value
 }
 
 // Проверка существования следующего элемента
-func (i *HashIterator) HasNext() bool {
-	return i.pos < len(i.values)
+func (hi *HashIterator) HasNext() bool {
+	return hi.pos < len(hi.values)
 }
 
 // Печать итератора
