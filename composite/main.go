@@ -8,19 +8,21 @@ import (
 type Composite interface {
 	Add(composite Composite)
 	Remove(composite Composite)
+	IsDir() bool
+	Size() int
 }
 
 // Структура "файл"
 type File struct {
-	Name string
-	Size int
+	name string
+	size int
 }
 
 // Конструктор файла
 func NewFile(name string, size int) *File {
 	return &File{
-		Name: name,
-		Size: size,
+		name: name,
+		size: size,
 	}
 }
 
@@ -30,33 +32,57 @@ func (*File) Add(composite Composite) {}
 // Удаление композита из файла
 func (*File) Remove(composite Composite) {}
 
+// Каталог ли файл
+func (*File) IsDir() bool {
+	return false
+}
+
+// Размер файла
+func (f *File) Size() int {
+	return f.size
+}
+
 // Структура "каталог"
 type Dir struct {
-	Name       string
-	Composites []Composite
+	name       string
+	composites []Composite
 }
 
 // Конструктор каталога
 func NewDir(name string) *Dir {
 	return &Dir{
-		Name: name,
+		name: name,
 	}
 }
 
 // Добавление композита в каталог
 func (d *Dir) Add(composite Composite) {
-	d.Composites = append(d.Composites, composite)
+	d.composites = append(d.composites, composite)
 }
 
 // Удаление композита из каталога
 func (d *Dir) Remove(composite Composite) {
-	for i, v := range d.Composites {
-		if v == composite {
-			copy(d.Composites[i:], d.Composites[i+1:])
-			d.Composites = d.Composites[:len(d.Composites)-1]
+	for i, c := range d.composites {
+		if c == composite {
+			copy(d.composites[i:], d.composites[i+1:])
+			d.composites = d.composites[:len(d.composites)-1]
 			break
 		}
 	}
+}
+
+// Каталог ли каталог
+func (*Dir) IsDir() bool {
+	return true
+}
+
+// Размер каталога
+func (d *Dir) Size() int {
+	var size int
+	for _, c := range d.composites {
+		size += c.Size()
+	}
+	return size
 }
 
 func main() {
@@ -77,7 +103,8 @@ func main() {
 	sub.Add(file2)
 	sub.Add(file3)
 
-	// Вывод
-	fmt.Println("dir:", dir)
-	fmt.Println("sub:", sub)
+	// Печать размеров
+	fmt.Println("Размеры")
+	fmt.Println("dir:", dir.Size())
+	fmt.Println("sub:", sub.Size())
 }
