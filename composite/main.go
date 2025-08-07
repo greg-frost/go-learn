@@ -130,9 +130,9 @@ func main() {
 	// Каталоги и файлы
 	dir := NewDir("dir")
 	sub := NewDir("sub")
-	file1 := NewFile("file1.txt", 1242)
-	file2 := NewFile("file2.log", 10233)
-	file3 := NewFile("file3", 5001)
+	file1 := NewFile("file1.txt", 1024)
+	file2 := NewFile("file2.log", 10502)
+	file3 := NewFile("file3", 5048)
 
 	// Вложение
 	dir.Add(sub)
