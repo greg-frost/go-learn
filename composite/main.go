@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 // Интерфейс "композит"
 type Composite interface {
 	Add(composite Composite)
 	Remove(composite Composite)
-	IsDir() bool
+	Name() string
 	Size() int
+	IsDir() bool
+	Composites() []Composite
 }
 
 // Структура "файл"
@@ -32,14 +35,24 @@ func (*File) Add(composite Composite) {}
 // Удаление композита из файла
 func (*File) Remove(composite Composite) {}
 
-// Каталог ли файл
-func (*File) IsDir() bool {
-	return false
+// Имя файла
+func (f *File) Name() string {
+	return f.name
 }
 
 // Размер файла
 func (f *File) Size() int {
 	return f.size
+}
+
+// Каталог ли файл
+func (*File) IsDir() bool {
+	return false
+}
+
+// Список композитов файла
+func (*File) Composites() []Composite {
+	return nil
 }
 
 // Структура "каталог"
@@ -71,9 +84,9 @@ func (d *Dir) Remove(composite Composite) {
 	}
 }
 
-// Каталог ли каталог
-func (*Dir) IsDir() bool {
-	return true
+// Имя каталога
+func (d *Dir) Name() string {
+	return d.name
 }
 
 // Размер каталога
@@ -83,6 +96,32 @@ func (d *Dir) Size() int {
 		size += c.Size()
 	}
 	return size
+}
+
+// Каталог ли каталог
+func (*Dir) IsDir() bool {
+	return true
+}
+
+// Список композитов каталога
+func (d *Dir) Composites() []Composite {
+	return d.composites
+}
+
+// Печать композита
+func Print(composite Composite) {
+	walk(composite, 0)
+}
+
+// Обход композитов
+func walk(composite Composite, level int) {
+	fmt.Print(strings.Repeat("   ", level))
+	fmt.Println(composite.Name())
+	if composite.IsDir() {
+		for _, c := range composite.Composites() {
+			walk(c, level+1)
+		}
+	}
 }
 
 func main() {
@@ -95,7 +134,7 @@ func main() {
 	file2 := NewFile("file2.log", 10233)
 	file3 := NewFile("file3", 5001)
 
-	// Добавление композитов
+	// Вложение
 	dir.Add(sub)
 	dir.Add(file1)
 	dir.Add(file2)
@@ -103,8 +142,11 @@ func main() {
 	sub.Add(file2)
 	sub.Add(file3)
 
-	// Печать размеров
-	fmt.Println("Размеры")
-	fmt.Println("dir:", dir.Size())
-	fmt.Println("sub:", sub.Size())
+	// Вывод
+	fmt.Println("Структура:")
+	Print(dir)
+	fmt.Println()
+	fmt.Println("Размеры:")
+	fmt.Println("dir -", dir.Size())
+	fmt.Println("sub -", sub.Size())
 }
