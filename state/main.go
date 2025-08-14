@@ -41,7 +41,7 @@ type State interface {
 	Return()
 }
 
-// Структура "состояние - товар готов к покупке"
+// Структура "товар готов к покупке"
 type ReadyState struct {
 	product *Product
 }
@@ -54,43 +54,43 @@ func NewReadyState(product *Product) *ReadyState {
 }
 
 // Заказ
-func (r *ReadyState) Order() {
-	if r.product.Quantity > 0 {
-		fmt.Printf("Товар %s успешно заказан\n", r.product.Title)
-		r.product.Quantity--
-		r.product.ChangeState(NewOrderedState(r.product))
+func (s *ReadyState) Order() {
+	if s.product.Quantity > 0 {
+		fmt.Printf("Товар %s успешно заказан\n", s.product.Title)
+		s.product.Quantity--
+		s.product.ChangeState(NewOrderedState(s.product))
 	} else {
-		fmt.Printf("Товар %s закончился\n", r.product.Title)
+		fmt.Printf("Товар %s закончился\n", s.product.Title)
 		// r.product.ChangeState(NewOutOfStockState(r.product))
 	}
 }
 
 // Оплата
-func (r *ReadyState) Pay() {
+func (*ReadyState) Pay() {
 	fmt.Println("Невозможно оплатить: товар еще не заказан")
 }
 
 // Доставка
-func (r *ReadyState) Deliver() {
+func (*ReadyState) Deliver() {
 	fmt.Println("Невозможно доставить: товар еще не заказан")
 }
 
 // Получение
-func (r *ReadyState) Recieve() {
+func (*ReadyState) Recieve() {
 	fmt.Println("Невозможно получить: товар еще не заказан")
 }
 
 // Отмена
-func (r *ReadyState) Cancel() {
+func (*ReadyState) Cancel() {
 	fmt.Println("Невозможно отменить: товар еще не заказан")
 }
 
 // Возврат
-func (r *ReadyState) Return() {
+func (*ReadyState) Return() {
 	fmt.Println("Невозможно вернуть: товар еще не заказан")
 }
 
-// Структура "состояние - товар заказан"
+// Структура "товар заказан"
 type OrderedState struct {
 	product *Product
 }
@@ -103,37 +103,82 @@ func NewOrderedState(product *Product) *OrderedState {
 }
 
 // Заказ
-func (o *OrderedState) Order() {
+func (*OrderedState) Order() {
 	fmt.Println("Невозможно заказать: товар уже заказан")
 }
 
 // Оплата
-func (o *OrderedState) Pay() {
-	fmt.Printf("Товар %s успешно оплачен: %.2f руб.\n", o.product.Title, o.product.Price)
-	// o.product.ChangeState(NewOrderedState(o.product))
+func (s *OrderedState) Pay() {
+	fmt.Printf("Товар %s успешно оплачен: %.2f руб.\n", s.product.Title, s.product.Price)
+	s.product.ChangeState(NewPayedState(s.product))
 }
 
 // Доставка
-func (o *OrderedState) Deliver() {
+func (*OrderedState) Deliver() {
 	fmt.Println("Невозможно доставить: товар еще не оплачен")
 }
 
 // Получение
-func (o *OrderedState) Recieve() {
+func (*OrderedState) Recieve() {
 	fmt.Println("Невозможно получить: товар еще не оплачен")
 }
 
 // Отмена
-func (o *OrderedState) Cancel() {
-	fmt.Printf("Заказ товара %s отменен, деньги возвращены: %.2f руб.\n",
-		o.product.Title, o.product.Price)
-	o.product.Quantity++
-	o.product.ChangeState(NewReadyState(o.product))
+func (s *OrderedState) Cancel() {
+	fmt.Printf("Заказ товара %s отменен\n", s.product.Title)
+	s.product.Quantity++
+	s.product.ChangeState(NewReadyState(s.product))
 }
 
 // Возврат
-func (o *OrderedState) Return() {
+func (*OrderedState) Return() {
 	fmt.Println("Невозможно вернуть: товар еще не оплачен")
+}
+
+// Структура "товар оплачен"
+type PayedState struct {
+	product *Product
+}
+
+// Конструктор состояния
+func NewPayedState(product *Product) *PayedState {
+	return &PayedState{
+		product: product,
+	}
+}
+
+// Заказ
+func (*PayedState) Order() {
+	fmt.Println("Невозможно заказать: товар уже заказан")
+}
+
+// Оплата
+func (*PayedState) Pay() {
+	fmt.Println("Невозможно оплатить: товар уже оплачен")
+}
+
+// Доставка
+func (s *PayedState) Deliver() {
+	fmt.Printf("Товар %s успешно отправлен\n", s.product.Title)
+	// s.product.ChangeState(NewDeliveredState(s.product))
+}
+
+// Получение
+func (*PayedState) Recieve() {
+	fmt.Println("Невозможно получить: товар еще не доставлен")
+}
+
+// Отмена
+func (s *PayedState) Cancel() {
+	fmt.Printf("Оплата товара %s отменена, деньги возвращены: %.2f руб.\n",
+		s.product.Title, s.product.Price)
+	s.product.Quantity++
+	s.product.ChangeState(NewReadyState(s.product))
+}
+
+// Возврат
+func (r *PayedState) Return() {
+	fmt.Println("Невозможно вернуть: товар еще не доставлен")
 }
 
 func main() {
