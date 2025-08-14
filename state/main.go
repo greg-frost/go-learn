@@ -177,7 +177,7 @@ func (s *PayedState) Cancel() {
 }
 
 // Возврат
-func (r *PayedState) Return() {
+func (*PayedState) Return() {
 	fmt.Println("Невозможно вернуть: товар еще не доставлен")
 }
 
