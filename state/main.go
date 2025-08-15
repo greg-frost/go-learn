@@ -160,7 +160,7 @@ func (*PayedState) Pay() {
 // Доставка
 func (s *PayedState) Deliver() {
 	fmt.Printf("Товар %s успешно отправлен\n", s.product.Title)
-	// s.product.ChangeState(NewDeliveredState(s.product))
+	s.product.ChangeState(NewDeliveredState(s.product))
 }
 
 // Получение
@@ -179,6 +179,52 @@ func (s *PayedState) Cancel() {
 // Возврат
 func (*PayedState) Return() {
 	fmt.Println("Невозможно вернуть: товар еще не доставлен")
+}
+
+// Структура "товар доставлен"
+type DeliveredState struct {
+	product *Product
+}
+
+// Конструктор состояния
+func NewDeliveredState(product *Product) *DeliveredState {
+	return &DeliveredState{
+		product: product,
+	}
+}
+
+// Заказ
+func (*DeliveredState) Order() {
+	fmt.Println("Невозможно заказать: товар уже заказан")
+}
+
+// Оплата
+func (*DeliveredState) Pay() {
+	fmt.Println("Невозможно оплатить: товар уже оплачен")
+}
+
+// Доставка
+func (*DeliveredState) Deliver() {
+	fmt.Println("Невозможно доставить: товар уже доставлен")
+}
+
+// Получение
+func (s *DeliveredState) Recieve() {
+	fmt.Printf("Товар %s успешно получен\n", s.product.Title)
+	s.product.ChangeState(NewReadyState(s.product))
+}
+
+// Отмена
+func (s *DeliveredState) Cancel() {
+	fmt.Println("Невозможно отменить: товар уже доставлен")
+}
+
+// Возврат
+func (s *DeliveredState) Return() {
+	fmt.Printf("Товар %s возвращен, деньги возвращены: %.2f руб.\n",
+		s.product.Title, s.product.Price)
+	s.product.Quantity++
+	s.product.ChangeState(NewReadyState(s.product))
 }
 
 func main() {
