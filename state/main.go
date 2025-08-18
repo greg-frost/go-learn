@@ -14,11 +14,42 @@ type Product struct {
 
 // Конструктор товара
 func NewProduct(title string, price float32, quantity int) *Product {
-	return &Product{
-		Title:    title,
-		Price:    price,
-		Quantity: quantity,
+	p := &Product{
+		Title: title,
+		Price: price,
 	}
+	p.Refill(quantity)
+	return p
+}
+
+// Заказ
+func (p *Product) Order() {
+	p.State().Order()
+}
+
+// Оплата
+func (p *Product) Pay() {
+	p.State().Pay()
+}
+
+// Доставка
+func (p *Product) Deliver() {
+	p.State().Deliver()
+}
+
+// Получение
+func (p *Product) Recieve() {
+	p.State().Recieve()
+}
+
+// Отмена
+func (p *Product) Cancel() {
+	p.State().Cancel()
+}
+
+// Возврат
+func (p *Product) Return() {
+	p.State().Return()
 }
 
 // Статус товара
@@ -31,6 +62,22 @@ func (p *Product) ChangeState(state State) {
 	p.state = state
 }
 
+// Пополнение товара
+func (p *Product) Refill(quantity int) {
+	p.Quantity += quantity
+	if p.Quantity > 0 {
+		p.state = NewReadyState(p)
+	} else {
+		p.state = NewOutOfStockState(p)
+	}
+}
+
+// Стрингер товара
+func (p *Product) String() string {
+	return fmt.Sprintf("Товар: %s (%.2f руб.)\nОсталось: %d",
+		p.Title, p.Price, p.Quantity)
+}
+
 // Интерфейс "состояние"
 type State interface {
 	Order()
@@ -39,6 +86,7 @@ type State interface {
 	Recieve()
 	Cancel()
 	Return()
+	// Refill(n int)
 }
 
 // Структура "товар готов к покупке"
@@ -61,7 +109,7 @@ func (s *ReadyState) Order() {
 		s.product.ChangeState(NewOrderedState(s.product))
 	} else {
 		fmt.Printf("Товар %s закончился\n", s.product.Title)
-		// r.product.ChangeState(NewOutOfStockState(r.product))
+		s.product.ChangeState(NewOutOfStockState(s.product))
 	}
 }
 
@@ -225,6 +273,48 @@ func (s *DeliveredState) Return() {
 		s.product.Title, s.product.Price)
 	s.product.Quantity++
 	s.product.ChangeState(NewReadyState(s.product))
+}
+
+// Структура "товар закончился"
+type OutOfStockState struct {
+	product *Product
+}
+
+// Конструктор состояния
+func NewOutOfStockState(product *Product) *OutOfStockState {
+	return &OutOfStockState{
+		product: product,
+	}
+}
+
+// Заказ
+func (*OutOfStockState) Order() {
+	fmt.Println("Невозможно заказать: товар закончился")
+}
+
+// Оплата
+func (*OutOfStockState) Pay() {
+	fmt.Println("Невозможно оплатить: товар закончился")
+}
+
+// Доставка
+func (*OutOfStockState) Deliver() {
+	fmt.Println("Невозможно доставить: товар закончился")
+}
+
+// Получение
+func (*OutOfStockState) Recieve() {
+	fmt.Println("Невозможно получить: товар закончился")
+}
+
+// Отмена
+func (*OutOfStockState) Cancel() {
+	fmt.Println("Невозможно отменить: товар закончился")
+}
+
+// Возврат
+func (*OutOfStockState) Return() {
+	fmt.Println("Невозможно вернуть: товар закончился")
 }
 
 func main() {
