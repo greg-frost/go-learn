@@ -64,6 +64,7 @@ func (p *Product) ChangeState(state State) {
 
 // Пополнение товара
 func (p *Product) Refill(quantity int) {
+	fmt.Printf("Пополнение товара %q: плюс %d шт.\n", p.Title, quantity)
 	p.Quantity += quantity
 	if p.Quantity > 0 {
 		p.state = NewReadyState(p)
@@ -74,7 +75,7 @@ func (p *Product) Refill(quantity int) {
 
 // Стрингер товара
 func (p *Product) String() string {
-	return fmt.Sprintf("Товар: %s (%.2f руб.)\nОсталось: %d",
+	return fmt.Sprintf("Товар: %q (%.2f руб.), осталось: %d шт.",
 		p.Title, p.Price, p.Quantity)
 }
 
@@ -86,7 +87,6 @@ type State interface {
 	Recieve()
 	Cancel()
 	Return()
-	// Refill(n int)
 }
 
 // Структура "товар готов к покупке"
@@ -104,11 +104,11 @@ func NewReadyState(product *Product) *ReadyState {
 // Заказ
 func (s *ReadyState) Order() {
 	if s.product.Quantity > 0 {
-		fmt.Printf("Товар %s успешно заказан\n", s.product.Title)
+		fmt.Printf("Товар %q успешно заказан\n", s.product.Title)
 		s.product.Quantity--
 		s.product.ChangeState(NewOrderedState(s.product))
 	} else {
-		fmt.Printf("Товар %s закончился\n", s.product.Title)
+		fmt.Println("Невозможно заказать: товар закончился")
 		s.product.ChangeState(NewOutOfStockState(s.product))
 	}
 }
@@ -157,7 +157,7 @@ func (*OrderedState) Order() {
 
 // Оплата
 func (s *OrderedState) Pay() {
-	fmt.Printf("Товар %s успешно оплачен: %.2f руб.\n", s.product.Title, s.product.Price)
+	fmt.Printf("Товар %q успешно оплачен: %.2f руб.\n", s.product.Title, s.product.Price)
 	s.product.ChangeState(NewPayedState(s.product))
 }
 
@@ -173,7 +173,7 @@ func (*OrderedState) Recieve() {
 
 // Отмена
 func (s *OrderedState) Cancel() {
-	fmt.Printf("Заказ товара %s отменен\n", s.product.Title)
+	fmt.Printf("Заказ товара %q отменен\n", s.product.Title)
 	s.product.Quantity++
 	s.product.ChangeState(NewReadyState(s.product))
 }
@@ -207,7 +207,7 @@ func (*PayedState) Pay() {
 
 // Доставка
 func (s *PayedState) Deliver() {
-	fmt.Printf("Товар %s успешно отправлен\n", s.product.Title)
+	fmt.Printf("Товар %q успешно отправлен\n", s.product.Title)
 	s.product.ChangeState(NewDeliveredState(s.product))
 }
 
@@ -218,7 +218,7 @@ func (*PayedState) Recieve() {
 
 // Отмена
 func (s *PayedState) Cancel() {
-	fmt.Printf("Оплата товара %s отменена, деньги возвращены: %.2f руб.\n",
+	fmt.Printf("Оплата товара %q отменена, деньги возвращены: %.2f руб.\n",
 		s.product.Title, s.product.Price)
 	s.product.Quantity++
 	s.product.ChangeState(NewReadyState(s.product))
@@ -258,7 +258,7 @@ func (*DeliveredState) Deliver() {
 
 // Получение
 func (s *DeliveredState) Recieve() {
-	fmt.Printf("Товар %s успешно получен\n", s.product.Title)
+	fmt.Printf("Товар %q успешно получен\n", s.product.Title)
 	s.product.ChangeState(NewReadyState(s.product))
 }
 
@@ -269,7 +269,7 @@ func (s *DeliveredState) Cancel() {
 
 // Возврат
 func (s *DeliveredState) Return() {
-	fmt.Printf("Товар %s возвращен, деньги возвращены: %.2f руб.\n",
+	fmt.Printf("Товар %q возвращен, деньги возвращены: %.2f руб.\n",
 		s.product.Title, s.product.Price)
 	s.product.Quantity++
 	s.product.ChangeState(NewReadyState(s.product))
@@ -319,4 +319,52 @@ func (*OutOfStockState) Return() {
 
 func main() {
 	fmt.Println(" \n[ СОСТОЯНИЕ ]\n ")
+
+	// Новый продукт
+	product := NewProduct("Статуя", 699.99, 2)
+	fmt.Println(product)
+	fmt.Println()
+
+	// Заказ и оплата
+	product.Pay()
+	product.Order()
+	product.Order()
+	product.Pay()
+	fmt.Println(product)
+	fmt.Println()
+
+	// Отмена
+	product.Cancel()
+	fmt.Println(product)
+	fmt.Println()
+
+	// Заказ, оплата, получение, возврат
+	product.Order()
+	product.Pay()
+	product.Return()
+	product.Deliver()
+	product.Return()
+	fmt.Println(product)
+	fmt.Println()
+
+	// Заказ, оплата, получение, прием
+	product.Order()
+	product.Pay()
+	product.Deliver()
+	product.Recieve()
+	fmt.Println(product)
+	fmt.Println()
+
+	// Заказ, оплата, получение, прием еще раз
+	product.Order()
+	product.Pay()
+	product.Deliver()
+	product.Recieve()
+	fmt.Println(product)
+	fmt.Println()
+
+	// Товар закончился
+	product.Order()
+	product.Refill(3)
+	fmt.Println(product)
 }
