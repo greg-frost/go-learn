@@ -67,4 +67,12 @@ func (rp *RemoteProxy) Remove(key string) {
 
 func main() {
 	fmt.Println(" \n[ ЗАМЕСТИТЕЛЬ ]\n ")
+
+	fmt.Println("Удаленный сервис:")
+	remote := NewRemoteProxy()
+	remote.Put("key", "value")
+	fmt.Printf("key = %q\n", remote.Get("key"))
+	remote.Put("deleted", "value")
+	remote.Remove("deleted")
+	fmt.Printf("deleted = %q\n", remote.Get("deleted"))
 }
