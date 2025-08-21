@@ -65,6 +65,33 @@ func (rp *RemoteProxy) Remove(key string) {
 	rp.service.Remove(key)
 }
 
+// Структура "заместитель с гостевым доступом"
+type GuestAccessProxy struct {
+	service Service
+}
+
+// Конструктор заместителя с гостевым доступом
+func NewGuestAccessProxy(service Service) Service {
+	return &GuestAccessProxy{
+		service: service,
+	}
+}
+
+// Получение значения
+func (gap *GuestAccessProxy) Get(key string) string {
+	return gap.service.Get(key)
+}
+
+// Сохранение значения
+func (*GuestAccessProxy) Put(key, value string) {
+	fmt.Println("Put: доступ запрещен")
+}
+
+// Удаление значения
+func (*GuestAccessProxy) Remove(key string) {
+	fmt.Println("Remove: доступ запрещен")
+}
+
 func main() {
 	fmt.Println(" \n[ ЗАМЕСТИТЕЛЬ ]\n ")
 
@@ -75,4 +102,11 @@ func main() {
 	remote.Put("deleted", "value")
 	remote.Remove("deleted")
 	fmt.Printf("deleted = %q\n", remote.Get("deleted"))
+	fmt.Println()
+
+	fmt.Println("Гостевой доступ:")
+	guest := NewGuestAccessProxy(remote)
+	guest.Put("newkey", "value")
+	guest.Remove("newkey")
+	fmt.Printf("key = %q\n", guest.Get("key"))
 }
