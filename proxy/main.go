@@ -65,48 +65,48 @@ func (rp *RemoteProxy) Remove(key string) {
 	rp.service.Remove(key)
 }
 
-// Структура "заместитель с гостевым доступом"
-type GuestAccessProxy struct {
+// Структура "заместитель доступа"
+type AccessProxy struct {
 	service Service
 }
 
-// Конструктор заместителя с гостевым доступом
-func NewGuestAccessProxy(service Service) Service {
-	return &GuestAccessProxy{
+// Конструктор заместителя доступа
+func NewAccessProxy(service Service) Service {
+	return &AccessProxy{
 		service: service,
 	}
 }
 
 // Получение значения
-func (gap *GuestAccessProxy) Get(key string) string {
-	return gap.service.Get(key)
+func (ap *AccessProxy) Get(key string) string {
+	return ap.service.Get(key)
 }
 
 // Сохранение значения
-func (*GuestAccessProxy) Put(key, value string) {
+func (*AccessProxy) Put(key, value string) {
 	fmt.Println("Put: доступ запрещен")
 }
 
 // Удаление значения
-func (*GuestAccessProxy) Remove(key string) {
+func (*AccessProxy) Remove(key string) {
 	fmt.Println("Remove: доступ запрещен")
 }
 
 func main() {
 	fmt.Println(" \n[ ЗАМЕСТИТЕЛЬ ]\n ")
 
-	fmt.Println("Удаленный сервис:")
+	fmt.Println("Удаленный заместитель:")
 	remote := NewRemoteProxy()
-	remote.Put("key", "value")
+	remote.Put("key", "remote value")
 	fmt.Printf("key = %q\n", remote.Get("key"))
 	remote.Put("deleted", "value")
 	remote.Remove("deleted")
 	fmt.Printf("deleted = %q\n", remote.Get("deleted"))
 	fmt.Println()
 
-	fmt.Println("Гостевой доступ:")
-	guest := NewGuestAccessProxy(remote)
-	guest.Put("newkey", "value")
-	guest.Remove("newkey")
-	fmt.Printf("key = %q\n", guest.Get("key"))
+	fmt.Println("Заместитель доступа:")
+	access := NewAccessProxy(remote)
+	access.Put("newkey", "value")
+	access.Remove("newkey")
+	fmt.Printf("key = %q\n", access.Get("key"))
 }
