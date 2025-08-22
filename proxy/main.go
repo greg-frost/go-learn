@@ -38,15 +38,49 @@ func (rs *RemoteService) Remove(key string) {
 	delete(rs.m, key)
 }
 
+// Структура "виртуальный заместитель"
+type VirtualProxy struct {
+	instance Service
+}
+
+// Конструктор виртуального заместителя
+func NewVirtualProxy() Service {
+	return new(VirtualProxy)
+}
+
+// Получение экземпляра сервиса
+func (vp *VirtualProxy) GetInstance() Service {
+	if vp.instance == nil {
+		vp.instance = NewRemoteService()
+		fmt.Println("(инициализация сервиса)")
+	}
+	return vp.instance
+}
+
+// Получение значения
+func (vp *VirtualProxy) Get(key string) string {
+	return vp.GetInstance().Get(key)
+}
+
+// Сохранение значения
+func (vp *VirtualProxy) Put(key, value string) {
+	vp.GetInstance().Put(key, value)
+}
+
+// Удаление значения
+func (vp *VirtualProxy) Remove(key string) {
+	vp.GetInstance().Remove(key)
+}
+
 // Структура "удаленный заместитель"
 type RemoteProxy struct {
 	service Service
 }
 
 // Конструктор удаленного заместителя
-func NewRemoteProxy() Service {
+func NewRemoteProxy(service Service) Service {
 	return &RemoteProxy{
-		service: NewRemoteService(),
+		service: service,
 	}
 }
 
@@ -95,8 +129,13 @@ func (*AccessProxy) Remove(key string) {
 func main() {
 	fmt.Println(" \n[ ЗАМЕСТИТЕЛЬ ]\n ")
 
+	fmt.Println("Виртуальный заместитель:")
+	virtual := NewVirtualProxy()
+	fmt.Println("(отложенная инициализация)")
+	fmt.Println()
+
 	fmt.Println("Удаленный заместитель:")
-	remote := NewRemoteProxy()
+	remote := NewRemoteProxy(virtual)
 	remote.Put("key", "remote value")
 	fmt.Printf("key = %q\n", remote.Get("key"))
 	remote.Put("deleted", "value")
