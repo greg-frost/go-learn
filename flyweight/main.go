@@ -22,7 +22,7 @@ func NewTree(x, y int, r float64) *Tree {
 
 // Прорисовка дерева
 func (t *Tree) Draw() {
-	fmt.Printf("Дерево: %.1f (%d, %d)\n", t.r, t.x, t.y)
+	drawTree(t.r, t.x, t.y)
 }
 
 // Структура "лес"
@@ -44,8 +44,43 @@ func (f *Forest) Draw() {
 	}
 }
 
+// Структура "легковес"
+type Flyweight struct {
+	coords [][2]int
+	rads   []float64
+}
+
+// Конструктор легковеса
+func NewFlyweight(trees ...[3]interface{}) *Flyweight {
+	coords := make([][2]int, 0, len(trees))
+	rads := make([]float64, 0, len(trees))
+	for _, tree := range trees {
+		coords = append(coords, [2]int{
+			tree[0].(int),
+			tree[1].(int),
+		})
+		rads = append(rads, tree[2].(float64))
+	}
+	return &Flyweight{
+		coords: coords,
+		rads:   rads,
+	}
+}
+
+// Прорисовка легковеса
+func (f *Flyweight) Draw() {
+	for i := 0; i < len(f.coords); i++ {
+		drawTree(f.rads[i], f.coords[i][0], f.coords[i][1])
+	}
+}
+
+// Прорисовка некого дерева
+func drawTree(r float64, x, y int) {
+	fmt.Printf("Дерево: %.1f (%d, %d)\n", r, x, y)
+}
+
 func main() {
-	fmt.Println(" \n[ ПРИСПОСОБЛЕНЕЦ (ЛЕГКОВЕС) ]\n ")
+	fmt.Println(" \n[ ЛЕГКОВЕС (ПРИСПОСОБЛЕНЕЦ) ]\n ")
 
 	// Медленный лес (каждое дерево - объект)
 	forest := NewForest(
@@ -55,4 +90,14 @@ func main() {
 	)
 	fmt.Println("Медленный лес:")
 	forest.Draw()
+	fmt.Println()
+
+	// Быстрый лес (все деревья в одном месте)
+	flyweight := NewFlyweight(
+		[3]interface{}{1, 2, 3.5},
+		[3]interface{}{3, 0, 2.1},
+		[3]interface{}{5, 7, 6.2},
+	)
+	fmt.Println("Быстрый лес:")
+	flyweight.Draw()
 }
