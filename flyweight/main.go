@@ -11,12 +11,12 @@ const leavesSize = 1e6
 type Tree struct {
 	x      int
 	y      int
-	r      float64
+	r      int
 	leaves []int
 }
 
 // Конструктор дерева
-func NewTree(x, y int, r float64) *Tree {
+func NewTree(x, y, r int) *Tree {
 	return &Tree{
 		x:      x,
 		y:      y,
@@ -60,33 +60,26 @@ func (f *Forest) Size() int {
 
 // Структура "легковес"
 type Flyweight struct {
-	coords [][2]int
-	rads   []float64
+	trees  [][3]int
 	leaves []int
 }
 
 // Конструктор легковеса
-func NewFlyweight(trees ...[3]interface{}) *Flyweight {
-	coords := make([][2]int, 0, len(trees))
-	rads := make([]float64, 0, len(trees))
+func NewFlyweight(trees ...[3]int) *Flyweight {
+	treesData := make([][3]int, 0, len(trees))
 	for _, tree := range trees {
-		coords = append(coords, [2]int{
-			tree[0].(int),
-			tree[1].(int),
-		})
-		rads = append(rads, tree[2].(float64))
+		treesData = append(treesData, tree)
 	}
 	return &Flyweight{
-		coords: coords,
-		rads:   rads,
+		trees:  treesData,
 		leaves: make([]int, leavesSize),
 	}
 }
 
 // Прорисовка легковеса
 func (f *Flyweight) Draw() {
-	for i := 0; i < len(f.coords); i++ {
-		drawTree(f.coords[i][0], f.coords[i][1], f.rads[i], f.leaves)
+	for i := 0; i < len(f.trees); i++ {
+		drawTree(f.trees[i][0], f.trees[i][1], f.trees[i][2], f.leaves)
 	}
 }
 
@@ -96,18 +89,20 @@ func (f *Flyweight) Size() int {
 }
 
 // Прорисовка абстрактного дерева
-func drawTree(x, y int, r float64, leaves []int) {
-	fmt.Printf("Дерево: %.1f (%d, %d)\n", r, x, y)
+func drawTree(x, y, r int, leaves []int) {
+	fmt.Printf("Дерево: %d м (%d, %d)\n", r, x, y)
 }
 
 func main() {
 	fmt.Println(" \n[ ЛЕГКОВЕС (ПРИСПОСОБЛЕНЕЦ) ]\n ")
 
-	// Медленный лес (каждое дерево - объект)
+	// Медленный лес
+	// (каждое дерево - объект,
+	// свои листья у каждого дерева)
 	forest := NewForest(
-		NewTree(1, 2, 3.5),
-		NewTree(3, 0, 2.1),
-		NewTree(5, 7, 6.2),
+		NewTree(1, 2, 3),
+		NewTree(3, 0, 2),
+		NewTree(5, 7, 6),
 	)
 	fmt.Println("Медленный лес:")
 	forest.Draw()
@@ -115,11 +110,13 @@ func main() {
 		float64(forest.Size())/1e6)
 	fmt.Println()
 
-	// Быстрый лес (все деревья в одном месте)
+	// Быстрый лес
+	// (все деревья в одном месте,
+	// общие листья у всех деревьев)
 	flyweight := NewFlyweight(
-		[3]interface{}{1, 2, 3.5},
-		[3]interface{}{3, 0, 2.1},
-		[3]interface{}{5, 7, 6.2},
+		[3]int{1, 2, 3},
+		[3]int{3, 0, 2},
+		[3]int{5, 7, 6},
 	)
 	fmt.Println("Быстрый лес:")
 	flyweight.Draw()
