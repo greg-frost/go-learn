@@ -130,8 +130,8 @@ func main() {
 	)
 	fmt.Println("Тяжелый и медленный лес:")
 	forest.Draw()
-	fmt.Println("Время:", time.Since(start))
-	fmt.Printf("Размер: %.1f MB\n",
+	fmt.Println("Время выполнения:", time.Since(start))
+	fmt.Printf("Использование памяти: %.1f MB\n",
 		float64(forest.Size())/1e6)
 	fmt.Println()
 
@@ -145,7 +145,7 @@ func main() {
 	)
 	fmt.Println("Легкий и быстрый лес:")
 	flyweight.Draw()
-	fmt.Println("Время:", time.Since(start))
-	fmt.Printf("Размер: %.1f MB\n",
+	fmt.Println("Время выполнения:", time.Since(start))
+	fmt.Printf("Использование памяти: %.1f MB\n",
 		float64(flyweight.Size())/1e6)
 }
