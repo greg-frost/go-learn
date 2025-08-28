@@ -4,18 +4,19 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"time"
 )
 
 // Структура "дерево"
 type Tree struct {
 	x      int
 	y      int
-	r      int
+	r      float64
 	leaves []int
 }
 
 // Конструктор дерева
-func NewTree(x, y, r int) *Tree {
+func NewTree(x, y int, r float64) *Tree {
 	return &Tree{
 		x:      x,
 		y:      y,
@@ -26,7 +27,7 @@ func NewTree(x, y, r int) *Tree {
 
 // Прорисовка дерева
 func (t *Tree) Draw() {
-	drawTree(t.x, t.y, t.r, t.leaves)
+	fmt.Printf("Дерево %.1f м (%d, %d)\n", t.r, t.x, t.y)
 }
 
 // Структура "лес"
@@ -57,34 +58,51 @@ func (f *Forest) Size() int {
 	return size
 }
 
-// Структура "легковес"
-type Flyweight struct {
-	trees  [][3]int
+// Структура "лес-легковес"
+type FlyweightForest struct {
+	trees  []*FlyweightTree
 	leaves []int
 }
 
-// Конструктор легковеса
-func NewFlyweight(trees ...[3]int) *Flyweight {
-	treesData := make([][3]int, 0, len(trees))
-	for _, tree := range trees {
-		treesData = append(treesData, tree)
-	}
-	return &Flyweight{
-		trees:  treesData,
+// Конструктор леса-легковеса
+func NewFlyweightForest(trees ...*FlyweightTree) *FlyweightForest {
+	return &FlyweightForest{
+		trees:  trees,
 		leaves: randomLeaves(leavesSize),
 	}
 }
 
-// Прорисовка легковеса
-func (f *Flyweight) Draw() {
-	for i := 0; i < len(f.trees); i++ {
-		drawTree(f.trees[i][0], f.trees[i][1], f.trees[i][2], f.leaves)
+// Прорисовка леса-легковеса
+func (ff *FlyweightForest) Draw() {
+	for _, tree := range ff.trees {
+		tree.Draw(ff.leaves)
 	}
 }
 
-// Размер легковеса
-func (f *Flyweight) Size() int {
-	return len(f.leaves)
+// Размер леса-легковеса
+func (ff *FlyweightForest) Size() int {
+	return len(ff.leaves)
+}
+
+// Структура "дерево-легковес"
+type FlyweightTree struct {
+	x int
+	y int
+	r float64
+}
+
+// Конструктор дерева-легковеса
+func NewFlyweightTree(x, y int, r float64) *FlyweightTree {
+	return &FlyweightTree{
+		x: x,
+		y: y,
+		r: r,
+	}
+}
+
+// Прорисовка дерева-легковеса
+func (ft *FlyweightTree) Draw(leaves []int) {
+	fmt.Printf("Дерево %.1f м (%d, %d)\n", ft.r, ft.x, ft.y)
 }
 
 // Размер массива листьев
@@ -99,38 +117,35 @@ func randomLeaves(size int) []int {
 	return leaves
 }
 
-// Прорисовка абстрактного дерева
-func drawTree(x, y, r int, leaves []int) {
-	fmt.Printf("Дерево: %d м (%d, %d)\n", r, x, y)
-}
-
 func main() {
 	fmt.Println(" \n[ ЛЕГКОВЕС (ПРИСПОСОБЛЕНЕЦ) ]\n ")
 
-	// Медленный лес:
-	// каждое дерево - объект,
-	// свои листья у каждого дерева
+	// Обычный лес
+	// (свои листья у каждого дерева)
+	start := time.Now()
 	forest := NewForest(
-		NewTree(1, 2, 3),
-		NewTree(3, 0, 2),
-		NewTree(5, 7, 6),
+		NewTree(1, 2, 3.5),
+		NewTree(3, 0, 2.1),
+		NewTree(5, 7, 6.2),
 	)
-	fmt.Println("Медленный лес:")
+	fmt.Println("Тяжелый и медленный лес:")
 	forest.Draw()
+	fmt.Println("Время:", time.Since(start))
 	fmt.Printf("Размер: %.1f MB\n",
 		float64(forest.Size())/1e6)
 	fmt.Println()
 
-	// Быстрый лес:
-	// все деревья в одном объекте,
-	// общие листья у всех деревьев
-	flyweight := NewFlyweight(
-		[3]int{1, 2, 3},
-		[3]int{3, 0, 2},
-		[3]int{5, 7, 6},
+	// Лес-легковес
+	// (общие листья у всех деревьев)
+	start = time.Now()
+	flyweight := NewFlyweightForest(
+		NewFlyweightTree(0, 0, 1.0),
+		NewFlyweightTree(2, 3, 7.7),
+		NewFlyweightTree(-1, -1, 5.3),
 	)
-	fmt.Println("Быстрый лес:")
+	fmt.Println("Легкий и быстрый лес:")
 	flyweight.Draw()
+	fmt.Println("Время:", time.Since(start))
 	fmt.Printf("Размер: %.1f MB\n",
 		float64(flyweight.Size())/1e6)
 }
