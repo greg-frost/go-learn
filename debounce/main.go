@@ -84,6 +84,7 @@ func DebounceLast(worker Worker, period time.Duration) Worker {
 					case <-ticker.C:
 						m.Lock()
 						if time.Now().After(threshold) {
+							// Вызов функции
 							res, err = worker(ctx)
 							m.Unlock()
 							return
