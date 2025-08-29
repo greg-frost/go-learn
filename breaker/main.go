@@ -35,9 +35,13 @@ func Breaker(worker Worker, threshold uint) Worker {
 		f := failures - int(threshold)
 
 		// Сервис недоступен
-
 		if f >= 0 {
 			delay := 2 << f * time.Second
+
+			// Случайное отклонение
+			jitter := rand.Int63n(int64(delay * 3))
+			delay += time.Duration(jitter)
+
 			shouldRetryAt := lastAttempt.Add(delay)
 
 			if !time.Now().After(shouldRetryAt) {
@@ -45,7 +49,6 @@ func Breaker(worker Worker, threshold uint) Worker {
 				return "", fmt.Errorf("Сервис недоступен (повтор через %v)", delay)
 			}
 		}
-
 		m.RUnlock()
 
 		// Вызов функции
@@ -53,16 +56,12 @@ func Breaker(worker Worker, threshold uint) Worker {
 
 		m.Lock()
 		defer m.Unlock()
-
 		lastAttempt = time.Now()
 
-		// Ошибка
 		if err != nil {
 			failures++
 			return res, err
 		}
-
-		// Сброс
 		failures = 0
 
 		return res, nil
@@ -73,20 +72,18 @@ func main() {
 	fmt.Println(" \n[ РАЗМЫКАТЕЛЬ ЦЕПИ ]\n ")
 
 	// Настройка
-	unstable := Unstable(85)
+	unstable := Unstable(80)
 	worker := Breaker(unstable, 5)
 
 	// Работа
 	for {
 		res, err := worker(context.Background())
-
 		if err != nil {
 			fmt.Println(err)
 		} else {
 			fmt.Println(res)
 			break
 		}
-
 		time.Sleep(time.Second)
 	}
 }
