@@ -72,7 +72,7 @@ func main() {
 	fmt.Println(" \n[ РАЗМЫКАТЕЛЬ ЦЕПИ ]\n ")
 
 	// Настройка
-	unstable := Unstable(80)
+	unstable := Unstable(85)
 	worker := Breaker(unstable, 5)
 
 	// Работа
