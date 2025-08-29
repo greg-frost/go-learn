@@ -108,13 +108,9 @@ func DebounceLast(worker Worker, period time.Duration) Worker {
 func main() {
 	fmt.Println(" \n[ АНТИДРЕБЕЗГ ]\n ")
 
-	// Настройка
+	// Отброс всех запросов, кроме первого
 	counter := Counter()
-
-	// Работа
-
 	fmt.Println("DebounceFirst:")
-
 	for i := 0; i < 5; i++ {
 		worker := DebounceFirst(counter, 50*time.Millisecond)
 		fmt.Printf("\nПачка №%d\n--------\n", i+1)
@@ -124,20 +120,16 @@ func main() {
 				time.Sleep(time.Duration(rand.Intn(250)) * time.Millisecond)
 				res, _ := worker(context.Background())
 				fmt.Println(res)
-
 			}()
 		}
-
 		time.Sleep(200 * time.Millisecond)
 	}
-
 	time.Sleep(500 * time.Millisecond)
-
 	fmt.Println()
-	fmt.Println("DebounceLast:")
 
+	// Отброс всех запросов, кроме последнего
 	counter = Counter()
-
+	fmt.Println("DebounceLast:")
 	for i := 0; i < 5; i++ {
 		worker := DebounceLast(counter, 50*time.Millisecond)
 		fmt.Printf("\nПачка №%d\n--------\n", i+1)
@@ -151,9 +143,7 @@ func main() {
 				}
 			}()
 		}
-
 		time.Sleep(200 * time.Millisecond)
 	}
-
 	time.Sleep(500 * time.Millisecond)
 }
