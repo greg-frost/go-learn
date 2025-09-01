@@ -42,7 +42,6 @@ func main() {
 			source <- fmt.Sprint(i)
 			time.Sleep(100 * time.Millisecond)
 		}
-
 		close(source)
 	}()
 
@@ -60,6 +59,5 @@ func main() {
 			}
 		}(ch)
 	}
-
 	wg.Wait()
 }
