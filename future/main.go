@@ -65,11 +65,9 @@ func main() {
 	future := Promise(ctx, 3*time.Second)
 
 	// Работа
-
 	time.Sleep(time.Second)
 	fmt.Println("Ожидание...")
 	time.Sleep(time.Second)
-
 	res, err := future.Result()
 	if err != nil {
 		fmt.Println(err)
