@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-// Сегмент
+// Структура "сегмент"
 type Shard struct {
 	sync.RWMutex
 	m map[string]interface{}
@@ -18,7 +18,6 @@ type Shards []*Shard
 // Конструктор набора сегментов
 func NewShards(n int) Shards {
 	shards := make(Shards, n)
-
 	for i := 0; i < n; i++ {
 		shard := make(map[string]interface{})
 		shards[i] = &Shard{m: shard}
@@ -81,12 +80,10 @@ func (s Shards) Contains(key string) bool {
 // Список всех ключей
 func (s Shards) Keys() []string {
 	keys := make([]string, 0)
-
 	var m sync.Mutex
 	var wg sync.WaitGroup
 
 	wg.Add(len(s))
-
 	for _, shard := range s {
 		go func(sh *Shard) {
 			sh.RLock()
@@ -101,7 +98,6 @@ func (s Shards) Keys() []string {
 			wg.Done()
 		}(shard)
 	}
-
 	wg.Wait()
 
 	return keys
@@ -112,11 +108,9 @@ func main() {
 
 	// Настройка
 	shards := NewShards(5)
-
 	shards.Set("alpha", 1)
 	shards.Set("beta", 2)
 	shards.Set("gamma", 3)
-
 	shards.Set("wrong", 100)
 	shards.Delete("wrong")
 
@@ -125,7 +119,6 @@ func main() {
 	for _, key := range keys {
 		fmt.Printf("%s = %d\n", key, shards.Get(key))
 	}
-
 	fmt.Println()
 	fmt.Println("Is alpha?", shards.Contains("alpha"))
 	fmt.Println("Is omega?", shards.Contains("omega"))
