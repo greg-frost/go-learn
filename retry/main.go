@@ -36,9 +36,7 @@ func Retry(worker Worker, retries uint, delay time.Duration) Worker {
 			fmt.Printf("Попытка №%d не удалась (повтор через %v)\n", r+1, delay)
 
 			select {
-			// Пауза
 			case <-time.After(delay):
-			// Отмена
 			case <-ctx.Done():
 				return "", ctx.Err()
 			}
