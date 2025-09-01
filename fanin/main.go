@@ -9,7 +9,6 @@ import (
 // Мультиплексор
 func Funnel(sources ...<-chan string) <-chan string {
 	dest := make(chan string)
-
 	var wg sync.WaitGroup
 	wg.Add(len(sources))
 
