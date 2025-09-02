@@ -13,7 +13,7 @@ type Worker func(context.Context) (string, error)
 
 // Функция-счетчик
 func Counter() Worker {
-	count := 0
+	var count int
 	return func(context.Context) (string, error) {
 		count++
 		return fmt.Sprintf("Запрос №%d", count), nil
@@ -83,7 +83,6 @@ func main() {
 		} else {
 			fmt.Println(res)
 		}
-
 		time.Sleep(100 * time.Millisecond)
 	}
 }
