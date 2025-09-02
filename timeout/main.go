@@ -28,6 +28,7 @@ func Timeout(worker Worker) WithContext {
 		chErr := make(chan error)
 
 		go func() {
+			// Вызов функции
 			res, err := worker(arg)
 			chRes <- res
 			chErr <- err
@@ -53,7 +54,6 @@ func main() {
 	// Работа
 	slow := Slow(2 * time.Second)
 	timeout := Timeout(slow)
-
 	for i := 0; i < 3; i++ {
 		res, err := timeout(ctxt, "Go!")
 		if err != nil {
