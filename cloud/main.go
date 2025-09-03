@@ -20,7 +20,7 @@ func init() {
 	os.Setenv("FRONTEND_TYPE", "rest")
 
 	os.Setenv("TLOG_FILE", filepath.Join(path,
-		"transact", "filelogger", "transaction.log"))
+		"transact", "logs", "transaction.log"))
 
 	os.Setenv("TLOG_DB_NAME", "learn")
 	os.Setenv("TLOG_DB_HOST", "localhost")
