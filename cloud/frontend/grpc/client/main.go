@@ -16,12 +16,15 @@ import (
 func main() {
 	fmt.Println(" \n[ GRPC-КЛИЕНТ ]\n ")
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
 	// Установка соединения
-	conn, err := grpc.Dial(
+	conn, err := grpc.DialContext(
+		ctx,
 		"localhost:5050",
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
-		grpc.WithTimeout(time.Second),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -37,8 +40,6 @@ func main() {
 		action, key = os.Args[1], os.Args[2]
 		value = strings.Join(os.Args[3:], " ")
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
 
 	switch action {
 	// Получение значения
