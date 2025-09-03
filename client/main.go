@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,6 +11,25 @@ import (
 	"strings"
 	"time"
 )
+
+// Структура "клиент с контекстом"
+type ClientContext struct {
+	http.Client
+}
+
+// Конструктор клиента с контекстом
+func NewClientContext() *ClientContext {
+	return new(ClientContext)
+}
+
+// Get-запрос клиента с контекстом
+func (c *ClientContext) GetContext(ctx context.Context, url string) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return c.Do(req)
+}
 
 func main() {
 	fmt.Println(" \n[ HTTP-КЛИЕНТ ]\n ")
@@ -45,10 +66,10 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Осталось символов:", len(body))
+	fmt.Println()
 
 	/* POST-запрос */
 
-	fmt.Println()
 	fmt.Println("POST:", addr)
 	data := strings.NewReader("payload data")
 	req, err := http.NewRequest("POST", addr, data)
@@ -60,16 +81,30 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Статус ответа:", res.Status)
+	fmt.Println()
 
 	/* Свой клиент */
 
-	fmt.Println()
+	// HEAD-запрос
 	fmt.Println("HEAD:", addr)
 	client := &http.Client{Timeout: 200 * time.Millisecond}
 	res, err = client.Head(addr)
 	if err != nil {
 		fmt.Println("Ошибка: таймаут!")
-		return
+	} else {
+		fmt.Println("Статус ответа:", res.Status)
 	}
-	fmt.Println("Статус ответа:", res.Status)
+	fmt.Println()
+
+	// GET-запрос с контекстом
+	fmt.Println("CONTEXT:", addr)
+	clientContext := NewClientContext()
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+	res, err = clientContext.GetContext(ctx, addr)
+	if err != nil && errors.Is(err, context.DeadlineExceeded) {
+		fmt.Println("Ошибка: таймаут!")
+	} else {
+		fmt.Println("Статус ответа:", res.Status)
+	}
 }
