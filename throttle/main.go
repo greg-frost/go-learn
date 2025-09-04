@@ -21,7 +21,7 @@ func Counter() Worker {
 }
 
 // Дроссельная заслонка
-func Throttle(worker Worker, max uint, refill uint, period time.Duration) Worker {
+func Throttle(worker Worker, max, refill uint, period time.Duration) Worker {
 	var tokens = max
 	var once sync.Once
 
@@ -68,17 +68,93 @@ func Throttle(worker Worker, max uint, refill uint, period time.Duration) Worker
 	}
 }
 
+// Мульти-дроссельная заслонка
+type MultiThrottled func(context.Context, string) (bool, string, error)
+
+// Структура "бакет"
+type bucket struct {
+	tokens uint
+	time   time.Time
+}
+
+func MultiThrottle(worker Worker, max, refill uint, d time.Duration) MultiThrottled {
+	// Свой лимит для каждого пользователя
+	buckets := make(map[string]*bucket)
+
+	return func(ctx context.Context, uid string) (bool, string, error) {
+		b := buckets[uid]
+
+		// Новый бакет
+		if b == nil {
+			buckets[uid] = &bucket{
+				tokens: max - 1,
+				time:   time.Now(),
+			}
+
+			// Вызов функции
+			res, err := worker(ctx)
+			return true, res, err
+		}
+
+		// Количество токенов, которые можно добавить,
+		// учитывая время, прошедшее с последнего запроса
+		refillInterval := uint(time.Since(b.time) / d)
+		newTokens := refill * refillInterval
+		currentTokens := b.tokens + newTokens
+
+		// Недостаточно токенов
+		if currentTokens < 1 {
+			return false, "", errors.New("Слишком много запросов")
+		}
+
+		// Если бакет пополнился, запоминается текущее время
+		if currentTokens > max {
+			b.time = time.Now()
+			b.tokens = max - 1
+		} else { // Иначе - время последнего добавления жетонов
+			deltaTokens := currentTokens - b.tokens
+			deltaRefill := deltaTokens / refill
+			deltaTime := time.Duration(deltaRefill) * d
+
+			b.time = b.time.Add(deltaTime)
+			b.tokens = currentTokens - 1
+		}
+
+		// Вызов функции
+		res, err := worker(ctx)
+		return true, res, err
+	}
+}
+
 func main() {
 	fmt.Println(" \n[ ДРОССЕЛЬНАЯ ЗАСЛОНКА ]\n ")
 
-	// Настройка
+	// Дроссельная заслонка
+	fmt.Println("Таймеры:")
 	counter := Counter()
-	worker := Throttle(counter, 5, 3, time.Second)
+	timers := Throttle(counter, 5, 3, time.Second)
 
 	// Работа
 	for i := 0; i < 15; i++ {
-		res, err := worker(context.Background())
+		res, err := timers(context.Background())
 		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(res)
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+	fmt.Println()
+
+	// Мульти-дроссельная заслонка
+	fmt.Println("Интервалы (мульти):")
+	counter = Counter()
+	intervals := MultiThrottle(counter, 5, 3, time.Second)
+
+	// Работа
+	for i := 0; i < 15; i++ {
+		ok, res, err := intervals(context.Background(), "user")
+		if !ok {
 			fmt.Println(err)
 		} else {
 			fmt.Println(res)
