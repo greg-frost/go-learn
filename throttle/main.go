@@ -130,7 +130,7 @@ func main() {
 	fmt.Println(" \n[ ДРОССЕЛЬНАЯ ЗАСЛОНКА ]\n ")
 
 	// Дроссельная заслонка
-	fmt.Println("Таймеры:")
+	fmt.Println("Throttle (тикеры):")
 	counter := Counter()
 	timers := Throttle(counter, 5, 3, time.Second)
 
@@ -147,7 +147,7 @@ func main() {
 	fmt.Println()
 
 	// Мульти-дроссельная заслонка
-	fmt.Println("Интервалы (мульти):")
+	fmt.Println("MultiThrottle (интервалы):")
 	counter = Counter()
 	intervals := MultiThrottle(counter, 5, 3, time.Second)
 
