@@ -6,34 +6,40 @@ import (
 	"strings"
 )
 
+// Получение абсолютного пути
 func Dir(target string) string {
-	dest, err := os.Getwd()
+	// Текущий каталог
+	curr, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 
-	dest = filepath.ToSlash(dest)
+	// Преобразование пути
+	curr = filepath.ToSlash(curr)
 	target = filepath.ToSlash(target)
 
-	destDirs := strings.Split(dest, "/")
+	// Разбиение пути
+	currDirs := strings.Split(curr, "/")
 	targetDirs := strings.Split(target, "/")
 
+	// Сравнение путей
 	var p1, p2 int
-	n1, n2 := len(destDirs), len(targetDirs)
+	n1, n2 := len(currDirs), len(targetDirs)
 	for p1 < n1 && p2 < n2 {
-		if destDirs[p1] == targetDirs[p2] {
+		if currDirs[p1] == targetDirs[p2] {
 			targetDirs = targetDirs[1:]
 			p2++
 		}
 		p1++
 	}
 
+	// Дополнение текущего пути
 	if len(targetDirs) > 0 {
-		dest = filepath.Join(
-			dest,
+		curr = filepath.Join(
+			curr,
 			filepath.Join(targetDirs...),
 		)
 	}
 
-	return dest
+	return curr
 }
