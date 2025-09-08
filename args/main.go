@@ -9,18 +9,18 @@ func main() {
 	fmt.Println(" \n[ АРГУМЕНТЫ ]\n ")
 
 	// Получение
-	var flgInt int
-	flag.IntVar(&flgInt, "num", 0, "числовой флаг")
-	flgBool := flag.Bool("cond", false, "логический флаг")
-	flgStr := flag.String("action", "none", "флаг действия")
+	var intValue int
+	flag.IntVar(&intValue, "num", 0, "числовой флаг")
+	boolValue := flag.Bool("cond", false, "логический флаг")
+	strValue := flag.String("action", "none", "флаг действия")
 
 	// Парсинг
 	flag.Parse()
 
 	// Вывод флагов
-	fmt.Println("Числовой флаг:", flgInt)
-	fmt.Println("Логический флаг:", *flgBool)
-	fmt.Println("Флаг действия:", *flgStr)
+	fmt.Println("Числовой флаг:", intValue)
+	fmt.Println("Логический флаг:", *boolValue)
+	fmt.Println("Флаг действия:", *strValue)
 
 	// Вывод остальных аргументов
 	fmt.Println("Аргументы:", flag.Args())
