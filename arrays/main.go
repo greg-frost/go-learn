@@ -6,8 +6,11 @@ import (
 
 // Среднее и минимальное значение
 func avgAndMin(arr []float64) (avg, min float64) {
-	min = arr[0]
+	if len(arr) == 0 {
+		return
+	}
 
+	min = arr[0]
 	for _, v := range arr {
 		avg += v
 		if v < min {
@@ -19,7 +22,7 @@ func avgAndMin(arr []float64) (avg, min float64) {
 	return
 }
 
-// Поиск индексов, сумма значений которых = k
+// Поиск индексов, сумма значений которых равна k
 func findKeysBySumVals(arr []int, k int) []int {
 	for i := 0; i < len(arr); i++ {
 		for j := i + 1; j < len(arr); j++ {
@@ -32,16 +35,14 @@ func findKeysBySumVals(arr []int, k int) []int {
 	return nil
 }
 
-// Поиск индексов, сумма значений которых = k (быстрый алгоритм)
+// Поиск индексов, сумма значений которых равна k (быстрый алгоритм)
 func findKeysBySumValsFast(arr []int, k int) []int {
-	m := make(map[int]int)
-
+	seen := make(map[int]int)
 	for i, v := range arr {
-		if j, ok := m[k-v]; ok {
+		if j, ok := seen[k-v]; ok {
 			return []int{i, j}
 		}
-
-		m[v] = i
+		seen[v] = i
 	}
 
 	return nil
@@ -54,6 +55,10 @@ func printSlice(s []int) {
 
 // Удаление элемента по индексу
 func removeAtIndex(s []int, i int) []int {
+	if i >= len(s) {
+		return s
+	}
+
 	n := len(s) - 1
 	s[i], s[n] = s[n], s[i]
 	return s[:n]
@@ -64,17 +69,17 @@ func removeDuplicates(s []string) []string {
 	res := make([]string, len(s))
 	copy(res, s)
 
-	sSet := make(map[string]struct{}, len(s))
-	resIds := 0
+	set := make(map[string]struct{}, len(s))
+	var id int
 	for _, v := range s {
-		if _, ok := sSet[v]; !ok {
-			res[resIds] = v
-			resIds++
+		if _, ok := set[v]; !ok {
+			res[id] = v
+			id++
 		}
-		sSet[v] = struct{}{}
+		set[v] = struct{}{}
 	}
 
-	return res[:resIds]
+	return res[:id]
 }
 
 // Определение уникальных чисел
@@ -84,12 +89,11 @@ func uniqueInts(values []int) []int {
 	}
 
 	res := make([]int, 0, len(values))
-	existed := make(map[int]struct{})
-
+	seen := make(map[int]struct{})
 	for _, v := range values {
-		if _, ok := existed[v]; !ok {
+		if _, ok := seen[v]; !ok {
 			res = append(res, v)
-			existed[v] = struct{}{}
+			seen[v] = struct{}{}
 		}
 	}
 
@@ -103,12 +107,11 @@ func uniqueStrings(values []string) []string {
 	}
 
 	res := make([]string, 0, len(values))
-	existed := make(map[string]struct{})
-
+	seen := make(map[string]bool)
 	for _, v := range values {
-		if _, ok := existed[v]; !ok {
+		if !seen[v] {
 			res = append(res, v)
-			existed[v] = struct{}{}
+			seen[v] = true
 		}
 	}
 
@@ -118,14 +121,12 @@ func uniqueStrings(values []string) []string {
 func main() {
 	fmt.Println(" \n[ МАССИВЫ ]\n ")
 
-	/* Входные данные */
-
+	// Входные данные
 	var (
 		arr = []float64{
 			48, 96, 86, 68,
 			57, 82, 63, 70,
 			37, 34, 83, 27,
-			19, 97, 9, 17,
 		}
 		matrix = [...][]int{
 			{1, 1, 1},
@@ -140,8 +141,7 @@ func main() {
 		avg, min     float64
 	)
 
-	/* Матрица */
-
+	// Матрица
 	fmt.Println("Матрица:")
 	for i := 0; i < len(matrix); i++ {
 		for j := 0; j < len(matrix[i]); j++ {
@@ -149,67 +149,53 @@ func main() {
 		}
 		fmt.Printf("\n")
 	}
-
 	fmt.Println()
 
-	/* Массив */
-
+	// Массив
 	avg, min = avgAndMin(arr)
 	fmt.Println("Массив:", arr)
-	fmt.Println("Среднее:", avg)
+	fmt.Printf("Среднее: %.2f\n", avg)
 	fmt.Println("Минимальное:", min)
-
 	fmt.Println()
 
-	/* Срез */
-
+	// Срез
 	slice = arr[3:12]
 	avg, min = avgAndMin(slice)
 	fmt.Println("Срез:", slice)
-	fmt.Println("Среднее:", avg)
+	fmt.Printf("Среднее: %.2f\n", avg)
 	fmt.Println("Минимальное:", min)
-
 	fmt.Println()
 
-	/* Размеры среза */
-
+	// Размеры среза
 	fmt.Println("Размеры срезов:")
 	printSlice(s)
-
 	s = s[:0]
 	printSlice(s)
-
 	s = s[:4]
 	printSlice(s)
-
 	s = s[2:]
 	printSlice(s)
-
 	s = removeAtIndex(s, 1)
 	printSlice(s)
-
 	fmt.Println()
 
-	/* Операции */
-
+	// Операции
 	merge = make([]float64, 5)
 	copy(merge, arr)
 	merge = append(merge, 48, 49, 50)
 	merge = append(merge, slice...)
-	fmt.Println("Странный массив:", merge)
-
+	fmt.Println("Странный массив:")
+	fmt.Println(merge)
 	fmt.Println()
 
+	// Индексы среза
 	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	k := 10
-
-	fmt.Print("Индексы среза ", values, ",\nсумма значений которых = ", k, ": ")
-	fmt.Println(findKeysBySumVals(values, k))
-
+	fmt.Printf("Индексы среза %v\nсумма значений которых = %d: %v\n",
+		values, k, findKeysBySumVals(values, k))
 	fmt.Println()
 
-	/* Карты */
-
+	// Карты
 	elements := map[string]map[string]string{
 		"H": {
 			"name":  "Hydrogen",
@@ -224,14 +210,13 @@ func main() {
 			"state": "solid",
 		},
 	}
-
 	fmt.Println("Карта:", elements)
 	if el, ok := elements["Li"]; ok {
-		fmt.Println("Элемент:", el["name"], "(", el["state"], ")")
+		fmt.Printf("Элемент: %s ( %s )\n", el["name"], el["state"])
 	}
-
 	fmt.Println()
 
+	// Уникальные значения
 	animals := []string{"кошка", "собака", "птица", "собака", "попугай", "кошка"}
 	fmt.Println("Карта животных:", animals)
 	fmt.Println("Без повторений:", removeDuplicates(animals))
