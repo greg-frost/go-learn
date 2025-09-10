@@ -23,7 +23,7 @@ func TestFileLen(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	e := 385
+	e := 388
 	if g != e {
 		t.Errorf("Длина файла: получено %d, ожидается %d", g, e)
 	}
@@ -48,7 +48,7 @@ func BenchmarkFileLen(b *testing.B) {
 func BenchmarkTemplates(b *testing.B) {
 	b.Logf("b.N = %d\n", b.N)
 	tpl := "Hello {{.Name}}"
-	data := &map[string]string{
+	data := map[string]string{
 		"Name": "World",
 	}
 	var buf bytes.Buffer
@@ -64,7 +64,7 @@ func BenchmarkCompiledTemplates(b *testing.B) {
 	b.Logf("b.N = %d\n", b.N)
 	tpl := "Hello {{.Name}}"
 	t, _ := template.New("test").Parse(tpl)
-	data := &map[string]string{
+	data := map[string]string{
 		"Name": "World",
 	}
 	var buf bytes.Buffer
@@ -78,10 +78,11 @@ func BenchmarkCompiledTemplates(b *testing.B) {
 func BenchmarkParallelTemplates(b *testing.B) {
 	tpl := "Hello {{.Name}}"
 	t, _ := template.New("test").Parse(tpl)
-	data := &map[string]string{
+	data := map[string]string{
 		"Name": "World",
 	}
-	//var buf bytes.Buffer // Data race!
+	// Гонка данных!
+	// var buf bytes.Buffer
 	b.RunParallel(func(pb *testing.PB) {
 		var buf bytes.Buffer
 		for pb.Next() {

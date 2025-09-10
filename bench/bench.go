@@ -12,7 +12,7 @@ func FileLen(f string, bufsize int) (int, error) {
 	}
 	defer file.Close()
 
-	count := 0
+	var count int
 	buf := make([]byte, bufsize)
 	for {
 		num, err := file.Read(buf)
