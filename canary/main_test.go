@@ -6,5 +6,5 @@ import (
 )
 
 func TestWriter(t *testing.T) {
-	var _ io.Writer = &MyWriter{}
+	var _ io.Writer = new(MyWriter)
 }

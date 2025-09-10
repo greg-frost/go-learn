@@ -30,17 +30,17 @@ func (m *MyWriter) Write(b []byte) (int, error) {
 // }
 
 func main() {
-	fmt.Println(" \n[ КАНАРЕЕЧНЫЕ ТЕСТЫ ]\n ")
+	fmt.Println(" \n[ КАНАРЕЕЧНЫЙ ТЕСТ ]\n ")
 
 	// Канарейка прямо в коде
-	var _ io.Writer = &MyWriter{}
+	var _ io.Writer = new(MyWriter)
 
 	fmt.Println("MyWriter соответствует интерфейсу io.Writer!")
 	fmt.Println("(а иначе бы код даже не скомпилировался...)")
 	fmt.Println()
 
 	// Утверждение интерфейса (возможна паника)
-	var myWriter interface{} = &MyWriter{}
+	var myWriter interface{} = new(MyWriter)
 	writer := myWriter.(io.Writer)
 	_ = writer
 
