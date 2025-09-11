@@ -22,7 +22,7 @@ type cacheFile struct {
 
 // Путь, кэш и мьютекс
 var path = base.Dir("cacheserver/..")
-var cache = map[string]*cacheFile{}
+var cache = make(map[string]*cacheFile)
 var mutex sync.RWMutex
 
 // Обработка файлов
@@ -35,6 +35,7 @@ func serveFiles(w http.ResponseWriter, r *http.Request) {
 		mutex.Lock()
 		defer mutex.Unlock()
 
+		// Открытие файла
 		filename := filepath.Join(path, r.URL.Path)
 		f, err := os.Open(filename)
 		defer f.Close()
@@ -43,6 +44,7 @@ func serveFiles(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Чтение файла
 		var b bytes.Buffer
 		_, err = io.Copy(&b, f)
 		if err != nil {
@@ -50,6 +52,7 @@ func serveFiles(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Кэширование файла
 		reader := bytes.NewReader(b.Bytes())
 		info, _ := f.Stat()
 		v = &cacheFile{
