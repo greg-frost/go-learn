@@ -36,31 +36,33 @@ var opMap = map[string]func(int, int) int{
 func main() {
 	fmt.Println(" \n[ КАЛЬКУЛЯТОР ]\n ")
 
+	// Выражения
 	expressions := [][]string{
 		{"10", "+", "5"},
 		{"10", "-", "5"},
 		{"10", "*", "5"},
 		{"10", "/", "5"},
 		{"10", "%", "5"},
-		{"ten", "+", "five"},
 		{"15"},
+		{"ten", "+", "five"},
 	}
 
-	for _, expression := range expressions {
-		if len(expression) != 3 {
-			fmt.Println("Неправильное выражение:", expression)
+	// Вычисление
+	for _, expr := range expressions {
+		if len(expr) != 3 {
+			fmt.Println("Неправильное выражение:", expr)
 			continue
 		}
 
 		// Левый операнд
-		p1, err := strconv.Atoi(expression[0])
+		p1, err := strconv.Atoi(expr[0])
 		if err != nil {
 			fmt.Println("Ошибка левого операнда:", err)
 			continue
 		}
 
 		// Операция
-		op := expression[1]
+		op := expr[1]
 		opFunc, ok := opMap[op]
 		if !ok {
 			fmt.Println("Неизвестная операция:", op)
@@ -68,13 +70,13 @@ func main() {
 		}
 
 		// Правый операнд
-		p2, err := strconv.Atoi(expression[2])
+		p2, err := strconv.Atoi(expr[2])
 		if err != nil {
 			fmt.Println("Ошибка правого операнда:", err)
 			continue
 		}
 
-		// Вычисление
+		// Результат
 		result := opFunc(p1, p2)
 		fmt.Println(p1, op, p2, "=", result)
 	}
