@@ -6,51 +6,52 @@ import (
 
 // Структура "кольцевой буфер"
 type CircularBuffer struct {
-	values  []float64
-	headIdx int
-	tailIdx int
+	values []float64
+	head   int
+	tail   int
 }
 
 // Конструктор буфера
 func NewCircularBuffer(size int) CircularBuffer {
-	return CircularBuffer{values: make([]float64, size+1)}
+	return CircularBuffer{
+		values: make([]float64, size+1),
+	}
 }
 
 // Добавление нового значения в буфер
-func (b *CircularBuffer) AddValue(v float64) {
-	b.values[b.tailIdx] = v
-	b.tailIdx = (b.tailIdx + 1) % cap(b.values)
-	if b.tailIdx == b.headIdx {
-		b.headIdx = (b.headIdx + 1) % cap(b.values)
+func (cb *CircularBuffer) Add(value float64) {
+	cb.values[cb.tail] = value
+	cb.tail = (cb.tail + 1) % cap(cb.values)
+	if cb.tail == cb.head {
+		cb.head = (cb.head + 1) % cap(cb.values)
 	}
 }
 
 // Длина буфера
-func (b CircularBuffer) GetSize() int {
-	if b.tailIdx < b.headIdx {
-		return b.tailIdx + cap(b.values) - b.headIdx
+func (cb CircularBuffer) Size() int {
+	if cb.tail < cb.head {
+		return cb.tail + cap(cb.values) - cb.head
 	}
-
-	return b.tailIdx - b.headIdx
+	return cb.tail - cb.head
 }
 
 // Значения буфера с сохранением порядка записи
-func (b CircularBuffer) GetValues() (retValues []float64) {
-	for i := b.headIdx; i != b.tailIdx; i = (i + 1) % cap(b.values) {
-		retValues = append(retValues, b.values[i])
+func (cb CircularBuffer) Values() []float64 {
+	var res []float64
+	for i := cb.head; i != cb.tail; i = (i + 1) % cap(cb.values) {
+		res = append(res, cb.values[i])
 	}
-
-	return
+	return res
 }
 
 // Установка значения по индексу (не надо так делать!)
-func (b CircularBuffer) SetValueByIdx(idx int, v float64) {
-	b.values[idx] = v
+func (cb CircularBuffer) SetById(id int, value float64) {
+	cb.values[id] = value
 }
 
 // Обработчик функции
-func Handle(v float64, f func(float64)) {
-	f(v)
+func Handle(value float64, f func(float64)) {
+	f(value)
 }
 
 // Структура "расширенный кольцевой буфер"
@@ -59,9 +60,9 @@ type ExtendedCircularBuffer struct {
 }
 
 // Добавление нескольких значений
-func (cb *ExtendedCircularBuffer) AddValues(vals ...float64) {
-	for _, val := range vals {
-		cb.AddValue(val)
+func (ecb *ExtendedCircularBuffer) Add(values ...float64) {
+	for _, value := range values {
+		ecb.CircularBuffer.Add(value)
 	}
 }
 
@@ -75,34 +76,29 @@ func NewExtendedCircularBuffer(size int) ExtendedCircularBuffer {
 func main() {
 	fmt.Println(" \n[ КОЛЬЦЕВОЙ БУФЕР ]\n ")
 
-	/* Простой буфер */
-
+	// Простой буфер
 	buf := NewCircularBuffer(4)
 	for i := 0; i < 7; i++ {
 		if i > 0 {
-			buf.AddValue(float64(i))
+			buf.Add(float64(i))
 		}
-		fmt.Printf("[%d]: %v\n", buf.GetSize(), buf.GetValues())
+		fmt.Printf("[%d]: %v\n", buf.Size(), buf.Values())
 	}
 
-	/* Изменение значений */
-
-	buf.SetValueByIdx(0, -1.0)
-	buf.SetValueByIdx(1, -2.0)
-	Handle(10.0, buf.AddValue)
-	Handle(20.0, buf.AddValue)
-	Handle(30.0, buf.AddValue)
-
+	// Изменение значений
+	buf.SetById(0, -1.0)
+	buf.SetById(1, -2.0)
+	Handle(10.0, buf.Add)
+	Handle(20.0, buf.Add)
+	Handle(30.0, buf.Add)
 	fmt.Println()
 	fmt.Println("Новые значения:")
 	fmt.Println(buf.values)
-
-	/* Расширенный буфер */
-
 	fmt.Println()
-	fmt.Println("Расширенный буфер:")
 
+	// Расширенный буфер
+	fmt.Println("Расширенный буфер:")
 	extBuf := NewExtendedCircularBuffer(5)
-	extBuf.AddValues(1, 2, 3, 4, 5)
-	fmt.Printf("[%d]: %v\n", extBuf.GetSize(), extBuf.GetValues())
+	extBuf.Add(1, 2, 3, 4, 5)
+	fmt.Printf("[%d]: %v\n", extBuf.Size(), extBuf.Values())
 }
