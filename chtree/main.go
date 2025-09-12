@@ -6,53 +6,51 @@ import (
 )
 
 // Структура "узел дерева"
-type Tree struct {
+type TreeNode struct {
 	val         int
-	left, right *Tree
+	left, right *TreeNode
 }
 
-// Создание дерева
-func MakeTree(k int) *Tree {
-	var t *Tree
+// Конструктор дерева
+func NewTree(k int) *TreeNode {
+	var t *TreeNode
 	for _, v := range rand.Perm(10) {
-		t = Insert(t, (1+v)*k)
+		t = InsertNode(t, (1+v)*k)
 	}
 	return t
 }
 
 // Добавление элемента
-func Insert(t *Tree, val int) *Tree {
+func InsertNode(t *TreeNode, val int) *TreeNode {
 	if t == nil {
-		return &Tree{val: val}
+		return &TreeNode{val: val}
 	}
 	if val < t.val {
-		t.left = Insert(t.left, val)
+		t.left = InsertNode(t.left, val)
 	} else if val > t.val {
-		t.right = Insert(t.right, val)
+		t.right = InsertNode(t.right, val)
 	}
 	return t
 }
 
 // Обход дерева
-func Walk(t *Tree, ch chan int) {
+func WalkTree(t *TreeNode, ch chan int) {
 	if t.left != nil {
-		Walk(t.left, ch)
+		WalkTree(t.left, ch)
 	}
-
 	ch <- t.val
-
 	if t.right != nil {
-		Walk(t.right, ch)
+		WalkTree(t.right, ch)
 	}
 }
 
 // Сравнение деревьев
-func Same(t1, t2 *Tree) bool {
+func IsSame(t1, t2 *TreeNode) bool {
 	ch1 := make(chan int)
 	ch2 := make(chan int)
 
-	go Walk(t1, ch1)
-	go Walk(t2, ch2)
+	go WalkTree(t1, ch1)
+	go WalkTree(t2, ch2)
 
 	var isSame = true
 	for i := 0; i < 10; i++ {
@@ -60,12 +58,11 @@ func Same(t1, t2 *Tree) bool {
 			isSame = false
 		}
 	}
-
 	return isSame
 }
 
 // Печать дерева
-func Print(t *Tree, ch chan int) {
+func PrintTree(t *TreeNode, ch chan int) {
 	for i := 0; i < 10; i++ {
 		fmt.Print(<-ch, " ")
 	}
@@ -75,32 +72,27 @@ func Print(t *Tree, ch chan int) {
 func main() {
 	fmt.Println(" \n[ ДЕРЕВО-КАНАЛ ]\n ")
 
+	// Канал
 	ch := make(chan int)
 
-	/* Создание и печать деревьев */
-
+	// Создание и печать деревьев
 	fmt.Println("Первое дерево:")
-	t1 := MakeTree(1)
-	go Walk(t1, ch)
-	Print(t1, ch)
-
+	t1 := NewTree(1)
+	go WalkTree(t1, ch)
+	PrintTree(t1, ch)
 	fmt.Println()
 
 	fmt.Println("Второе дерево:")
-	t2 := MakeTree(2)
-	go Walk(t2, ch)
-	Print(t2, ch)
-
+	t2 := NewTree(2)
+	go WalkTree(t2, ch)
+	PrintTree(t2, ch)
 	fmt.Println()
 
-	/* Сравнение деревьев */
-
+	// Сравнение деревьев
 	t3 := t1
 	fmt.Println("Третье дерево:\n(такое же, как первое)")
-
 	fmt.Println()
-
 	fmt.Println("Равенство деревьев:")
-	fmt.Println("1 и 2:", Same(t1, t2))
-	fmt.Println("1 и 3:", Same(t1, t3))
+	fmt.Println("1 и 2:", IsSame(t1, t2))
+	fmt.Println("1 и 3:", IsSame(t1, t3))
 }
