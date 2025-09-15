@@ -56,7 +56,6 @@ func main() {
 					fmt.Println("Ошибка:", msg)
 					return errors.New(msg)
 				}
-
 				fmt.Printf("Сервис #%d успешно запущен.\n", id)
 				services[id] = true
 				return nil
@@ -80,7 +79,6 @@ func main() {
 					fmt.Println("Ошибка:", msg)
 					return errors.New(msg)
 				}
-
 				fmt.Printf("Сервис #%d успешно остановлен.\n", id)
 				services[id] = false
 				return nil
@@ -92,13 +90,11 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		name := c.GlobalString("name")
 		english := c.GlobalBool("english")
-
 		if english {
 			fmt.Printf("Hello, %s!\n", name)
 		} else {
 			fmt.Printf("Привет, %s!\n", name)
 		}
-
 		return nil
 	}
 
