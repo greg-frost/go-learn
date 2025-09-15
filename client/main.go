@@ -34,8 +34,7 @@ func (c *ClientContext) GetContext(ctx context.Context, url string) (*http.Respo
 func main() {
 	fmt.Println(" \n[ HTTP-КЛИЕНТ ]\n ")
 
-	/* GET-запрос */
-
+	// GET-запрос
 	addr := "https://go.dev"
 	fmt.Println("GET:", addr)
 	get, err := http.Get(addr)
@@ -50,28 +49,29 @@ func main() {
 
 	// Чтение построчно
 	fmt.Println("Первые строки:")
+	var count int
 	scanner := bufio.NewScanner(get.Body)
 	for i := 0; scanner.Scan() && i < 3; i++ {
-		fmt.Println(scanner.Text())
+		line := scanner.Text()
+		count += len(line)
+		fmt.Println(line)
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("...")
-	fmt.Println()
 
 	// Чтение полностью
 	body, err := ioutil.ReadAll(get.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Осталось символов:", len(body))
+	fmt.Printf("(осталось символов: %d)\n", len(body)-count)
 	fmt.Println()
 
-	/* POST-запрос */
-
+	// POST-запрос
 	fmt.Println("POST:", addr)
-	data := strings.NewReader("payload data")
+	data := strings.NewReader("payload")
 	req, err := http.NewRequest("POST", addr, data)
 	if err != nil {
 		log.Fatal(err)
@@ -83,9 +83,7 @@ func main() {
 	fmt.Println("Статус ответа:", res.Status)
 	fmt.Println()
 
-	/* Свой клиент */
-
-	// HEAD-запрос
+	// Свой клиент
 	fmt.Println("HEAD:", addr)
 	client := &http.Client{Timeout: 200 * time.Millisecond}
 	res, err = client.Head(addr)
@@ -96,7 +94,7 @@ func main() {
 	}
 	fmt.Println()
 
-	// GET-запрос с контекстом
+	// Контекст
 	fmt.Println("CONTEXT:", addr)
 	clientContext := NewClientContext()
 	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
