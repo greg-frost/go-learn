@@ -27,10 +27,10 @@ func send(msg chan<- int, done <-chan bool) {
 		select {
 		case <-done:
 			fmt.Println("Отправитель: канал закрыт")
-			close(msg) // ... Отправитель закрывает канал
+			close(msg) // ... отправитель закрывает канал
 			return
 		default:
-			msg <- rand.Intn(1_000_000)
+			msg <- rand.Intn(1e6)
 			time.Sleep(500 * time.Millisecond)
 		}
 	}
@@ -45,8 +45,7 @@ func recieve(msg <-chan int, done chan<- bool, until <-chan time.Time) {
 		case <-until:
 			fmt.Println()
 			fmt.Println("Получатель: прием закончен")
-			done <- true // Когда получатель заканчивает прием ...
-			time.Sleep(500 * time.Millisecond)
+			done <- true // Когда получатель заканчивает прием, ...
 			return
 		}
 	}
