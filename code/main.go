@@ -20,8 +20,7 @@ func main() {
 
 	var files, dirs, lines int
 
-	/* Подсчет корневых директорий */
-
+	// Подсчет корневых директорий
 	root, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -36,8 +35,7 @@ func main() {
 		}
 	}
 
-	/* Подсчет количества go-файлов и строк кода */
-
+	// Подсчет количества go-файлов и строк кода
 	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if strings.HasSuffix(path, ".go") {
 			for _, s := range skip {
@@ -45,6 +43,7 @@ func main() {
 					return nil
 				}
 			}
+			files++
 
 			file, err := os.Open(path)
 			if err != nil {
@@ -56,14 +55,11 @@ func main() {
 			for scanner.Scan() {
 				lines++
 			}
-
-			files++
 		}
 		return nil
 	})
 
-	/* Вывод статистики */
-
+	// Вывод статистики
 	fmt.Println("Статистика:")
 	fmt.Println()
 	fmt.Println("Проектов:  ", dirs)
