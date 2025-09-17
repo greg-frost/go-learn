@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 // Структура "сотрудник"
@@ -21,9 +22,9 @@ type Manager struct {
 	Reports []Employee
 }
 
-// Поиск новых менеджеров
-func (m Manager) FindNewEmployees() []Employee {
-	return []Employee{
+// Поиск нового менеджера
+func (m Manager) FindNewEmployee() Employee {
+	employees := []Employee{
 		{
 			Name: "Ada Wong",
 			ID:   "098263",
@@ -33,10 +34,11 @@ func (m Manager) FindNewEmployees() []Employee {
 			ID:   "655312",
 		},
 		{
-			Name: "Charles the Prince",
+			Name: "Iggy Pop",
 			ID:   "122213",
 		},
 	}
+	return employees[rand.Intn(len(employees))]
 }
 
 // Структура "внутренняя"
@@ -51,8 +53,7 @@ func (i Inner) IntPrinter(val int) string {
 
 // Удвоение внутреннего числа
 func (i Inner) Double() string {
-	result := i.A * 2
-	return i.IntPrinter(result)
+	return i.IntPrinter(i.A * 2)
 }
 
 // Структура "внешняя"
@@ -69,8 +70,7 @@ func (o Outer) IntPrinter(val int) string {
 func main() {
 	fmt.Println(" \n[ КОМПОЗИЦИЯ ]\n ")
 
-	/* Композиция */
-
+	// Композиция
 	m := Manager{
 		Employee: Employee{
 			Name: "Greg Frost",
@@ -81,23 +81,19 @@ func main() {
 
 	fmt.Println("Менеджер:")
 	fmt.Println()
-
 	fmt.Println("Имя:", m.Name)
 	fmt.Println("Идентификатор:", m.ID)
 	fmt.Println(m.Description())
 
-	m.Reports = m.FindNewEmployees()
-	m.Reports = append(m.Reports, m.FindNewEmployees()...)
-	m.Reports = append(m.Reports, m.FindNewEmployees()...)
+	m.Reports = append(m.Reports, m.FindNewEmployee())
+	m.Reports = append(m.Reports, m.FindNewEmployee())
+	m.Reports = append(m.Reports, m.FindNewEmployee())
 	fmt.Println("Подчиненные:")
 	fmt.Println(m.Reports)
-
 	fmt.Println()
 
-	/* Виртуальные методы */
-
+	// Виртуальные методы
 	fmt.Println("Виртуальные методы:")
-
 	o := Outer{
 		Inner: Inner{
 			A: 10,
