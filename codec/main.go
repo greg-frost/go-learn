@@ -21,10 +21,10 @@ func main() {
 		Name:  "Greg",
 		Email: "greg-frost@yandex.ru",
 	}
+	times := 1000000
 	var out []byte
 	var u2 user.User
 
-	times := 1000000
 	fmt.Println("Число повторов:", times)
 	fmt.Println()
 
@@ -36,7 +36,6 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-
 	fmt.Println("Кодирование:")
 	fmt.Println(string(out))
 	fmt.Println("Заняло", time.Since(start))
