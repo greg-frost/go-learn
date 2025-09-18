@@ -46,20 +46,26 @@ type Inner struct {
 	A int
 }
 
-// Печать внутреннего числа
-func (i Inner) IntPrinter(val int) string {
-	return fmt.Sprintf("внутреннее: %d", val)
-}
-
 // Удвоение внутреннего числа
 func (i Inner) Double() string {
 	return i.IntPrinter(i.A * 2)
 }
 
+// Печать внутреннего числа
+func (i Inner) IntPrinter(val int) string {
+	return fmt.Sprintf("внутреннее: %d", val)
+}
+
 // Структура "внешняя"
 type Outer struct {
 	Inner
+	B int
 	S string
+}
+
+// Удвоение внешнего числа
+func (o Outer) Double() string {
+	return o.IntPrinter(o.B * 2)
 }
 
 // Печать внешнего числа
@@ -98,8 +104,11 @@ func main() {
 		Inner: Inner{
 			A: 10,
 		},
+		B: 100,
 		S: "Привет",
 	}
-	fmt.Print(o.S, ", ", o.Double())
-	fmt.Println()
+	// По умолчанию - внешнее
+	fmt.Printf("%s, %s\n", o.S, o.Double())
+	// Явно - внутреннее
+	fmt.Printf("%s, %s\n", o.S, o.Inner.Double())
 }
