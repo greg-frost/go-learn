@@ -31,11 +31,6 @@ type Person struct {
 	children []*Person
 }
 
-// Домашная работа человека
-func (p Person) DoHomework() string {
-	return p.homework
-}
-
 // Список детей человека
 func (p Person) Children() []*Person {
 	return p.children
@@ -43,10 +38,11 @@ func (p Person) Children() []*Person {
 
 // Работа человека
 func (p Person) Work(tasks []string) string {
-	res := p.name + " работа:"
+	res := p.name + " работает:"
 	for _, task := range tasks {
 		res += "\n Я выполняю " + task
 	}
+	res += fmt.Sprintf("\n(домашняя работа: %s)", p.homework)
 	return res
 }
 
@@ -64,11 +60,12 @@ type Robot struct {
 
 // Работа робота
 func (r *Robot) Work(tasks []string) string {
-	res := fmt.Sprintf("%s работа:", r)
+	res := fmt.Sprintf("%s работает:", r)
 	for _, task := range tasks {
 		res += "\n Я выполняю " + task + ", хозяин"
 	}
 	r.workCounter += len(tasks)
+	res += fmt.Sprintf("\n(выполнено работ: %d)", r.workCounter)
 	return res
 }
 
@@ -80,17 +77,25 @@ func (r Robot) String() string {
 func main() {
 	fmt.Println(" \n[ КОМПАНИЯ ]\n ")
 
-	company := Company{}
-
+	// Сотрудники
 	person1 := Person{name: "Grog", homework: "пить"}
 	person2 := Person{name: "Grig", homework: "жать"}
-	person3 := Person{name: "Greg", children: []*Person{&person1, &person2}}
+	person3 := Person{name: "Greg", homework: "жить",
+		children: []*Person{&person1, &person2}}
 	robot := &Robot{model: "GF Mk.1", serialId: 12226122}
 
+	// Наем
+	var company Company
 	company.Hire(person1)
 	company.Hire(person2)
 	company.Hire(person3)
 	company.Hire(robot)
 
-	fmt.Println(company)
+	// Вывод
+	fmt.Println("Сотрудники:")
+	fmt.Println(person3, person3.Children())
+	fmt.Println()
+	fmt.Println(company.Process(2, []string{"еда", "отдых", "программирование"}))
+	fmt.Println()
+	fmt.Println(company.Process(3, []string{"починка", "поломка", "головоломка"}))
 }
