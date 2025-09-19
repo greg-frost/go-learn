@@ -4,26 +4,31 @@ import (
 	"fmt"
 )
 
+// Константы
 const (
 	i         = 10
 	f         = 1.5
 	i64 int64 = 88
 )
 
+// Переменная
 var v = 45
 
 func main() {
 	fmt.Println(" \n[ КОНСТАНТЫ ]\n ")
 
+	// Допустимые операции
 	fmt.Println("i + f = ", i+f)
 	fmt.Println("i + i64 = ", i+i64)
 	fmt.Println("i + v = ", i+v)
 
-	// f + v = f (untyped float constant 1.5) truncated to int
-	// f + i64 = f (untyped float constant 1.5) truncated to int64
-	// i64 + v = i64 + v (mismatched types int64 and int)
+	// Ошибки приведения типов
+	// fmt.Println(f + v) // Нетипизированная вещественная константа урезается до int
+	// fmt.Println(f + i64) // Нетипизированная вещественная константа урезается до int64
+	// fmt.Println(i64 + v) // Несовпадение типов int64 и int
 
-	//i = 20 // не выйдет
-	//pi := &i // а вот это попробуйте
-	//*pi = 20 // тоже фиаско
+	// Ошибки изменения значения
+	// i = 20 // Не выйдет
+	// pi := &i // А вот это попробуйте
+	// *pi = 20 // Тоже фиаско
 }
