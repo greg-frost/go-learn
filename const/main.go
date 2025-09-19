@@ -18,9 +18,9 @@ func main() {
 	fmt.Println(" \n[ КОНСТАНТЫ ]\n ")
 
 	// Допустимые операции
-	fmt.Println("i + f = ", i+f)
-	fmt.Println("i + i64 = ", i+i64)
-	fmt.Println("i + v = ", i+v)
+	fmt.Printf("i + f = %d + %.1f = %.1f\n", i, f, i+f)
+	fmt.Printf("i + i64 = %d + %d = %d\n", i, i64, i+i64)
+	fmt.Printf("i + v = %d + %d = %d\n", i, v, i+v)
 
 	// Ошибки приведения типов
 	// fmt.Println(f + v) // Нетипизированная вещественная константа урезается до int
