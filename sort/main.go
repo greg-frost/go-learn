@@ -15,85 +15,83 @@ type Person struct {
 // Сортировка по имени
 type ByName []Person
 
-// Функция длины для сортировки
-func (this ByName) Len() int {
-	return len(this)
+// Количество элементов
+func (bn ByName) Len() int {
+	return len(bn)
 }
 
-// Функция поиска меньшего для сортировки
-func (this ByName) Less(i, j int) bool {
-	return this[i].firstName < this[j].firstName
+// Меньший элемент (по имени)
+func (bn ByName) Less(i, j int) bool {
+	return bn[i].firstName < bn[j].firstName
 }
 
-// Функция замены элементов для сортировки
-func (this ByName) Swap(i, j int) {
-	this[i], this[j] = this[j], this[i]
+// Замена элементов
+func (bn ByName) Swap(i, j int) {
+	bn[i], bn[j] = bn[j], bn[i]
 }
 
 // Сортировка по возрасту
 type ByAge []Person
 
-// Функция длины для сортировки
-func (this ByAge) Len() int {
-	return len(this)
+// Количество элементов
+func (ba ByAge) Len() int {
+	return len(ba)
 }
 
-// Функция поиска меньшего для сортировки
-func (this ByAge) Less(i, j int) bool {
-	return this[i].age < this[j].age
+// Меньший элемент (по возрасту)
+func (ba ByAge) Less(i, j int) bool {
+	return ba[i].age < ba[j].age
 }
 
-// Функция замены элементов для сортировки
-func (this ByAge) Swap(i, j int) {
-	this[i], this[j] = this[j], this[i]
+// Замена элементов
+func (ba ByAge) Swap(i, j int) {
+	ba[i], ba[j] = ba[j], ba[i]
 }
 
 func main() {
 	fmt.Println(" \n[ СОРТИРОВКА ]\n ")
 
-	/* Простая сортировка */
-
+	// Простая сортировка
 	fmt.Println("Простая сортировка")
 	fmt.Println("------------------")
 	fmt.Println()
 
-	nums := []int{3, 1, 7, 4, 2, 6, 5, 10, 8, 9}
-
 	fmt.Println("До сортировки:")
+	nums := []int{3, 1, 7, 4, 2, 6, 5, 10, 8, 9}
 	fmt.Println(nums)
 	fmt.Println()
-
-	sort.Ints(nums)
 
 	fmt.Println("После сортировки:")
+	sort.Ints(nums)
 	fmt.Println(nums)
-
-	/* Сложная сортировка */
-
 	fmt.Println()
+
+	fmt.Println("В обратном порядке:")
+	sort.Sort(sort.Reverse(sort.IntSlice(nums)))
+	fmt.Println(nums)
+	fmt.Println()
+
+	// Сложная сортировка
 	fmt.Println("Сложная сортировка")
 	fmt.Println("------------------")
 	fmt.Println()
 
+	fmt.Println("До сортировки:")
 	var people = []Person{
 		{"Charles", "Bukowski", 27},
 		{"Ada", "Wong", 21},
 		{"Bob", "Marley", 18},
 	}
-
-	fmt.Println("До сортировки:")
 	fmt.Println(people)
 	fmt.Println()
 
-	/* По имени */
-
+	// По имени
 	fmt.Println("Сортировка по имени:")
 	sort.Sort(ByName(people))
 	fmt.Println(people)
 	fmt.Println()
 
-	/* По фамилии */
-
+	// По фамилии
 	fmt.Println("Сортировка по фамилии:")
 	sort.Slice(people, func(i, j int) bool {
 		return people[i].lastName < people[j].lastName
@@ -101,8 +99,7 @@ func main() {
 	fmt.Println(people)
 	fmt.Println()
 
-	/* По возрасту */
-
+	// По возрасту
 	fmt.Println("Сортировка по возрасту:")
 	sort.Sort(ByAge(people))
 	fmt.Println(people)
