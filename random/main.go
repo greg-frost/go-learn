@@ -16,10 +16,10 @@ func randomInts(n, from, to int) []int {
 }
 
 // Случайная строка
-func randomString(n int) string {
+func randomString(n int, from, to byte) string {
 	res := make([]byte, n)
 	for i := 0; i < n; i++ {
-		res[i] = 33 + byte(rand.Intn(94))
+		res[i] = from + byte(rand.Intn(int(to-from+1)))
 	}
 	return string(res)
 }
@@ -50,7 +50,9 @@ func main() {
 	fmt.Println(randomInts(10, 1, 10))
 	fmt.Println()
 
-	// Случайная строка
-	fmt.Println("Случайная строка:")
-	fmt.Println(randomString(20))
+	// Случайные строки
+	fmt.Println("Случайные строки:")
+	fmt.Println(randomString(20, '!', '~'))
+	fmt.Println(randomString(20, 'A', 'Z'))
+	fmt.Println(randomString(20, 'a', 'z'))
 }
