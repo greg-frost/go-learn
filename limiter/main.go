@@ -9,17 +9,14 @@ func main() {
 	fmt.Println(" \n[ ЛИМИТЕР ]\n ")
 
 	const (
-		count = 5
-		limit = 3
+		count = 5 // Число запросов
+		limit = 3 // Лимит запросов
 	)
 
-	/* Равномерный лимитер */
-
+	// Равномерный лимитер
 	fmt.Println("Равномерный:")
-	fmt.Println()
 
 	limiter := time.Tick(200 * time.Millisecond)
-
 	requests := make(chan int, count)
 	for i := 1; i <= count; i++ {
 		requests <- i
@@ -30,12 +27,10 @@ func main() {
 		<-limiter
 		fmt.Println("Запрос", req, time.Now())
 	}
-
-	/* Всплесковый лимитер */
-
 	fmt.Println()
+
+	// Всплесковый лимитер
 	fmt.Println("Всплесковый:")
-	fmt.Println()
 
 	burstyLimiter := make(chan time.Time, limit)
 	for i := 1; i <= limit; i++ {
