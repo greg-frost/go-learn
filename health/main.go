@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
+
+	"go-learn/health/service"
 )
 
 // Проверка жизнеспособности (доступности)
@@ -41,12 +45,29 @@ func shallowHealthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
+// Глубокая проверка работоспособности
+func deepHealthHandler(w http.ResponseWriter, r *http.Request) {
+	// Контекст и таймаут
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	// Проверка сервиса
+	if err := service.Ping(ctx); err != nil {
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
+}
+
 func main() {
 	fmt.Println(" \n[ ПРОВЕРКА РАБОТОСПОСОБНОСТИ ]\n ")
 
 	// Обработчики
 	http.HandleFunc("/health", healthHandler)
 	http.HandleFunc("/shallow", shallowHealthHandler)
+	http.HandleFunc("/deep", deepHealthHandler)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю обновлений...")
