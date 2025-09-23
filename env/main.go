@@ -13,8 +13,12 @@ func main() {
 	os.Setenv("FOO", "1")
 
 	// Чтение
-	fmt.Println("FOO", os.Getenv("FOO"))
-	fmt.Println("BAR", os.Getenv("BAR"))
+	fmt.Printf("FOO = %q\n", os.Getenv("FOO"))
+	fmt.Printf("BAR = %q", os.Getenv("BAR"))
+	if _, ok := os.LookupEnv("BAR"); !ok {
+		fmt.Print(" (не задано)")
+	}
+	fmt.Println()
 	fmt.Println()
 
 	// Список всех переменных
