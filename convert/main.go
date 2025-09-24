@@ -9,21 +9,15 @@ func main() {
 
 	var f float32
 
-	/* Температура */
-
+	// Температура
 	fmt.Print("Введите температуру по Фаренгейту: ")
-	fmt.Scanf("%f", &f)
-
-	fmt.Println(f, "по Фаренгейту равна", fmt.Sprintf("%.2f", (float32(f-32)*5/9)), "по Цельсию")
-
+	fmt.Scanln(&f)
+	fmt.Printf("%.2f по Фаренгейту равна %.2f по Цельсию", f, float32(f-32)*5/9)
 	fmt.Println()
 
-	/* Расстояние */
-
+	// Расстояние
 	fmt.Print("Введите расстояние в футах: ")
-	fmt.Scanf("%f", &f)
-
-	fmt.Printf("%.f футов равно %.2f метров", f, float32(f)*0.3048)
-
+	fmt.Scanln(&f)
+	fmt.Printf("%.2f футов равно %.2f метров", f, float32(f)*0.3048)
 	fmt.Println()
 }
