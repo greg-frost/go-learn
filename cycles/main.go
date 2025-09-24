@@ -7,13 +7,10 @@ import (
 func main() {
 	fmt.Println(" \n[ ЦИКЛЫ ]\n ")
 
-	/* If-Case */
-
+	// If-Case
 	for i := 1; i <= 100; i++ {
 		if t := i % 3; t == 0 {
-
-			/* Выбор (case) */
-
+			// Выбор (case)
 			switch {
 			case i%15 == 0:
 				fmt.Print("FizzBuzz ")
@@ -26,9 +23,7 @@ func main() {
 			}
 
 		} else if t == 1 {
-
-			/* Условия (вариант 1) */
-
+			// Условия (вариант 1)
 			if i%3 == 0 && i%5 == 0 {
 				fmt.Print("FizzBuzz ")
 			} else if i%3 == 0 {
@@ -40,9 +35,7 @@ func main() {
 			}
 
 		} else if t == 2 {
-
-			/* Условия (вариант 2) */
-
+			// Условия (вариант 2)
 			var found = false
 			if i%3 == 0 {
 				fmt.Print("Fizz")
@@ -56,14 +49,12 @@ func main() {
 				fmt.Print(i)
 			}
 			fmt.Print(" ")
-
 		}
 	}
+	fmt.Println()
+	fmt.Println()
 
-	/* Метки */
-
-	fmt.Println(" \n ")
-
+	// Метки
 	fmt.Println("Метки:")
 	fmt.Println()
 
@@ -75,7 +66,6 @@ outerBreakLabel:
 		}
 	}
 	fmt.Println("Брейк!")
-
 	fmt.Println()
 
 outerContinueLabel:
