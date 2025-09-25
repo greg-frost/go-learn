@@ -12,40 +12,41 @@ import (
 
 // Запуск сервера
 func startServer(ctx context.Context) error {
+	// Получение адреса
 	addr, err := net.ResolveTCPAddr("tcp", ":8080")
 	if err != nil {
 		return err
 	}
+
+	// Прослушивание TCP
 	l, err := net.ListenTCP("tcp", addr)
 	if err != nil {
 		return err
 	}
-
 	defer l.Close()
 
+	// Ожидание подключений
 	log.Print("Сервер запущен")
-
 	for {
 		select {
+		// Таймаут
 		case <-ctx.Done():
 			log.Print("Сервер остановлен")
 			return nil
+
+		// Подключение
 		default:
 			log.Print("Ожидание подключений")
-
 			if err := l.SetDeadline(time.Now().Add(time.Second)); err != nil {
 				return err
 			}
-
 			_, err := l.Accept()
 			if err != nil {
 				if os.IsTimeout(err) {
 					continue
 				}
-
 				return err
 			}
-
 			log.Print("Новое подключение")
 		}
 	}
