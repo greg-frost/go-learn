@@ -4,88 +4,88 @@ import (
 	"fmt"
 	"net"
 	"net/rpc"
+	"time"
 )
 
-// Структура "Сервер"
+// Структура "сервер"
 type Server struct{}
 
 // Смена знака
-func (this *Server) Negate(i int64, reply *int64) error {
+func (*Server) Negate(i int64, reply *int64) error {
 	*reply = -i
 	return nil
 }
 
 // Удвоение
-func (this *Server) Double(i int64, reply *int64) error {
+func (*Server) Double(i int64, reply *int64) error {
 	*reply = i * 2
 	return nil
 }
 
 // Сервер
 func server() {
+	// Регистрация RPC-сервера
 	rpc.Register(new(Server))
 
-	ln, err := net.Listen("tcp", ":9999")
+	// Прослушивание TCP
+	l, err := net.Listen("tcp", ":9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации сервера:", err)
 		return
 	}
 
+	// Ожидание соединений
 	for {
-		c, err := ln.Accept()
+		c, err := l.Accept()
 		if err != nil {
 			fmt.Println("Ошибка приема соединения:", err)
 			continue
 		}
 
+		// Обработка запроса
 		go rpc.ServeConn(c)
 	}
 }
 
 // Клиент
 func client() {
+	// Инициализация RPC-клиента
 	c, err := rpc.Dial("tcp", "localhost:9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации клиента:", err)
 		return
 	}
+	defer c.Close()
 
-	var input, result int64
-	input = 128
+	var input int64 = 128
+	var result int64
 
-	/* Смена знака */
-
+	// Смена знака
 	err = c.Call("Server.Negate", input, &result)
 	if err != nil {
 		fmt.Println("Ошибка выполнения RPC:", err)
 	} else {
-		fmt.Print("Server.Negate(", input, ") = ", result)
+		fmt.Printf("Server.Negate(%d) = %d\n", input, result)
 	}
 
-	fmt.Println()
-
-	/* Удвоение */
-
+	// Удвоение
 	err = c.Call("Server.Double", input, &result)
 	if err != nil {
 		fmt.Println("Ошибка выполнения RPC:", err)
 	} else {
-		fmt.Print("Server.Double(", input, ") = ", result)
+		fmt.Printf("Server.Double(%d) = %d\n", input, result)
 	}
-
-	c.Close()
 }
 
 func main() {
 	fmt.Println(" \n[ RPC ]\n ")
 
-	/* Запуск клиента и сервера */
+	fmt.Println("Server:")
 
+	// Запуск клиента и сервера
 	go server()
 	go client()
 
-	/* Ожидание ввода */
-
-	var input string
-	fmt.Scanln(&input)
+	// Ожидание
+	time.Sleep(1 * time.Second)
 }
