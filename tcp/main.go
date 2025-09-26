@@ -10,6 +10,7 @@ import (
 
 // Сервер
 func server() {
+	// Прослушивание TCP
 	conn, err := net.Listen("tcp", "localhost:9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации сервера:", err)
@@ -17,6 +18,7 @@ func server() {
 	}
 	defer conn.Close()
 
+	// Ожидание соединений
 	for {
 		c, err := conn.Accept()
 		if err != nil {
@@ -24,14 +26,15 @@ func server() {
 			continue
 		}
 
+		// Обработка запроса
 		go connection(c)
 	}
 }
 
 // Соединение
 func connection(c net.Conn) {
+	// Декодирование сообщения
 	var msg string
-
 	err := json.NewDecoder(c).Decode(&msg)
 	if err != nil {
 		fmt.Println("Ошибка декодирования сообщения:", err)
@@ -39,40 +42,39 @@ func connection(c net.Conn) {
 		fmt.Println("Получено:", msg)
 	}
 
-	c.Close()
+	c.Close() // Не уверен, что нужно закрывать
 }
 
 // Клиент
 func client() {
+	// Соединение по TCP
 	c, err := net.Dial("tcp", "localhost:9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации клиента:", err)
 		return
 	}
+	defer c.Close()
 
 	msg := "Привет, сервер!"
 	fmt.Println("Отправлено:", msg)
 
+	// Кодирование и отправка сообщения
 	err = json.NewEncoder(c).Encode(msg)
 	if err != nil {
 		fmt.Println("Ошибка кодирования сообщения:", err)
 	}
-
-	c.Close()
 }
 
 func main() {
 	fmt.Println(" \n[ TCP ]\n ")
 
-	/* Сторонний сервер */
-
+	// Сторонний сервер
 	conn, _ := net.Dial("tcp", "golang.org:80")
 	fmt.Fprintf(conn, "GET / HTTP/1.0\r\n\r\n")
 	status, _ := bufio.NewReader(conn).ReadString('\n')
 	fmt.Print(status)
 
-	/* Локальный сервер */
-
+	// Локальный сервер
 	go server()
 	go client()
 
