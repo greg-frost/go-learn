@@ -9,6 +9,7 @@ import (
 
 // Сервер
 func server() {
+	// Прослушивание UDP
 	conn, err := net.ListenPacket("udp", ":9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации сервера:", err)
@@ -16,6 +17,7 @@ func server() {
 	}
 	defer conn.Close()
 
+	// Ожидание соединений
 	for {
 		connection(conn)
 	}
@@ -23,6 +25,7 @@ func server() {
 
 // Соединение
 func connection(c net.PacketConn) {
+	// Чтение сообщения
 	b := make([]byte, 1024)
 	n, _, err := c.ReadFrom(b)
 	if err != nil {
@@ -30,6 +33,7 @@ func connection(c net.PacketConn) {
 		return
 	}
 
+	// Декодирование сообщения
 	var msg string
 	err = json.Unmarshal(b[:n], &msg)
 	if err != nil {
@@ -41,28 +45,28 @@ func connection(c net.PacketConn) {
 
 // Клиент
 func client() {
+	// Соединение по UDP
 	c, err := net.Dial("udp", "localhost:9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации клиента:", err)
 		return
 	}
+	defer c.Close()
 
 	msg := "Привет, сервер!"
 	fmt.Println("Отправлено:", msg)
 
+	// Кодирование и отправка сообщения
 	err = json.NewEncoder(c).Encode(msg)
 	if err != nil {
 		fmt.Println("Ошибка кодирования сообщения:", err)
 	}
-
-	c.Close()
 }
 
 func main() {
 	fmt.Println(" \n[ UDP ]\n ")
 
-	/* Локальный сервер */
-
+	// Локальный сервер
 	go server()
 	go client()
 
