@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -28,26 +29,26 @@ type COut struct {
 
 // Получение результата A
 func getResultA(ctx context.Context, val int) (AOut, error) {
-	time.Sleep(time.Millisecond * 45)
+	time.Sleep(45 * time.Millisecond)
 	return AOut(val * 1), nil
 }
 
 // Получение результата B
 func getResultB(ctx context.Context, val int) (BOut, error) {
-	time.Sleep(time.Millisecond * 35)
+	time.Sleep(35 * time.Millisecond)
 	return BOut(val * 2), nil
 }
 
 // Получение результата C
 func getResultC(ctx context.Context, val CIn) (COut, error) {
-	time.Sleep(time.Millisecond * 5)
+	time.Sleep(5 * time.Millisecond)
 	return COut{
 		A: val.A * 3,
 		B: val.B * 5,
 	}, nil
 }
 
-// Структура "процессор"
+// Структура "обработчик"
 type processor struct {
 	outA chan AOut
 	outB chan BOut
@@ -58,14 +59,16 @@ type processor struct {
 
 // Основная функция управления
 func GatherAndProcess(ctx context.Context) (COut, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*50)
+	ctx, cancel := context.WithTimeout(ctx, 50*time.Millisecond)
 	defer cancel()
 
+	// Получение ввода из контекста
 	data, ok := InputFromContext(ctx)
 	if !ok {
-		return COut{}, fmt.Errorf("Не найдено значение в контексте")
+		return COut{}, errors.New("Не найдено значение в контексте")
 	}
 
+	// Подготовка и запуск
 	p := processor{
 		outA: make(chan AOut, 1),
 		outB: make(chan BOut, 1),
@@ -73,20 +76,23 @@ func GatherAndProcess(ctx context.Context) (COut, error) {
 		outC: make(chan COut, 1),
 		errs: make(chan error, 2),
 	}
-	p.launch(ctx, data)
+	p.run(ctx, data)
 
+	// Ожидание A и B
 	inputC, err := p.waitForAB(ctx)
 	if err != nil {
 		return COut{}, err
 	}
 
+	// Ожидание C
 	p.inC <- inputC
 	out, err := p.waitForC(ctx)
 	return out, err
 }
 
 // Запуск всех обработчиков
-func (p *processor) launch(ctx context.Context, data Input) {
+func (p *processor) run(ctx context.Context, data Input) {
+	// Обработка A
 	go func() {
 		aOut, err := getResultA(ctx, data.A)
 		if err != nil {
@@ -96,6 +102,7 @@ func (p *processor) launch(ctx context.Context, data Input) {
 		p.outA <- aOut
 	}()
 
+	// Обработка B
 	go func() {
 		bOut, err := getResultB(ctx, data.B)
 		if err != nil {
@@ -105,6 +112,7 @@ func (p *processor) launch(ctx context.Context, data Input) {
 		p.outB <- bOut
 	}()
 
+	// Обработка C
 	go func() {
 		select {
 		case <-ctx.Done():
@@ -123,8 +131,7 @@ func (p *processor) launch(ctx context.Context, data Input) {
 // Ожидание ответов из A и B
 func (p *processor) waitForAB(ctx context.Context) (CIn, error) {
 	var inputC CIn
-	count := 0
-
+	var count int
 	for count < 2 {
 		select {
 		case a := <-p.outA:
@@ -155,6 +162,7 @@ func (p *processor) waitForC(ctx context.Context) (COut, error) {
 	}
 }
 
+// Ключ контекста
 const ctxKey string = "input"
 
 // Запись значения в контекст
@@ -171,15 +179,16 @@ func InputFromContext(ctx context.Context) (Input, bool) {
 func main() {
 	fmt.Println(" \n[ КОНКУРЕНТНОСТЬ ]\n ")
 
+	// Контекст и значение
 	ctx := context.Background()
 	input := Input{1, 2}
 	ctx = ContextWithInput(ctx, input)
 
+	// Обработка
 	res, err := GatherAndProcess(ctx)
 	if err != nil {
 		fmt.Println("ОШИБКА:", err)
 		return
 	}
-
 	fmt.Println("Результат:", res)
 }
