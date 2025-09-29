@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -62,7 +62,7 @@ func main() {
 	fmt.Println("...")
 
 	// Чтение полностью
-	body, err := ioutil.ReadAll(get.Body)
+	body, err := io.ReadAll(get.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
