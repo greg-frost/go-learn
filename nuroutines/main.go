@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"sync"
 )
 
 // Генерация значений в канал
@@ -27,33 +25,6 @@ func countTo(max int) (<-chan int, func()) {
 	}()
 
 	return ch, cancel
-}
-
-// Каналы для чтения и записи
-var read = make(chan int)
-var write = make(chan int)
-
-// Запись значения
-func setValue(value int) {
-	write <- value
-}
-
-// Чтение значения
-func getValue() int {
-	return <-read
-}
-
-// Конвейер
-func pipeline() {
-	var value int
-	for {
-		select {
-		case newValue := <-write:
-			value = newValue
-			fmt.Printf("%d ", value)
-		case read <- value:
-		}
-	}
 }
 
 func main() {
@@ -136,20 +107,4 @@ func main() {
 		fmt.Print(i, ok, " ")
 	}
 	fmt.Println()
-	fmt.Println()
-
-	// Конвейер
-	fmt.Println("Конвейер:")
-	var wg sync.WaitGroup
-	go pipeline()
-	n = 10
-	for i := 0; i < n; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			setValue(rand.Intn(10 * n))
-		}()
-	}
-	wg.Wait()
-	fmt.Printf("\nПоследнее значение: %d\n", getValue())
 }
