@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"hash/adler32"
 	"hash/crc32"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"go-learn/base"
@@ -14,15 +14,14 @@ import (
 
 // Хэш содержимого файла
 func getFileHash(filename string) (uint32, error) {
-	bs, err := ioutil.ReadFile(filename)
+	bs, err := os.ReadFile(filename)
 	if err != nil {
 		return 0, err
 	}
 
-	h := adler32.New()
-	h.Write(bs)
-
-	return h.Sum32(), nil
+	hash := adler32.New()
+	hash.Write(bs)
+	return hash.Sum32(), nil
 }
 
 func main() {
@@ -32,8 +31,7 @@ func main() {
 	fmt.Println("Исходный текст:", string(msg))
 	fmt.Println()
 
-	/* CRC32 */
-
+	// CRC32
 	fmt.Println("CRC32:")
 	crcHash := crc32.NewIEEE()
 	crcHash.Write(msg)
@@ -41,8 +39,7 @@ func main() {
 	fmt.Println(crcVal)
 	fmt.Println()
 
-	/* Adler32 */
-
+	// Adler32
 	fmt.Println("Adler32:")
 	path := base.Dir("crypt/..")
 	adlerHash1, _ := getFileHash(filepath.Join(path, "crypt", "main.go"))
@@ -50,8 +47,7 @@ func main() {
 	fmt.Println(adlerHash1, adlerHash2, adlerHash1 == adlerHash2)
 	fmt.Println()
 
-	/* SHA1 */
-
+	// SHA1
 	fmt.Println("SHA1:")
 	sha1Hash := sha1.New()
 	sha1Hash.Write(msg)
@@ -59,8 +55,7 @@ func main() {
 	fmt.Println(sha1Val)
 	fmt.Println()
 
-	/* SHA256 */
-
+	// SHA256
 	fmt.Println("SHA256:")
 	sha256Hash := sha256.New()
 	sha256Hash.Write(msg)
