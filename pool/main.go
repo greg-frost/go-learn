@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
-	"time"
+	"sync"
 )
 
 // Число воркеров
@@ -61,19 +61,21 @@ func main() {
 		go process(i+1, jobs, done)
 	}
 	fmt.Println("Обработчики запущены")
-	fmt.Println()
 
 	// Получение результатов
 	res := make([]string, n)
-	go func() {
-		for r := range done {
+	var wg sync.WaitGroup
+	wg.Add(n)
+	for i := 0; i < n; i++ {
+		go func() {
+			defer wg.Done()
+			r := <-done
 			res[r.job.id] = r.res
-		}
-		fmt.Println("Результаты получены")
-		close(done)
-	}()
-
-	time.Sleep(250 * time.Millisecond)
+		}()
+	}
+	wg.Wait()
+	fmt.Println("Результаты получены")
+	fmt.Println()
 
 	fmt.Println(res)
 }
