@@ -23,7 +23,7 @@ type Res struct {
 }
 
 // Обработка задач
-func process(worker int, jobs chan Job, done chan Res) {
+func process(worker int, jobs chan Job, done chan Res, wg *sync.WaitGroup) {
 	for j := range jobs {
 		done <- Res{
 			job:    j,
@@ -31,6 +31,7 @@ func process(worker int, jobs chan Job, done chan Res) {
 			res:    strings.ToUpper(j.word),
 		}
 	}
+	wg.Done()
 }
 
 func main() {
@@ -42,40 +43,44 @@ func main() {
 	fmt.Println(words)
 	fmt.Println()
 
-	// Каналы для задач и результатов
-	jobs := make(chan Job, n)
-	done := make(chan Res, n)
+	// Каналы для задач, результатов и завершения
+	jobs := make(chan Job, workers)
+	ress := make(chan Res, workers)
+	done := make(chan bool)
 
 	// Постановка задач в очередь
-	for i, w := range words {
-		jobs <- Job{
-			id:   i,
-			word: w,
+	go func() {
+		for i, w := range words {
+			jobs <- Job{
+				id:   i,
+				word: w,
+			}
 		}
-	}
-	fmt.Println("Задачи добавлены")
-	close(jobs)
-
-	// Запуск воркеров для обработки задач
-	for i := 0; i < workers; i++ {
-		go process(i+1, jobs, done)
-	}
-	fmt.Println("Обработчики запущены")
+		close(jobs)
+		fmt.Println("Задачи добавлены")
+	}()
 
 	// Получение результатов
 	res := make([]string, n)
-	var wg sync.WaitGroup
-	wg.Add(n)
-	for i := 0; i < n; i++ {
-		go func() {
-			defer wg.Done()
-			r := <-done
+	go func() {
+		for r := range ress {
 			res[r.job.id] = r.res
-		}()
+		}
+		done <- true
+		fmt.Println("Результаты получены")
+	}()
+
+	// Запуск воркеров для обработки задач
+	var wg sync.WaitGroup
+	for i := 0; i < workers; i++ {
+		wg.Add(1)
+		go process(i+1, jobs, ress, &wg)
 	}
 	wg.Wait()
-	fmt.Println("Результаты получены")
-	fmt.Println()
+	fmt.Println("Обработчики запущены")
+	close(ress)
 
+	<-done
+	fmt.Println()
 	fmt.Println(res)
 }
