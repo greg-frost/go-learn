@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"plugin"
 
 	"go-learn/base"
@@ -19,7 +20,7 @@ func main() {
 
 	// Путь к плагину
 	if len(os.Args) != 2 {
-		fmt.Println("Синтаксис: go run ... animal")
+		fmt.Printf("Синтаксис: ./%s ANIMAL\n", filepath.Base(os.Args[0]))
 		return
 	}
 	name := os.Args[1]
