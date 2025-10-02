@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -67,7 +68,8 @@ func main() {
 		log.Printf("DELETE %s", key)
 
 	default:
-		fmt.Println("Синтаксис: go run ... [get|put|delete] KEY (VALUE)")
+		fmt.Printf("Синтаксис: ./%s [get|put|delete] KEY (VALUE)\n",
+			filepath.Base(os.Args[0]))
 		return
 	}
 }
