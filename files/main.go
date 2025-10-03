@@ -50,7 +50,7 @@ func copyFile(src, dst string) error {
 func printDir(path string, predicate func(string) bool) {
 	var walk func(string)
 	walk = func(path string) {
-		files, err := ioutil.ReadDir(path)
+		files, err := os.ReadDir(path)
 		check(err)
 
 		for _, f := range files {
