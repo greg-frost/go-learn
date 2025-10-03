@@ -24,10 +24,10 @@ func main() {
 	// Обработчики
 	http.HandleFunc("/", handleMain)
 	http.Handle(
-		"/test/",
+		"/testing/",
 		http.StripPrefix(
-			"/test/",
-			http.FileServer(http.Dir(filepath.Join(path, "test"))),
+			"/testing/",
+			http.FileServer(http.Dir(filepath.Join(path, "testing"))),
 		),
 	)
 
@@ -43,6 +43,6 @@ func main() {
 	fmt.Println("(на http://localhost:8080)")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 	// log.Fatal(http.ListenAndServe("localhost:8080",
-	// 	fs.FileServer(http.Dir(filepath.Join(path, "test"))),
+	// 	fs.FileServer(http.Dir(filepath.Join(path, "testing"))),
 	// ))
 }
