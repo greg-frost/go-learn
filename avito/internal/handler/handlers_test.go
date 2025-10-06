@@ -263,8 +263,8 @@ func TestDeleteLastProduct(t *testing.T) {
 }
 
 func TestGetSummary(t *testing.T) {
-	startDate := url.QueryEscape(time.Now().Add(1 * time.Minute).Format(time.RFC3339))
-	endDate := url.QueryEscape(time.Now().Add(-1 * time.Minute).Format(time.RFC3339))
+	startDate := url.QueryEscape(time.Now().Add(time.Minute).Format(time.RFC3339))
+	endDate := url.QueryEscape(time.Now().Add(-time.Minute).Format(time.RFC3339))
 
 	tests := []struct {
 		test  string
