@@ -41,8 +41,7 @@ func connection(c net.Conn) {
 	} else {
 		fmt.Println("Получено:", msg)
 	}
-
-	c.Close() // Не уверен, что нужно закрывать
+	c.Close()
 }
 
 // Клиент
@@ -79,5 +78,5 @@ func main() {
 	go client()
 
 	// Ожидание
-	time.Sleep(1 * time.Second)
+	time.Sleep(time.Second)
 }
