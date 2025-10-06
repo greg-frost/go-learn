@@ -87,5 +87,5 @@ func main() {
 	go client()
 
 	// Ожидание
-	time.Sleep(1 * time.Second)
+	time.Sleep(time.Second)
 }
