@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -17,7 +18,7 @@ import (
 
 // Путь и таймаут
 var path = base.Dir("download")
-var timeout = 1 * time.Second
+var timeout = time.Second
 
 // Скачивание
 func download(location string, file *os.File, retries int64) error {
@@ -81,7 +82,7 @@ func hasTimeout(err error) bool {
 			return true
 		}
 	}
-	errMsg := "use of closed network connection"
+	errMsg := "использование закрытого соединения"
 	if err != nil && strings.Contains(err.Error(), errMsg) {
 		return true
 	}
@@ -97,8 +98,7 @@ func main() {
 	filename := filepath.Join(path, "file.zip")
 	file, err := os.Create(filename)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 	defer os.Remove(filename)
 	defer file.Close()
@@ -108,13 +108,11 @@ func main() {
 		"wp-content/uploads/2020/05/sample-large-zip-file.zip"
 	err = download(location, file, 100)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 	info, err := file.Stat()
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 
 	// Отчет
