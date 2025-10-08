@@ -19,7 +19,7 @@ func main() {
 	for scanner.Scan() {
 		// Преобразование в верхний регистр
 		upper := strings.ToUpper(scanner.Text())
-		fmt.Println(upper)
+		fmt.Printf("%q\n", upper)
 	}
 
 	// Обработка ошибок
