@@ -110,12 +110,12 @@ func (li *ListIterator) HasNext() bool {
 	return li.curr != nil
 }
 
-// Структура "хеш-таблица"
+// Структура "хэш-таблица"
 type Hash struct {
 	values map[string]string
 }
 
-// Конструктор хеш-таблицы
+// Конструктор хэш-таблицы
 func NewHash() *Hash {
 	return &Hash{
 		values: make(map[string]string),
@@ -129,7 +129,7 @@ func (h *Hash) Add(values ...string) {
 	}
 }
 
-// Получение итератора для хеш-таблицы
+// Получение итератора для хэш-таблицы
 func (h *Hash) GetIterator() Iterator {
 	values := make([]string, 0, len(h.values))
 	for _, value := range h.values {
@@ -140,7 +140,7 @@ func (h *Hash) GetIterator() Iterator {
 	}
 }
 
-// Структура "итератор хеш-таблицы"
+// Структура "итератор хэш-таблицы"
 type HashIterator struct {
 	values []string
 	pos    int
@@ -190,9 +190,9 @@ func main() {
 	Print(list.GetIterator())
 	fmt.Println()
 
-	// Итератор хеш-таблицы
+	// Итератор хэш-таблицы
 	hash := NewHash()
 	hash.Add("Random", "Hashed", "Strings")
-	fmt.Println("Хеш-таблица:")
+	fmt.Println("Хэш-таблица:")
 	Print(hash.GetIterator())
 }
