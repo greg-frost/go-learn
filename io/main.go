@@ -24,13 +24,16 @@ func NewRand(seed int64) io.Reader {
 
 // Генерация случайных чисел
 func (g *generator) Read(bytes []byte) (n int, err error) {
-	/*for i := range bytes {
-	    randInt := g.rnd.Int63()  // случайное число от 0 до 2^63
-	    randByte := byte(randInt)
-	    bytes[i] = randByte
-	}*/
+	// for i := range bytes {
+	// 	randInt := g.rnd.Int63() // Случайное число от 0 до 2^63
+	// 	randByte := byte(randInt)
+	// 	bytes[i] = randByte
+	// }
 	for i := 0; i+8 <= len(bytes); i += 8 {
-		binary.LittleEndian.PutUint64(bytes[i:i+8], uint64(g.rnd.Int63()))
+		binary.LittleEndian.PutUint64(
+			bytes[i:i+8],
+			uint64(g.rnd.Int63()),
+		)
 	}
 	return len(bytes), nil
 }
@@ -93,36 +96,28 @@ func (r *LimitedReader) Read(p []byte) (int, error) {
 func main() {
 	fmt.Println(" \n[ IO-ПАКЕТ ]\n ")
 
-	/* Рандом */
-
+	// Рандом
+	fmt.Println("Рандом:")
 	generator := NewRand(time.Now().UnixNano())
 	buf := make([]byte, 16)
-
 	for i := 0; i < 5; i++ {
 		n, _ := generator.Read(buf)
-		fmt.Printf("Рандом: %v размер(%d)\n", buf, n)
+		fmt.Printf("%v (%d)\n", buf, n)
 	}
-
 	fmt.Println()
 
-	/* Хэш */
-
+	// Хэш
 	hasher := NewHash(0)
 	hasher.Write(buf)
-
 	fmt.Printf("Хэш: %v \n", hasher.Hash())
-
 	fmt.Println()
 
-	/* Ограниченное чтение */
-
+	// Ограниченное чтение
 	r := strings.NewReader("Some io.Reader stream to read\n")
 	lr := LimitReader(r, 4)
-
 	_, err := io.Copy(os.Stdout, lr)
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println("...")
 }
