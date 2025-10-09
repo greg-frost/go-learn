@@ -20,7 +20,7 @@ func main() {
 	var value interface{}
 	var ok bool
 
-	/* Список (List) */
+	// Список (List)
 
 	fmt.Println("Список")
 	fmt.Println("------")
@@ -73,15 +73,15 @@ func main() {
 	fmt.Printf("размер: %d, пуст: %t\n", list.Size(), list.Empty())
 	fmt.Println()
 
-	/* Множество (Set) */
+	// Множество (Set)
 
 	fmt.Println("Множество")
 	fmt.Println("---------")
 	fmt.Println()
 
-	set := hashset.New() // На основе хеш-таблицы (случайный порядок)
+	set := hashset.New() // На основе хэш-таблицы (случайный порядок)
 	// set := treeset.NewWithIntComparator() // На основе дерева (упорядочено)
-	// set := linkedhashset.New() // На основе хеш-таблицы и списка (в порядке вставки)
+	// set := linkedhashset.New() // На основе хэш-таблицы и списка (в порядке вставки)
 
 	fmt.Println("Добавление элементов")
 	set.Add(1)
@@ -107,7 +107,7 @@ func main() {
 	fmt.Printf("размер: %d, пусто: %t\n", set.Size(), set.Empty())
 	fmt.Println()
 
-	/* Стек (Stack) */
+	// Стек (Stack)
 
 	fmt.Println("Стек")
 	fmt.Println("----")
@@ -141,16 +141,16 @@ func main() {
 	fmt.Printf("размер: %d, пуст: %t\n", stack.Size(), stack.Empty())
 	fmt.Println()
 
-	/* Карта (Map) */
+	// Карта (Map)
 
 	fmt.Println("Карта")
 	fmt.Println("-----")
 	fmt.Println()
 
-	m := hashmap.New() // На основе хеш-таблицы (случайный порядок)
+	m := hashmap.New() // На основе хэш-таблицы (случайный порядок)
 	// m := treemap.NewWithIntComparator() // На основе дерева (упорядочено)
-	// m := linkedhashmap.New() // На основе хеш-таблицы и списка (в порядке вставки)
-	// m := hashbidimap.New() // На основе хеш-таблицы (двусторонняя карта, случайный порядок)
+	// m := linkedhashmap.New() // На основе хэш-таблицы и списка (в порядке вставки)
+	// m := hashbidimap.New() // На основе хэш-таблицы (двусторонняя карта, случайный порядок)
 	// m := treebidimap.NewWith( // На основе дерева (двусторонняя карта, упорядочено)
 	// 	utils.IntComparator, utils.StringComparator)
 
@@ -191,7 +191,7 @@ func main() {
 	fmt.Printf("размер: %d, пуста: %t\n", m.Size(), m.Empty())
 	fmt.Println()
 
-	/* Дерево (Tree) */
+	// Дерево (Tree)
 
 	fmt.Println("Дерево")
 	fmt.Println("------")
@@ -248,7 +248,7 @@ func main() {
 	fmt.Printf("размер: %d, пусто: %t\n", tree.Size(), tree.Empty())
 	fmt.Println()
 
-	/* Куча (Heap) */
+	// Куча (Heap)
 
 	fmt.Println("Куча")
 	fmt.Println("----")
@@ -284,7 +284,7 @@ func main() {
 	fmt.Printf("размер: %d, пуста: %t\n", heap.Size(), heap.Empty())
 	fmt.Println()
 
-	/* Очередь (Queue) */
+	// Очередь (Queue)
 
 	fmt.Println("Очередь")
 	fmt.Println("-------")
@@ -323,7 +323,7 @@ func main() {
 	fmt.Printf("размер: %d, пуста: %t\n", queue.Size(), queue.Empty())
 	fmt.Println()
 
-	/* Очередь с приоритетом (Priority Queue) */
+	// Очередь с приоритетом (Priority Queue)
 
 	fmt.Println("Приоритет")
 	fmt.Println("---------")
