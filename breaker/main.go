@@ -41,7 +41,6 @@ func Breaker(worker Worker, threshold uint) Worker {
 			// Случайное отклонение
 			jitter := rand.Int63n(int64(delay * 3))
 			delay += time.Duration(jitter)
-
 			shouldRetryAt := lastAttempt.Add(delay)
 
 			if !time.Now().After(shouldRetryAt) {
