@@ -69,7 +69,6 @@ func DebounceLast(worker Worker, period time.Duration) Worker {
 			ticker = time.NewTicker(10 * time.Millisecond)
 
 			go func() {
-
 				// Остановка таймера
 				defer func() {
 					m.Lock()
