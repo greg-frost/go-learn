@@ -10,17 +10,17 @@ import (
 // Сервер
 func server() {
 	// Прослушивание UDP
-	conn, err := net.ListenPacket("udp", ":9999")
+	c, err := net.ListenPacket("udp", ":9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации сервера:", err)
 		return
 	}
-	defer conn.Close()
+	defer c.Close()
 
 	// Ожидание соединений
 	for {
-		connection(conn)
-		// go connection(conn)
+		connection(c)
+		// go connection(c)
 	}
 }
 
