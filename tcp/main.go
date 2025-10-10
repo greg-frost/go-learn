@@ -11,16 +11,16 @@ import (
 // Сервер
 func server() {
 	// Прослушивание TCP
-	conn, err := net.Listen("tcp", "localhost:9999")
+	l, err := net.Listen("tcp", "localhost:9999")
 	if err != nil {
 		fmt.Println("Ошибка инициализации сервера:", err)
 		return
 	}
-	defer conn.Close()
+	defer l.Close()
 
 	// Ожидание соединений
 	for {
-		c, err := conn.Accept()
+		c, err := l.Accept()
 		if err != nil {
 			fmt.Println("Ошибка приема соединения:", err)
 			continue
