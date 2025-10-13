@@ -20,9 +20,6 @@ var stmt *sql.Stmt
 // Отступ
 const sep = "   "
 
-// Ошибка
-var err error
-
 // Структура "альбом"
 type Album struct {
 	ID     int64
@@ -33,14 +30,13 @@ type Album struct {
 
 // Получение списка альбомов по артисту
 func albumsByArtist(name string) ([]Album, error) {
-	var albums []Album
-
 	rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
 	if err != nil {
 		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
 	}
 	defer rows.Close()
 
+	var albums []Album
 	for rows.Next() {
 		var a Album
 		if err := rows.Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
@@ -51,13 +47,12 @@ func albumsByArtist(name string) ([]Album, error) {
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
 	}
+
 	return albums, nil
 }
 
 // Получение списка альбомов по артисту (с контекстом и таймаутом)
 func albumsByArtistContext(ctx context.Context, timeout time.Duration, name string) ([]Album, error) {
-	var albums []Album
-
 	queryCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
@@ -67,6 +62,7 @@ func albumsByArtistContext(ctx context.Context, timeout time.Duration, name stri
 	}
 	defer rows.Close()
 
+	var albums []Album
 	for rows.Next() {
 		var a Album
 		if err := rows.Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
@@ -77,19 +73,19 @@ func albumsByArtistContext(ctx context.Context, timeout time.Duration, name stri
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("albumsByArtistContext %q: %v", name, err)
 	}
+
 	return albums, nil
 }
 
 // Получение альбома по ID
 func albumByID(id int64) (Album, error) {
 	var a Album
-
 	row := db.QueryRow("SELECT * FROM album WHERE id = ?", id)
 	if err := row.Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
 		if err == sql.ErrNoRows {
-			return a, fmt.Errorf("albumById %d: нет такого альбома", id)
+			return a, fmt.Errorf("albumByID %d: нет такого альбома", id)
 		}
-		return a, fmt.Errorf("albumById %d: %v", id, err)
+		return a, fmt.Errorf("albumByID %d: %v", id, err)
 	}
 	return a, nil
 }
@@ -97,6 +93,7 @@ func albumByID(id int64) (Album, error) {
 // Получение альбома по ID (подготовленный запрос)
 func albumByIDPrepared(id int64) (Album, error) {
 	if stmt == nil {
+		var err error
 		stmt, err = db.Prepare("SELECT * FROM album WHERE id = ?")
 		if err != nil {
 			log.Fatal(err)
@@ -104,7 +101,6 @@ func albumByIDPrepared(id int64) (Album, error) {
 	}
 
 	var a Album
-
 	if err := stmt.QueryRow(id).Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
 		if err == sql.ErrNoRows {
 			return a, fmt.Errorf("albumByIDPrepared %d: нет такого альбома", id)
@@ -132,6 +128,7 @@ func addAlbum(a Album) (int64, error) {
 
 // Добавление альбома (с транзакцией)
 func addAlbumTx(ctx context.Context, a Album) (int64, error) {
+	// Начало транзакции
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, fmt.Errorf("addAlbumTx: %v", err)
@@ -155,7 +152,7 @@ func addAlbumTx(ctx context.Context, a Album) (int64, error) {
 	_, err = tx.ExecContext(
 		ctx, "INSERT INTO log (event) VALUES (?)",
 		fmt.Sprintf(
-			"Добавлен альбом: %d - %s, %s ($%0.2f)",
+			"Добавлен альбом: %d - %s, %s ($%.2f)",
 			id, a.Title, a.Artist, a.Price,
 		),
 	)
@@ -174,8 +171,6 @@ func addAlbumTx(ctx context.Context, a Album) (int64, error) {
 func main() {
 	fmt.Println(" \n[ БАЗА ДАННЫХ ]\n ")
 
-	/* Подключение */
-
 	// БД, адрес, логин и пароль
 	dbname := "learn"
 	addr := "127.0.0.1:3306"
@@ -184,8 +179,9 @@ func main() {
 		username = "root"
 	}
 	password := os.Getenv("DB_PASS")
+	var err error
 
-	// Вариант 1
+	// Подключение (вариант 1)
 	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s",
 		username, password, addr, dbname)
 	db, err = sql.Open("mysql", conn)
@@ -203,13 +199,13 @@ func main() {
 		AllowNativePasswords: true,
 	}
 
-	// Вариант 2
+	// Подключение (вариант 2)
 	db, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Вариант 3
+	// Подключение (вариант 3)
 	connector, err := mysql.NewConnector(&cfg)
 	if err != nil {
 		log.Fatal(err)
@@ -282,7 +278,6 @@ func main() {
 	// Поиск альбомов по артисту
 	fmt.Println("Поиск по артисту:")
 	fmt.Println()
-
 	artists := []string{"John Coltrane", "Jack Cocktail"}
 	for _, artist := range artists {
 		albums, err := albumsByArtist(artist)
@@ -294,7 +289,7 @@ func main() {
 			fmt.Println(sep + "(не найдено)")
 		}
 		for _, a := range albums {
-			fmt.Printf("%s%d - %s ($%0.2f)\n", sep, a.ID, a.Title, a.Price)
+			fmt.Printf("%s%d - %s ($%.2f)\n", sep, a.ID, a.Title, a.Price)
 		}
 	}
 	fmt.Println()
@@ -302,7 +297,6 @@ func main() {
 	// Поиск альбомов по ID
 	fmt.Println("Поиск по ID:")
 	fmt.Println()
-
 	ids := []int64{3, 6}
 	for _, id := range ids {
 		a, err := albumByID(id)
@@ -310,14 +304,13 @@ func main() {
 		if err != nil {
 			fmt.Println(sep + "(не найдено)")
 		} else {
-			fmt.Printf("%s%s, %s ($%0.2f)\n", sep, a.Title, a.Artist, a.Price)
+			fmt.Printf("%s%s, %s ($%.2f)\n", sep, a.Title, a.Artist, a.Price)
 		}
 	}
 	fmt.Println()
 
 	// Отмена запросов
 	fmt.Println("Контекст и таймаут:")
-
 	_, err = albumsByArtistContext(
 		context.Background(),
 		100*time.Microsecond,
@@ -333,13 +326,11 @@ func main() {
 	// Подготовленные запросы
 	fmt.Println("Сравнение запросов:")
 	times := 1000
-
 	start := time.Now()
 	for i := 0; i < times; i++ {
 		albumByID(int64(i%5 + 1))
 	}
 	fmt.Printf("Обычные - %v\n", time.Since(start))
-
 	start = time.Now()
 	for i := 0; i < times; i++ {
 		albumByIDPrepared(int64(i%5 + 1))
@@ -348,7 +339,6 @@ func main() {
 
 	// Добавление альбома
 	fmt.Println("Новые альбомы:")
-
 	albums := []Album{
 		{Title: "Ariadna's Clue", Artist: "Greg Frost"},
 		{Title: "Cold Face, Your Grace", Artist: "Greg Frost"},
@@ -358,20 +348,18 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s%d - %s, %s ($%0.2f)\n", sep, id, a.Title, a.Artist, a.Price)
+		fmt.Printf("%s%d - %s, %s ($%.2f)\n", sep, id, a.Title, a.Artist, a.Price)
 	}
 	fmt.Println()
 
 	// Добавление альбома (с транзакцией)
 	fmt.Println("Добавление альбома:")
-
 	album := Album{Title: "(Third album)", Artist: "Greg Frost"}
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		7*time.Millisecond,
 	)
 	defer cancel()
-
 	_, err = addAlbumTx(ctx, album)
 	if err != nil {
 		fmt.Println("Транзакция отменена...")
