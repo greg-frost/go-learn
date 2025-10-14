@@ -76,7 +76,7 @@ type Network struct {
 	binary Binary
 }
 
-// Констурктор сети
+// Конструктор сети
 func NewNetwork(binary Binary) *Network {
 	return &Network{
 		binary: binary,
