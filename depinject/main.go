@@ -24,9 +24,16 @@ type DataStore interface {
 	NameById(userID string) (string, bool)
 }
 
-// Абстрактная фабрика хранилища
-func NewDataStore() DataStore {
-	return NewSimpleDataStore()
+// Фабрика хранилища
+func NewDataStore(store string) DataStore {
+	switch store {
+	case "simple":
+		return NewSimpleDataStore()
+	case "complex":
+		return NewComplexDataStore()
+	default:
+		return NewSimpleDataStore()
+	}
 }
 
 // Структура "простое хранилище данных"
@@ -34,13 +41,7 @@ type SimpleDataStore struct {
 	userData map[string]string
 }
 
-// Получение имени по идентификатору из простого хранилища
-func (sds SimpleDataStore) NameById(userID string) (string, bool) {
-	name, ok := sds.userData[userID]
-	return name, ok
-}
-
-// Фабрика простого хранилища
+// Конструктор простого хранилища
 func NewSimpleDataStore() SimpleDataStore {
 	return SimpleDataStore{
 		map[string]string{
@@ -51,19 +52,18 @@ func NewSimpleDataStore() SimpleDataStore {
 	}
 }
 
+// Получение имени по идентификатору из простого хранилища
+func (sds SimpleDataStore) NameById(userID string) (string, bool) {
+	name, ok := sds.userData[userID]
+	return name, ok
+}
+
 // Структура "сложное хранилище данных"
 type ComplexDataStore struct {
 	userData map[int]string
 }
 
-// Получение имени по идентификатору из сложного хранилища
-func (cds ComplexDataStore) NameById(userID string) (string, bool) {
-	userIDNum, _ := strconv.Atoi(userID)
-	name, ok := cds.userData[int(math.Pow(2, float64(userIDNum)))]
-	return name, ok
-}
-
-// Фабрика сложного хранилища
+// Конструктор сложного хранилища
 func NewComplexDataStore() ComplexDataStore {
 	return ComplexDataStore{
 		map[int]string{
@@ -72,6 +72,13 @@ func NewComplexDataStore() ComplexDataStore {
 			8: "Ada Wong",
 		},
 	}
+}
+
+// Получение имени по идентификатору из сложного хранилища
+func (cds ComplexDataStore) NameById(userID string) (string, bool) {
+	userIDNum, _ := strconv.Atoi(userID)
+	name, ok := cds.userData[int(math.Pow(2, float64(userIDNum)))]
+	return name, ok
 }
 
 // Интерфейс "логгер"
@@ -93,15 +100,30 @@ type Logic interface {
 	SayGoodbye(userID string) (string, error)
 }
 
-// Абстрактная фабрика логики
-func NewLogic(lg Logger, ds DataStore) Logic {
-	return NewSimpleLogic(lg, ds)
+// Фабрика логики
+func NewLogic(logic string, lg Logger, ds DataStore) Logic {
+	switch logic {
+	case "simple":
+		return NewSimpleLogic(lg, ds)
+	case "complex":
+		return NewComplexLogic(lg, ds)
+	default:
+		return NewSimpleLogic(lg, ds)
+	}
 }
 
 // Структура "простая логика"
 type SimpleLogic struct {
 	lg Logger
 	ds DataStore
+}
+
+// Конструктор простой логики
+func NewSimpleLogic(lg Logger, ds DataStore) SimpleLogic {
+	return SimpleLogic{
+		lg: lg,
+		ds: ds,
+	}
 }
 
 // Приветствие по простой логике
@@ -126,18 +148,18 @@ func (sl SimpleLogic) SayGoodbye(userID string) (string, error) {
 	return "Пока, " + name, nil
 }
 
-// Фабрика простой логики
-func NewSimpleLogic(lg Logger, ds DataStore) SimpleLogic {
-	return SimpleLogic{
-		lg: lg,
-		ds: ds,
-	}
-}
-
 // Структура "сложная логика"
 type ComplexLogic struct {
 	lg Logger
 	ds DataStore
+}
+
+// Конструктор сложной логики
+func NewComplexLogic(lg Logger, ds DataStore) ComplexLogic {
+	return ComplexLogic{
+		lg: lg,
+		ds: ds,
+	}
 }
 
 // Приветствие по сложной логике
@@ -162,18 +184,18 @@ func (cl ComplexLogic) SayGoodbye(userID string) (string, error) {
 	return "Bye, " + name + ", sorry that you leave...", nil
 }
 
-// Фабрика сложной логики
-func NewComplexLogic(lg Logger, ds DataStore) ComplexLogic {
-	return ComplexLogic{
-		lg: lg,
-		ds: ds,
-	}
-}
-
 // Структура "контроллер"
 type Controller struct {
 	lg Logger
 	lc Logic
+}
+
+// Конструктор контроллера
+func NewController(lg Logger, lc Logic) Controller {
+	return Controller{
+		lg: lg,
+		lc: lc,
+	}
 }
 
 // Приветствие через контроллер
@@ -202,29 +224,19 @@ func (c Controller) SayGoodbye(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(message))
 }
 
-// Фабрика контроллера
-func NewController(lg Logger, lc Logic) Controller {
-	return Controller{
-		lg: lg,
-		lc: lc,
-	}
-}
-
 func main() {
 	fmt.Println(" \n[ ВНЕДРЕНИЕ ЗАВИСИМОСТИ ]\n ")
 
-	/* Простое */
-
+	// Простое
 	simpleLogger := LoggerAdapter(LogPrint)
-	simpleDataStore := NewSimpleDataStore()
-	simpleLogic := NewSimpleLogic(simpleLogger, simpleDataStore)
+	simpleDataStore := NewDataStore("simple")
+	simpleLogic := NewLogic("simple", simpleLogger, simpleDataStore)
 	simpleController := NewController(simpleLogger, simpleLogic)
 
-	/* Сложное */
-
+	// Сложное
 	complexLogger := LoggerAdapter(LogLog)
-	complexDataStore := NewComplexDataStore()
-	complexLogic := NewComplexLogic(complexLogger, complexDataStore)
+	complexDataStore := NewDataStore("complex")
+	complexLogic := NewLogic("complex", complexLogger, complexDataStore)
 	complexController := NewController(complexLogger, complexLogic)
 
 	// Обработчики
