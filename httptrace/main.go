@@ -10,9 +10,8 @@ import (
 func main() {
 	fmt.Println(" \n[ HTTP-ТРАССИРОВКА ]\n ")
 
-	// Клиент и запрос
+	// Адрес и запрос
 	addr := "https://go.dev"
-	client := &http.Client{}
 	req, err := http.NewRequest("GET", addr, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -52,7 +51,7 @@ func main() {
 
 	// Запрос
 	fmt.Println("Выполнение запроса")
-	res, err := client.Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}
