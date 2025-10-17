@@ -34,10 +34,6 @@ func nullifySliceReflect(s interface{}) {
 func main() {
 	fmt.Println(" \n[ ДЖЕНЕРИКИ И РЕФЛЕКСИЯ ]\n ")
 
-	// Обнуление
-	fmt.Println("Обнуление среза")
-	fmt.Println()
-
 	// Статический тип
 	staticSlice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 	fmt.Println("Статический тип:")
@@ -62,7 +58,4 @@ func main() {
 	fmt.Println(reflectSlice)
 	nullifySliceReflect(reflectSlice)
 	fmt.Println(reflectSlice)
-
-	// start := time.Now()
-	// fmt.Println("Время выполнения:", time.Since(start))
 }
