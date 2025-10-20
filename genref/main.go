@@ -85,12 +85,12 @@ func main() {
 	for i := 0; i < times; i++ {
 		nullifySliceGenerics(slice)
 	}
-	fmt.Println("Дженерики:", time.Since(start))
+	fmt.Println("Дженерики:  ", time.Since(start))
 
 	// Рефлексия
 	start = time.Now()
 	for i := 0; i < times; i++ {
 		nullifySliceReflect(slice)
 	}
-	fmt.Println("Рефлексия:", time.Since(start))
+	fmt.Println("Рефлексия:  ", time.Since(start))
 }
