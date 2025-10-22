@@ -85,7 +85,7 @@ func (f *restFrontEnd) Start(kvs *core.KeyValueStore) error {
 	r.HandleFunc("/v1/{key}", f.handleDelete).Methods("DELETE")
 
 	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
 
 	// HTTP
