@@ -74,7 +74,7 @@ func main() {
 	go handleSignals(cancel)
 
 	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
 	fmt.Println("или отмены (Ctrl+C)")
 	fmt.Println()
