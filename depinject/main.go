@@ -246,7 +246,7 @@ func main() {
 	http.HandleFunc("/goodbye", complexController.SayGoodbye)
 
 	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
