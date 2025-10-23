@@ -45,7 +45,7 @@ func main() {
 	go listenForShutdown(ch)
 
 	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
 	manners.ListenAndServe("localhost:8080", handler)
 }
