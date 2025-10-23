@@ -67,7 +67,7 @@ func main() {
 
 	// Запуск сервера
 	fmt.Println()
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
 	fmt.Println()
 	log.Fatal(router.Run("localhost:8080"))
