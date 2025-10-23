@@ -89,7 +89,7 @@ func main() {
 	go func() {
 		http.HandleFunc("/", handleError)
 
-		fmt.Println("Ожидаю обновлений...")
+		fmt.Println("Ожидаю соединений...")
 		fmt.Println("(на http://localhost:8080)")
 		log.Fatal(http.ListenAndServe("localhost:8080", nil))
 	}()
