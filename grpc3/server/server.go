@@ -200,7 +200,7 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Запуск на", listener.Addr())
-	fmt.Println("(ожидаю обновлений...)")
+	fmt.Println("(Ожидаю соединений...)")
 	fmt.Println()
 
 	rs := NewRouteServer()
