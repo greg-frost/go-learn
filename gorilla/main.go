@@ -74,7 +74,7 @@ func main() {
 	router.HandleFunc("/albums", postAlbum).Methods("POST")
 
 	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
 	log.Fatal(http.ListenAndServe("localhost:8080", router))
 }
