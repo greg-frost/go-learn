@@ -40,7 +40,7 @@ func main() {
 	http.Handle("/query", srv)
 
 	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Printf("(на http://localhost:%s)\n", port)
 	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
 }
