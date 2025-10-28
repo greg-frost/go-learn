@@ -137,7 +137,7 @@ func startServer(router *httprouter.Router, cfg *config.Config) {
 	}
 
 	// Запуск
-	log.Info("Ожидаю обновлений...")
+	log.Info("Ожидаю соединений...")
 	log.Info(caption)
 	log.Fatal(server.Serve(listener))
 }
