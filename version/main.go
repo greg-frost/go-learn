@@ -113,7 +113,7 @@ func main() {
 		http.HandleFunc("/api/v2/endpoint", handleByUrlV2)
 		http.HandleFunc("/endpoint", handleByContentType)
 
-		fmt.Println("Ожидаю обновлений...")
+		fmt.Println("Ожидаю соединений...")
 		fmt.Println("(на http://localhost:8080)")
 		log.Fatal(http.ListenAndServe("localhost:8080", nil))
 	}()
