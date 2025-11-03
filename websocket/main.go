@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -26,12 +27,12 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 
 // WS-обработчик
 func wsHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Соединение:", r.Host)
+	fmt.Println("[СЕРВЕР] Соединение:", r.Host)
 
 	// Получение соединения WS
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("Ошибка upgrader.Upgrade:", err)
+		fmt.Println("Ошибка upgrader.Upgrade:", err)
 		return
 	}
 	defer ws.Close()
@@ -39,21 +40,21 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	// Ожидание соединений
 	for {
 		// Получение сообщения
-		mt, message, err := ws.ReadMessage()
+		mt, msg, err := ws.ReadMessage()
 		if err != nil {
-			log.Printf("Ошибка чтения сообщения с хоста %v: %v", r.Host, err)
+			fmt.Println("[СЕРВЕР] Ошибка получения сообщения:", err)
 			break
 		}
-		log.Println("Получено:", string(message))
+		fmt.Println("[СЕРВЕР] Получено:", string(msg))
 
 		// Отправка сообщения
-		message = []byte(strings.ToUpper(string(message)))
-		err = ws.WriteMessage(mt, message)
+		msg = []byte(strings.ToUpper(string(msg)))
+		err = ws.WriteMessage(mt, msg)
 		if err != nil {
-			log.Println("Ошибка записи сообщения:", err)
+			fmt.Println("[СЕРВЕР] Ошибка отправки сообщения:", err)
 			break
 		}
-		log.Println("Отправлено:", string(message))
+		fmt.Println("[СЕРВЕР] Отправлено:", string(msg))
 	}
 }
 
@@ -76,13 +77,63 @@ func server() {
 	mux.HandleFunc("/ws", wsHandler)
 
 	// Запуск сервера
-	fmt.Println("Ожидаю обновлений...")
+	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
+	fmt.Println()
 	log.Fatal(s.ListenAndServe())
+}
+
+// Клиент
+func client() {
+	// Соединение по WebSocket
+	URL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "ws"}
+	c, _, err := websocket.DefaultDialer.Dial(URL.String(), nil)
+	if err != nil {
+		fmt.Println("Ошибка инициализации клиента:", err)
+		return
+	}
+	defer c.Close()
+
+	// Получение сообщений
+	go func() {
+		for {
+			_, msg, err := c.ReadMessage()
+			if err != nil {
+				fmt.Println("[КЛИЕНТ] Ошибка получения сообщения:", err)
+				return
+			}
+			fmt.Println("[КЛИЕНТ] Получено:", string(msg))
+		}
+	}()
+
+	// Отправка сообщения
+	msg := "Привет, сервер!"
+	err = c.WriteMessage(websocket.TextMessage, []byte(msg))
+	if err != nil {
+		fmt.Println("[КЛИЕНТ] Ошибка отправки сообщения:", err)
+		return
+	}
+	fmt.Println("[КЛИЕНТ] Отправлено:", msg)
+
+	// Закрытие соединения
+	err = c.WriteMessage(websocket.CloseMessage,
+		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	if err != nil {
+		fmt.Println("[КЛИЕНТ] Ошибка закрытия соединения:", err)
+		return
+	}
+	fmt.Println("[КЛИЕНТ] Закрытие соединения")
+
+	time.Sleep(100 * time.Millisecond)
 }
 
 func main() {
 	fmt.Println(" \n[ WEBSOCKET ]\n ")
 
-	server()
+	// Локальный сервер
+	go server()
+	go client()
+
+	// Ожидание
+	time.Sleep(time.Second)
 }
