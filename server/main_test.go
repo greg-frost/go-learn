@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-func TestTextResponse(t *testing.T) {
-	handler := http.HandlerFunc(textResponse)
+func TestTextHandler(t *testing.T) {
+	handler := http.HandlerFunc(textHandler)
 
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil)
@@ -26,8 +26,8 @@ func TestTextResponse(t *testing.T) {
 	}
 }
 
-func TestHtmlResponse(t *testing.T) {
-	handler := http.HandlerFunc(htmlResponse)
+func TestHtmlHandler(t *testing.T) {
+	handler := http.HandlerFunc(htmlHandler)
 
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/html", nil)

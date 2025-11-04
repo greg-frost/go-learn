@@ -23,24 +23,24 @@ const (
 	`
 )
 
-// TXT-ответ
-func textResponse(res http.ResponseWriter, req *http.Request) {
-	res.WriteHeader(http.StatusOK)
-	fmt.Fprint(res, text)
+// TXT-обработчик
+func textHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, text)
 }
 
-// HTML-ответ
-func htmlResponse(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "text/html")
-	res.WriteHeader(http.StatusOK)
-	io.WriteString(res, html)
+// HTML-обработчик
+func htmlHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusOK)
+	io.WriteString(w, html)
 }
 
 // Список заголовков
-func headersResponse(res http.ResponseWriter, req *http.Request) {
-	for name, headers := range req.Header {
+func headersHandler(w http.ResponseWriter, r *http.Request) {
+	for name, headers := range r.Header {
 		for _, h := range headers {
-			fmt.Fprintf(res, "%v: %v\n", name, h)
+			fmt.Fprintf(w, "%v: %v\n", name, h)
 		}
 	}
 }
@@ -49,9 +49,9 @@ func main() {
 	fmt.Println(" \n[ HTTP-СЕРВЕР ]\n ")
 
 	// Обработчики
-	http.HandleFunc("/", textResponse)
-	http.HandleFunc("/html/", htmlResponse)
-	http.HandleFunc("/headers/", headersResponse)
+	http.HandleFunc("/", textHandler)
+	http.HandleFunc("/html/", htmlHandler)
+	http.HandleFunc("/headers/", headersHandler)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю соединений...")
