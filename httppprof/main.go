@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/pprof"
 	"time"
 )
 
@@ -30,6 +31,13 @@ func main() {
 	// Обработчики
 	r.HandleFunc("/", handler)
 	r.HandleFunc("/time/", timeHandler)
+
+	// Профилирование
+	r.HandleFunc("/debug/pprof", pprof.Index)
+	r.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	r.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	r.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	r.HandleFunc("/debug/pprof/trace", pprof.Trace)
 
 	// Запуск сервера
 	fmt.Println("Ожидаю соединений...")
