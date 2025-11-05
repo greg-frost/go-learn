@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"go-learn/base"
@@ -137,7 +137,7 @@ func main() {
 	fmt.Println()
 
 	path := base.Dir("graphql3")
-	jsonUsers, err := ioutil.ReadFile(filepath.Join(path, "users.json"))
+	jsonUsers, err := os.ReadFile(filepath.Join(path, "users.json"))
 	if err != nil {
 		log.Fatalf("не удалось загрузить файл с пользователями: %v", err)
 
