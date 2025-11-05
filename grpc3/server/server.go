@@ -6,10 +6,10 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"math"
 	"net"
+	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -40,7 +40,7 @@ func NewRouteServer() *routeServer {
 	}
 
 	// Чтение файла
-	b, err := ioutil.ReadFile(filepath.Join(path, "data", "routes.json"))
+	b, err := os.ReadFile(filepath.Join(path, "data", "routes.json"))
 	if err != nil {
 		return rs
 	}
