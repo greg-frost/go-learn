@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -65,7 +65,7 @@ func get(url string) (*http.Response, error) {
 			return res, fmt.Errorf(msg, res.Status)
 		}
 
-		b, _ := ioutil.ReadAll(res.Body)
+		b, _ := io.ReadAll(res.Body)
 		res.Body.Close()
 		var data ErrorWrap
 		err = json.Unmarshal(b, &data)
@@ -83,8 +83,7 @@ func get(url string) (*http.Response, error) {
 func main() {
 	fmt.Println(" \n[ HTTP-ОШИБКИ ]\n ")
 
-	/* Сервер */
-
+	// Сервер
 	fmt.Println("Сервер:")
 	go func() {
 		http.HandleFunc("/", handleError)
@@ -97,15 +96,14 @@ func main() {
 	time.Sleep(250 * time.Millisecond)
 	fmt.Println()
 
-	/* Клиент */
-
+	// Клиент
 	fmt.Println("Клиент:")
 	res, err := get("http://localhost:8080")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	b, _ := ioutil.ReadAll(res.Body)
+	b, _ := io.ReadAll(res.Body)
 	res.Body.Close()
 	fmt.Println(string(b))
 }
