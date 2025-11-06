@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -21,7 +20,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 // Поверхностная проверка работоспособности
 func shallowHealthHandler(w http.ResponseWriter, r *http.Request) {
 	// Создание временного файла
-	tmp, err := ioutil.TempFile(os.TempDir(), "shallow-")
+	tmp, err := os.CreateTemp(os.TempDir(), "shallow-")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
