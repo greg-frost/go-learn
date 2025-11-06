@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -37,7 +37,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		o, err := ioutil.ReadAll(r.Body)
+		o, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -57,7 +57,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		o, err := ioutil.ReadAll(r.Body)
+		o, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Fatal(err)
 		}
