@@ -60,15 +60,20 @@ func fibo2(n int) int {
 func main() {
 	fmt.Println(" \n[ ПРОФИЛИРОВАНИЕ ]\n ")
 
-	// Файл профиля
-	profile := filepath.Join(os.TempDir(), "profile.out")
-	file, err := os.Create(profile)
+	// Файл профиля CPU
+	cpuProfile := filepath.Join(os.TempDir(), "cpuProfile.out")
+	cpuFile, err := os.Create(cpuProfile)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer cpuFile.Close()
 
-	// Запуск профилирования
-	pprof.StartCPUProfile(file)
+	fmt.Println("Процессор:")
+	fmt.Println(cpuProfile)
+	fmt.Println()
+
+	// Запуск профилирования CPU
+	pprof.StartCPUProfile(cpuFile)
 	defer pprof.StopCPUProfile()
 
 	// Простые числа
@@ -108,6 +113,35 @@ func main() {
 		fmt.Print(fibo, " ")
 	}
 	fmt.Println()
+	fmt.Println()
 
 	runtime.GC() // Запуск сборщика мусора
+
+	// Файл профиля памяти
+	memoryProfile := filepath.Join(os.TempDir(), "memoryProfile.out")
+	memoryFile, err := os.Create(memoryProfile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer memoryFile.Close()
+
+	fmt.Println("Память:")
+	fmt.Println(memoryProfile)
+	fmt.Println()
+
+	for i := 0; i < 10; i++ {
+		s := make([]byte, 50_000_000)
+		if s == nil {
+			fmt.Println("Ошибка выделения памяти!")
+		} else {
+			fmt.Println("Выделено 50 МБ...")
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	// Профилирование памяти
+	err = pprof.WriteHeapProfile(memoryFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
