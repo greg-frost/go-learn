@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -141,7 +141,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -167,7 +167,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	body, err = ioutil.ReadAll(res.Body)
+	body, err = io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -193,7 +193,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	body, err = ioutil.ReadAll(res.Body)
+	body, err = io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -263,13 +263,13 @@ func main() {
 	fmt.Println("Запись в файл...")
 	path := base.Dir("protobuf")
 	filename := filepath.Join(path, "file.txt")
-	if err = ioutil.WriteFile(filename, out, 0644); err != nil {
+	if err = os.WriteFile(filename, out, 0644); err != nil {
 		log.Fatal(err)
 	}
 	defer os.Remove(filename)
 
 	fmt.Println("Чтение из файла...")
-	in, err := ioutil.ReadFile(filename)
+	in, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
