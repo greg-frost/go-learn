@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -110,7 +109,7 @@ func main() {
 		log.Fatal(err)
 	}
 	defer c.Close()
-	o, err := ioutil.ReadAll(c)
+	o, err := io.ReadAll(c)
 	if err != nil {
 		log.Fatal(err)
 	}
