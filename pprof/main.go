@@ -115,7 +115,8 @@ func main() {
 	fmt.Println()
 	fmt.Println()
 
-	runtime.GC() // Запуск сборщика мусора
+	// Сборка мусора
+	runtime.GC()
 
 	// Файл профиля памяти
 	memoryProfile := filepath.Join(os.TempDir(), "memoryProfile.out")
