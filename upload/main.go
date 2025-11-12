@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime"
 	"mime/multipart"
@@ -48,7 +47,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	// contentType := typeByContent(in)
 
 	w.Header().Set("Content-Type", contentType)
-	b, err := ioutil.ReadFile(filename)
+	b, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
