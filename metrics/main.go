@@ -54,8 +54,7 @@ func main() {
 	// Список доступных метрик
 	fmt.Println("Все метрики:")
 	for _, m := range metrics.All() {
-		fmt.Print(m.Name)
-		fmt.Println(" -", m.Description)
 		fmt.Println()
+		fmt.Println(m.Name, "-", m.Description)
 	}
 }
