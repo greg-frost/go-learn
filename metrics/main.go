@@ -21,6 +21,8 @@ func main() {
 		{Name: freeMemory},
 	}
 
+	fmt.Println("Подождите...")
+
 	// Создание горутин и выделение памяти
 	var wg sync.WaitGroup
 	for i := 0; i < 3; i++ {
@@ -38,6 +40,7 @@ func main() {
 	runtime.GC()
 
 	// Чтение метрик
+	fmt.Println()
 	metrics.Read(ms)
 	for _, m := range ms {
 		if m.Value.Kind() == metrics.KindBad {
@@ -45,5 +48,14 @@ func main() {
 			continue
 		}
 		fmt.Println(m.Name, "-", m.Value.Uint64())
+	}
+	fmt.Println()
+
+	// Список доступных метрик
+	fmt.Println("Все метрики:")
+	for _, m := range metrics.All() {
+		fmt.Print(m.Name)
+		fmt.Println(" -", m.Description)
+		fmt.Println()
 	}
 }
