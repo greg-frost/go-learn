@@ -34,7 +34,9 @@ func main() {
 		}()
 	}
 
-	wg.Wait()
+	// Ожидание
+	// wg.Wait()
+	time.Sleep(time.Second)
 
 	// Сборка мусора
 	runtime.GC()
