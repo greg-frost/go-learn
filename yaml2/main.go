@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 
 	"go-learn/base"
@@ -46,7 +46,7 @@ func main() {
 
 	// Чтение конфигурации
 	path := base.Dir("yaml2")
-	source, err := ioutil.ReadFile(filepath.Join(path, "example.yml"))
+	source, err := os.ReadFile(filepath.Join(path, "example.yml"))
 	if err != nil {
 		log.Fatal(err)
 	}
