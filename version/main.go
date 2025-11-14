@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -97,7 +97,7 @@ func getPage(url, acceptType string) (string, error) {
 		acceptType != contentType {
 		return "", fmt.Errorf("неизвестный тип содержимого - %q", contentType)
 	}
-	b, _ := ioutil.ReadAll(res.Body)
+	b, _ := io.ReadAll(res.Body)
 	res.Body.Close()
 	return string(b), nil
 }
@@ -105,8 +105,7 @@ func getPage(url, acceptType string) (string, error) {
 func main() {
 	fmt.Println(" \n[ ВЕРСИОНИРОВАНИЕ ]\n ")
 
-	/* Сервер */
-
+	// Сервер
 	fmt.Println("Сервер:")
 	go func() {
 		http.HandleFunc("/api/v1/endpoint", handleByUrl)
@@ -121,22 +120,16 @@ func main() {
 	time.Sleep(250 * time.Millisecond)
 	fmt.Println()
 
-	/* Клиенты */
-
+	// Клиенты
 	fmt.Println("Клиенты:")
-
 	res, _ := getPage("http://localhost:8080/api/v1/endpoint", "")
 	fmt.Println("V1 по URL:", res)
-
 	res, _ = getPage("http://localhost:8080/api/v2/endpoint", "")
 	fmt.Println("V2 по URL:", res)
-
 	res, _ = getPage("http://localhost:8080/endpoint", "")
 	fmt.Println("V? по Content-Type:", res)
-
 	res, _ = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=1.0")
 	fmt.Println("V1 по Content-Type:", res)
-
 	res, _ = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=2.0")
 	fmt.Println("V2 по Content-Type:", res)
 }
