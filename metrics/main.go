@@ -4,38 +4,32 @@ import (
 	"fmt"
 	"runtime"
 	"runtime/metrics"
-	"sync"
 	"time"
 )
+
+// Метрики
+const numRoutines = "/sched/goroutines:goroutines"   // Количество горутин
+const freeMemory = "/memory/classes/heap/free:bytes" // Освобожденная память
 
 func main() {
 	fmt.Println(" \n[ МЕТРИКИ ]\n ")
 
-	// Метрики
-	routinesCount := "/sched/goroutines:goroutines" // Число горутин
-	freeMemory := "/memory/classes/heap/free:bytes" // Освобожденная память
-
 	// Срез для метрик
 	ms := []metrics.Sample{
-		{Name: routinesCount},
+		{Name: numRoutines},
 		{Name: freeMemory},
 	}
 
 	fmt.Println("Подождите...")
 
 	// Создание горутин и выделение памяти
-	var wg sync.WaitGroup
 	for i := 0; i < 3; i++ {
-		wg.Add(1)
 		go func() {
-			defer wg.Done()
 			_ = make([]int, 1_000_000)
 			time.Sleep(3 * time.Second)
 		}()
 	}
 
-	// Ожидание
-	// wg.Wait()
 	time.Sleep(time.Second)
 
 	// Сборка мусора
