@@ -4,6 +4,8 @@ import (
 	"io"
 	"net/http"
 
+	"go-learn/rest4/internal/app/store"
+
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
@@ -12,6 +14,7 @@ import (
 type APIServer struct {
 	config *Config
 	logger *logrus.Logger
+	store  *store.Store
 	router *mux.Router
 }
 
@@ -26,12 +29,17 @@ func New(config *Config) *APIServer {
 
 // Запуск сервера
 func (s *APIServer) Start() error {
-	// Конфигурирование логгера
+	s.logger.Info("Конфигурирование логгера")
 	if err := s.configureLogger(); err != nil {
 		return err
 	}
 
-	// Конфигурирование роутера
+	s.logger.Info("Конфигурирование хранилища")
+	if err := s.configureStore(); err != nil {
+		return err
+	}
+
+	s.logger.Info("Конфигурирование роутера")
 	s.configureRouter()
 
 	// Запуск сервера
@@ -47,8 +55,18 @@ func (s *APIServer) configureLogger() error {
 	if err != nil {
 		return err
 	}
-
 	s.logger.SetLevel(level)
+
+	return nil
+}
+
+// Конфигурирование хранилища
+func (s *APIServer) configureStore() error {
+	st := store.New(s.config.Store)
+	if err := st.Open(); err != nil {
+		return err
+	}
+	s.store = st
 
 	return nil
 }

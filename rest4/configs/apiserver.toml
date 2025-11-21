@@ -1,2 +1,5 @@
 bind_addr = "localhost:8080"
 log_level = "debug"
+
+[store]
+database_url = "user=postgres password=admin dbname=learn sslmode=disable"
