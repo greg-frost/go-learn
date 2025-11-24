@@ -8,8 +8,9 @@ import (
 
 // Структура "хранилище"
 type Store struct {
-	config *Config
-	db     *sql.DB
+	config         *Config
+	db             *sql.DB
+	userRepository *UserRepository
 }
 
 // Конструктор хранилища
@@ -37,4 +38,14 @@ func (s *Store) Open() error {
 // Закрытие соединения
 func (s *Store) Close() {
 	s.db.Close()
+}
+
+// Получение хранилища пользователей
+func (s *Store) User() *UserRepository {
+	if s.userRepository == nil {
+		s.userRepository = &UserRepository{
+			store: s,
+		}
+	}
+	return s.userRepository
 }
