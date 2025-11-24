@@ -18,6 +18,7 @@ func (r *UserRepository) Create(user *model.User) (*model.User, error) {
 	); err != nil {
 		return nil, err
 	}
+
 	return user, nil
 }
 
@@ -34,5 +35,6 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	); err != nil {
 		return nil, err
 	}
+
 	return user, nil
 }

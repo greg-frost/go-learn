@@ -46,6 +46,7 @@ func (s *APIServer) Start() error {
 	s.logger.Info("Запуск сервера API")
 	s.logger.Info("Ожидаю соединений...")
 	s.logger.Infof("(на http://%s)", s.config.BindAddr)
+
 	return http.ListenAndServe(s.config.BindAddr, s.router)
 }
 
