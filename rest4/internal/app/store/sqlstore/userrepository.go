@@ -1,6 +1,11 @@
 package sqlstore
 
-import "go-learn/rest4/internal/app/model"
+import (
+	"database/sql"
+
+	"go-learn/rest4/internal/app/model"
+	"go-learn/rest4/internal/app/store"
+)
 
 // Структура "хранилище пользователей"
 type UserRepository struct {
@@ -40,6 +45,9 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 		&user.Email,
 		&user.EncryptedPassword,
 	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
 		return nil, err
 	}
 

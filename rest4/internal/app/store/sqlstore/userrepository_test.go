@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"go-learn/rest4/internal/app/model"
+	"go-learn/rest4/internal/app/store"
 	"go-learn/rest4/internal/app/store/sqlstore"
 
 	"github.com/stretchr/testify/assert"
@@ -30,7 +31,7 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 
 	// Пользователь не найден
 	_, err := s.User().FindByEmail(email)
-	assert.Error(t, err)
+	assert.EqualError(t, err, store.ErrRecordNotFound.Error())
 
 	// Пользователь найден
 	s.User().Create(model.TestUser(t))

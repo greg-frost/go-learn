@@ -1,8 +1,8 @@
 package teststore
 
 import (
-	"fmt"
 	"go-learn/rest4/internal/app/model"
+	"go-learn/rest4/internal/app/store"
 )
 
 // Структура "хранилище пользователей"
@@ -34,7 +34,7 @@ func (r *UserRepository) Create(user *model.User) error {
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	user, ok := r.users[email]
 	if !ok {
-		return nil, fmt.Errorf("пользователь %s не найден", email)
+		return nil, store.ErrRecordNotFound
 	}
 
 	return user, nil
