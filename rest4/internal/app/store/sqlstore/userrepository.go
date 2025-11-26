@@ -1,4 +1,4 @@
-package store
+package sqlstore
 
 import "go-learn/rest4/internal/app/model"
 
@@ -8,29 +8,25 @@ type UserRepository struct {
 }
 
 // Создание пользователя
-func (r *UserRepository) Create(user *model.User) (*model.User, error) {
+func (r *UserRepository) Create(user *model.User) error {
 	// Валидация
 	if err := user.Validate(); err != nil {
-		return nil, err
+		return err
 	}
 
 	// Подготовка
 	if err := user.BeforeCreate(); err != nil {
-		return nil, err
+		return err
 	}
 
 	// Сохранение
-	if err := r.store.db.QueryRow(
+	return r.store.db.QueryRow(
 		"INSERT INTO users (email, encrypted_password) VALUES($1, $2) RETURNING id",
 		user.Email,
 		user.EncryptedPassword,
 	).Scan(
 		&user.ID,
-	); err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	)
 }
 
 // Поиск пользователя по Email
