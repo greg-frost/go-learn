@@ -27,8 +27,9 @@ func startsWithVowel(s string) bool {
 
 // Одна случайная строка
 func buildString() string {
-	out := make([]byte, 5)
-	for i := 0; i < 5; i++ {
+	size := 5
+	out := make([]byte, size)
+	for i := 0; i < size; i++ {
 		out[i] = byte(rand.Intn(26) + 65)
 	}
 	return string(out)
@@ -37,8 +38,9 @@ func buildString() string {
 // Генерация набора случайных строк
 func setup() []string {
 	rand.Seed(1)
-	vals := make([]string, 1000)
-	for i := 0; i < 1000; i++ {
+	size := 1000
+	vals := make([]string, size)
+	for i := 0; i < size; i++ {
 		vals[i] = buildString()
 	}
 	return vals
@@ -46,8 +48,9 @@ func setup() []string {
 
 // Генерация набора целых
 func setupInt() []int {
-	vals := make([]int, 1000)
-	for i := 0; i < 1000; i++ {
+	size := 1000
+	vals := make([]int, size)
+	for i := 0; i < size; i++ {
 		vals[i] = i
 	}
 	return vals
@@ -97,7 +100,7 @@ func BenchmarkFilterString(b *testing.B) {
 	}
 }
 
-// Бенчмарк фильтрации целых чисел (рефлексия)
+// Бенчмарк фильтрации чисел (рефлексия)
 func BenchmarkFilterReflectInt(b *testing.B) {
 	vals := setupInt()
 	b.ResetTimer()
@@ -106,7 +109,7 @@ func BenchmarkFilterReflectInt(b *testing.B) {
 	}
 }
 
-// Бенчмарк фильтрации целых чисел (без рефлексии)
+// Бенчмарк фильтрации чисел (без рефлексии)
 func BenchmarkFilterInt(b *testing.B) {
 	vals := setupInt()
 	b.ResetTimer()

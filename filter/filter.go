@@ -16,6 +16,7 @@ func Filter(slice interface{}, filter interface{}) interface{} {
 			out = reflect.Append(out, curVal)
 		}
 	}
+
 	return out.Interface()
 }
 
@@ -30,7 +31,7 @@ func FilterString(s []string, f func(string) bool) []string {
 	return out
 }
 
-// Фильтрация целых чисел (без рефлексии)
+// Фильтрация чисел (без рефлексии)
 func FilterInt(s []int, f func(int) bool) []int {
 	out := make([]int, 0, len(s))
 	for _, v := range s {
