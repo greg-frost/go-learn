@@ -12,9 +12,7 @@ import (
 func main() {
 	fmt.Println(" \n[ ВЫПОЛНЕНИЕ ПРОЦЕССОВ ]\n ")
 
-	/* Команда date */
-
-	// Без флагов
+	// Команда date (без флагов)
 	fmt.Println("> date")
 	dateCmd := exec.Command("date")
 	dateOut, err := dateCmd.Output()
@@ -23,7 +21,7 @@ func main() {
 	}
 	fmt.Println(string(dateOut))
 
-	// С несуществующим флагом
+	// Команда date (с несуществующим флагом)
 	fmt.Println("> date -x")
 	_, err = exec.Command("date", "-x").Output()
 	if err != nil {
@@ -39,8 +37,7 @@ func main() {
 	}
 	fmt.Println()
 
-	/* Команда grep */
-
+	// Команда grep
 	fmt.Println("> grep hello")
 	grepCmd := exec.Command("grep", "hello")
 	grepIn, _ := grepCmd.StdinPipe()
@@ -52,9 +49,7 @@ func main() {
 	grepCmd.Wait()
 	fmt.Println(string(grepBytes))
 
-	/* Команда ls */
-
-	// Bash
+	// Команда ls (bash)
 	fmt.Println("> ls -a -l -h")
 	lsCmd := exec.Command("bash", "-c", "ls -a -l -h")
 	lsOut, err := lsCmd.Output()
@@ -65,7 +60,7 @@ func main() {
 	fmt.Println("...")
 	fmt.Println()
 
-	// Syscall
+	// Команда ls (syscall)
 	fmt.Println("> ls (syscall)")
 	binary, lookErr := exec.LookPath("ls")
 	if lookErr != nil {
