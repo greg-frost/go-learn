@@ -9,10 +9,23 @@ const (
 	i         = 10
 	f         = 1.5
 	i64 int64 = 88
+
+	Big   = 1 << 100
+	Small = Big >> 99
 )
 
 // Переменная
 var v = 45
+
+// Функция, принимающая int
+func toInt(x int) int {
+	return x*10 + 1
+}
+
+// Функция, принимающая float64
+func toFloat(x float64) float64 {
+	return x * 0.1
+}
 
 func main() {
 	fmt.Println(" \n[ КОНСТАНТЫ ]\n ")
@@ -21,6 +34,12 @@ func main() {
 	fmt.Printf("i + f = %d + %.1f = %.1f\n", i, f, i+f)
 	fmt.Printf("i + i64 = %d + %d = %d\n", i, i64, i+i64)
 	fmt.Printf("i + v = %d + %d = %d\n", i, v, i+v)
+	fmt.Println()
+
+	// Приведение типов
+	fmt.Println("Small (int):", toInt(Small))
+	fmt.Println("Small (float64):", toFloat(Small))
+	fmt.Println("Big (float64):", toFloat(Big))
 
 	// Ошибки приведения типов
 	// fmt.Println(f + v) // Нетипизированная вещественная константа урезается до int
