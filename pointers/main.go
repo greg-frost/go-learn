@@ -49,32 +49,41 @@ func main() {
 	y := 2
 	ptr := new(int)
 
-	/* Обнуление, копирование, привязка */
-
+	// Обнуление, копирование, привязка
 	fmt.Println("Было:", x, y)
 	zero(&x)
 	copy(&x, &y)
-	bind(&x, &y) // не сработает
+	bind(&x, &y) // Не сработает
 
-	/* Установка значения */
-
+	// Установка значения
 	y = 5
 	set(ptr, 7)
-
 	fmt.Println("Стало:", x, y, *ptr)
-
 	fmt.Println()
 
-	/* Квадратный корень */
-
+	// Квадратный корень
 	s := 1.5
 	square(&s)
 	fmt.Println("Квадрат:", s)
 
-	/* Замена переменных */
-
+	// Замена переменных
 	swappy(&x, &y)
 	swap(&x, &y)
 	swappy(&x, &y)
 	fmt.Println("Замена:", x, y)
+	fmt.Println()
+
+	// Указатель на указатель
+	a := 100
+	var b *int = &a
+	var c **int = &b
+	fmt.Println("Адрес a:", &a)
+	fmt.Println("Значение a:", a)
+	fmt.Println("Адрес b:", &b)
+	fmt.Println("Значение b:", b)
+	fmt.Println("Разыменование b:", *b)
+	fmt.Println("Адрес c:", &c)
+	fmt.Println("Значение c:", c)
+	fmt.Println("Разыменование c:", *c)
+	fmt.Println("Двойное разыменование c:", **c)
 }
