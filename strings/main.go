@@ -8,7 +8,7 @@ import (
 
 // Переворот строки
 func reverseString(s string) string {
-	n := 0
+	var n int
 	runes := make([]rune, len(s))
 	for _, r := range s {
 		runes[n] = r
@@ -26,11 +26,9 @@ func reverseString(s string) string {
 // Счетчик букв
 func lettersCount(s string) map[rune]int {
 	res := make(map[rune]int)
-
 	for _, v := range s {
 		res[v]++
 	}
-
 	return res
 }
 
@@ -62,124 +60,141 @@ func (octs IPAddr) String() string {
 }
 
 // Обрезка строки
-func trim(text string) string {
-	if text == "" {
-		return text
+func trim(s string) string {
+	if s == "" {
+		return s
+	}
+	if s[0] != ' ' && s[len(s)-1] != ' ' {
+		return s
 	}
 
-	if text[0] != ' ' && text[len(text)-1] != ' ' {
-		return text
-	}
-
-	start := 0
-	end := len(text)
-
+	start, end := 0, len(s)
 	for start < end {
-		if text[start] != ' ' {
+		if s[start] != ' ' {
 			break
 		}
 		start++
 	}
-
 	for end > start {
-		if text[end-1] != ' ' {
+		if s[end-1] != ' ' {
 			break
 		}
 		end--
 	}
 
-	return text[start:end]
+	return s[start:end]
+}
+
+// Конкатенация строк
+func concat(values ...string) string {
+	var res string
+	for _, value := range values {
+		res += value
+	}
+	return res
+}
+
+// Конкатенация строк (через билдер)
+func concatBuilder(values ...string) string {
+	res := strings.Builder{}
+	for _, value := range values {
+		res.WriteString(value)
+	}
+	return res.String()
+}
+
+// Конкатенация строк (через билдер с ростом)
+func concatBuilderGrow(values ...string) string {
+	var total int
+	for i := 0; i < len(values); i++ {
+		total += len(values[i])
+	}
+
+	res := strings.Builder{}
+	res.Grow(total)
+	for _, value := range values {
+		res.WriteString(value)
+	}
+
+	return res.String()
 }
 
 func main() {
 	fmt.Println(" \n[ СТРОКИ ]\n ")
 
+	// Строка
 	var str string = "Hello" + ", " + "Мир!"
+	fmt.Printf("%q\n\n", str)
 
-	fmt.Println(`"` + str + `"`)
-	fmt.Println()
-
-	/* Длина и символ */
-
+	// Длина и символ
 	fmt.Println("Длина:", len(str))
 	fmt.Println("Первый символ:", str[0])
-
 	fmt.Println()
 
-	/* Подстрока, поиск и позиция */
-
-	fmt.Println("Подстрока \"Мир\":", strings.Contains(str, "Мир"))
-	fmt.Println("Число букв \"L\":", strings.Count(str, "l"))
-	fmt.Println("Позиция буквы \"L\":", strings.Index(str, "l"))
-
+	// Подстрока, поиск и позиция
+	fmt.Printf("Подстрока %q: %t\n", "Мир", strings.Contains(str, "Мир"))
+	fmt.Printf("Число букв %q: %d\n", "l", strings.Count(str, "l"))
+	fmt.Printf("Позиция буквы %q: %d\n", "l", strings.Index(str, "l"))
 	fmt.Println()
 
-	/* Замена, префикс и суффикс */
-
+	// Замена, префикс и суффикс
 	fmt.Println("Замена слова:", strings.Replace(str, "Мир", "World", 1))
-	fmt.Println("Начинается на \"Hel\":", strings.HasPrefix(str, "Hel"))
-	fmt.Println("Заканчивается на \"!?\":", strings.HasSuffix(str, "!?"))
-
+	fmt.Printf("Начинается на %q: %t\n", "Hel", strings.HasPrefix(str, "Hel"))
+	fmt.Printf("Заканчивается на %q: %t\n", "!?", strings.HasSuffix(str, "!?"))
 	fmt.Println()
 
-	/* Разбиение, слияние, повторение */
-
+	// Разбиение, слияние, повторение
 	split := strings.Split(str, ", ")
 	fmt.Println("Разбиение по запятой:", split)
 	fmt.Println("Слияние по запятой:", strings.Join(split, ", "))
 	fmt.Println("Повторение дважды:", strings.Repeat(split[0], 2))
-
 	fmt.Println()
 
-	/* Регистры */
-
+	// Регистры
 	fmt.Println("Нижний регистр:", strings.ToLower(str))
 	fmt.Println("Верхний регистр:", strings.ToUpper(str))
-
 	fmt.Println()
 
-	/* Байты, руны и строки */
-
+	// Байты, руны и строки
 	bytes := []byte(str)
 	firstBytes := make([]byte, 5)
 	copy(firstBytes, bytes)
 	strAgain := string(firstBytes)
-
 	fmt.Println("Перевод в байты:", firstBytes)
 	fmt.Println("Снова строка:", strAgain)
-
 	fmt.Println()
 
 	jap := "椒, hello, 椒!"
-
-	fmt.Println("Длина", jap, "в строке:", len(jap))
-	fmt.Println("Длина", jap, "в байтах:", len([]byte(jap)))
-	fmt.Println("Длина", jap, "в рунах:", len([]rune(jap)))
-
-	japCount := 0
+	fmt.Printf("Длина %q в строке: %d\n", jap, len(jap))
+	fmt.Printf("Длина %q в байтах: %d\n", jap, len([]byte(jap)))
+	fmt.Printf("Длина %q в рунах: %d\n", jap, len([]rune(jap)))
+	var japCount int
 	for range jap {
 		japCount++
 	}
-	fmt.Println("Длина", jap, "в range:", japCount)
-
+	fmt.Printf("Длина %q в range: %d\n", jap, japCount)
 	fmt.Println("Перевернутая строка:", reverseString(jap))
-
 	fmt.Println()
 
-	/* Счетчики букв и слов */
-
+	// Счетчики букв и слов
 	str = "АБВГДБА!"
-	fmt.Print("Счетчик букв для \"", str, "\":\n")
+	fmt.Printf("Счетчик букв для %q:\n", str)
 	fmt.Println(lettersCount(str))
 	fmt.Println()
 
 	str = "Мир, Труд, Май, мир!"
-	fmt.Print("Счетчик слов для \"", str, "\":\n")
+	fmt.Printf("Счетчик слов для %q:\n", str)
 	fmt.Println(wordsCount(str))
 	fmt.Println()
 
-	/* IP-адреса */
+	// Конкатенация
+	fmt.Println("Конкатенация:")
+	fmt.Println("Обычная:", concat("Hello", "Cruel", "World"))
+	fmt.Println("Билдер:", concatBuilder("Hello", "Appending", "Builder"))
+	fmt.Println("Билдер с ростом:", concatBuilderGrow("Hello", "Builder", "Grow"))
+	fmt.Println()
 
+	// IP-адреса
 	fmt.Println("IP-адреса:")
 	hosts := map[string]IPAddr{
 		"Loopback":  {127, 0, 0, 1},
