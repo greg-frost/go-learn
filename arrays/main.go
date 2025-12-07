@@ -64,60 +64,6 @@ func removeAtIndex(s []int, i int) []int {
 	return s[:n]
 }
 
-// Удаление дубликатов слайса
-func removeDuplicates(s []string) []string {
-	res := make([]string, len(s))
-	copy(res, s)
-
-	set := make(map[string]struct{}, len(s))
-	var id int
-	for _, v := range s {
-		if _, ok := set[v]; !ok {
-			res[id] = v
-			id++
-		}
-		set[v] = struct{}{}
-	}
-
-	return res[:id]
-}
-
-// Определение уникальных чисел
-func uniqueInts(values []int) []int {
-	if len(values) == 0 {
-		return values
-	}
-
-	res := make([]int, 0, len(values))
-	seen := make(map[int]struct{})
-	for _, v := range values {
-		if _, ok := seen[v]; !ok {
-			res = append(res, v)
-			seen[v] = struct{}{}
-		}
-	}
-
-	return res
-}
-
-// Определение уникальных строк
-func uniqueStrings(values []string) []string {
-	if len(values) == 0 {
-		return values
-	}
-
-	res := make([]string, 0, len(values))
-	seen := make(map[string]bool)
-	for _, v := range values {
-		if !seen[v] {
-			res = append(res, v)
-			seen[v] = true
-		}
-	}
-
-	return res
-}
-
 func main() {
 	fmt.Println(" \n[ МАССИВЫ ]\n ")
 
@@ -191,33 +137,6 @@ func main() {
 	// Индексы среза
 	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	k := 10
-	fmt.Printf("Индексы среза %v\nсумма значений которых = %d: %v\n",
+	fmt.Printf("Индексы среза %v,\nсумма значений которых = %d: %v\n",
 		values, k, findKeysBySumVals(values, k))
-	fmt.Println()
-
-	// Карты
-	elements := map[string]map[string]string{
-		"H": {
-			"name":  "Hydrogen",
-			"state": "gas",
-		},
-		"He": {
-			"name":  "Helium",
-			"state": "gas",
-		},
-		"Li": {
-			"name":  "Lithium",
-			"state": "solid",
-		},
-	}
-	fmt.Println("Карта:", elements)
-	if el, ok := elements["Li"]; ok {
-		fmt.Printf("Элемент: %s ( %s )\n", el["name"], el["state"])
-	}
-	fmt.Println()
-
-	// Уникальные значения
-	animals := []string{"кошка", "собака", "птица", "собака", "попугай", "кошка"}
-	fmt.Println("Карта животных:", animals)
-	fmt.Println("Без повторений:", removeDuplicates(animals))
 }
