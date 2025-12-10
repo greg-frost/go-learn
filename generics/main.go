@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// Структура список произвольных элементов
+// Структура "список произвольных элементов"
 type List[T any] struct {
 	next *List[T]
 	val  T
@@ -23,32 +23,26 @@ func Index[T comparable](s []T, x T) int {
 func main() {
 	fmt.Println(" \n[ ДЖЕНЕРИКИ ]\n ")
 
-	/* Функции-дженерики */
-
-	sis := 15
-	si := []int{10, 20, 15, -10}
-	fmt.Println("Поиск", sis, "в", si, ":", Index(si, sis))
-
-	sss := "hello"
-	ss := []string{"foo", "bar", "baz"}
-	fmt.Println("Поиск", sss, "в", ss, ":", Index(ss, sss))
-
-	/* Типы-дженерики */
-
+	// Функции-дженерики
+	fmt.Println("Функции:")
+	seachInt := 15
+	sliceInts := []int{10, 20, 15, -10}
+	fmt.Printf("Поиск %d в %v: %d\n",
+		seachInt, sliceInts, Index(sliceInts, seachInt))
+	searchString := "hello"
+	sliceStrings := []string{"foo", "bar", "baz"}
+	fmt.Printf("Поиск %s в %v: %d\n",
+		searchString, sliceStrings, Index(sliceStrings, searchString))
 	fmt.Println()
-	fmt.Println("Связанные списки:")
 
+	// Типы-дженерики
+	fmt.Println("Связанные списки:")
 	lastInt := new(List[int])
 	lastInt.val = 1000
-
 	firstInt := List[int]{lastInt, 0}
-
 	fmt.Println(firstInt, lastInt)
-
 	lastString := new(List[string])
 	lastString.val = "World"
-
 	firstString := List[string]{lastString, "Hello"}
-
 	fmt.Println(firstString, lastString)
 }
