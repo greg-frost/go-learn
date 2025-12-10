@@ -45,22 +45,27 @@ func (o *{{.MyType}}Queue) Remove() {{.MyType}} {
 func main() {
 	fmt.Println(" \n[ КОДОГЕНЕРАЦИЯ ]\n ")
 
+	// Парсинг шаблона
 	t := template.Must(template.New("queue").Parse(tpl))
 	var count int
 
+	// Обработка параметров
 	for i := 1; i < len(os.Args); i++ {
+		// Создание файла
 		dest := strings.ToLower(os.Args[i]) + "_queue.go"
-
 		file, err := os.Create(filepath.Join(path, dest))
 		if err != nil {
 			log.Printf("Не удалось создать %s: %s (пропуск)", dest, err)
 			continue
 		}
 
+		// Определение имени пакета
 		packageName := os.Getenv("GOPACKAGE")
 		if packageName == "" {
 			packageName = "main"
 		}
+
+		// Параметры и выполнение шаблона
 		vals := map[string]string{
 			"MyType":  os.Args[i],
 			"Package": packageName,
