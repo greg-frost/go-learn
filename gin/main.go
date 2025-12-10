@@ -31,25 +31,21 @@ func getAlbums(c *gin.Context) {
 // Получение альбома по ID
 func getAlbumByID(c *gin.Context) {
 	id := c.Param("id")
-
 	for _, a := range albums {
 		if a.ID == id {
 			c.IndentedJSON(http.StatusOK, a)
 			return
 		}
 	}
-
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "альбом не найден"})
 }
 
 // Создание альбома
 func postAlbum(c *gin.Context) {
 	var newAlbum album
-
 	if err := c.BindJSON(&newAlbum); err != nil {
 		return
 	}
-
 	albums = append(albums, newAlbum)
 	c.IndentedJSON(http.StatusCreated, newAlbum)
 }
