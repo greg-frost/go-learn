@@ -16,7 +16,7 @@ func sum(vals ...int) (res int) {
 
 // Максимум
 func max(vals ...int) (max int) {
-	max = vals[0]
+	max = math.MinInt
 	for _, v := range vals {
 		if v > max {
 			max = v
@@ -39,7 +39,6 @@ func fact(n int) int {
 	if n == 0 {
 		return 1
 	}
-
 	return n * fact(n-1)
 }
 
@@ -47,9 +46,7 @@ func fact(n int) int {
 func fibRow(n int) []int {
 	res := make([]int, n+1)
 
-	res[0] = 0
-	res[1] = 1
-
+	res[0], res[1] = 0, 1
 	for i := 2; i <= n; i++ {
 		res[i] = res[i-1] + res[i-2]
 	}
@@ -62,31 +59,29 @@ func fibValue(n int) int {
 	if n <= 1 {
 		return n
 	}
-
 	return fibValue(n-1) + fibValue(n-2)
 }
 
-var memo = map[int]int{}
+// Кэш для значений Фибоначчи
+var memo = make(map[int]int)
 
 // Значение Фибоначчи (с мемоизацией)
 func fibValueMemo(n int) int {
 	if n <= 1 {
 		return n
 	}
-
 	if v, ok := memo[n]; ok {
 		return v
 	}
 
-	memo[n] = fibValueMemo(n-1) + fibValueMemo(n-2)
-
-	return memo[n]
+	res := fibValueMemo(n-1) + fibValueMemo(n-2)
+	memo[n] = res
+	return res
 }
 
 // Замыкание Фибоначчи
 func fibClosure() func() int {
-	prev := 0
-	next := 1
+	prev, next := 0, 1
 
 	return func() int {
 		curr := prev
@@ -97,7 +92,7 @@ func fibClosure() func() int {
 
 // Генератор нечетных чисел
 func makeOddGenerator() func() uint {
-	i := uint(1)
+	var i uint = 1
 	return func() (ret uint) {
 		ret = i
 		i += 2
@@ -107,7 +102,7 @@ func makeOddGenerator() func() uint {
 
 // Генератор четных чисел
 func makeEvenGenerator() func() uint {
-	i := uint(0)
+	var i uint = 0
 	return func() (ret uint) {
 		ret = i
 		i += 2
@@ -116,11 +111,11 @@ func makeEvenGenerator() func() uint {
 }
 
 // Тип "функция"
-type prodder func(a, b int) int
+type function func(a, b int) int
 
-// Выполнение типа-функции
-func prodFunc(p prodder) int {
-	return p(3, 25)
+// Выполнение
+func typeFunc(f function) int {
+	return f(3, 25)
 }
 
 // Структура "вычитатель"
@@ -128,7 +123,7 @@ type subber struct {
 	val int
 }
 
-// Вычитание из
+// Вычитание
 func (s subber) subFrom(val int) int {
 	return val - s.val
 }
@@ -140,7 +135,7 @@ func compute(fn func(float64, float64) float64) float64 {
 
 // Замыкание
 func adder() func(int) int {
-	sum := 0
+	var sum int
 	return func(x int) int {
 		sum += x
 		return sum
@@ -218,99 +213,76 @@ func main() {
 	fmt.Println(" \n[ ФУНКЦИИ ]\n ")
 
 	var a, b, c int
-
 	fmt.Print("Введите до трех чисел (через пробел): ")
 	fmt.Scanf("%d %d %d", &a, &b, &c)
-
 	fmt.Println()
 
-	/* Сумма через функцию */
-
+	// Сумма через функцию
 	sum := sum(a, b, c)
-	fmt.Println("Общая сумма равна", sum)
+	fmt.Println("Общая сумма:", sum)
 
-	/* Сумма серез срез */
-
+	// Сумма через срез
+	var res int
 	slice := []int{a, b}
-	res := 0
 	sumSlice := func(slice []int) int {
 		for _, v := range slice {
 			res += v
 		}
 		return res
 	}
-	fmt.Println("Сумма среза равна", sumSlice(slice))
-	fmt.Println("Сумма двух срезов равна", sumSlice(slice))
-
+	fmt.Println("Сумма среза:", sumSlice(slice))
+	fmt.Println("Сумма двух срезов:", sumSlice(slice))
 	fmt.Println()
 
-	/* Максимум, половина и факториал */
-
-	fmt.Println("Наибольшее число", max(a, b, c))
-
+	// Максимум, половина и факториал
+	fmt.Println("Наибольшее число:", max(a, b, c))
 	res, isEven := half(sum)
-	fmt.Println("Половина (четная)", res, "(", isEven, ")")
-
-	fmt.Println("Факториал равен", fact(res))
-
+	fmt.Printf("Половина (четная): %d (%t)\n", res, isEven)
+	fmt.Println("Факториал:", fact(res))
 	fmt.Println()
 
-	/* Фибоначчи */
-
-	fmt.Println("Ряд Фибоначчи", fibRow(res))
-	fmt.Println("Число Фибоначчи", fibValue(res))
-	fmt.Println("Число Фибоначчи (мемо.)", fibValueMemo(res))
+	// Фибоначчи
+	fmt.Println("Ряд Фибоначчи:", fibRow(res))
+	fmt.Println("Число Фибоначчи:", fibValue(res))
+	fmt.Println("Число Фибоначчи (мемо.):", fibValueMemo(res))
 	fmt.Println("Замыкание Фибоначчи:")
 	f := fibClosure()
-
 	for i := 0; i <= res; i++ {
 		fmt.Print(f(), " ")
 	}
+	fmt.Println()
+	fmt.Println()
 
-	fmt.Println(" \n ")
-
-	/* Нечетные и четные числа */
-
+	// Нечетные и четные числа
 	nextOdd := makeOddGenerator()
 	fmt.Println("Нечетные числа:", nextOdd(), nextOdd(), nextOdd())
-
 	nextEven := makeEvenGenerator()
 	fmt.Println("Четные числа:", nextEven(), nextEven(), nextEven())
-
 	fmt.Println()
 
-	/* Тип-функция и формы методы */
-
-	fmt.Println("Тип-функция:", prodFunc(func(a int, b int) int {
+	// Тип-функция и формы методы
+	fmt.Println("Тип-функция:", typeFunc(func(a int, b int) int {
 		return a * b
 	}))
-
 	mySubber := subber{val: 50}
 	fmt.Println("Обычный метод:", mySubber.subFrom(120))
-
 	fs1 := mySubber.subFrom
 	fmt.Println("Значение метода:", fs1(115))
-
 	fs2 := subber.subFrom
 	fmt.Println("Выражение метода:", fs2(mySubber, 110))
-
 	fmt.Println()
 
-	/* Абстрактная функция */
-
+	// Абстрактная функция
 	fmt.Println("Абстракные функции:")
 	hypot := func(x, y float64) float64 {
 		return math.Pow(2*x, 2*y)
 	}
 	fmt.Println("hypot(2, 4) =", hypot(2, 4))
-
 	fmt.Println("compute(hypot) =", compute(hypot))
 	fmt.Println("compute(math.Pow) =", compute(math.Pow))
-
 	fmt.Println()
 
-	/* Замыкания */
-
+	// Замыкания
 	fmt.Println("Замыкания:")
 	pos, neg := adder(), adder()
 	for i := 0; i < max(a, b, c); i++ {
@@ -319,46 +291,37 @@ func main() {
 			neg(-2*i),
 		)
 	}
-
 	fmt.Println()
 
-	/* Отложенная функция */
-
+	// Полиморфная функция
 	myFigure := triangle
 	myX := 3.5
-
 	ar, ok := area(myFigure)
 	if !ok {
 		fmt.Println("ОШИБКА: Нет функции для расчета фигуры")
 		return
 	}
-
 	myArea := ar(myX)
 	fmt.Printf("Фигура: %d, площадь: %2.2f\n\n", myFigure, myArea)
 
-	/* Отслеживание количества вызовов и времени выполнения */
-
+	// Отслеживание количества вызовов
 	fmt.Println("Количество вызовов функции:")
-
 	countedPrint := countCall(myPrinter)
 	countedPrint("Hello")
 	countedPrint("World")
 	fmt.Println()
 
+	// Отслеживание времени выполнения
 	fmt.Println("Время выполнения функции:")
-
 	metricPrint := metricCall(countedPrint)
 	metricPrint("Привет")
 	metricPrint("Мир")
 	fmt.Println()
 
-	/* Отложенные функции */
-
+	// Отложенные функции
 	df := 10
 	defer deferrer(df, &df)
 	df = 100
-
 	fmt.Println(intuitive())
 	fmt.Println(unintuitive())
-
 }
