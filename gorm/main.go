@@ -85,7 +85,7 @@ func main() {
 	fmt.Println("Таблица пользовательских групп создана")
 	fmt.Println()
 
-	/* Создание */
+	// Создание
 
 	user := User{
 		Name: "Gregory Frost",
@@ -138,7 +138,7 @@ func main() {
 	}
 	fmt.Println()
 
-	/* Обновление */
+	// Обновление
 
 	// Полностью
 	user.Email = "greg-frost@yandex.ru"
@@ -153,7 +153,7 @@ func main() {
 	db.Model(&User{}).Where("age < 30").
 		Updates(map[string]interface{}{"age": 21})
 
-	/* Чтение записи */
+	// Чтение записи
 
 	var firstUser User
 	var firstOrder Order
@@ -176,7 +176,7 @@ func main() {
 	fmt.Printf("Заказ первого пользователя:\nTitle: %s Quantity: %d Name: %s\n\n",
 		firstOrder.Title, firstOrder.Quantity, firstOrder.User.Name)
 
-	/* Чтение всех записей */
+	// Чтение всех записей
 
 	var allUsers []User
 
@@ -205,8 +205,7 @@ func main() {
 	fmt.Println("Пользователь удален")
 	fmt.Println()
 
-	/* Транзакции */
-
+	// Транзакции
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -216,7 +215,6 @@ func main() {
 	if tx.Error != nil {
 		return
 	}
-
 	if err := tx.Create(&user).Error; err != nil {
 		tx.Rollback()
 		fmt.Println("Транзакция отменена")
