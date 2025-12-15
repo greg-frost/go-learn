@@ -52,7 +52,7 @@ func GetUsersByID(id int) (*User, error) {
 func main() {
 	fmt.Println(" \n[ GRAPHQL 3 (GRAPHQL-GO) ]\n ")
 
-	/* Простая схема */
+	// Простая схема
 
 	fmt.Println("Простая схема:")
 	fmt.Println()
@@ -92,7 +92,7 @@ func main() {
 	response, _ := json.MarshalIndent(r, "", "   ")
 	fmt.Printf("Ответ:\n%s\n\n", response)
 
-	/* Использование контекста */
+	// Использование контекста
 
 	fmt.Println("Использование контекста:")
 	fmt.Println()
@@ -131,7 +131,7 @@ func main() {
 	response, _ = json.MarshalIndent(r, "", "   ")
 	fmt.Printf("Ответ:\n%s\n\n", response)
 
-	/* Режим сервера */
+	// Режим сервера
 
 	fmt.Println("Режим сервера:")
 	fmt.Println()
