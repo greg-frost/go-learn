@@ -24,8 +24,7 @@ func (s *server) Say(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRespons
 func main() {
 	fmt.Println(" \n[ GRPC 1 ]\n ")
 
-	/* Сервер */
-
+	// Сервер
 	fmt.Println("Сервер:")
 	go func() {
 		fmt.Println("Запуск на localhost:8888")
@@ -39,21 +38,17 @@ func main() {
 		pb.RegisterHelloServer(s, &server{})
 		s.Serve(listener)
 	}()
-
 	time.Sleep(250 * time.Millisecond)
 	fmt.Println()
 
-	/* Клиент */
-
+	// Клиент
 	fmt.Println("Клиент:")
-
 	addr := "localhost:8888"
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer conn.Close()
-
 	c := pb.NewHelloClient(conn)
 	name := "Greg Frost"
 	hr := &pb.HelloRequest{Name: name}
@@ -61,6 +56,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Printf("Получено %q\n", r.Message)
 }
