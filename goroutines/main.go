@@ -7,18 +7,18 @@ import (
 )
 
 // Текстовая рутина
-func routineText(txt string, size, ms int) {
+func routineText(msg string, size, ms int) {
 	for i := 1; i <= size; i++ {
-		fmt.Print(txt, i, " ")
+		fmt.Print(msg, i, " ")
 		waitMs(ms)
 	}
-	fmt.Println("Поток", txt, "завершен!")
+	fmt.Println("Поток", msg, "завершен!")
 }
 
 // Символьная рутина
-func routineVisual(txt string, size, ms int) {
+func routineVisual(msg string, size, ms int) {
 	for i := 1; i <= size; i++ {
-		fmt.Print(txt)
+		fmt.Print(msg)
 		waitMs(ms)
 	}
 }
@@ -33,7 +33,7 @@ func routineRand(n, ms int) {
 
 // Пауза в мс
 func waitMs(ms int) {
-	time.Sleep(time.Millisecond * time.Duration(ms))
+	time.Sleep(time.Duration(ms) * time.Millisecond)
 }
 
 // Пауза в сек
@@ -49,34 +49,27 @@ func waitRandMs(ms int) {
 func main() {
 	fmt.Println(" \n[ ГОРУТИНЫ ]\n ")
 
-	/* Текстовые рутины */
-
+	// Текстовые рутины
 	go routineText("A", 100, 1)
 	go routineText("B", 50, 10)
 	go routineText("C", 10, 100)
-
 	waitSec(2)
-
 	fmt.Println()
 
-	/* Символьные рутины */
-
+	// Символьные рутины
 	go routineVisual("-", 100, 1)
 	go routineVisual("+", 50, 10)
 	go routineVisual("#", 10, 100)
-
 	waitSec(2)
+	fmt.Println()
+	fmt.Println()
 
-	fmt.Println(" \n ")
-
-	/* Рутины со случайной паузой */
-
+	// Рутины со случайной паузой
 	for i := 0; i < 10; i++ {
 		go routineRand(i, 250)
 	}
 
-	/* Ожидание ввода */
-
+	// Ожидание ввода
 	var input string
 	fmt.Scanln(&input)
 }
