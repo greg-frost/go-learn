@@ -103,7 +103,7 @@ func print(c <-chan string) {
 
 // Пауза в мс
 func waitMs(ms int) {
-	time.Sleep(time.Millisecond * time.Duration(ms))
+	time.Sleep(time.Duration(ms) * time.Millisecond)
 }
 
 func main() {
