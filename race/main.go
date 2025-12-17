@@ -48,41 +48,33 @@ func main() {
 
 	times := 1000
 
-	/* Без синхронизации */
-
+	// Без синхронизации
 	for i := 0; i < times; i++ {
 		go increment()
 	}
-
-	time.Sleep(time.Millisecond * 50)
+	time.Sleep(50 * time.Millisecond)
 	fmt.Println("Гонка:  ", counter)
 
-	/* Мьютекс */
-
+	// Мьютекс
 	counter = 0
 	for i := 0; i < times; i++ {
 		go mutexIncrement()
 	}
-
-	time.Sleep(time.Millisecond * 50)
+	time.Sleep(50 * time.Millisecond)
 	fmt.Println("Mutex:  ", counter)
 
-	/* Atomic */
-
+	// Atomic
 	for i := 0; i < times; i++ {
 		go atomicIncrement()
 	}
-
-	time.Sleep(time.Millisecond * 50)
+	time.Sleep(50 * time.Millisecond)
 	fmt.Println("Atomic: ", acounter.Load())
 
-	/* Канал */
-
+	// Канал
 	counter = 0
 	for i := 0; i < times; i++ {
 		go channelIncrement()
 	}
-
-	time.Sleep(time.Millisecond * 50)
+	time.Sleep(50 * time.Millisecond)
 	fmt.Println("Channel:", counter)
 }
