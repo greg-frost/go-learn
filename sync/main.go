@@ -8,19 +8,19 @@ import (
 
 // Привет
 func doHello() {
-	time.Sleep(time.Second * 1)
+	time.Sleep(time.Second)
 	fmt.Print("Hello ")
 }
 
 // Жестокий
 func doCruel() {
-	time.Sleep(time.Second * 2)
+	time.Sleep(2 * time.Second)
 	fmt.Print("Cruel ")
 }
 
 // Мир
 func doWorld() {
-	time.Sleep(time.Second * 3)
+	time.Sleep(3 * time.Second)
 	fmt.Print("World ")
 }
 
@@ -60,59 +60,46 @@ func sqrt(x int) int {
 func main() {
 	fmt.Println(" \n[ СИНХРОНИЗАЦИЯ ]\n ")
 
-	/* WaitGroup 1 */
-
+	// WaitGroup 1
+	fmt.Println("WaitGroup 1:")
 	var wg sync.WaitGroup
 	wg.Add(3)
-
-	fmt.Println("WaitGroup 1:")
-
 	go func() {
 		defer wg.Done()
 		doHello()
 	}()
-
 	go func() {
 		defer wg.Done()
 		doCruel()
 	}()
-
 	go func() {
 		defer wg.Done()
 		doWorld()
 	}()
-
 	wg.Wait()
 	fmt.Println(" \n ")
 
-	/* WaitGroup 2 */
-
+	// WaitGroup 2
+	fmt.Println("WaitGroup 2:")
 	const size = 10
 	res := make([]int, size)
-
 	in := make(chan int, size)
 	for i := 0; i < size; i++ {
 		in <- i + 1
 	}
 	close(in)
-
 	copy(res, GatherAndProcess(in, sqrt, size))
-
-	fmt.Println("WaitGroup 2:")
 	fmt.Println(res)
 	fmt.Println()
 
-	/* Once */
-
-	var once sync.Once
-
+	// Once
 	fmt.Println("Однократно:")
+	var once sync.Once
 	for i := 0; i < 2; i++ {
 		once.Do(func() {
 			fmt.Print("Once")
 		})
 		fmt.Print(" upon a time")
 	}
-
 	fmt.Println()
 }
