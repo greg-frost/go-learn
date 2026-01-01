@@ -1,0 +1,1 @@
+Файлы контрактов API (Swagger, Protocol Buffers и т.д.)
