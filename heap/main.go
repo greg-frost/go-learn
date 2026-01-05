@@ -5,8 +5,7 @@ import (
 	"fmt"
 )
 
-/* Библиотечная */
-
+// Библиотечная куча
 type IntHeap []int
 
 func (h IntHeap) Len() int {
@@ -31,9 +30,7 @@ func (h *IntHeap) Pop() any {
 	return x
 }
 
-/* Собственная */
-
-// Минимальная
+// Собственная куча (минимальная)
 type MinHeap []int
 
 func (h MinHeap) sink(i int) {
@@ -48,7 +45,6 @@ func (h MinHeap) sink(i int) {
 		if h[k] <= h[j] {
 			return
 		}
-
 		h[k], h[j] = h[j], h[k]
 		k = j
 		j = 2*k + 1
@@ -79,7 +75,7 @@ func (h *MinHeap) Pop() (int, bool) {
 	return v, true
 }
 
-// Максимальная
+// Собственная куча (максимальная)
 type MaxHeap []int
 
 func (h MaxHeap) sink(i int) {
@@ -94,7 +90,6 @@ func (h MaxHeap) sink(i int) {
 		if h[k] >= h[j] {
 			return
 		}
-
 		h[k], h[j] = h[j], h[k]
 		k = j
 		j = 2*k + 1
@@ -128,23 +123,20 @@ func (h *MaxHeap) Pop() (int, bool) {
 func main() {
 	fmt.Println(" \n[ КУЧА ]\n ")
 
-	/* Библиотечная куча */
-
+	// Библиотечная куча
 	fmt.Println("Библиотечная")
 	fmt.Println("------------")
 	fmt.Println()
 
+	// Инициализация
 	h1 := &IntHeap{}
 	heap.Init(h1)
 
 	// Добавление
-
 	fmt.Println("Push: 10")
 	heap.Push(h1, 10)
-
 	fmt.Println("Push: 5")
 	heap.Push(h1, 5)
-
 	fmt.Println("Push: 15")
 	heap.Push(h1, 15)
 
@@ -154,13 +146,10 @@ func main() {
 	fmt.Println()
 
 	// Извлечение
-
 	v := heap.Pop(h1).(int)
 	fmt.Println("Min:", v)
-
 	v = heap.Pop(h1).(int)
 	fmt.Println("Min:", v)
-
 	v = heap.Pop(h1).(int)
 	fmt.Println("Min:", v)
 
@@ -169,22 +158,19 @@ func main() {
 	fmt.Println("Heap:", *h1)
 	fmt.Println()
 
-	/* Собственная куча */
-
+	// Собственная куча
 	fmt.Println("Собственная")
 	fmt.Println("-----------")
 	fmt.Println()
 
+	// Инициализация
 	h2 := MinHeap{}
 
 	// Добавление
-
 	fmt.Println("Push: 3")
 	h2.Push(3)
-
 	fmt.Println("Push: 5")
 	h2.Push(5)
-
 	fmt.Println("Push: 1")
 	h2.Push(1)
 
@@ -194,16 +180,12 @@ func main() {
 	fmt.Println()
 
 	// Извлечение
-
 	v, ok := h2.Pop()
 	fmt.Println("Min:", v, ok)
-
 	v, ok = h2.Pop()
 	fmt.Println("Min:", v, ok)
-
 	v, ok = h2.Pop()
 	fmt.Println("Min:", v, ok)
-
 	v, ok = h2.Pop()
 	fmt.Println("Min:", v, ok)
 
