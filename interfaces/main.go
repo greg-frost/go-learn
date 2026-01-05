@@ -53,7 +53,6 @@ func main() {
 	fmt.Println(" \n[ ИНТЕРФЕЙС ]\n ")
 
 	fmt.Println("Приветствие:")
-
 	c := NewClient("Eikichi", "Onidzuka", 22, false)
 	c.Program()
 }
