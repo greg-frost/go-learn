@@ -77,6 +77,7 @@ func get(url string) (*http.Response, error) {
 
 		return res, data.Err
 	}
+
 	return res, nil
 }
 
@@ -92,7 +93,6 @@ func main() {
 		fmt.Println("(на http://localhost:8080)")
 		log.Fatal(http.ListenAndServe("localhost:8080", nil))
 	}()
-
 	time.Sleep(250 * time.Millisecond)
 	fmt.Println()
 
