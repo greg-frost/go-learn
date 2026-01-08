@@ -42,8 +42,8 @@ func run() error {
 // Генерация своей ошибки
 func myRun() error {
 	var e error
-	e = errors.New("НИЧИВО-НИ-ВЫШЛА!") // Можно так, ...
-	e = fmt.Errorf("НИЧИВО-НИ-ВЫШЛА!") // ... а можно и этак
+	e = errors.New("НИЧИВО-НИ-ВЫШЛА!") // Можно так ...
+	e = fmt.Errorf("НИЧИВО-НИ-ВЫШЛА!") // ... или так
 	return e
 }
 
