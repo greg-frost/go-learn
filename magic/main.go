@@ -27,7 +27,6 @@ func CastToAll(spell Spell, objects []interface{}) {
 
 // Каст заклинания на кого-то конкретного
 func CastTo(spell Spell, object interface{}) {
-
 	// Если есть метод
 	if recv, ok := object.(CastReceiver); ok {
 		recv.ReceiveSpell(spell)
@@ -47,12 +46,10 @@ func CastTo(spell Spell, object interface{}) {
 	if !field.IsValid() {
 		return
 	}
-
 	// Если нельзя изменить
 	if !field.CanSet() {
 		return
 	}
-
 	// Если не целое
 	if field.Kind() != reflect.Int && field.Kind() != reflect.Int8 &&
 		field.Kind() != reflect.Int16 && field.Kind() != reflect.Int32 &&
@@ -60,7 +57,7 @@ func CastTo(spell Spell, object interface{}) {
 		return
 	}
 
-	field.SetInt(field.Int() + int64(spell.Value())) // новое значение
+	field.SetInt(field.Int() + int64(spell.Value())) // Новое значение
 }
 
 // Структура "заклинание"
@@ -126,15 +123,13 @@ type Wall struct {
 func main() {
 	fmt.Println(" \n[ МАГИЯ РЕФЛЕКСИИ ]\n ")
 
-	/* Игрок */
-
+	// Игрок
 	player := &Player{
 		name:   "Player",
 		health: 100,
 	}
 
-	/* Враги */
-
+	// Враги
 	enemies := []interface{}{
 		&Zombie{Health: 1000},
 		&Zombie{Health: 1000},
@@ -146,8 +141,7 @@ func main() {
 		&Wall{Durability: 100},
 	}
 
-	/* Заклинания */
-
+	// Заклинания
 	CastToAll(newSpell("fire", "Health", -250), append(enemies, player))
 	fmt.Println()
 	CastToAll(newSpell("heal", "Health", 100), append(enemies, player))
