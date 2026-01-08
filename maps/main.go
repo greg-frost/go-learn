@@ -14,7 +14,6 @@ func uniqueInts(values []int) []int {
 	if len(values) == 0 {
 		return values
 	}
-
 	res := make([]int, 0, len(values))
 	seen := make(map[int]struct{})
 	for _, v := range values {
@@ -23,7 +22,6 @@ func uniqueInts(values []int) []int {
 			seen[v] = struct{}{}
 		}
 	}
-
 	return res
 }
 
@@ -32,7 +30,6 @@ func uniqueStrings(values []string) []string {
 	if len(values) == 0 {
 		return values
 	}
-
 	res := make([]string, 0, len(values))
 	seen := make(map[string]bool)
 	for _, v := range values {
@@ -41,13 +38,13 @@ func uniqueStrings(values []string) []string {
 			seen[v] = true
 		}
 	}
-
 	return res
 }
 
 func main() {
 	fmt.Println(" \n[ КАРТЫ ]\n ")
 
+	// Поиск и перебор
 	elements := map[string]map[string]string{
 		"H": {
 			"name":  "Hydrogen",
