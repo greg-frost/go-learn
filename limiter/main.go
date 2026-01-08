@@ -15,14 +15,12 @@ func main() {
 
 	// Равномерный лимитер
 	fmt.Println("Равномерный:")
-
 	limiter := time.Tick(200 * time.Millisecond)
 	requests := make(chan int, count)
 	for i := 1; i <= count; i++ {
 		requests <- i
 	}
 	close(requests)
-
 	for req := range requests {
 		<-limiter
 		fmt.Println("Запрос", req, time.Now())
@@ -31,7 +29,6 @@ func main() {
 
 	// Всплесковый лимитер
 	fmt.Println("Всплесковый:")
-
 	burstyLimiter := make(chan time.Time, limit)
 	for i := 1; i <= limit; i++ {
 		burstyLimiter <- time.Now()
@@ -41,13 +38,11 @@ func main() {
 			burstyLimiter <- t
 		}
 	}()
-
 	burstyRequests := make(chan int, count)
 	for i := 1; i <= count; i++ {
 		burstyRequests <- i
 	}
 	close(burstyRequests)
-
 	for req := range burstyRequests {
 		<-burstyLimiter
 		fmt.Println("Запрос", req, time.Now())
