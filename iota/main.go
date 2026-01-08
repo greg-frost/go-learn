@@ -74,12 +74,15 @@ func (b ByteSize) String() string {
 func main() {
 	fmt.Println(" \n[ ЙОТА ]\n ")
 
+	// Дни недели
 	var today Weekday = Sunday
 	tomorrow := NextDay(today)
 	fmt.Println("Сегодня:", today, "Завтра:", tomorrow)
 
+	// Нечетные числа
 	fmt.Println("Нечетные:", one, three, five, seven, nine)
 
+	// Размер файла
 	var size ByteSize = 1000000000
 	fmt.Println("Размер файла:", size)
 }
