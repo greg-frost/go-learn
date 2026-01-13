@@ -48,6 +48,7 @@ func init() {
 func main() {
 	fmt.Println(" \n[ COBRA ]\n ")
 
+	// Запуск команд и флагов
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
