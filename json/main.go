@@ -46,7 +46,6 @@ func readJSON(respJson string) (Response, error) {
 	if err := json.Unmarshal([]byte(respJson), &resp); err != nil {
 		return Response{}, fmt.Errorf("JSON десериализация: %w", err)
 	}
-
 	return resp, nil
 }
 
@@ -82,23 +81,19 @@ func printJSON(v interface{}, caption string, depth int) {
 func main() {
 	fmt.Println(" \n[ JSON ]\n ")
 
-	/* Сериализация */
-
+	// Сериализация
 	man := Person{
 		Name:        "Greg",
 		Email:       "greg-frost@yandex.ru",
 		DateOfBirth: time.Now(),
 	}
-
 	jsonMan, err := json.Marshal(man)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Printf("Сериализация:\n%v\n\n", string(jsonMan))
 
-	/* Анонимная структура */
-
+	// Анонимная структура
 	req := struct {
 		NameContains string `json:"name_contains"`
 		Offset       int    `json:"offset"`
@@ -107,12 +102,10 @@ func main() {
 		NameContains: "Григорий",
 		Limit:        50,
 	}
-
 	jsonReq, _ := json.Marshal(req)
 	fmt.Printf("Анонимная структура:\n%v\n\n", string(jsonReq))
 
-	/* Композитный JSON (вручную) */
-
+	// Композитный JSON (вручную)
 	resp1 := Response{
 		Header: Header{
 			Code:    0,
@@ -129,12 +122,10 @@ func main() {
 			},
 		},
 	}
-
 	jsonResp1, _ := json.Marshal(resp1)
 	fmt.Printf("Структура ответа (вручную):\n%+v\n%v\n\n", resp1, string(jsonResp1))
 
-	/* Композитный JSON (десериализация) */
-
+	// Композитный JSON (десериализация)
 	const respJson = `
 	{
 	    "header": {
@@ -151,13 +142,11 @@ func main() {
 	    }]
 	}
 	`
-
 	resp2, _ := readJSON(respJson)
 	jsonResp2, _ := json.Marshal(resp2)
 	fmt.Printf("Структура ответа (десериализация):\n%+v\n%v\n\n", resp2, string(jsonResp2))
 
-	/* Encoder и Decoder */
-
+	// Encoder и Decoder
 	const data = `
 		{"name": "Fred", "age": 40}
 		{"name": "Mary", "age": 21}
@@ -167,30 +156,24 @@ func main() {
 		Name string `json:"name"`
 		Age  int    `json:"age"`
 	}
-
 	var b bytes.Buffer
 	dec := json.NewDecoder(strings.NewReader(data))
 	enc := json.NewEncoder(&b)
-
 	for dec.More() {
 		err := dec.Decode(&p)
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		p.Name = p.Name + " " + p.Name
-
 		err = enc.Encode(p)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-
 	fmt.Println("Encode и Decode:")
 	fmt.Println(b.String())
 
-	/* Произвольный формат */
-
+	// Произвольный формат
 	fmt.Println("Произвольный формат:")
 	jsonCustom := `
 	{
@@ -209,7 +192,6 @@ func main() {
 		}
 	}
 	`
-
 	var custom interface{}
 	err = json.Unmarshal([]byte(jsonCustom), &custom)
 	if err != nil {
@@ -217,6 +199,5 @@ func main() {
 	}
 	fmt.Println(custom)
 	fmt.Println()
-
 	printJSON(custom, "", 0)
 }
