@@ -27,7 +27,7 @@ type Config struct {
 var path = base.Dir("config")
 
 // Загрузка конфигурации
-func loadConfig(filename string) (Config, error) {
+func loadConfiguration(filename string) (Config, error) {
 	d, err := os.ReadFile(filepath.Join(path, filename))
 	if err != nil {
 		return Config{}, err
@@ -42,7 +42,17 @@ func loadConfig(filename string) (Config, error) {
 	return config, nil
 }
 
-// Вычисление кэша файла
+// Печать конфигурации
+func printConfiguration(config Config) {
+	fmt.Println("Host:", config.Host)
+	fmt.Println("Port:", config.Port)
+	fmt.Println("Tags:")
+	for tag, value := range config.Tags {
+		fmt.Printf("   %s: %s\n", tag, value)
+	}
+}
+
+// Вычисление хэша файла
 func calculateFileHash(filename string) (string, error) {
 	file, err := os.Open(filepath.Join(path, filename))
 	if err != nil {
@@ -63,16 +73,11 @@ func main() {
 	fmt.Println(" \n[ КОНФИГУРАЦИЯ ]\n ")
 
 	// Загрузка
-	cfg, err := loadConfig("config.yml")
+	cfg, err := loadConfiguration("config.yml")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Вывод
-	fmt.Println("Host:", cfg.Host)
-	fmt.Println("Port:", cfg.Port)
-	fmt.Println("Tags:")
-	for tag, value := range cfg.Tags {
-		fmt.Printf("   %s: %s\n", tag, value)
-	}
+	// Печать
+	printConfiguration(cfg)
 }
