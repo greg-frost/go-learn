@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -73,7 +74,7 @@ func calculateFileHash(filename string) (string, error) {
 func watchConfig(filename string) (<-chan string, <-chan error, error) {
 	updates := make(chan string)
 	errs := make(chan error)
-	var hash string
+	hash, _ := calculateFileHash(filename)
 
 	go func() {
 		ticker := time.NewTicker(time.Second)
@@ -133,6 +134,17 @@ func init() {
 func main() {
 	fmt.Println(" \n[ КОНФИГУРАЦИЯ ]\n ")
 
+	// Загрузка
+	var err error
+	config, err = loadConfig("config.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Печать
+	printConfig(config)
+
+	fmt.Println()
 	fmt.Println("Измените файл конфигурации")
 	fmt.Println("или нажмите любую кнопку для выхода...")
 
