@@ -4,9 +4,9 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"go-learn/base"
 
@@ -21,13 +21,13 @@ type Config struct {
 }
 
 // Конфигурация
-// var config Config
+var config Config
 
 // Путь
 var path = base.Dir("config")
 
 // Загрузка конфигурации
-func loadConfiguration(filename string) (Config, error) {
+func loadConfig(filename string) (Config, error) {
 	d, err := os.ReadFile(filepath.Join(path, filename))
 	if err != nil {
 		return Config{}, err
@@ -43,7 +43,7 @@ func loadConfiguration(filename string) (Config, error) {
 }
 
 // Печать конфигурации
-func printConfiguration(config Config) {
+func printConfig(config Config) {
 	fmt.Println("Host:", config.Host)
 	fmt.Println("Port:", config.Port)
 	fmt.Println("Tags:")
@@ -69,15 +69,74 @@ func calculateFileHash(filename string) (string, error) {
 	return sum, nil
 }
 
+// Наблюдение за конфигурацией
+func watchConfig(filename string) (<-chan string, <-chan error, error) {
+	updates := make(chan string)
+	errs := make(chan error)
+	var hash string
+
+	go func() {
+		ticker := time.NewTicker(time.Second)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			newHash, err := calculateFileHash(filename)
+			if err != nil {
+				errs <- err
+				continue
+			}
+
+			if newHash != hash {
+				hash = newHash
+				updates <- filename
+			}
+		}
+	}()
+
+	return updates, errs, nil
+}
+
+// Прослушивание изменений
+func startListening(updates <-chan string, errs <-chan error) {
+	for {
+		select {
+		case filename := <-updates:
+			cfg, err := loadConfig(filename)
+			if err != nil {
+				fmt.Println("Ошибка загрузки конфигурации:", err)
+				continue
+			}
+
+			config = cfg
+
+			fmt.Println()
+			fmt.Println("Конфигурация изменилась!")
+			printConfig(config)
+
+		case err := <-errs:
+			fmt.Println("Ошибка наблюдения за конфигурацией:", err)
+		}
+	}
+}
+
+func init() {
+	// Регистрация наблюдения
+	updates, errs, err := watchConfig("config.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	// Прослушивание изменений
+	go startListening(updates, errs)
+}
+
 func main() {
 	fmt.Println(" \n[ КОНФИГУРАЦИЯ ]\n ")
 
-	// Загрузка
-	cfg, err := loadConfiguration("config.yml")
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println("Измените файл конфигурации")
+	fmt.Println("или нажмите любую кнопку для выхода...")
 
-	// Печать
-	printConfiguration(cfg)
+	// Ожидание ввода
+	var input string
+	fmt.Scanln(&input)
 }
