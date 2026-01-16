@@ -70,8 +70,31 @@ func calculateFileHash(filename string) (string, error) {
 	return sum, nil
 }
 
-// Наблюдение за конфигурацией
-func watchConfig(filename string) (<-chan string, <-chan error, error) {
+// Прослушивание изменений
+func startListening(updates <-chan string, errs <-chan error) {
+	for {
+		select {
+		case filename := <-updates:
+			cfg, err := loadConfig(filename)
+			if err != nil {
+				fmt.Println("Ошибка загрузки конфигурации:", err)
+				continue
+			}
+
+			config = cfg
+
+			fmt.Println()
+			fmt.Println("Конфигурация изменилась!")
+			printConfig(config)
+
+		case err := <-errs:
+			fmt.Println("Ошибка наблюдения за конфигурацией:", err)
+		}
+	}
+}
+
+// Наблюдение за конфигурацией (по изменению хэша)
+func watchConfigByHash(filename string) (<-chan string, <-chan error, error) {
 	updates := make(chan string)
 	errs := make(chan error)
 	hash, _ := calculateFileHash(filename)
@@ -97,32 +120,9 @@ func watchConfig(filename string) (<-chan string, <-chan error, error) {
 	return updates, errs, nil
 }
 
-// Прослушивание изменений
-func startListening(updates <-chan string, errs <-chan error) {
-	for {
-		select {
-		case filename := <-updates:
-			cfg, err := loadConfig(filename)
-			if err != nil {
-				fmt.Println("Ошибка загрузки конфигурации:", err)
-				continue
-			}
-
-			config = cfg
-
-			fmt.Println()
-			fmt.Println("Конфигурация изменилась!")
-			printConfig(config)
-
-		case err := <-errs:
-			fmt.Println("Ошибка наблюдения за конфигурацией:", err)
-		}
-	}
-}
-
 func init() {
-	// Регистрация наблюдения
-	updates, errs, err := watchConfig("config.yml")
+	// Регистрация наблюдателя
+	updates, errs, err := watchConfigByHash("config.yml")
 	if err != nil {
 		panic(err)
 	}
