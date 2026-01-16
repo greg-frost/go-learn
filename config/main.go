@@ -54,46 +54,6 @@ func printConfig(config Config) {
 	}
 }
 
-// Вычисление хэша файла
-func calculateFileHash(filename string) (string, error) {
-	file, err := os.Open(filepath.Join(path, filename))
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	hash := sha256.New()
-	if _, err := io.Copy(hash, file); err != nil {
-		return "", err
-	}
-	sum := fmt.Sprintf("%x", hash.Sum(nil))
-
-	return sum, nil
-}
-
-// Прослушивание изменений
-func startListening(updates <-chan string, errs <-chan error) {
-	for {
-		select {
-		case filename := <-updates:
-			cfg, err := loadConfig(filename)
-			if err != nil {
-				fmt.Println("Ошибка загрузки конфигурации:", err)
-				continue
-			}
-
-			config = cfg
-
-			fmt.Println()
-			fmt.Println("Конфигурация изменилась!")
-			printConfig(config)
-
-		case err := <-errs:
-			fmt.Println("Ошибка наблюдения за конфигурацией:", err)
-		}
-	}
-}
-
 // Наблюдение за конфигурацией (по изменению хэша)
 func watchConfigByHash(filename string) (<-chan string, <-chan error, error) {
 	updates := make(chan string)
@@ -119,6 +79,23 @@ func watchConfigByHash(filename string) (<-chan string, <-chan error, error) {
 	}()
 
 	return updates, errs, nil
+}
+
+// Вычисление хэша файла
+func calculateFileHash(filename string) (string, error) {
+	file, err := os.Open(filepath.Join(path, filename))
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	hash := sha256.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return "", err
+	}
+	sum := fmt.Sprintf("%x", hash.Sum(nil))
+
+	return sum, nil
 }
 
 // Наблюдение за конфигурацией (по сигналам ОС)
@@ -148,6 +125,29 @@ func watchConfigByNotify(filename string) (<-chan string, <-chan error, error) {
 	}()
 
 	return updates, watcher.Errors, nil
+}
+
+// Прослушивание изменений
+func startListening(updates <-chan string, errs <-chan error) {
+	for {
+		select {
+		case filename := <-updates:
+			cfg, err := loadConfig(filename)
+			if err != nil {
+				fmt.Println("Ошибка загрузки конфигурации:", err)
+				continue
+			}
+
+			config = cfg
+
+			fmt.Println()
+			fmt.Println("Конфигурация изменилась!")
+			printConfig(config)
+
+		case err := <-errs:
+			fmt.Println("Ошибка наблюдения за конфигурацией:", err)
+		}
+	}
 }
 
 func init() {
