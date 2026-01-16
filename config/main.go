@@ -11,6 +11,7 @@ import (
 
 	"go-learn/base"
 
+	"github.com/fsnotify/fsnotify"
 	"gopkg.in/yaml.v2"
 )
 
@@ -100,7 +101,7 @@ func watchConfigByHash(filename string) (<-chan string, <-chan error, error) {
 	hash, _ := calculateFileHash(filename)
 
 	go func() {
-		ticker := time.NewTicker(time.Second)
+		ticker := time.NewTicker(3 * time.Second)
 		defer ticker.Stop()
 
 		for range ticker.C {
@@ -118,6 +119,35 @@ func watchConfigByHash(filename string) (<-chan string, <-chan error, error) {
 	}()
 
 	return updates, errs, nil
+}
+
+// Наблюдение за конфигурацией (по сигналам ОС)
+func watchConfigByNotify(filename string) (<-chan string, <-chan error, error) {
+	updates := make(chan string)
+
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = watcher.Add(filepath.Join(path, filename))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	go func() {
+		// Начальное изменение файла
+		// updates <- filename
+
+		for event := range watcher.Events {
+			// Почему-то приходит по два события
+			if event.Op&fsnotify.Write == fsnotify.Write {
+				updates <- filepath.Base(event.Name)
+			}
+		}
+	}()
+
+	return updates, watcher.Errors, nil
 }
 
 func init() {
