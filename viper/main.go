@@ -46,4 +46,15 @@ func main() {
 	fmt.Printf("string: %q\n", viper.GetString("string"))
 	fmt.Println("number:", viper.GetInt("number"))
 	fmt.Println("boolean:", viper.GetBool("boolean"))
+	fmt.Println()
+
+	// Переменные окружения
+	// (приоритет ниже, чем у флагов)
+	fmt.Println("Переменные окружения:")
+	viper.BindEnv("id")
+	viper.BindEnv("pt", "PORT")
+	viper.BindEnv("string")
+	fmt.Println("ID:", viper.GetInt("id"))
+	fmt.Println("PORT:", viper.GetInt("pt"))
+	fmt.Printf("STRING: %q\n", viper.GetString("string"))
 }
