@@ -35,7 +35,7 @@ func main() {
 
 	// Установка вручную
 	// (наивысший приоритет)
-	fmt.Println("Установка вручную:")
+	fmt.Println("Установка вручную")
 	viper.Set("set", true)
 	viper.Set("key", "value")
 	fmt.Println("set:", viper.GetBool("set"))
@@ -44,7 +44,7 @@ func main() {
 
 	// Флаги командной строки
 	// (приоритет ниже, чем при установке вручную)
-	fmt.Println("Флаги командной строки:")
+	fmt.Println("Флаги командной строки")
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
@@ -55,18 +55,18 @@ func main() {
 
 	// Переменные окружения
 	// (приоритет ниже, чем у флагов командной строки)
-	fmt.Println("Переменные окружения:")
+	fmt.Println("Переменные окружения")
 	viper.BindEnv("id")
-	viper.BindEnv("port", "PORT")
+	viper.BindEnv("port", "PORT_N")
 	viper.BindEnv("string")
 	fmt.Println("ID:", viper.GetInt("id"))
-	fmt.Println("PORT:", viper.GetInt("port"))
+	fmt.Println("PORT_N:", viper.GetInt("port"))
 	fmt.Printf("STRING: %q\n", viper.GetString("string"))
 	fmt.Println()
 
 	// Файлы конфигурации
 	// (приоритет ниже, чем у переменных окружения)
-	fmt.Println("Файлы конфигурации:")
+	fmt.Println("Файлы конфигурации")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml") // Необязательно
 	viper.AddConfigPath(".")
@@ -79,4 +79,11 @@ func main() {
 	fmt.Println("tags.debug:", viper.GetBool("tags.debug"))
 	fmt.Println("tags.silent:", viper.GetBool("tags.silent"))
 	fmt.Println("tags.ssl:", viper.GetString("tags.ssl"))
+	fmt.Println()
+
+	// Значения по умолчанию
+	// (самый низкий приоритет)
+	fmt.Println("Значения по умолчанию")
+	viper.SetDefault("id", 1000)
+	fmt.Println("id:", viper.GetInt("id"))
 }
