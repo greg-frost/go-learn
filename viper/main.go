@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"log"
 
+	"go-learn/base"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+// Путь
+var path = base.Dir("viper")
 
 // Команда Cobra
 var rootCmd = &cobra.Command{
@@ -49,12 +54,29 @@ func main() {
 	fmt.Println()
 
 	// Переменные окружения
-	// (приоритет ниже, чем у флагов)
+	// (приоритет ниже, чем у флагов командной строки)
 	fmt.Println("Переменные окружения:")
 	viper.BindEnv("id")
-	viper.BindEnv("pt", "PORT")
+	viper.BindEnv("port", "PORT")
 	viper.BindEnv("string")
 	fmt.Println("ID:", viper.GetInt("id"))
-	fmt.Println("PORT:", viper.GetInt("pt"))
+	fmt.Println("PORT:", viper.GetInt("port"))
 	fmt.Printf("STRING: %q\n", viper.GetString("string"))
+	fmt.Println()
+
+	// Файлы конфигурации
+	// (приоритет ниже, чем у переменных окружения)
+	fmt.Println("Файлы конфигурации:")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml") // Необязательно
+	viper.AddConfigPath(".")
+	viper.AddConfigPath(path)
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("host: %q\n", viper.GetString("host"))
+	fmt.Println("port:", viper.GetInt("port"))
+	fmt.Println("tags.debug:", viper.GetBool("tags.debug"))
+	fmt.Println("tags.silent:", viper.GetBool("tags.silent"))
+	fmt.Println("tags.ssl:", viper.GetString("tags.ssl"))
 }
