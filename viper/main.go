@@ -9,6 +9,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	// _ "github.com/spf13/viper/remote"
 )
 
 // Путь
@@ -87,6 +88,15 @@ func main() {
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("Конфигурация изменилась:", e.Name)
 	})
+
+	// Удаленные службы конфигурации
+	// (приоритет ниже, чем у файлов конфигурации)
+	// fmt.Println("Удаленные службы конфигурации")
+	// viper.AddRemoteProvider("etcd", "http://127.0.0.1:4001", "/config/service.json")
+	// viper.SetConfigType("json")
+	// if err := viper.ReadRemoteConfig(); err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	// Значения по умолчанию
 	// (самый низкий приоритет)
