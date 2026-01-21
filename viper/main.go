@@ -6,6 +6,7 @@ import (
 
 	"go-learn/base"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -80,6 +81,12 @@ func main() {
 	fmt.Println("tags.silent:", viper.GetBool("tags.silent"))
 	fmt.Println("tags.ssl:", viper.GetString("tags.ssl"))
 	fmt.Println()
+
+	// Наблюдение за конфигурацией
+	viper.WatchConfig()
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Конфигурация изменилась:", e.Name)
+	})
 
 	// Значения по умолчанию
 	// (самый низкий приоритет)
