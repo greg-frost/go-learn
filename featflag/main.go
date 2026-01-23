@@ -2,10 +2,18 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
 )
 
-// Флаг использования нового функционала
-const useNewFeature = true
+// Включение функционала вручную
+// const useNewFeature = true
+
+// Флаг использования функционала
+func FeatureEnabled(feature string) bool {
+	state := strings.ToLower(os.Getenv(feature))
+	return state == "true" || state == "on" || strings.HasPrefix(state, "enable")
+}
 
 // Старый функционал
 func OldFeature() {
@@ -21,7 +29,7 @@ func main() {
 	fmt.Println(" \n[ FEATURE FLAG ]\n ")
 
 	// Выбор функционала
-	if useNewFeature {
+	if FeatureEnabled("USE_NEW_FEATURE") {
 		NewFeature()
 	} else {
 		OldFeature()
