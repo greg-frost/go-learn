@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strings"
+
+	"github.com/spf13/viper"
 )
 
 // Включение функционала вручную
@@ -11,8 +11,9 @@ import (
 
 // Флаг использования функционала
 func FeatureEnabled(feature string) bool {
-	state := strings.ToLower(os.Getenv(feature))
-	return state == "true" || state == "on" || strings.HasPrefix(state, "enable")
+	// state := strings.ToLower(os.Getenv(feature))
+	// return state == "true" || state == "on" || strings.HasPrefix(state, "enable")
+	return viper.GetBool(feature)
 }
 
 // Старый функционал
@@ -28,8 +29,12 @@ func NewFeature() {
 func main() {
 	fmt.Println(" \n[ FEATURE FLAG ]\n ")
 
+	// Имя флага и регистрация в Viper
+	feature := "use_new_feature"
+	viper.BindEnv(feature)
+
 	// Выбор функционала
-	if FeatureEnabled("USE_NEW_FEATURE") {
+	if FeatureEnabled(feature) {
 		NewFeature()
 	} else {
 		OldFeature()
