@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 
@@ -17,16 +18,19 @@ import (
 // }
 
 // Тип "включение функционала"
-type Enabled func(int) bool
+type Enabled func(context.Context) (bool, error)
 
 // Функции включения функционала
 var enabledFunctions = map[string]Enabled{
 	"use_new_feature": enabledByChance,
 }
 
+// Вероятность срабатывания
+const chance = 25
+
 // Включение с определенной вероятностью
-func enabledByChance(chance int) bool {
-	return rand.Intn(100) < chance
+func enabledByChance(ctx context.Context) (bool, error) {
+	return rand.Intn(100) < chance, nil
 }
 
 // Флаг использования функционала (с определенной вероятностью)
@@ -43,7 +47,12 @@ func FeatureEnabled(feature string) bool {
 	}
 
 	// Вызов функции включения функционала
-	return enabledFunc(25)
+	enabled, err := enabledFunc(context.Background())
+	if err != nil {
+		return false
+	}
+
+	return enabled
 }
 
 // Старый функционал
