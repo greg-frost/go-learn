@@ -25,11 +25,9 @@ var enabledFunctions = map[string]Enabled{
 	"use_new_feature": enabledByChance,
 }
 
-// Вероятность срабатывания
-const chance = 25
-
 // Включение с определенной вероятностью
 func enabledByChance(ctx context.Context) (bool, error) {
+	chance := ctx.Value("chance").(int)
 	return rand.Intn(100) < chance, nil
 }
 
@@ -47,7 +45,8 @@ func FeatureEnabled(feature string) bool {
 	}
 
 	// Вызов функции включения функционала
-	enabled, err := enabledFunc(context.Background())
+	enabled, err := enabledFunc(context.WithValue(
+		context.Background(), "chance", 25))
 	if err != nil {
 		return false
 	}
