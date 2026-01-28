@@ -70,21 +70,16 @@ func sqrt(x float64) (float64, error) {
 func main() {
 	fmt.Println(" \n[ МАТЕМАТИКА ]\n ")
 
-	/* Ввод данных */
-
+	// Ввод данных
 	var a, b int
-
 	fmt.Print("Введите два числа (через пробел): ")
 	fmt.Scanf("%d %d", &a, &b)
-
 	fmt.Println()
 
-	/* Сумма и произведение */
-
+	// Сумма и произведение
 	fmt.Println("Сумма", a, "и", b, "равна", sum(a, b))
 	fmt.Println("Произведение", a, "и", b, "равно", prod(a, b))
 	fmt.Println("Произведение через сумму", a, "и", b, "равно", prodBySum(a, b))
-
 	fmt.Println()
 
 	var (
@@ -93,32 +88,25 @@ func main() {
 		p float64 = 0.75
 	)
 
-	/* Пропорция */
-
+	// Пропорция
 	c, d := split(y, p)
 	fmt.Println("Разделение числа", y, "в пропорции", p, "равно", c, "и", d)
 	fmt.Printf("Само число %d принадлежит к типу %T\n", y, y)
-
 	fmt.Println()
 
-	/* Квадратный корень */
-
+	// Квадратный корень
 	sr, _ := sqrt(x)
 	fmt.Println("mySQRT   (", x, ") =", sr)
 	fmt.Println("mathSQRT (", x, ") =", math.Sqrt(x))
 	fmt.Println(sqrt(-x))
-
 	fmt.Println()
 
-	/* Побитовый сдвиг */
-
+	// Побитовый сдвиг
 	fmt.Println("Степени числа 2:")
-
 	pow := make([]int, 9)
 	for i := range pow {
 		pow[i] = 1 << uint(i)
 		fmt.Printf("%d ", pow[i])
 	}
-
 	fmt.Println()
 }
