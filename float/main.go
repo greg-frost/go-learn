@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-// Менее точная функция
-func f1(n int) float64 {
+// Менее точная функция сложения
+func sumLessPrecise(n int) float64 {
 	res := 10_000.
 	for i := 0; i < n; i++ {
 		res += 1.0001
@@ -13,13 +13,23 @@ func f1(n int) float64 {
 	return res
 }
 
-// Более точная функция
-func f2(n int) float64 {
+// Более точная функция сложения
+func sumMorePrecise(n int) float64 {
 	var res float64
 	for i := 0; i < n; i++ {
 		res += 1.0001
 	}
 	return res + 10_000.
+}
+
+// Менее точная функция умножения
+func prodLessPrecise(a, b, c float64) float64 {
+	return a * (b + c)
+}
+
+// Более точная функция умножения
+func prodMorePrecise(a, b, c float64) float64 {
+	return a*b + a*c
 }
 
 func main() {
@@ -28,10 +38,11 @@ func main() {
 	// Сравнение точности при сложении
 	fmt.Println("Точность сложения:")
 	size := 1000
-	precise := 11000.1
-	n1, n2 := f1(size), f2(size)
-	fmt.Printf("f1 = %v (%v)\n", n1, precise-n1)
-	fmt.Printf("f2 = %v (%v) [ точнее ]\n", n2, precise-n2)
+	preciseSum := 11000.1
+	sum1 := sumLessPrecise(size)
+	sum2 := sumMorePrecise(size)
+	fmt.Printf("10000 + sum = %v (%v)\n", sum1, preciseSum-sum1)
+	fmt.Printf("sum + 10000 = %v (%v) [ точнее ]\n", sum2, preciseSum-sum2)
 	fmt.Println()
 
 	// Сравнение точности при умножении
@@ -39,9 +50,9 @@ func main() {
 	a := 100000.001
 	b := 1.0001
 	c := 1.0002
-	precise = 200030.002
-	n1 = a * (b + c)
-	n2 = a*b + a*c
-	fmt.Printf("a * (b+c) = %v (%v)\n", n1, n1-precise)
-	fmt.Printf("a*b + a*c = %v (%v) [ точнее ]\n", n2, n2-precise)
+	preciseProd := 200030.002
+	prod1 := prodLessPrecise(a, b, c)
+	prod2 := prodMorePrecise(a, b, c)
+	fmt.Printf("a * (b+c) = %v (%v)\n", prod1, prod1-preciseProd)
+	fmt.Printf("a*b + a*c = %v (%v) [ точнее ]\n", prod2, prod2-preciseProd)
 }
