@@ -20,9 +20,9 @@ func leakCap(msg []byte) []byte {
 // Функция без утечки емкости
 func noLeakCap(msg []byte) []byte {
 	// Вариант 1
-	header := make([]byte, 5)
-	copy(header, msg)
-	return header
+	five := make([]byte, 5)
+	copy(five, msg)
+	return five
 
 	// Вариант 2
 	// return msg[:5:5]
@@ -36,6 +36,20 @@ type Slice struct {
 // Функция с утечкой среза
 func leakSlice(slices []Slice) []Slice {
 	return slices[:2]
+}
+
+// Функция без утечки среза
+func noLeakSlice(slices []Slice) []Slice {
+	// Вариант 1
+	two := make([]Slice, 2)
+	copy(two, slices)
+	return two
+
+	// Вариант 2
+	// for i := 2; i < len(slices); i++ {
+	// 	slices[i].v = nil
+	// }
+	// return slices[:2]
 }
 
 func main() {
@@ -85,9 +99,27 @@ func main() {
 			v: make([]byte, size),
 		}
 	}
-	printAlloc("Память после")
 	two := leakSlice(slices)
-	runtime.GC() // Сборка мусора
-	printAlloc("Память в итоге")
+	runtime.GC()
 	runtime.KeepAlive(two)
+	printAlloc("Память после")
+	fmt.Println()
+
+	// Сборка мусора
+	slices = nil
+	runtime.GC()
+
+	// Без утечки среза
+	fmt.Println("(без утечки)")
+	slices = make([]Slice, count)
+	printAlloc("Память до")
+	for i := 0; i < count; i++ {
+		slices[i] = Slice{
+			v: make([]byte, size),
+		}
+	}
+	two = noLeakSlice(slices)
+	runtime.GC()
+	runtime.KeepAlive(two)
+	printAlloc("Память после")
 }
