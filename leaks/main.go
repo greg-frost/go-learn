@@ -28,7 +28,7 @@ func noLeakCap(msg []byte) []byte {
 	// return msg[:5:5]
 }
 
-// Структура "срезы"
+// Структура "срез"
 type Slice struct {
 	v []byte
 }
@@ -61,14 +61,12 @@ func main() {
 	// Утечка емкости
 	fmt.Println("Утечка емкости:")
 	printAlloc("Память до")
-	var caps int
-	for i := 0; i < count; i++ {
-		msg := make([]byte, size)
-		five := leakCap(msg)
-		caps += cap(five)
-	}
+	msg := make([]byte, count*size)
+	five := leakCap(msg)
+	runtime.GC()
+	runtime.KeepAlive(five)
 	printAlloc("Память после")
-	fmt.Println("Общая емкость:", caps)
+	fmt.Println("Емкость:", cap(five))
 	fmt.Println()
 
 	// Сборка мусора
@@ -76,15 +74,13 @@ func main() {
 
 	// Без утечки емкости
 	fmt.Println("(без утечки)")
-	caps = 0
 	printAlloc("Память до")
-	for i := 0; i < count; i++ {
-		msg := make([]byte, size)
-		five := noLeakCap(msg)
-		caps += cap(five)
-	}
+	msg = make([]byte, size)
+	five = noLeakCap(msg)
+	runtime.GC()
+	runtime.KeepAlive(five)
 	printAlloc("Память после")
-	fmt.Println("Общая емкость:", caps)
+	fmt.Println("Емкость:", cap(five))
 	fmt.Println()
 
 	// Сборка мусора
@@ -92,8 +88,8 @@ func main() {
 
 	// Утечка среза
 	fmt.Println("Утечка среза:")
-	slices := make([]Slice, count)
 	printAlloc("Память до")
+	slices := make([]Slice, count)
 	for i := 0; i < count; i++ {
 		slices[i] = Slice{
 			v: make([]byte, size),
@@ -106,13 +102,12 @@ func main() {
 	fmt.Println()
 
 	// Сборка мусора
-	slices = nil
 	runtime.GC()
 
 	// Без утечки среза
 	fmt.Println("(без утечки)")
-	slices = make([]Slice, count)
 	printAlloc("Память до")
+	slices = make([]Slice, count)
 	for i := 0; i < count; i++ {
 		slices[i] = Slice{
 			v: make([]byte, size),
