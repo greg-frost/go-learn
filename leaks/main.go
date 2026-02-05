@@ -52,6 +52,17 @@ func noLeakSlice(slices []Slice) []Slice {
 	// return slices[:2]
 }
 
+// Тип "карта"
+type Map map[int]bool
+
+// Функция с утечкой карты
+func leakMap(m Map) Map {
+	for i := 1000; i < len(m); i++ {
+		delete(m, i)
+	}
+	return m
+}
+
 func main() {
 	fmt.Println(" \n[ УТЕЧКИ ]\n ")
 
@@ -116,5 +127,21 @@ func main() {
 	two = noLeakSlice(slices)
 	runtime.GC()
 	runtime.KeepAlive(two)
+	printAlloc("Память после")
+	fmt.Println()
+
+	// Сборка мусора
+	runtime.GC()
+
+	// Утечка карты
+	fmt.Println("Утечка карты:")
+	printAlloc("Память до")
+	m := make(Map)
+	for i := 0; i < count*count; i++ {
+		m[i] = true
+	}
+	m = leakMap(m)
+	runtime.GC()
+	runtime.KeepAlive(m)
 	printAlloc("Память после")
 }
