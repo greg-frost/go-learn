@@ -57,10 +57,25 @@ type Map map[int]bool
 
 // Функция с утечкой карты
 func leakMap(m Map) Map {
-	for i := 1000; i < len(m); i++ {
+	size := len(m)
+	for i := 1000; i < size; i++ {
 		delete(m, i)
 	}
 	return m
+}
+
+// Функция без утечки карты
+func noLeakMap(m Map) Map {
+	size := len(m)
+	for i := 1000; i < size; i++ {
+		delete(m, i)
+	}
+
+	nm := make(Map, len(m))
+	for k, v := range m {
+		nm[k] = v
+	}
+	return nm
 }
 
 func main() {
@@ -143,5 +158,21 @@ func main() {
 	m = leakMap(m)
 	runtime.GC()
 	runtime.KeepAlive(m)
+	printAlloc("Память после")
+	fmt.Println()
+
+	// Сборка мусора
+	runtime.GC()
+
+	// Без утечки карты
+	fmt.Println("(без утечки)")
+	printAlloc("Память до")
+	m = make(Map)
+	for i := 0; i < count*count; i++ {
+		m[i] = true
+	}
+	nm := noLeakMap(m)
+	runtime.GC()
+	runtime.KeepAlive(nm)
 	printAlloc("Память после")
 }
