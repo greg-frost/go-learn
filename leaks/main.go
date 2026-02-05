@@ -52,11 +52,15 @@ func noLeakSlice(slices []Slice) []Slice {
 	// return slices[:2]
 }
 
-// Тип "карта"
-type Map map[int]bool
+// Тип "карта значений"
+type vMap map[int][128]byte
+
+// Тип "карта указателей"
+// (уменьшит размер утечки)
+type pMap map[int]*[128]byte
 
 // Функция с утечкой карты
-func leakMap(m Map) Map {
+func leakMap(m vMap) vMap {
 	size := len(m)
 	for i := 1000; i < size; i++ {
 		delete(m, i)
@@ -65,13 +69,13 @@ func leakMap(m Map) Map {
 }
 
 // Функция без утечки карты
-func noLeakMap(m Map) Map {
+func noLeakMap(m vMap) vMap {
 	size := len(m)
 	for i := 1000; i < size; i++ {
 		delete(m, i)
 	}
 
-	nm := make(Map, len(m))
+	nm := make(vMap, len(m))
 	for k, v := range m {
 		nm[k] = v
 	}
@@ -151,9 +155,9 @@ func main() {
 	// Утечка карты
 	fmt.Println("Утечка карты:")
 	printAlloc("Память до")
-	m := make(Map)
-	for i := 0; i < count*count; i++ {
-		m[i] = true
+	m := make(vMap)
+	for i := 0; i < size; i++ {
+		m[i] = [128]byte{}
 	}
 	m = leakMap(m)
 	runtime.GC()
@@ -167,9 +171,9 @@ func main() {
 	// Без утечки карты
 	fmt.Println("(без утечки)")
 	printAlloc("Память до")
-	m = make(Map)
-	for i := 0; i < count*count; i++ {
-		m[i] = true
+	m = make(vMap)
+	for i := 0; i < size; i++ {
+		m[i] = [128]byte{}
 	}
 	nm := noLeakMap(m)
 	runtime.GC()
