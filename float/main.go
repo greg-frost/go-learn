@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 // Менее точная функция сложения
@@ -32,6 +33,11 @@ func prodMorePrecise(a, b, c float64) float64 {
 	return a*b + a*c
 }
 
+// Сравнение чисел float
+func compareFloat(a, b, precise float64) bool {
+	return math.Abs(a-b) < precise
+}
+
 func main() {
 	fmt.Println(" \n[ ЧИСЛА С ПЛАВАЮЩЕЙ ТОЧКОЙ ]\n ")
 
@@ -43,6 +49,8 @@ func main() {
 	sum2 := sumMorePrecise(size)
 	fmt.Printf("10000 + sum = %v (%v)\n", sum1, preciseSum-sum1)
 	fmt.Printf("sum + 10000 = %v (%v) [ точнее ]\n", sum2, preciseSum-sum2)
+	fmt.Println("Равенство:", sum1 == sum2)
+	fmt.Println("Сравнение:", compareFloat(sum1, sum2, 1e-6))
 	fmt.Println()
 
 	// Сравнение точности при умножении
@@ -55,4 +63,6 @@ func main() {
 	prod2 := prodMorePrecise(a, b, c)
 	fmt.Printf("a * (b+c) = %v (%v)\n", prod1, prod1-preciseProd)
 	fmt.Printf("a*b + a*c = %v (%v) [ точнее ]\n", prod2, prod2-preciseProd)
+	fmt.Println("Равенство:", prod1 == prod2)
+	fmt.Println("Сравнение:", compareFloat(prod1, prod2, 1e-6))
 }
