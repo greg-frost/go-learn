@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"reflect"
 )
 
 // Сравнение чисел float
@@ -21,6 +22,26 @@ type Comparable struct {
 type NonComparable struct {
 	Int    *int
 	String *string
+	Array  []int
+}
+
+// Сравнение несравнимых структур
+func (first NonComparable) Compare(second NonComparable) bool {
+	if first.Int != second.Int {
+		return false
+	}
+	if first.String != second.String {
+		return false
+	}
+	if len(first.Array) != len(second.Array) {
+		return false
+	}
+	for i := 0; i < len(first.Array); i++ {
+		if first.Array[i] != second.Array[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func main() {
@@ -71,12 +92,16 @@ func main() {
 	ns1 := NonComparable{
 		Int:    &oneInt,
 		String: &oneString,
+		Array:  []int{1, 2, 3},
 	}
 	ns2 := NonComparable{
 		Int:    &oneInt,
 		String: &oneString,
+		Array:  []int{1, 2, 3},
 	}
 	fmt.Println("s1 =", ns1)
 	fmt.Println("s2 =", ns2)
-	fmt.Println("Равенство:", ns1 == ns2)
+	fmt.Println("Равенство:", "(ошибка)")
+	fmt.Println("Рефлексия:", reflect.DeepEqual(ns1, ns2))
+	fmt.Println("Сравнение:", ns1.Compare(ns2))
 }
