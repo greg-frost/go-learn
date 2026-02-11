@@ -35,43 +35,32 @@ func (ll *LinkedList) String() string {
 func main() {
 	fmt.Println(" \n[ СПИСКИ ]\n ")
 
-	/* Библиотечный список */
-
-	var l list.List
-
+	// Библиотечный список
 	fmt.Println("Библиотечный")
 	fmt.Println("------------")
-	fmt.Println()
-
+	var l list.List
 	l.PushBack(3)
 	l.PushBack(4)
 	l.PushBack(5)
 	l.PushFront(2)
 	l.PushFront(1)
 	l.PushFront(0)
-
-	fmt.Println("Вперед:")
+	fmt.Print("Вперед: ")
 	for e := l.Front(); e != nil; e = e.Next() {
 		fmt.Print(e.Value, " ")
 	}
-
-	fmt.Println(" \n ")
-
-	fmt.Println("Назад:")
+	fmt.Println()
+	fmt.Print("Назад: ")
 	for e := l.Back(); e != nil; e = e.Prev() {
 		fmt.Print(e.Value, " ")
 	}
-
-	fmt.Println(" \n ")
-
-	/* Собственный список */
-
-	fmt.Println("Собственный")
-	fmt.Println("-----------")
+	fmt.Println()
 	fmt.Println()
 
+	// Собственный список
+	fmt.Println("Собственный")
+	fmt.Println("-----------")
 	var ll *LinkedList
-
 	ll = ll.Insert(0, 10)
 	fmt.Println(ll)
 	ll = ll.Insert(0, "foo")
