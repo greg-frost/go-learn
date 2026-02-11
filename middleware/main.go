@@ -22,7 +22,7 @@ func myMiddleware(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func main() {
-	fmt.Println(" \n[ ПОСРЕДНИК ]\n ")
+	fmt.Println(" \n[ MIDDLEWARE ]\n ")
 
 	// Обработчик
 	http.HandleFunc("/", myMiddleware(myHandler))
