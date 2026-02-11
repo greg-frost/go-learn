@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"runtime"
+	"strings"
 )
 
 // Печать потребления памяти
@@ -80,6 +81,20 @@ func noLeakMap(m vMap) vMap {
 		nm[k] = v
 	}
 	return nm
+}
+
+// Функция с утечкой строки
+func leakString(s string) string {
+	return s[:100]
+}
+
+// Функция без утечки строки
+func noLeakString(s string) string {
+	// Вариант 1
+	return strings.Clone(s[:100])
+
+	// Вариант 2
+	// return string([]byte(s[:100]))
 }
 
 func main() {
@@ -178,5 +193,31 @@ func main() {
 	nm := noLeakMap(m)
 	runtime.GC()
 	runtime.KeepAlive(nm)
+	printAlloc("Память после")
+	fmt.Println()
+
+	// Сборка мусора
+	runtime.GC()
+
+	// Утечка строки
+	fmt.Println("Утечка строки:")
+	printAlloc("Память до")
+	s := strings.Repeat("#", count*size)
+	ns := leakString(s)
+	runtime.GC()
+	runtime.KeepAlive(ns)
+	printAlloc("Память после")
+	fmt.Println()
+
+	// Сборка мусора
+	runtime.GC()
+
+	// Без утечки строки
+	fmt.Println("(без утечки)")
+	printAlloc("Память до")
+	s = strings.Repeat("#", count*size)
+	ns = noLeakString(s)
+	runtime.GC()
+	runtime.KeepAlive(ns)
 	printAlloc("Память после")
 }
