@@ -21,11 +21,9 @@ func NewItem(opts ...option) *Item {
 		Msg:     "OK",
 		Code:    200,
 	}
-
 	for _, opt := range opts {
 		opt(i)
 	}
-
 	return i
 }
 
@@ -46,10 +44,12 @@ func Code(val int) option {
 func main() {
 	fmt.Println(" \n[ ПАРАМЕТРЫ ]\n ")
 
+	// Добавление
 	item1 := NewItem()
 	item2 := NewItem(Code(201))
 	item3 := NewItem(Msg("Bad"), Code(403))
 
+	// Печать
 	fmt.Printf("Item 1 = %v\n", *item1)
 	fmt.Printf("Item 2 = %+v\n", *item2)
 	fmt.Printf("Item 3 = %#v\n", *item3)
