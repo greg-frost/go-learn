@@ -66,13 +66,11 @@ func MultInt(a, b int) int {
 // Попытка инкремента
 func TryIncInt(counter int) {
 	fmt.Printf("%d + 1 = ", counter)
-
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
 		}
 	}()
-
 	res := IncInt(counter)
 	fmt.Println(res)
 }
@@ -80,13 +78,11 @@ func TryIncInt(counter int) {
 // Попытка сложения
 func TryAddInt(a, b int) {
 	fmt.Printf("%d + %d = ", a, b)
-
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
 		}
 	}()
-
 	res := AddInt(a, b)
 	fmt.Println(res)
 }
@@ -94,13 +90,11 @@ func TryAddInt(a, b int) {
 // Попытка умножения
 func TryMultInt(a, b int) {
 	fmt.Printf("%d * %d = ", a, b)
-
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
 		}
 	}()
-
 	res := MultInt(a, b)
 	fmt.Println(res)
 }
@@ -108,10 +102,12 @@ func TryMultInt(a, b int) {
 func main() {
 	fmt.Println(" \n[ ПЕРЕПОЛНЕНИЕ ]\n ")
 
+	// Числа
 	full := math.MaxInt
 	half := full / 2
 	quart := half / 2
 
+	// Переполнение при инкременте
 	fmt.Println("Инкремент:")
 	TryIncInt(quart)
 	TryIncInt(half)
@@ -119,6 +115,7 @@ func main() {
 	TryIncInt(full)
 	fmt.Println()
 
+	// Переполнение при сложении
 	fmt.Println("Сложение:")
 	TryAddInt(quart, quart)
 	TryAddInt(half, quart)
@@ -129,6 +126,7 @@ func main() {
 	TryAddInt(full, 1)
 	fmt.Println()
 
+	// Переполнение при умножении
 	fmt.Println("Умножение:")
 	TryMultInt(quart, 0)
 	TryMultInt(quart, 1)
