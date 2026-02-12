@@ -9,17 +9,17 @@ import (
 // Кэш
 var cache *lru.Cache
 
-// Инициализация
 func init() {
-	cache, _ = lru.NewWithEvict(2,
-		func(key, value interface{}) {
+	// Инициализация кэша
+	cache, _ = lru.NewWithEvict(2, // Размер
+		func(key, value interface{}) { // Функция при вытеснении
 			fmt.Printf("[ вытеснено: %v -> %v ]\n", key, value)
 		},
 	)
 }
 
 func main() {
-	fmt.Println(" \n[ LRU-кэш ]\n ")
+	fmt.Println(" \n[ LRU-КЭШ ]\n ")
 
 	// Добавление
 	fmt.Println("Добавление значений")
