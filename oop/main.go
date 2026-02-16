@@ -49,7 +49,7 @@ func (c Circle) perimeter() float64 {
 	return math.Pi * c.r * 2
 }
 
-// Структурура "прямоугольник"
+// Структура "прямоугольник"
 type Rectangle struct {
 	x1, y1, x2, y2 float64
 }
@@ -88,7 +88,6 @@ type Person struct {
 // Убить человека
 func (p Person) kill() {
 	var who, what string
-
 	if p.isMen {
 		who = "Мужик"
 		what = "был убит"
@@ -96,8 +95,7 @@ func (p Person) kill() {
 		who = "Баба"
 		what = "была убита"
 	}
-
-	fmt.Println(who, what, "в возрасте", p.age, "лет")
+	fmt.Printf("%s %s в возрасте %d лет\n", who, what, p.age)
 }
 
 // Изменение возраста
@@ -108,8 +106,7 @@ func ChangeAge(p Person, age int) {
 func main() {
 	fmt.Println(" \n[ ООП ]\n ")
 
-	/* Круг */
-
+	// Круг
 	c := new(Circle)
 	c.x = 0
 	c.y = 5
@@ -117,35 +114,26 @@ func main() {
 	fmt.Println("Круг:", *c)
 	fmt.Println("Площадь:", math.Round(c.area()))
 	fmt.Println("Периметр:", math.Round(c.perimeter()))
-
 	fmt.Println()
 
-	/* Прямоугольник */
-
+	// Прямоугольник
 	r := Rectangle{x1: 1, y1: 3, x2: 10, y2: 12}
 	fmt.Println("Прямоугольник:", r)
 	fmt.Println("Площадь:", r.area())
 	fmt.Println("Периметр:", r.perimeter())
-
 	fmt.Println()
 
-	/* Мультифигура */
-
+	// Мультифигура
 	s := new(MultiShape)
 	fmt.Println("Фигуры:", *s)
 	fmt.Println("Общая площадь (метод):", math.Round((*s).area()))
 	fmt.Println("Общая площадь (функция):", math.Round(totalArea(c, &r)))
-
 	fmt.Println()
 
-	/* Человек */
-
+	// Человек
 	var p = Person{"Greg", &Men{34, true}}
-
-	fmt.Printf("%#+v", p)
-	fmt.Println(" \n ")
-
-	fmt.Println("Имя:", p.name, "Возраст:", p.age, "Пол (мужик):", p.Men.isMen)
+	fmt.Printf("%#+v\n", p)
+	fmt.Printf("Имя: %s, возраст: %d, пол (мужик): %t\n", p.name, p.age, p.Men.isMen)
 	ChangeAge(p, 35)
 	(&p).kill()
 }
