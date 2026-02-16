@@ -89,6 +89,7 @@ func (t *treeNode) String() string {
 func main() {
 	fmt.Println(" \n[ ДЕРЕВО ОПЕРАЦИЙ ]\n ")
 
+	// Дерево
 	tree := &treeNode{
 		val: operators["+"],
 		left: &treeNode{
@@ -99,11 +100,12 @@ func main() {
 		right: &treeNode{val: number(20)},
 	}
 
+	// Печать
 	fmt.Println("Дерево:")
 	fmt.Println(tree)
-
 	fmt.Println()
 
+	// Обход
 	fmt.Println("Выражение:")
 	result, _ := walkTree(tree)
 	fmt.Println("5 * 10 + 20 =", result)
