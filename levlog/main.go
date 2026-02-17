@@ -23,11 +23,11 @@ type LogExtended struct {
 }
 
 // Установка уровня лога
-func (l *LogExtended) SetLogLevel(lvl LogLevel) {
-	if !lvl.IsValid() {
+func (l *LogExtended) SetLogLevel(level LogLevel) {
+	if !level.IsValid() {
 		return
 	}
-	l.logLevel = lvl
+	l.logLevel = level
 }
 
 // Проверка валидности уровня лога
@@ -42,26 +42,25 @@ func (l LogLevel) IsValid() bool {
 
 // Печать информации
 func (l *LogExtended) Infoln(msg string) {
-	l.println(LogLevelInfo, "INFO ", msg)
+	l.println(LogLevelInfo, "INFO", msg)
 }
 
 // Печать предупреждения
 func (l *LogExtended) Warnln(msg string) {
-	l.println(LogLevelWarning, "WARN ", msg)
+	l.println(LogLevelWarning, "WARN", msg)
 }
 
 // Печать ошибки
 func (l *LogExtended) Errorln(msg string) {
-	l.println(LogLevelError, "ERR ", msg)
+	l.println(LogLevelError, "ERR", msg)
 }
 
 // Печать лога
-func (l *LogExtended) println(srcLogLvl LogLevel, prefix, msg string) {
-	if srcLogLvl < l.logLevel {
+func (l *LogExtended) println(level LogLevel, prefix, msg string) {
+	if level < l.logLevel {
 		return
 	}
-
-	l.Logger.Println(prefix + msg)
+	l.Logger.Println(prefix, msg)
 }
 
 // Конструктор расширенного логгера
@@ -81,10 +80,9 @@ func main() {
 	// Установка предельного уровня
 	logger.SetLogLevel(LogLevelWarning)
 
+	// Логирование
 	fmt.Println("Логи уровня Warning и выше:")
 	fmt.Println()
-
-	// Логирование
 	logger.Infoln("Не должно напечататься")
 	logger.Warnln("Hello")
 	logger.Errorln("World")
