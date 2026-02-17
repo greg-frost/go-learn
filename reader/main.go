@@ -61,6 +61,7 @@ func main() {
 
 	path := base.Dir("reader/..")
 
+	// Файл
 	fmt.Println("Чтение файла:")
 	err := openFile(filepath.Join(path, "hello", "main.go"))
 	if err != nil {
@@ -68,6 +69,7 @@ func main() {
 	}
 	fmt.Println()
 
+	// Архив
 	fmt.Println("Чтение архива:")
 	err = openGzipFile(filepath.Join(path, "reader", "data", "main.tar.gz"))
 	if err != nil {
