@@ -9,17 +9,22 @@ import (
 
 // TCP-сервер
 func tcpServer(protocol, address string, print bool) {
+	// Прослушивание TCP
 	conn, err := net.Listen(protocol, address)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer conn.Close()
+
+	// Ожидание соединений
 	for {
 		c, err := conn.Accept()
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
+
+		// Обработка запроса
 		go tcpConnection(c, print)
 	}
 }
@@ -28,11 +33,14 @@ func tcpServer(protocol, address string, print bool) {
 func tcpConnection(c net.Conn, print bool) {
 	defer c.Close()
 	for {
+		// Чтение сообщения
 		msg := make([]byte, 1024)
 		n, err := c.Read(msg)
 		if err != nil {
 			return
 		}
+
+		// Печать сообщения
 		if print {
 			fmt.Print(string(msg[:n]))
 		}
@@ -41,11 +49,14 @@ func tcpConnection(c net.Conn, print bool) {
 
 // UDP-сервер
 func udpServer(protocol, address string, print bool) {
+	// Прослушивание UDP
 	conn, err := net.ListenPacket(protocol, address)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer conn.Close()
+
+	// Ожидание соединений
 	for {
 		udpConnection(conn, print)
 	}
@@ -53,11 +64,14 @@ func udpServer(protocol, address string, print bool) {
 
 // UDP-соединение
 func udpConnection(c net.PacketConn, print bool) {
+	// Чтение сообщения
 	msg := make([]byte, 1024)
 	n, _, err := c.ReadFrom(msg)
 	if err != nil {
 		return
 	}
+
+	// Печать сообщения
 	if print {
 		fmt.Print(string(msg[:n]))
 	}
@@ -66,10 +80,9 @@ func udpConnection(c net.PacketConn, print bool) {
 func main() {
 	fmt.Println(" \n[ СЕТЕВОЕ ЛОГИРОВАНИЕ ]\n ")
 
+	// Использование
 	timeout := 30 * time.Second
 	flags := log.LstdFlags | log.Lshortfile
-
-	/* Использование */
 
 	// Запуск серверов
 	go tcpServer("tcp", "localhost:8080", true)
@@ -82,13 +95,11 @@ func main() {
 		log.Fatal(err)
 	}
 	defer tcp.Close()
-
 	fmt.Println("Протокол TCP:")
 	logger := log.New(tcp, "[tcp] ", flags)
 	logger.Print("Hello")
 	logger.Printf("Cruel\n")
 	logger.Println("World")
-
 	time.Sleep(500 * time.Millisecond)
 	fmt.Println()
 
@@ -98,24 +109,20 @@ func main() {
 		log.Fatal(err)
 	}
 	defer udp.Close()
-
 	fmt.Println("Протокол UDP:")
 	logger = log.New(udp, "[udp] ", flags)
 	logger.Print("Hello")
 	logger.Printf("Cruel\n")
 	logger.Println("World")
-
 	time.Sleep(500 * time.Millisecond)
 
-	/* Сравнение скорости */
-
+	// Сравнение скорости
 	times := 100000
 
 	// Запуск серверов
 	go tcpServer("tcp", "localhost:8085", false)
 	go udpServer("udp", "localhost:9095", false)
 	time.Sleep(250 * time.Millisecond)
-
 	fmt.Println()
 	fmt.Println("Сравнение скорости")
 	fmt.Println("------------------")
@@ -127,7 +134,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer tcp.Close()
-
 	fmt.Println("Протокол TCP:")
 	logger = log.New(tcp, "[tcp] ", flags)
 	start := time.Now()
@@ -145,7 +151,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer udp.Close()
-
 	fmt.Println("Протокол UDP:")
 	logger = log.New(udp, "[udp] ", flags)
 	start = time.Now()
