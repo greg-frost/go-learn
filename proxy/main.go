@@ -129,11 +129,13 @@ func (*AccessProxy) Remove(key string) {
 func main() {
 	fmt.Println(" \n[ ЗАМЕСТИТЕЛЬ ]\n ")
 
+	// Виртуальный
 	fmt.Println("Виртуальный заместитель:")
 	virtual := NewVirtualProxy()
 	fmt.Println("(отложенная инициализация)")
 	fmt.Println()
 
+	// Удаленный
 	fmt.Println("Удаленный заместитель:")
 	remote := NewRemoteProxy(virtual)
 	remote.Put("key", "remote value")
@@ -143,6 +145,7 @@ func main() {
 	fmt.Printf("deleted = %q\n", remote.Get("deleted"))
 	fmt.Println()
 
+	// Доступ
 	fmt.Println("Заместитель доступа:")
 	access := NewAccessProxy(remote)
 	access.Put("newkey", "value")
