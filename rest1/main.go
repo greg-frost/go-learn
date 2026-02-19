@@ -27,8 +27,7 @@ var albums = []album{
 func processAlbums(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	/* Создание альбома */
-
+	// Создание альбома
 	if r.Method == "POST" {
 		var newAlbum album
 		if err := json.NewDecoder(r.Body).Decode(&newAlbum); err != nil {
@@ -41,17 +40,14 @@ func processAlbums(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/* Получение альбома по ID */
-
+	// Получение альбома по ID
 	var id string
 	id = strings.Split(r.URL.Path, "/")[2]
 	if id == "" {
 		id = r.URL.Query().Get("id")
 	}
-
 	// Go 1.22
 	// id := r.PathValue("id")
-
 	if id != "" {
 		for _, a := range albums {
 			if a.ID == id {
@@ -60,14 +56,12 @@ func processAlbums(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, `{"message": "альбом не найден"}`)
 		return
 	}
 
-	/* Получение всех альбомов */
-
+	// Получение всех альбомов
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(albums)
 }
