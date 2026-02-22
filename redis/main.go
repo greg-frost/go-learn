@@ -28,31 +28,27 @@ func main() {
 	}
 	fmt.Println("PING:", ping)
 
-	/* Простое значение */
-
-	// Запись
+	// Запись простого значения
 	err = client.Set(ctx, "key", "value", 0).Err()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Чтение
+	// Чтение простого значения
 	value, err := client.Get(ctx, "key").Result()
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("key = %v\n", value)
 
-	/* Составное значение */
-
-	// Структура
+	// Структура "составное значение"
 	type Composite struct {
 		Int    int    `json:"int"`
 		String string `json:"string"`
 		Bool   bool   `json:"bool"`
 	}
 
-	// Маршаллизация
+	// Маршаллинг составного значения
 	jsonBytes, err := json.Marshal(Composite{
 		Int:    1,
 		String: "str",
@@ -62,16 +58,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Ключ
+	// Запись составного значения
 	key := fmt.Sprintf("composite:%v", rand.Intn(1000000))
-
-	// Запись
 	err = client.Set(ctx, key, jsonBytes, 0).Err()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Чтение
+	// Чтение составного значения
 	value, err = client.Get(ctx, key).Result()
 	if err != nil {
 		log.Fatal(err)
