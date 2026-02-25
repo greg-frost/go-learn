@@ -6,41 +6,41 @@ import (
 
 // Структура "узел дерева"
 type Tree struct {
-	val         int
+	value       int
 	left, right *Tree
 }
 
 // Создание дерева
 func MakeTree(values []int) *Tree {
 	var t *Tree
-	for _, v := range values {
-		t = t.Insert(v)
+	for _, value := range values {
+		t = t.Insert(value)
 	}
 	return t
 }
 
 // Добавление элемента
-func (t *Tree) Insert(val int) *Tree {
+func (t *Tree) Insert(value int) *Tree {
 	if t == nil {
-		return &Tree{val: val}
+		return &Tree{value: value}
 	}
-	if val < t.val {
-		t.left = t.left.Insert(val)
-	} else if val > t.val {
-		t.right = t.right.Insert(val)
+	if value < t.value {
+		t.left = t.left.Insert(value)
+	} else if value > t.value {
+		t.right = t.right.Insert(value)
 	}
 	return t
 }
 
 // Поиск элемента
-func (t *Tree) Contains(val int) bool {
+func (t *Tree) Contains(value int) bool {
 	switch {
 	case t == nil:
 		return false
-	case val < t.val:
-		return t.left.Contains(val)
-	case val > t.val:
-		return t.right.Contains(val)
+	case value < t.value:
+		return t.left.Contains(value)
+	case value > t.value:
+		return t.right.Contains(value)
 	default:
 		return true
 	}
@@ -55,7 +55,7 @@ func (t *Tree) String() string {
 	if t.left != nil {
 		s += t.left.String() + " "
 	}
-	s += fmt.Sprint(t.val)
+	s += fmt.Sprint(t.value)
 	if t.right != nil {
 		s += " " + t.right.String()
 	}
@@ -65,17 +65,18 @@ func (t *Tree) String() string {
 func main() {
 	fmt.Println(" \n[ ДЕРЕВО ]\n ")
 
+	// Создание
 	values := []int{10, 5, 25, 50, 100, 2, 3, 1}
 	search := []int{25, 30}
-
 	tree := MakeTree(values)
 
+	// Печать
 	fmt.Println("Дерево:")
 	fmt.Println(tree)
-
 	fmt.Println()
 
-	for _, v := range search {
-		fmt.Println("Есть ли", v, ":", tree.Contains(v))
+	// Поиск
+	for _, value := range search {
+		fmt.Printf("Поиск %d: %t\n", value, tree.Contains(value))
 	}
 }
