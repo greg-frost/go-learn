@@ -44,7 +44,7 @@ func Timeout(worker Worker) WithContext {
 }
 
 func main() {
-	fmt.Println(" \n[ Таймаут ]\n ")
+	fmt.Println(" \n[ ТАЙМАУТ ]\n ")
 
 	// Настройка
 	ctx := context.Background()
