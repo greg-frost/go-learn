@@ -10,43 +10,6 @@ import (
 	"go-learn/base"
 )
 
-func main() {
-	fmt.Println(" \n[ ПОДСЧЕТ СЛОВ ]\n ")
-
-	// Смена директории
-	path := base.Dir("words")
-	os.Chdir(path)
-
-	if len(os.Args) == 1 {
-		fmt.Println("Передайте список файлов в виде параметров!")
-		return
-	}
-
-	fmt.Println("Идет подсчет слов в файлах...")
-
-	// Параллельное сжатие
-	var wg sync.WaitGroup
-	w := newWords()
-	for _, file := range os.Args[1:] {
-		wg.Add(1)
-		go func(filename string) {
-			defer wg.Done()
-			if err := countWords(filename, w); err != nil {
-				fmt.Println("Ошибка:", err)
-			}
-		}(file)
-	}
-	wg.Wait()
-
-	// Вывод результатов
-	fmt.Println()
-	for word, count := range w.found {
-		if len(word) >= 3 {
-			fmt.Printf("%s: %d\n", word, count)
-		}
-	}
-}
-
 // Структура "слова"
 type words struct {
 	mu    sync.Mutex
@@ -54,14 +17,14 @@ type words struct {
 }
 
 // Конструктор слов
-func newWords() *words {
+func NewWords() *words {
 	return &words{
 		found: make(map[string]int),
 	}
 }
 
 // Добавление слов
-func (w *words) add(word string, n int) {
+func (w *words) Add(word string, n int) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
@@ -69,7 +32,7 @@ func (w *words) add(word string, n int) {
 }
 
 // Подсчет слов
-func countWords(filename string, dict *words) error {
+func CountWords(filename string, dict *words) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -83,7 +46,43 @@ func countWords(filename string, dict *words) error {
 		word = strings.ReplaceAll(word, ",", "")
 		word = strings.ReplaceAll(word, ".", "")
 		word = strings.ReplaceAll(word, "!", "")
-		dict.add(word, 1)
+		dict.Add(word, 1)
 	}
 	return scanner.Err()
+}
+
+func main() {
+	fmt.Println(" \n[ ПОДСЧЕТ СЛОВ ]\n ")
+
+	// Смена директории
+	path := base.Dir("words")
+	os.Chdir(path)
+
+	if len(os.Args) == 1 {
+		fmt.Println("Передайте список файлов в виде параметров!")
+		return
+	}
+
+	// Параллельное сжатие
+	fmt.Println("Идет подсчет слов в файлах...")
+	var wg sync.WaitGroup
+	w := NewWords()
+	for _, file := range os.Args[1:] {
+		wg.Add(1)
+		go func(filename string) {
+			defer wg.Done()
+			if err := CountWords(filename, w); err != nil {
+				fmt.Println("Ошибка:", err)
+			}
+		}(file)
+	}
+	wg.Wait()
+
+	// Вывод
+	fmt.Println()
+	for word, count := range w.found {
+		if len(word) >= 3 {
+			fmt.Printf("%s: %d\n", word, count)
+		}
+	}
 }
