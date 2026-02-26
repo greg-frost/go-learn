@@ -22,7 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(`Соответствие:`, match)
+	fmt.Println("Соответствие:", match)
 
 	// Компиляция
 	r, err := regexp.Compile(pattern)
@@ -44,7 +44,6 @@ func main() {
 	fmt.Println("Поиск двух строк:", r.FindAllString(text, 2))
 	fmt.Println("Индексы всех подстрок:")
 	fmt.Println(r.FindAllStringSubmatchIndex(text, -1))
-
 	fmt.Println()
 
 	// Замена
