@@ -7,19 +7,20 @@ import (
 	"strings"
 )
 
+// Структура "ридер шифра ROT13"
 type rot13Reader struct {
 	r io.Reader
 }
 
+// Чтение шифра
 func (r rot13Reader) Read(b []byte) (int, error) {
 	const (
 		From, To = 65, 91
 		from, to = 97, 123
 		shift    = 13
 	)
-
+	var readed int
 	n, _ := r.r.Read(b)
-	readed := 0
 
 	for i := 0; i < n; i++ {
 		pos := int(b[i])
@@ -40,17 +41,16 @@ func (r rot13Reader) Read(b []byte) (int, error) {
 func main() {
 	fmt.Println(" \n[ ROT13 ]\n ")
 
+	// Шифр
 	sipher := "Lbh penpxrq gur pbqr!"
-
 	fmt.Println("Шифр:")
 	fmt.Println(sipher)
-
 	fmt.Println()
-	fmt.Println("Расшифровка:")
 
+	// Расшифровка
+	fmt.Println("Расшифровка:")
 	s := strings.NewReader(sipher)
 	r := rot13Reader{s}
 	io.Copy(os.Stdout, &r)
-
 	fmt.Println()
 }
