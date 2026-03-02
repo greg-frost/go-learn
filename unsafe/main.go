@@ -66,8 +66,7 @@ func BytesFromData(d Data) [16]byte {
 func main() {
 	fmt.Println(" \n[ ПАКЕТ UNSAFE ]\n ")
 
-	/* Информация */
-
+	// Информация
 	d := Data{
 		Value:  8675309,
 		Active: true,
@@ -76,11 +75,12 @@ func main() {
 	fmt.Println("Инфо:", d, unsafe.Alignof(d), unsafe.Alignof(d.Value),
 		unsafe.Alignof(d.Label), unsafe.Alignof(d.Active))
 
-	/* Из байтов в данные */
-
-	b := [16]byte{0, 132, 95, 237, 80, 104, 111, 110, 101, 0, 0, 0, 0, 0, 1, 0}
+	// Из байтов в данные
+	b := [16]byte{
+		0, 132, 95, 237, 80, 104, 111,
+		110, 101, 0, 0, 0, 0, 0, 1, 0,
+	}
 	fmt.Println("До передачи:", b)
-
 	b1 := BytesFromData(d)
 	b2 := BytesFromDataUnsafe(d)
 	if b1 != b2 {
@@ -88,8 +88,7 @@ func main() {
 	}
 	fmt.Printf("Передача: %+v\n", b1)
 
-	/* Из данных в байты */
-
+	// Из данных в байты
 	d1 := DataFromBytes(b1)
 	d2 := DataFromBytesUnsafe(b1)
 	if d1 != d2 {
