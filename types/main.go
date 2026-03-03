@@ -9,12 +9,12 @@ import (
 )
 
 // Печать интерфейса
-func describeIntf(i any) {
+func DescribeIntf(i any) {
 	fmt.Printf("(%v, %T)\n", i, i)
 }
 
 // Определение типа
-func testType(i interface{}) {
+func TestType(i interface{}) {
 	switch v := i.(type) {
 	case int:
 		fmt.Printf("Дважды %v равно %v\n", v, v*2)
@@ -28,7 +28,7 @@ func testType(i interface{}) {
 }
 
 // Перегруженное умножение
-func mul(a interface{}, b int) interface{} {
+func Mul(a interface{}, b int) interface{} {
 	switch v := a.(type) {
 	case int:
 		return v * b
@@ -42,10 +42,9 @@ func mul(a interface{}, b int) interface{} {
 }
 
 // Перегруженная сумма
-func sum(v ...interface{}) float64 {
+func Sum(v ...interface{}) float64 {
 	var res float64
 	for _, val := range v {
-		ref := reflect.ValueOf(val)
 		switch val.(type) {
 		case int:
 			res += float64(val.(int))
@@ -62,6 +61,7 @@ func sum(v ...interface{}) float64 {
 		case uint64:
 			res += float64(val.(uint64))
 		case string:
+			ref := reflect.ValueOf(val)
 			a, err := strconv.ParseFloat(ref.String(), 64)
 			if err != nil {
 				fmt.Printf("Ошибка парсинга строки %s, игнорирую.\n", val)
@@ -76,7 +76,7 @@ func sum(v ...interface{}) float64 {
 }
 
 // Перегруженная сумма (рефлексия)
-func sumRef(v ...interface{}) float64 {
+func SumRef(v ...interface{}) float64 {
 	var res float64
 	for _, val := range v {
 		ref := reflect.ValueOf(val)
@@ -111,13 +111,13 @@ func (n *Name) String() string {
 }
 
 // Проверка интерфейса Stringer
-func isStringer(v interface{}) bool {
+func IsStringer(v interface{}) bool {
 	_, ok := v.(fmt.Stringer)
 	return ok
 }
 
 // Проверка любого интерфейса
-func isImplements(current, target interface{}) bool {
+func IsImplements(current, target interface{}) bool {
 	iface := reflect.TypeOf(target).Elem()
 	v := reflect.ValueOf(iface)
 	t := v.Type()
@@ -127,122 +127,93 @@ func isImplements(current, target interface{}) bool {
 func main() {
 	fmt.Println(" \n[ ТИПЫ ]\n ")
 
-	/* Пустой интерфейс */
-
+	// Пустой интерфейс
 	fmt.Println("Пустой интерфейс:")
-
 	var i interface{}
-	describeIntf(i)
-
+	DescribeIntf(i)
 	i = 66
-	describeIntf(i)
-
+	DescribeIntf(i)
 	i = "Привет"
-	describeIntf(i)
-
+	DescribeIntf(i)
 	fmt.Println()
 
-	/* Приведение типов */
-
+	// Приведение типов
 	var j interface{} = "Hello"
-
 	fmt.Println("Приведение строки:")
-
 	s := j.(string)
 	fmt.Println("Строка:", s)
-
 	s, ok := j.(string)
-	fmt.Println("Строка:", s, "(ok)", ok)
-
-	//f = j.(int) // будет паника
-	//fmt.Println("Целое:", f)
-
+	fmt.Printf("Строка: %s (ok: %t)\n", s, ok)
+	// f = j.(int) // Будет паника
 	f, ok := j.(int)
-	fmt.Println("Целое:", f, "(ok)", ok)
-
+	fmt.Printf("Целое: %d (ok: %t)\n", f, ok)
 	fmt.Println()
 
-	/* Проверка типа */
-
+	// Проверка типов
 	fmt.Println("Проверка типов:")
-
-	testType(21)
-	testType("String")
-	testType(true)
-
+	TestType(21)
+	TestType("String")
+	TestType(true)
 	fmt.Println()
 
-	/* Проверка типа */
-
+	// Интерфейсы и nil
 	fmt.Println("Интерфейсы и nil:")
-
 	var str *string
 	fmt.Println("var str *string == nil:", str == nil)
-
 	var intf interface{}
 	fmt.Println("var intf interface{} == nil:", intf == nil)
-
 	intf = str
 	fmt.Println("intf = str, intf == nil:", intf == nil)
-
 	fmt.Println()
 
-	/* Перегруженное умножение */
-
+	// Перегруженное умножение
 	vs := "Hello"
 	vi := 5
 	va := 2
-
 	fmt.Println("Перегруженное умножение:")
-	fmt.Println("Число:", mul(vi, va))
-	fmt.Println("Строка:", mul(vs, va))
+	fmt.Println("Число:", Mul(vi, va))
+	fmt.Println("Строка:", Mul(vs, va))
 	fmt.Println()
 
-	/* Перегруженная сумма */
-
+	// Перегруженная сумма
 	type MyInt int64
-
 	var (
 		a uint8  = 2
 		b int    = 37
 		c string = "3.2"
 		d MyInt  = 1
 	)
-
 	fmt.Println("Перегруженная сумма:")
-	fmt.Println("Проверка типа:", sum(a, b, c, d))
-	fmt.Println("Рефлексия:", sumRef(a, b, c, d))
+	fmt.Println("Проверка типа:", Sum(a, b, c, d))
+	fmt.Println("Рефлексия:", SumRef(a, b, c, d))
 	fmt.Println()
 
-	/* Проверка интерфейса */
-
+	// Проверка интерфейса
 	fmt.Println("Реализация интерфейса:")
 	fmt.Println()
-
 	fmt.Println("Проверка типа:")
 	name := &Name{First: "Greg", Last: "Frost"}
-	if isStringer(name) {
+	if IsStringer(name) {
 		fmt.Printf("%T реализует интерфейс *fmt.Stringer\n", name)
 	} else {
 		fmt.Printf("%T не реализует интерфейс *fmt.Stringer\n", name)
 	}
 	num := 123
-	if isStringer(num) {
+	if IsStringer(num) {
 		fmt.Printf("%T реализует интерфейс *fmt.Stringer\n", num)
 	} else {
 		fmt.Printf("%T не реализует интерфейс *fmt.Stringer\n", num)
 	}
 	fmt.Println()
-
 	fmt.Println("Рефлексия:")
 	stringer := (*fmt.Stringer)(nil)
-	if isImplements(name, stringer) {
+	if IsImplements(name, stringer) {
 		fmt.Printf("%T реализует интерфейс %T\n", name, stringer)
 	} else {
 		fmt.Printf("%T не реализует интерфейс %T\n", name, stringer)
 	}
 	writer := (*io.Writer)(nil)
-	if isImplements(num, writer) {
+	if IsImplements(num, writer) {
 		fmt.Printf("%T реализует интерфейс %T\n", name, writer)
 	} else {
 		fmt.Printf("%T не реализует интерфейс %T\n", name, writer)
