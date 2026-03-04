@@ -167,6 +167,6 @@ func main() {
 	reflect.ValueOf(&varBool).Elem().Set(reflect.ValueOf(&trueVal))
 	fmt.Println("(присвоено значение true)")
 	fmt.Println("bool (true) - это nil?", reflect.ValueOf(varBool).IsNil())
-	fmt.Println("bool (true) =", reflect.ValueOf(varBool).Elem().Bool()) // вывод через рефлексию
-	//fmt.Println("bool (true) =", *varBool) // или обычным образом
+	fmt.Println("bool (true) =", reflect.ValueOf(varBool).Elem().Bool()) // Вывод через рефлексию
+	//fmt.Println("bool (true) =", *varBool) // Или обычным образом
 }
