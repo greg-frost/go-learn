@@ -30,7 +30,7 @@ type User struct {
 }
 
 // Новый пользователь
-func newUser() User {
+func NewUser() User {
 	return User{
 		Name:  "Greg Frost",
 		Id:    100021,
@@ -39,7 +39,7 @@ func newUser() User {
 }
 
 // Новый пользователь Protobuf v2
-func newUserPb2() pb2.User {
+func NewUserPb2() pb2.User {
 	return pb2.User{
 		Name:  proto.String("Greg Frost"),
 		Id:    proto.Int32(100021),
@@ -48,7 +48,7 @@ func newUserPb2() pb2.User {
 }
 
 // Новый пользователь Protobuf v3
-func newUserPb3() pb3.User {
+func NewUserPb3() pb3.User {
 	return pb3.User{
 		Name:  "Greg Frost",
 		Id:    100021,
@@ -57,7 +57,7 @@ func newUserPb3() pb3.User {
 }
 
 // Новый человек
-func newPerson() *pbp.Person {
+func NewPerson() *pbp.Person {
 	return &pbp.Person{
 		Name:  "Greg Frost",
 		Id:    100021,
@@ -74,7 +74,7 @@ func newPerson() *pbp.Person {
 
 // Обработчик JSON
 func handleJSON(w http.ResponseWriter, r *http.Request) {
-	u := newUser()
+	u := NewUser()
 
 	body, err := json.Marshal(u)
 	if err != nil {
@@ -88,7 +88,7 @@ func handleJSON(w http.ResponseWriter, r *http.Request) {
 
 // Обработчик Protocol Buffers v2
 func handleProtobuf2(w http.ResponseWriter, r *http.Request) {
-	u := newUserPb2()
+	u := NewUserPb2()
 
 	body, err := proto.Marshal(&u)
 	if err != nil {
@@ -102,7 +102,7 @@ func handleProtobuf2(w http.ResponseWriter, r *http.Request) {
 
 // Обработчик Protocol Buffers v3
 func handleProtobuf3(w http.ResponseWriter, r *http.Request) {
-	u := newUserPb3()
+	u := NewUserPb3()
 
 	body, err := proto.Marshal(&u)
 	if err != nil {
@@ -202,7 +202,7 @@ func main() {
 	fmt.Printf("Сравнение:\n(%d повторов)\n\n", times)
 
 	// JSON
-	jsonUser = newUser()
+	jsonUser = NewUser()
 	start := time.Now()
 	for i := 0; i < times; i++ {
 		body, _ = json.Marshal(jsonUser)
@@ -211,7 +211,7 @@ func main() {
 	fmt.Println("JSON:", time.Since(start))
 
 	// Protobuf v2
-	pbv2User = newUserPb2()
+	pbv2User = NewUserPb2()
 	start = time.Now()
 	for i := 0; i < times; i++ {
 		body, _ = proto.Marshal(&pbv2User)
@@ -220,7 +220,7 @@ func main() {
 	fmt.Println("Protobuf v2:", time.Since(start))
 
 	// Protobuf v3
-	pbv3User = newUserPb3()
+	pbv3User = NewUserPb3()
 	start = time.Now()
 	for i := 0; i < times; i++ {
 		body, _ = proto.Marshal(&pbv3User)
@@ -234,7 +234,7 @@ func main() {
 	fmt.Println()
 	fmt.Println("Создание объектов...")
 	people := &pbp.People{
-		People: []*pbp.Person{newPerson(), newPerson(), newPerson()},
+		People: []*pbp.Person{NewPerson(), NewPerson(), NewPerson()},
 	}
 	fmt.Println("Сериализация...")
 	out, err := proto.Marshal(people)
