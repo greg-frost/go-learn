@@ -117,8 +117,7 @@ func handleProtobuf3(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println(" \n[ PROTOBUF ]\n ")
 
-	/* Сервер */
-
+	// Сервер
 	fmt.Println("Сервер:")
 	go func() {
 		http.HandleFunc("/json", handleJSON)
@@ -129,90 +128,76 @@ func main() {
 		fmt.Println("(на http://localhost:8080)")
 		log.Fatal(http.ListenAndServe("localhost:8080", nil))
 	}()
-
 	time.Sleep(250 * time.Millisecond)
 	fmt.Println()
 
-	/* JSON */
-
+	// JSON
 	fmt.Println("JSON:")
 	res, err := http.Get("http://localhost:8080/json")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 	res.Body.Close()
-
 	var jsonUser User
 	err = json.Unmarshal(body, &jsonUser)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Имя:", jsonUser.Name)
 	fmt.Println("ID:", jsonUser.Id)
 	fmt.Println("E-mail:", jsonUser.Email)
 	raw := string(body)
 	fmt.Printf("RAW: %s (%d)\n\n", raw, len(raw))
 
-	/* Protobuf v2 */
-
+	// Protobuf v2
 	fmt.Println("Protobuf v2:")
 	res, err = http.Get("http://localhost:8080/protobuf2")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	body, err = io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 	res.Body.Close()
-
 	var pbv2User pb2.User
 	err = proto.Unmarshal(body, &pbv2User)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Имя:", pbv2User.GetName())
 	fmt.Println("ID:", pbv2User.GetId())
 	fmt.Println("E-mail:", pbv2User.GetEmail())
 	raw = strings.TrimSpace(string(body))
 	fmt.Printf("RAW: %s (%d)\n\n", raw, len(raw))
 
-	/* Protobuf v3 */
-
+	// Protobuf v3
 	fmt.Println("Protobuf v3:")
 	res, err = http.Get("http://localhost:8080/protobuf3")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	body, err = io.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 	res.Body.Close()
-
 	var pbv3User pb3.User
 	err = proto.Unmarshal(body, &pbv3User)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Имя:", pbv3User.GetName())
 	fmt.Println("ID:", pbv3User.GetId())
 	fmt.Println("E-mail:", pbv3User.GetEmail())
 	raw = strings.TrimSpace(string(body))
 	fmt.Printf("RAW: %s (%d)\n\n", raw, len(raw))
 
-	/* Сравнение */
-
+	// Сравнение
 	times := 100000
 	fmt.Printf("Сравнение:\n(%d повторов)\n\n", times)
 
@@ -244,22 +229,18 @@ func main() {
 	fmt.Println("Protobuf v3:", time.Since(start))
 	fmt.Println()
 
-	/* Сложный пример */
-
+	// Сложный пример
 	fmt.Println("Комплексный Protobuf:")
 	fmt.Println()
-
 	fmt.Println("Создание объектов...")
 	people := &pbp.People{
 		People: []*pbp.Person{newPerson(), newPerson(), newPerson()},
 	}
-
 	fmt.Println("Сериализация...")
 	out, err := proto.Marshal(people)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Запись в файл...")
 	path := base.Dir("protobuf")
 	filename := filepath.Join(path, "file.txt")
@@ -267,34 +248,29 @@ func main() {
 		log.Fatal(err)
 	}
 	defer os.Remove(filename)
-
 	fmt.Println("Чтение из файла...")
 	in, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println("Десериализация...")
 	newPeople := &pbp.People{}
 	if err = proto.Unmarshal(in, newPeople); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println()
-
 	fmt.Print("Сериализованные данные идентичны: ")
 	if equalBytes := bytes.Compare(in, out); equalBytes == 0 {
 		fmt.Println("да")
 	} else {
 		fmt.Println("нет")
 	}
-
 	fmt.Print("Десериализованные структуры равны: ")
 	if p1, p2 := fmt.Sprintf("%+v", people), fmt.Sprintf("%+v", newPeople); p1 == p2 {
 		fmt.Println("да")
 	} else {
 		fmt.Println("нет")
 	}
-
 	fmt.Print("Десериализованные структуры идентичны: ")
 	if reflect.DeepEqual(people, newPeople) {
 		fmt.Println("да")
@@ -302,7 +278,6 @@ func main() {
 		fmt.Println("нет")
 	}
 	fmt.Println()
-
 	fmt.Println("Имя:", newPeople.People[0].GetName())
 	fmt.Println("ID:", newPeople.People[0].GetId())
 	fmt.Println("E-mail:", newPeople.People[0].GetEmail())
@@ -324,6 +299,5 @@ func main() {
 	fmt.Println()
 	fmt.Println("Дата:", people.People[0].GetLastUpdated().AsTime())
 	fmt.Println()
-
 	fmt.Println("Количество:", len(newPeople.People))
 }
