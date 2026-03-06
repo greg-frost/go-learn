@@ -10,36 +10,8 @@ import (
 	"time"
 )
 
-func main() {
-	fmt.Println(" \n[ СКАНИРОВАНИЕ ПОРТОВ ]\n ")
-
-	// Фоновый запуск сервера (открытие порта)
-	go http.ListenAndServe("localhost:8080", nil)
-	time.Sleep(100 * time.Millisecond)
-
-	// Проверка одного порта
-	open := scanPort("tcp", "localhost", 8080)
-	fmt.Println("Порт 8080 открыт:", open)
-	fmt.Println()
-
-	/* Сканироване портов 1-1024 */
-
-	fmt.Println("Идет сканирование портов...")
-	fmt.Println()
-
-	// TCP
-	tcp := scanPorts("tcp", "localhost", 1, 1024)
-	tcp, tcpCount, tcpDots := preparePorts(tcp)
-	fmt.Printf("[ tcp ] Открытые: %v%s Всего: %d\n", tcp, tcpDots, tcpCount)
-
-	// UDP
-	udp := scanPorts("udp", "localhost", 1, 1024)
-	udp, udpCount, udpDots := preparePorts(udp)
-	fmt.Printf("[ upd ] Открытые: %v%s Всего: %d\n", udp, udpDots, udpCount)
-}
-
 // Сканирование одного порта
-func scanPort(protocol, hostname string, port int) bool {
+func ScanPort(protocol, hostname string, port int) bool {
 	address := hostname + ":" + strconv.Itoa(port)
 
 	conn, err := net.DialTimeout(protocol, address, 5*time.Second)
@@ -52,7 +24,7 @@ func scanPort(protocol, hostname string, port int) bool {
 }
 
 // Сканирование нескольких портов
-func scanPorts(protocol, hostname string, from, to int) []int {
+func ScanPorts(protocol, hostname string, from, to int) []int {
 	var res []int
 	var mu sync.Mutex
 	var wg sync.WaitGroup
@@ -61,7 +33,7 @@ func scanPorts(protocol, hostname string, from, to int) []int {
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
-			if scanPort(protocol, hostname, port) {
+			if ScanPort(protocol, hostname, port) {
 				mu.Lock()
 				defer mu.Unlock()
 				res = append(res, port)
@@ -74,7 +46,7 @@ func scanPorts(protocol, hostname string, from, to int) []int {
 }
 
 // Подготовка списка портов
-func preparePorts(ports []int) ([]int, int, string) {
+func PreparePorts(ports []int) ([]int, int, string) {
 	sort.Ints(ports)
 
 	var dots string
@@ -86,4 +58,31 @@ func preparePorts(ports []int) ([]int, int, string) {
 	}
 
 	return ports, count, dots
+}
+
+func main() {
+	fmt.Println(" \n[ СКАНИРОВАНИЕ ПОРТОВ ]\n ")
+
+	// Фоновый запуск сервера (открытие порта)
+	go http.ListenAndServe("localhost:8080", nil)
+	time.Sleep(100 * time.Millisecond)
+
+	// Проверка одного порта
+	open := ScanPort("tcp", "localhost", 8080)
+	fmt.Println("Порт 8080 открыт:", open)
+	fmt.Println()
+
+	// Сканироване портов 1-1024
+	fmt.Println("Идет сканирование портов...")
+	fmt.Println()
+
+	// TCP
+	tcp := ScanPorts("tcp", "localhost", 1, 1024)
+	tcp, tcpCount, tcpDots := PreparePorts(tcp)
+	fmt.Printf("[ tcp ] Открытые: %v%s Всего: %d\n", tcp, tcpDots, tcpCount)
+
+	// UDP
+	udp := ScanPorts("udp", "localhost", 1, 1024)
+	udp, udpCount, udpDots := PreparePorts(udp)
+	fmt.Printf("[ upd ] Открытые: %v%s Всего: %d\n", udp, udpDots, udpCount)
 }
