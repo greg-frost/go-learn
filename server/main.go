@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// Текст и HTML-разметка
 const (
 	text = "Go, Baby, Go!"
 	html = `
@@ -39,8 +40,8 @@ func htmlHandler(w http.ResponseWriter, r *http.Request) {
 // Список заголовков
 func headersHandler(w http.ResponseWriter, r *http.Request) {
 	for name, headers := range r.Header {
-		for _, h := range headers {
-			fmt.Fprintf(w, "%v: %v\n", name, h)
+		for _, header := range headers {
+			fmt.Fprintf(w, "%v: %v\n", name, header)
 		}
 	}
 }
