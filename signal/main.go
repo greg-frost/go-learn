@@ -27,8 +27,6 @@ func main() {
 	// Ожидание прерывания
 	fmt.Println("Ожидание сигнала...")
 	fmt.Println("(нажмите Ctrl+C)")
-
 	<-done
-
 	fmt.Println("Завершение работы")
 }
