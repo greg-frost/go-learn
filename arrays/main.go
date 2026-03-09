@@ -5,7 +5,7 @@ import (
 )
 
 // Среднее и минимальное значение
-func avgAndMin(arr []float64) (avg, min float64) {
+func AvgAndMin(arr []float64) (avg, min float64) {
 	if len(arr) == 0 {
 		return
 	}
@@ -23,7 +23,7 @@ func avgAndMin(arr []float64) (avg, min float64) {
 }
 
 // Поиск индексов, сумма значений которых равна k
-func findKeysBySumVals(arr []int, k int) []int {
+func FindKeysBySumVals(arr []int, k int) []int {
 	for i := 0; i < len(arr); i++ {
 		for j := i + 1; j < len(arr); j++ {
 			if arr[i]+arr[j] == k {
@@ -36,7 +36,7 @@ func findKeysBySumVals(arr []int, k int) []int {
 }
 
 // Поиск индексов, сумма значений которых равна k (быстрый алгоритм)
-func findKeysBySumValsFast(arr []int, k int) []int {
+func FindKeysBySumValsFast(arr []int, k int) []int {
 	seen := make(map[int]int)
 	for i, v := range arr {
 		if j, ok := seen[k-v]; ok {
@@ -49,12 +49,12 @@ func findKeysBySumValsFast(arr []int, k int) []int {
 }
 
 // Печать среза
-func printSlice(s []int) {
+func PrintSlice(s []int) {
 	fmt.Printf("len=%d  cap=%d  s=%v\n", len(s), cap(s), s)
 }
 
 // Удаление элемента по индексу
-func removeAtIndex(s []int, i int) []int {
+func RemoveAtIndex(s []int, i int) []int {
 	if i >= len(s) {
 		return s
 	}
@@ -98,7 +98,7 @@ func main() {
 	fmt.Println()
 
 	// Массив
-	avg, min = avgAndMin(arr)
+	avg, min = AvgAndMin(arr)
 	fmt.Println("Массив:", arr)
 	fmt.Printf("Среднее: %.2f\n", avg)
 	fmt.Println("Минимальное:", min)
@@ -106,7 +106,7 @@ func main() {
 
 	// Срез
 	slice = arr[3:12]
-	avg, min = avgAndMin(slice)
+	avg, min = AvgAndMin(slice)
 	fmt.Println("Срез:", slice)
 	fmt.Printf("Среднее: %.2f\n", avg)
 	fmt.Println("Минимальное:", min)
@@ -114,15 +114,15 @@ func main() {
 
 	// Размеры среза
 	fmt.Println("Размеры срезов:")
-	printSlice(s)
+	PrintSlice(s)
 	s = s[:0]
-	printSlice(s)
+	PrintSlice(s)
 	s = s[:4]
-	printSlice(s)
+	PrintSlice(s)
 	s = s[2:]
-	printSlice(s)
-	s = removeAtIndex(s, 1)
-	printSlice(s)
+	PrintSlice(s)
+	s = RemoveAtIndex(s, 1)
+	PrintSlice(s)
 	fmt.Println()
 
 	// Операции
@@ -138,5 +138,5 @@ func main() {
 	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	k := 10
 	fmt.Printf("Индексы среза %v,\nсумма значений которых = %d: %v\n",
-		values, k, findKeysBySumVals(values, k))
+		values, k, FindKeysBySumVals(values, k))
 }
