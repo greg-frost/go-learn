@@ -45,7 +45,7 @@ func (cb CircularBuffer) Values() []float64 {
 }
 
 // Установка значения по индексу (не надо так делать!)
-func (cb CircularBuffer) SetById(id int, value float64) {
+func (cb CircularBuffer) SetByID(id int, value float64) {
 	cb.values[id] = value
 }
 
@@ -86,8 +86,8 @@ func main() {
 	}
 
 	// Изменение значений
-	buf.SetById(0, -1.0)
-	buf.SetById(1, -2.0)
+	buf.SetByID(0, -1.0)
+	buf.SetByID(1, -2.0)
 	Handle(10.0, buf.Add)
 	Handle(20.0, buf.Add)
 	Handle(30.0, buf.Add)
