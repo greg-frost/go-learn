@@ -85,28 +85,23 @@ const (
 func main() {
 	fmt.Println(" \n[ RSA ]\n ")
 
-	/* Генерация простых чисел */
-
+	// Генерация простых чисел
 	fmt.Println("Выбор двух простых чисел:")
-
-	// Простое число p
 	var p int
 	for !isPrime(p) {
-		p = random(min, max)
+		p = random(min, max) // Простое число p
 	}
 	fmt.Printf("p = %d\n", p)
 
-	// Простое число q
 	var q, diff int
 	for !isPrime(q) || q == p || diff < min {
-		q = random(min, max)
-		diff = int(math.Abs(float64(p - q)))
+		q = random(min, max)                 // Простое число q
+		diff = int(math.Abs(float64(p - q))) // Расстояние между p и q
 	}
 	fmt.Printf("q = %d\n\n", q)
 
 	// Произведение простых чисел
 	fmt.Println("Произведение p и q:")
-
 	n := p * q
 	fi := (p - 1) * (q - 1)
 	fmt.Printf("n = %d\n\n", n)
@@ -114,47 +109,34 @@ func main() {
 	fmt.Println("...")
 	fmt.Println()
 
-	/* Генерация ключа шифрования */
-
+	// Генерация ключа шифрования
 	fmt.Println("Выбор числа для шифрования:")
-
-	// Число e
 	var e int
 	for !isPrime(e) || !isCoprime(e, fi) {
-		e = random(min, max)
+		e = random(min, max) // Число e
 	}
-	//e = 65537
+	// e = 65537
 	fmt.Printf("e = %d\n\n", e)
 
-	/* Генерация ключа дешифрования */
-
+	// Генерация ключа дешифрования
 	fmt.Println("Выбор числа для дешифрования:")
-
-	// Число d
-	d := modularInverse(e, fi)
+	d := modularInverse(e, fi) // Число d
 	fmt.Printf("d = %d\n\n", d)
 
 	fmt.Println("...")
 	fmt.Println()
 
-	/* Шифрование и дешифрование */
-
+	// Шифрование и дешифрование
 	fmt.Println("Оригинальное сообщение:")
-
-	// Генерация сообщения (не длиннее n)
-	M := random(1, n)
+	M := random(1, n) // Генерация сообщения (не длиннее n)
 	fmt.Printf("M = %d\n\n", M)
 
 	fmt.Println("Зашифрованное сообщение:")
-
-	// Шифрование (M^e mod n)
-	Me := fastPowMod(M, e, n)
+	Me := fastPowMod(M, e, n) // Шифрование (M^e mod n)
 	fmt.Printf("M(e) = %d\n\n", Me)
 
 	fmt.Println("Расшифрованное сообщение:")
-
-	// Дешифрование (Me^d mod n)
-	Md := fastPowMod(Me, d, n)
+	Md := fastPowMod(Me, d, n) // Дешифрование (Me^d mod n)
 	fmt.Printf("M(d) = %d\n\n", Md)
 
 	fmt.Println("Сообщения идентичны:", M == Md)
