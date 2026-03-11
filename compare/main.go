@@ -7,7 +7,7 @@ import (
 )
 
 // Сравнение чисел float
-func compareFloat(a, b, precise float64) bool {
+func CompareFloat(a, b, precise float64) bool {
 	return math.Abs(a-b) < precise
 }
 
@@ -63,8 +63,8 @@ func main() {
 	fmt.Println("f1 =", f1)
 	fmt.Println("f2 =", f2)
 	fmt.Println("Равенство:", f1 == f2)
-	fmt.Println("Сравнение (0.000001):", compareFloat(f1, f2, 1e-6))
-	fmt.Println("Сравнение (0.000000001):", compareFloat(f1, f2, 1e-9))
+	fmt.Println("Сравнение (0.000001):", CompareFloat(f1, f2, 1e-6))
+	fmt.Println("Сравнение (0.000000001):", CompareFloat(f1, f2, 1e-9))
 	fmt.Println()
 
 	// Сравнение сравнимых структур
