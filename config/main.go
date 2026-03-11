@@ -29,7 +29,7 @@ var config Config
 var path = base.Dir("config")
 
 // Загрузка конфигурации
-func loadConfig(filename string) (Config, error) {
+func LoadConfig(filename string) (Config, error) {
 	d, err := os.ReadFile(filepath.Join(path, filename))
 	if err != nil {
 		return Config{}, err
@@ -45,7 +45,7 @@ func loadConfig(filename string) (Config, error) {
 }
 
 // Печать конфигурации
-func printConfig(config Config) {
+func PrintConfig(config Config) {
 	fmt.Println("Host:", config.Host)
 	fmt.Println("Port:", config.Port)
 	fmt.Println("Tags:")
@@ -58,14 +58,14 @@ func printConfig(config Config) {
 func watchConfigByHash(filename string) (<-chan string, <-chan error, error) {
 	updates := make(chan string)
 	errs := make(chan error)
-	hash, _ := calculateFileHash(filename)
+	hash, _ := CalculateFileHash(filename)
 
 	go func() {
 		ticker := time.NewTicker(3 * time.Second)
 		defer ticker.Stop()
 
 		for range ticker.C {
-			newHash, err := calculateFileHash(filename)
+			newHash, err := CalculateFileHash(filename)
 			if err != nil {
 				errs <- err
 				continue
@@ -82,7 +82,7 @@ func watchConfigByHash(filename string) (<-chan string, <-chan error, error) {
 }
 
 // Вычисление хэша файла
-func calculateFileHash(filename string) (string, error) {
+func CalculateFileHash(filename string) (string, error) {
 	file, err := os.Open(filepath.Join(path, filename))
 	if err != nil {
 		return "", err
@@ -132,7 +132,7 @@ func startListening(updates <-chan string, errs <-chan error) {
 	for {
 		select {
 		case filename := <-updates:
-			cfg, err := loadConfig(filename)
+			cfg, err := LoadConfig(filename)
 			if err != nil {
 				fmt.Println("Ошибка загрузки конфигурации:", err)
 				continue
@@ -142,7 +142,7 @@ func startListening(updates <-chan string, errs <-chan error) {
 
 			fmt.Println()
 			fmt.Println("Конфигурация изменилась!")
-			printConfig(config)
+			PrintConfig(config)
 
 		case err := <-errs:
 			fmt.Println("Ошибка наблюдения за конфигурацией:", err)
@@ -166,13 +166,13 @@ func main() {
 
 	// Загрузка
 	var err error
-	config, err = loadConfig("config.yml")
+	config, err = LoadConfig("config.yml")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Печать
-	printConfig(config)
+	PrintConfig(config)
 
 	fmt.Println()
 	fmt.Println("Измените файл конфигурации")
