@@ -6,23 +6,8 @@ import (
 	"time"
 )
 
-func main() {
-	fmt.Println(" \n[ ЗАКРЫТИЕ ]\n ")
-
-	// Каналы
-	msg := make(chan int)
-	done := make(chan bool)
-	until := time.After(5 * time.Second)
-
-	// Отправка и получение
-	fmt.Println("Отправка в канал:")
-	fmt.Println()
-	go send(msg, done)
-	recieve(msg, done, until)
-}
-
 // Отправка
-func send(msg chan<- int, done <-chan bool) {
+func Send(msg chan<- int, done <-chan bool) {
 	for {
 		select {
 		case <-done:
@@ -37,7 +22,7 @@ func send(msg chan<- int, done <-chan bool) {
 }
 
 // Получение
-func recieve(msg <-chan int, done chan<- bool, until <-chan time.Time) {
+func Recieve(msg <-chan int, done chan<- bool, until <-chan time.Time) {
 	for {
 		select {
 		case m := <-msg:
@@ -49,4 +34,19 @@ func recieve(msg <-chan int, done chan<- bool, until <-chan time.Time) {
 			return
 		}
 	}
+}
+
+func main() {
+	fmt.Println(" \n[ ЗАКРЫТИЕ ]\n ")
+
+	// Каналы
+	msg := make(chan int)
+	done := make(chan bool)
+	until := time.After(5 * time.Second)
+
+	// Отправка и получение
+	fmt.Println("Отправка в канал:")
+	fmt.Println()
+	go Send(msg, done)
+	Recieve(msg, done, until)
 }
