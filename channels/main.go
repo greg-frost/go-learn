@@ -6,7 +6,7 @@ import (
 )
 
 // Рутина
-func routine(from, to, ms int) {
+func Routine(from, to, ms int) {
 	for i := from; i <= to; i++ {
 		fmt.Print(i, " ")
 		waitMs(ms)
@@ -14,9 +14,9 @@ func routine(from, to, ms int) {
 }
 
 // Канал
-func channel(from, to, ms int) {
+func Channel(from, to, ms int) {
 	c := make(chan int)
-	go readChannel(c, ms)
+	go ReadChannel(c, ms)
 
 	for i := from; i <= to; i++ {
 		c <- i
@@ -25,7 +25,7 @@ func channel(from, to, ms int) {
 }
 
 // Чтение канала
-func readChannel(c chan int, ms int) {
+func ReadChannel(c chan int, ms int) {
 	for i := range c {
 		fmt.Print(i, " ")
 		waitMs(ms)
@@ -33,7 +33,7 @@ func readChannel(c chan int, ms int) {
 }
 
 // Сумма (через каналы)
-func chanSum(s []int, c chan int) {
+func ChanSum(s []int, c chan int) {
 	var sum int
 	for _, v := range s {
 		sum += v
@@ -42,7 +42,7 @@ func chanSum(s []int, c chan int) {
 }
 
 // Ряд Фибоначчи (через каналы)
-func chanFibonacci(n int, c chan int) {
+func ChanFibonacci(n int, c chan int) {
 	x, y := 0, 1
 	for i := 0; i < n; i++ {
 		c <- x
@@ -52,49 +52,47 @@ func chanFibonacci(n int, c chan int) {
 }
 
 // IN-OUT каналы
-func chanInOut(in <-chan int, out chan<- int) {
+func ChanInOut(in <-chan int, out chan<- int) {
 	go func() {
 		for val := range in {
 			var res int
-
 			switch {
 			case val%2 == 0:
-				res = triple(val)
+				res = Double(val)
 			default:
-				res = double(val)
+				res = Triple(val)
 			}
-
 			out <- res
 		}
 	}()
 }
 
 // Удвоение
-func double(val int) int {
+func Double(val int) int {
 	return val * 2
 }
 
 // Утроение
-func triple(val int) int {
+func Triple(val int) int {
 	return val * 3
 }
 
 // Пинг
-func ping(c chan string) {
+func Ping(c chan string) {
 	for {
 		c <- "Ping"
 	}
 }
 
 // Понг
-func pong(c chan<- string) {
+func Pong(c chan<- string) {
 	for {
 		c <- "Pong"
 	}
 }
 
 // Печать
-func print(c <-chan string) {
+func Print(c <-chan string) {
 	for {
 		fmt.Print(<-c, " ")
 		waitMs(1000)
@@ -111,18 +109,18 @@ func main() {
 
 	// Рутины
 	fmt.Println("Без каналов:")
-	go routine(1, 3, 1)
-	go routine(4, 7, 10)
-	go routine(8, 12, 100)
+	go Routine(1, 3, 1)
+	go Routine(4, 7, 10)
+	go Routine(8, 12, 100)
 	waitMs(500)
 	fmt.Println()
 	fmt.Println()
 
 	// Каналы
 	fmt.Println("С каналами:")
-	channel(1, 3, 1)
-	channel(4, 7, 10)
-	channel(8, 12, 100)
+	Channel(1, 3, 1)
+	Channel(4, 7, 10)
+	Channel(8, 12, 100)
 	waitMs(250)
 	fmt.Println()
 	fmt.Println()
@@ -130,15 +128,15 @@ func main() {
 	// Сумма (через каналы)
 	c := make(chan int)
 	s := []int{7, 2, 8, -9, 4, 0}
-	go chanSum(s[:len(s)/2], c)
-	go chanSum(s[len(s)/2:], c)
+	go ChanSum(s[:len(s)/2], c)
+	go ChanSum(s[len(s)/2:], c)
 	x, y := <-c, <-c
 	fmt.Println("Сумма (через каналы):", x, y, x+y)
 	fmt.Println()
 
 	// Фибоначчи (через каналы)
 	f := make(chan int, 10)
-	go chanFibonacci(cap(f), f)
+	go ChanFibonacci(cap(f), f)
 	fmt.Println("Ряд Фибоначчи (через каналы):")
 	for {
 		if v, ok := <-f; ok {
@@ -153,7 +151,7 @@ func main() {
 	// IN-OUT каналы
 	in := make(chan int)
 	out := make(chan int)
-	chanInOut(in, out)
+	ChanInOut(in, out)
 	fmt.Println("IN-OUT каналы:")
 	i := 1
 	for i <= 10 {
@@ -169,9 +167,9 @@ func main() {
 
 	// Пинг-понг
 	p := make(chan string)
-	go ping(p)
-	go pong(p)
-	go print(p)
+	go Ping(p)
+	go Pong(p)
+	go Print(p)
 
 	// Ожидание ввода
 	var input string
