@@ -7,12 +7,12 @@ import (
 )
 
 // Случайное число в диапазоне
-func random(from, to int) int {
+func Random(from, to int) int {
 	return from + rand.Intn(to-from+1)
 }
 
 // Простое ли число
-func isPrime(n int) bool {
+func IsPrime(n int) bool {
 	if n <= 1 {
 		return false
 	}
@@ -25,7 +25,7 @@ func isPrime(n int) bool {
 }
 
 // Взаимно простые ли числа
-func isCoprime(n, m int) bool {
+func IsCoprime(n, m int) bool {
 	for i := 2; i*i <= n && i*i <= m; i++ {
 		if n%i == 0 && m%i == 0 {
 			return false
@@ -34,26 +34,26 @@ func isCoprime(n, m int) bool {
 	return true
 }
 
-// Алгоритм Евклида (наименьший общий делитель)
-func euclid(a, b int) int {
+// Алгоритм Евклида (наибольший общий делитель)
+func Euclid(a, b int) int {
 	if b == 0 {
 		return a
 	}
-	return euclid(b, a%b)
+	return Euclid(b, a%b)
 }
 
 // Расширенный алгоритм Евклида (разложение на сумму множителей)
-func extendedEuclid(a, b int) (int, int, int) {
+func ExtendedEuclid(a, b int) (int, int, int) {
 	if b == 0 {
 		return a, 1, 0
 	}
-	r, x, y := extendedEuclid(b, a%b)
+	r, x, y := ExtendedEuclid(b, a%b)
 	return r, y, x - a/b*y
 }
 
 // Модульная (мультипликативная) инверсия
-func modularInverse(a, n int) int {
-	r, x, _ := extendedEuclid(a, n)
+func ModularInverse(a, n int) int {
+	r, x, _ := ExtendedEuclid(a, n)
 	if r != 1 {
 		return 0
 	}
@@ -64,7 +64,7 @@ func modularInverse(a, n int) int {
 }
 
 // Быстрое возведение в степень по модулю
-func fastPowMod(x, n, p int) int {
+func FastPowMod(x, n, p int) int {
 	c, d, r := x%p, n, 1
 	for d > 0 {
 		if d&1 == 1 {
@@ -88,14 +88,14 @@ func main() {
 	// Генерация простых чисел
 	fmt.Println("Выбор двух простых чисел:")
 	var p int
-	for !isPrime(p) {
-		p = random(min, max) // Простое число p
+	for !IsPrime(p) {
+		p = Random(min, max) // Простое число p
 	}
 	fmt.Printf("p = %d\n", p)
 
 	var q, diff int
-	for !isPrime(q) || q == p || diff < min {
-		q = random(min, max)                 // Простое число q
+	for !IsPrime(q) || q == p || diff < min {
+		q = Random(min, max)                 // Простое число q
 		diff = int(math.Abs(float64(p - q))) // Расстояние между p и q
 	}
 	fmt.Printf("q = %d\n\n", q)
@@ -112,15 +112,15 @@ func main() {
 	// Генерация ключа шифрования
 	fmt.Println("Выбор числа для шифрования:")
 	var e int
-	for !isPrime(e) || !isCoprime(e, fi) {
-		e = random(min, max) // Число e
+	for !IsPrime(e) || !IsCoprime(e, fi) {
+		e = Random(min, max) // Число e
 	}
 	// e = 65537
 	fmt.Printf("e = %d\n\n", e)
 
 	// Генерация ключа дешифрования
 	fmt.Println("Выбор числа для дешифрования:")
-	d := modularInverse(e, fi) // Число d
+	d := ModularInverse(e, fi) // Число d
 	fmt.Printf("d = %d\n\n", d)
 
 	fmt.Println("...")
@@ -128,15 +128,15 @@ func main() {
 
 	// Шифрование и дешифрование
 	fmt.Println("Оригинальное сообщение:")
-	M := random(1, n) // Генерация сообщения (не длиннее n)
+	M := Random(1, n) // Генерация сообщения (не длиннее n)
 	fmt.Printf("M = %d\n\n", M)
 
 	fmt.Println("Зашифрованное сообщение:")
-	Me := fastPowMod(M, e, n) // Шифрование (M^e mod n)
+	Me := FastPowMod(M, e, n) // Шифрование (M^e mod n)
 	fmt.Printf("M(e) = %d\n\n", Me)
 
 	fmt.Println("Расшифрованное сообщение:")
-	Md := fastPowMod(Me, d, n) // Дешифрование (Me^d mod n)
+	Md := FastPowMod(Me, d, n) // Дешифрование (Me^d mod n)
 	fmt.Printf("M(d) = %d\n\n", Md)
 
 	fmt.Println("Сообщения идентичны:", M == Md)
