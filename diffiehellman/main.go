@@ -7,12 +7,12 @@ import (
 )
 
 // Случайное число в диапазоне
-func random(from, to int) int {
+func Random(from, to int) int {
 	return from + rand.Intn(to-from+1)
 }
 
 // Простое ли число
-func isPrime(n int) bool {
+func IsPrime(n int) bool {
 	if n <= 1 {
 		return false
 	}
@@ -25,7 +25,7 @@ func isPrime(n int) bool {
 }
 
 // Возведение в степень
-func pow(x, n int) int {
+func Pow(x, n int) int {
 	return int(math.Pow(
 		float64(x),
 		float64(n),
@@ -33,7 +33,7 @@ func pow(x, n int) int {
 }
 
 // Быстрое возведение в степень
-func fastPow(x, n int) int {
+func FastPow(x, n int) int {
 	res := 1
 	for n > 0 {
 		if n%2 == 1 {
@@ -46,7 +46,7 @@ func fastPow(x, n int) int {
 }
 
 // Быстрое возведение в степень по модулю
-func fastPowMod(x, n, p int) int {
+func FastPowMod(x, n, p int) int {
 	res := 1
 	x %= p
 	for n > 0 {
@@ -65,12 +65,12 @@ func main() {
 	// Генерация открытых чисел
 	fmt.Println("Выбор двух открытых чисел:")
 	var p int
-	for !isPrime(p) {
-		p = random(1e6, 1e9) // Простое число p
+	for !IsPrime(p) {
+		p = Random(1e6, 1e9) // Простое число p
 	}
 	fmt.Printf("p = %d\n", p)
 
-	g := random(2, p-2) // Число g (от 2 до p-2)
+	g := Random(2, p-2) // Число g (от 2 до p-2)
 	fmt.Printf("g = %d\n\n", g)
 
 	fmt.Println("...")
@@ -78,11 +78,11 @@ func main() {
 
 	// Действия Алисы
 	fmt.Println("Алиса придумывает секрет:")
-	a := random(1, p-1) // Число a (от 1 до p-1)
+	a := Random(1, p-1) // Число a (от 1 до p-1)
 	fmt.Printf("a = %d\n\n", a)
 
 	fmt.Println("Алиса рассчитывает открытое число на основе секрета:")
-	A := fastPowMod(g, a, p) // Число A (g^a mod p)
+	A := FastPowMod(g, a, p) // Число A (g^a mod p)
 	fmt.Printf("A = %d\n\n", A)
 
 	fmt.Println("Алиса отправляет свое открытое число Бобу.")
@@ -93,11 +93,11 @@ func main() {
 
 	// Действия Боба
 	fmt.Println("Боб придумывает секрет:")
-	b := random(1, p-1) // Число b (от 1 до p-1)
+	b := Random(1, p-1) // Число b (от 1 до p-1)
 	fmt.Printf("b = %d\n\n", b)
 
 	fmt.Println("Боб рассчитывает открытое число на основе секрета:")
-	B := fastPowMod(g, b, p) // Число B (g^b mod p)
+	B := FastPowMod(g, b, p) // Число B (g^b mod p)
 	fmt.Printf("B = %d\n\n", B)
 
 	fmt.Println("Боб отправляет свое открытое число Алисе.")
@@ -108,11 +108,11 @@ func main() {
 
 	// Генерация ключей
 	fmt.Println("Алиса получает ключ из числа Боба и своего секрета:")
-	aliceKey := fastPowMod(B, a, p) // Ключ Алисы (B^a mod p)
+	aliceKey := FastPowMod(B, a, p) // Ключ Алисы (B^a mod p)
 	fmt.Printf("aliceKey = %d\n\n", aliceKey)
 
 	fmt.Println("Боб получает ключ из числа Алисы и своего секрета:")
-	bobKey := fastPowMod(A, b, p) // Ключ Боба (A^b mod p)
+	bobKey := FastPowMod(A, b, p) // Ключ Боба (A^b mod p)
 	fmt.Printf("bobKey = %d\n\n", bobKey)
 
 	fmt.Println("Ключи идентичны:", aliceKey == bobKey)
