@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func main() {
@@ -36,4 +37,28 @@ func main() {
 		"attempt", 3,
 		"backoff", time.Second,
 	)
+	fmt.Println()
+
+	// Динамическая фильтрация
+	cfg := zap.NewDevelopmentConfig()
+	cfg.EncoderConfig.TimeKey = "" // Без меток времени
+	cfg.Sampling = &zap.SamplingConfig{
+		Initial:    3, // Регистрация до 3 событий в секунду
+		Thereafter: 3, // Дальше - только 1 событие из 3
+		Hook: func(e zapcore.Entry, d zapcore.SamplingDecision) {
+			if d == zapcore.LogDropped {
+				fmt.Println("(событие отброшено)")
+			}
+		},
+	}
+	logger, _ = cfg.Build()    // Инициализация из конфиругации
+	zap.ReplaceGlobals(logger) // Замена глобального логгера
+
+	fmt.Println("Фильтрация:")
+	for i := 1; i <= 10; i++ {
+		zap.S().Infow(
+			"Событие",
+			"event", i,
+		)
+	}
 }
