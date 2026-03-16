@@ -38,6 +38,7 @@ require (
 	github.com/ugorji/go/codec v1.2.12
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.mongodb.org/mongo-driver v1.17.3
+	go.uber.org/zap v1.27.1
 	golang.org/x/crypto v0.27.0
 	golang.org/x/sync v0.8.0
 	google.golang.org/grpc v1.65.0
