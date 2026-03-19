@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
+	"strconv"
 
 	// "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
@@ -37,7 +40,29 @@ func Fibonacci(ctx context.Context, n int) chan int {
 		if n > 1 {
 			a := Fibonacci(cctx, n-1)
 			b := Fibonacci(cctx, n-2)
-			res = <-a + <-b
+
+			// Без отмены
+			// res = <-a + <-b
+
+			// С отменой
+			select {
+			case x := <-a:
+				select {
+				case y := <-b:
+					res = x + y
+				case <-ctx.Done():
+					return
+				}
+			case y := <-b:
+				select {
+				case x := <-a:
+					res = x + y
+				case <-ctx.Done():
+					return
+				}
+			case <-ctx.Done():
+				return
+			}
 		}
 
 		// Добавление атрибута
@@ -47,6 +72,40 @@ func Fibonacci(ctx context.Context, n int) chan int {
 	}()
 
 	return ch
+}
+
+// Обработчик Фибоначии
+func handleFib(w http.ResponseWriter, r *http.Request) {
+	var n int
+	var err error
+
+	// Парсинг параметра
+	queryN := r.URL.Query()["n"]
+	if len(queryN) != 1 {
+		err = errors.New("неверное число аргументов")
+	} else {
+		n, err = strconv.Atoi(queryN[0])
+	}
+	if err != nil {
+		http.Error(w, "не удалось распознать параметр n", 400)
+		return
+	}
+
+	// Вычисление Фибоначчи
+	ctx := r.Context()
+	res := <-Fibonacci(ctx, n)
+
+	// Трассировка
+	// (получение спана из контекста)
+	if sp := trace.SpanFromContext(ctx); sp != nil {
+		// Добавление атрибутов
+		sp.SetAttributes(
+			label.Int("parameter", n),
+			label.Int("result", res),
+		)
+	}
+
+	fmt.Fprintln(w, res)
 }
 
 func main() {
