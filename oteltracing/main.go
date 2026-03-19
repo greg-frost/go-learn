@@ -4,22 +4,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
-	// "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel"
-	// "go.opentelemetry.io/otel/exporters/stdout"
 	// "go.opentelemetry.io/otel/exporters/trace/jaeger"
-	// "go.opentelemetry.io/otel/label"
-	// export "go.opentelemetry.io/otel/sdk/export/trace"
-	// sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/stdout"
 	"go.opentelemetry.io/otel/label"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 )
 
-// Имя сервиса
-const serviceName = "fibonacci"
+const (
+	serviceName = "fibonacci" // Имя сервиса
+	// jaegerEndpoint = "http://localhost:14268/api/traces"
+)
 
 // Вычисление числа Фибоначчи
 func Fibonacci(ctx context.Context, n int) chan int {
@@ -110,4 +111,42 @@ func handleFib(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	fmt.Println(" \n[ OPEN TELEMETRY (ТРАССИРОВКА) ]\n ")
+
+	// Стандартный экспортер
+	stdExporter, err := stdout.NewExporter(
+		stdout.WithPrettyPrint(),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Экспортер Jaeger
+	// jaegerExporter, err := jaeger.NewRawExporter(
+	// 	jaeger.WithCollectorEndpoint(jaegerEndpoint),
+	// 	jaeger.WithProcess(jaeger.Process{
+	// 		ServiceName: serviceName,
+	// 	}),
+	// )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// Провайдер трассировки
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithSyncer(stdExporter),
+		// sdktrace.WithSyncer(jaegerExporter),
+	)
+
+	// Регистрация провайдера
+	otel.SetTracerProvider(tp)
+
+	// Обработчик (с инструментацией)
+	http.Handle("/",
+		otelhttp.NewHandler(http.HandlerFunc(handleFib), "root"),
+	)
+
+	// Запуск сервера
+	fmt.Println("Ожидаю соединений...")
+	fmt.Println("(на http://localhost:8080)")
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
