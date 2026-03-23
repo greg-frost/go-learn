@@ -42,6 +42,21 @@ func swappy(ptr1, ptr2 *int) {
 	*ptr1, *ptr2 = *ptr2, *ptr1
 }
 
+// Структура "ничто"
+type Nil struct {
+	value string
+}
+
+// Допустимый метод nil-структуры
+func (n *Nil) OK() string {
+	return "все ОК"
+}
+
+// Недопустимый метод nil-структуры
+func (n *Nil) Panic() string {
+	return n.value
+}
+
 func main() {
 	fmt.Println(" \n[ УКАЗАТЕЛИ ]\n ")
 
@@ -86,4 +101,13 @@ func main() {
 	fmt.Println("Значение c:", c)
 	fmt.Println("Разыменование c:", *c)
 	fmt.Println("Двойное разыменование c:", **c)
+	fmt.Println()
+
+	// Nil-методы
+	var n *Nil
+	fmt.Println("Допустимый nil-метод:", n.OK())
+	fmt.Println("Недопустимый nil-метод:",
+		"(будет паника)",
+		// n.Panic(),
+	)
 }
