@@ -21,8 +21,8 @@ func main() {
 	)
 
 	for {
+		// Ввод и парсинг
 		fmt.Scanln(&input)
-
 		input = strings.ToLower(input)
 		if input != "" {
 			d := strings.Split(input, "d")
@@ -39,7 +39,11 @@ func main() {
 			}
 		}
 
-		res := n + rand.Intn(n*m-n+1)
+		// Бросок кубиков
+		var res int
+		for i := 0; i < n; i++ {
+			res += rand.Intn(m) + 1
+		}
 		fmt.Printf("Бросаем кубики %dd%d... Выпало: %d\n", n, m, res)
 	}
 }
