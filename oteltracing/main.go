@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"strconv"
 
-	// "go.opentelemetry.io/otel/exporters/trace/jaeger"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/stdout"
 	"go.opentelemetry.io/otel/label"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	// "go.opentelemetry.io/otel/exporters/trace/jaeger"
 )
 
 const (
@@ -43,27 +43,7 @@ func Fibonacci(ctx context.Context, n int) chan int {
 			b := Fibonacci(cctx, n-2)
 
 			// Без отмены
-			// res = <-a + <-b
-
-			// С отменой
-			select {
-			case x := <-a:
-				select {
-				case y := <-b:
-					res = x + y
-				case <-ctx.Done():
-					return
-				}
-			case y := <-b:
-				select {
-				case x := <-a:
-					res = x + y
-				case <-ctx.Done():
-					return
-				}
-			case <-ctx.Done():
-				return
-			}
+			res = <-a + <-b
 		}
 
 		// Добавление атрибута
