@@ -11,12 +11,10 @@ import (
 	"strconv"
 	"time"
 
+	// "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/metric/prometheus"
 	"go.opentelemetry.io/otel/label"
 	"go.opentelemetry.io/otel/metric"
-	// "go.opentelemetry.io/otel"
-	// sdkmetric "go.opentelemetry.io/otel/sdk/export/metric"
-	// "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Имя сервиса
@@ -115,25 +113,8 @@ func Fibonacci(ctx context.Context, n int) chan int {
 			a := Fibonacci(ctx, n-1)
 			b := Fibonacci(ctx, n-2)
 
-			// С отменой
-			select {
-			case x := <-a:
-				select {
-				case y := <-b:
-					res = x + y
-				case <-ctx.Done():
-					return
-				}
-			case y := <-b:
-				select {
-				case x := <-a:
-					res = x + y
-				case <-ctx.Done():
-					return
-				}
-			case <-ctx.Done():
-				return
-			}
+			// Без отмены
+			res = <-a + <-b
 		}
 
 		ch <- res
