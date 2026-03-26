@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
+	"time"
 
 	"go.opentelemetry.io/otel/exporters/metric/prometheus"
 	"go.opentelemetry.io/otel/label"
@@ -26,6 +28,12 @@ var meterProvider metric.MeterProvider
 // Метрика "число запросов"
 var requests metric.Int64Counter
 
+// Метки метрик
+var labels = []label.KeyValue{
+	label.Key("application").String(serviceName),
+	label.Key("container_id").String(os.Getenv("HOSTNAME")),
+}
+
 // Создание счетчика запросов
 func buildRequestsCounter() error {
 	// Получение экземпляра из провайдера метрик
@@ -41,10 +49,31 @@ func buildRequestsCounter() error {
 	return err
 }
 
-// Метки метрик
-var labels = []label.KeyValue{
-	label.Key("application").String(serviceName),
-	label.Key("container_id").String(os.Getenv("HOSTNAME")),
+// Обновление метрик (вручную)
+func updateMetrics(ctx context.Context) {
+	// Получение экземпляра из провайдера метрик
+	// mp := otel.GetMeterProvider()
+	mp := meterProvider
+	meter := mp.Meter(serviceName)
+
+	// Метрики памяти и горутин
+	memory, _ := meter.NewInt64UpDownCounter("memory_usage_bytes",
+		metric.WithDescription("Количество использованной памяти в байтах"))
+	goroutines, _ := meter.NewInt64UpDownCounter("num_goroutines",
+		metric.WithDescription("Количество запущенных горутин"))
+
+	// Опрос метрик
+	var m runtime.MemStats
+	for {
+		// Получение метрик
+		runtime.ReadMemStats(&m)
+		mMemory := memory.Measurement(int64(m.Sys))
+		mGoroutines := goroutines.Measurement(int64(runtime.NumGoroutine()))
+
+		// Запись метрик одной пачкой
+		meter.RecordBatch(ctx, labels, mMemory, mGoroutines)
+		time.Sleep(5 * time.Second)
+	}
 }
 
 // Вычисление числа Фибоначчи
@@ -115,6 +144,8 @@ func handleFib(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println(" \n[ OPEN TELEMETRY (МЕТРИКИ) ]\n ")
 
+	ctx := context.Background()
+
 	// Экспортер Prometheus
 	// (можно использовать InstallNewPipeline)
 	prometheusExporter, err := prometheus.NewExportPipeline(
@@ -131,8 +162,11 @@ func main() {
 	// otel.SetMeterProvider(mp)
 	meterProvider = mp
 
-	// Регистрация метрик
+	// Регистрация счетчика
 	buildRequestsCounter()
+
+	// Обновление метрик
+	go updateMetrics(ctx)
 
 	// Обработчики
 	http.HandleFunc("/", handleFib)
