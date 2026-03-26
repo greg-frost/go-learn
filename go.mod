@@ -40,7 +40,9 @@ require (
 	go.mongodb.org/mongo-driver v1.17.3
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.17.0
 	go.opentelemetry.io/otel v0.17.0
+	go.opentelemetry.io/otel/exporters/metric/prometheus v0.17.0
 	go.opentelemetry.io/otel/exporters/stdout v0.17.0
+	go.opentelemetry.io/otel/metric v0.17.0
 	go.opentelemetry.io/otel/sdk v0.17.0
 	go.opentelemetry.io/otel/trace v0.17.0
 	go.uber.org/zap v1.27.1
@@ -117,7 +119,6 @@ require (
 	github.com/xrash/smetrics v0.0.0-20240312152122-5f08fbb34913 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.opentelemetry.io/contrib v0.17.0 // indirect
-	go.opentelemetry.io/otel/metric v0.17.0 // indirect
 	go.opentelemetry.io/otel/sdk/export/metric v0.17.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v0.17.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
