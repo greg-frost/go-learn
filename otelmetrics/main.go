@@ -50,7 +50,7 @@ func buildRequestsCounter() error {
 }
 
 // Обновление метрик (вручную)
-func updateMetrics(ctx context.Context) {
+func watchRuntimeMetrics(ctx context.Context) {
 	// Получение экземпляра из провайдера метрик
 	// mp := otel.GetMeterProvider()
 	mp := meterProvider
@@ -58,7 +58,7 @@ func updateMetrics(ctx context.Context) {
 
 	// Метрики памяти и горутин
 	memory, _ := meter.NewInt64UpDownCounter("memory_usage_bytes",
-		metric.WithDescription("Количество использованной памяти в байтах"))
+		metric.WithDescription("Количество использованной памяти"))
 	goroutines, _ := meter.NewInt64UpDownCounter("num_goroutines",
 		metric.WithDescription("Количество запущенных горутин"))
 
@@ -74,6 +74,31 @@ func updateMetrics(ctx context.Context) {
 		meter.RecordBatch(ctx, labels, mMemory, mGoroutines)
 		time.Sleep(5 * time.Second)
 	}
+}
+
+// Обновление метрик (автоматическое)
+func buildRuntimeObservers() {
+	// Получение экземпляра из провайдера метрик
+	// mp := otel.GetMeterProvider()
+	mp := meterProvider
+	meter := mp.Meter(serviceName)
+	var m runtime.MemStats
+
+	// Метрика "использование памяти"
+	meter.NewInt64UpDownSumObserver("memory_usage_bytes",
+		func(_ context.Context, result metric.Int64ObserverResult) {
+			runtime.ReadMemStats(&m)
+			result.Observe(int64(m.Sys), labels...)
+		},
+		metric.WithDescription("Количество использованной памяти"),
+	)
+	// Метрика "количество горутин"
+	meter.NewInt64UpDownSumObserver("num_goroutines",
+		func(_ context.Context, result metric.Int64ObserverResult) {
+			result.Observe(int64(runtime.NumGoroutine()), labels...)
+		},
+		metric.WithDescription("Количество запущенных горутин"),
+	)
 }
 
 // Вычисление числа Фибоначчи
@@ -144,8 +169,6 @@ func handleFib(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println(" \n[ OPEN TELEMETRY (МЕТРИКИ) ]\n ")
 
-	ctx := context.Background()
-
 	// Экспортер Prometheus
 	// (можно использовать InstallNewPipeline)
 	prometheusExporter, err := prometheus.NewExportPipeline(
@@ -166,7 +189,8 @@ func main() {
 	buildRequestsCounter()
 
 	// Обновление метрик
-	go updateMetrics(ctx)
+	// go watchRuntimeMetrics(ctx)
+	buildRuntimeObservers()
 
 	// Обработчики
 	http.HandleFunc("/", handleFib)
