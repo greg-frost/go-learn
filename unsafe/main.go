@@ -64,7 +64,7 @@ func BytesFromData(d Data) [16]byte {
 }
 
 func main() {
-	fmt.Println(" \n[ ПАКЕТ UNSAFE ]\n ")
+	fmt.Println(" \n[ UNSAFE ]\n ")
 
 	// Информация
 	d := Data{
