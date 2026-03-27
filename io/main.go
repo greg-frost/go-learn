@@ -94,7 +94,7 @@ func (r *LimitedReader) Read(p []byte) (int, error) {
 }
 
 func main() {
-	fmt.Println(" \n[ IO-ПАКЕТ ]\n ")
+	fmt.Println(" \n[ INPUT-OUTPUT ]\n ")
 
 	// Рандом
 	fmt.Println("Рандом:")
