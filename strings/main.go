@@ -7,24 +7,17 @@ import (
 )
 
 // Переворот строки
-func reverseString(s string) string {
-	var n int
-	runes := make([]rune, len(s))
-	for _, r := range s {
-		runes[n] = r
-		n++
-	}
-	runes = runes[0:n]
-
+func ReverseString(s string) string {
+	r := []rune(s)
+	n := len(r)
 	for i := 0; i < n/2; i++ {
-		runes[i], runes[n-1-i] = runes[n-1-i], runes[i]
+		r[i], r[n-1-i] = r[n-1-i], r[i]
 	}
-
-	return string(runes)
+	return string(r)
 }
 
 // Счетчик букв
-func lettersCount(s string) map[rune]int {
+func LettersCount(s string) map[rune]int {
 	res := make(map[rune]int)
 	for _, v := range s {
 		res[v]++
@@ -33,18 +26,60 @@ func lettersCount(s string) map[rune]int {
 }
 
 // Счетчик слов
-func wordsCount(s string) map[string]int {
+func WordsCount(s string) map[string]int {
 	res := make(map[string]int)
 	s = strings.ToLower(s)
-
 	words := strings.FieldsFunc(s, func(c rune) bool {
 		return !unicode.IsLetter(c) && !unicode.IsNumber(c)
 	})
 	for _, v := range words {
 		res[v]++
 	}
-
 	return res
+}
+
+// Обрезка строки
+func Trim(s string) string {
+	start, end := 0, len(s)
+	for start < end && s[start] == ' ' {
+		start++
+	}
+	for end > start && s[end-1] == ' ' {
+		end--
+	}
+	return s[start:end]
+}
+
+// Конкатенация строк
+func Concat(values ...string) string {
+	var res string
+	for _, value := range values {
+		res += value
+	}
+	return res
+}
+
+// Конкатенация строк (через билдер)
+func ConcatBuilder(values ...string) string {
+	var res strings.Builder
+	for _, value := range values {
+		res.WriteString(value)
+	}
+	return res.String()
+}
+
+// Конкатенация строк (через билдер с ростом)
+func ConcatBuilderGrow(values ...string) string {
+	var total int
+	for i := 0; i < len(values); i++ {
+		total += len(values[i])
+	}
+	var res strings.Builder
+	res.Grow(total)
+	for _, value := range values {
+		res.WriteString(value)
+	}
+	return res.String()
 }
 
 // Тип "IP-адрес"
@@ -59,66 +94,6 @@ func (octs IPAddr) String() string {
 	return strings.Join(res, ".")
 }
 
-// Обрезка строки
-func trim(s string) string {
-	if s == "" {
-		return s
-	}
-	if s[0] != ' ' && s[len(s)-1] != ' ' {
-		return s
-	}
-
-	start, end := 0, len(s)
-	for start < end {
-		if s[start] != ' ' {
-			break
-		}
-		start++
-	}
-	for end > start {
-		if s[end-1] != ' ' {
-			break
-		}
-		end--
-	}
-
-	return s[start:end]
-}
-
-// Конкатенация строк
-func concat(values ...string) string {
-	var res string
-	for _, value := range values {
-		res += value
-	}
-	return res
-}
-
-// Конкатенация строк (через билдер)
-func concatBuilder(values ...string) string {
-	res := strings.Builder{}
-	for _, value := range values {
-		res.WriteString(value)
-	}
-	return res.String()
-}
-
-// Конкатенация строк (через билдер с ростом)
-func concatBuilderGrow(values ...string) string {
-	var total int
-	for i := 0; i < len(values); i++ {
-		total += len(values[i])
-	}
-
-	res := strings.Builder{}
-	res.Grow(total)
-	for _, value := range values {
-		res.WriteString(value)
-	}
-
-	return res.String()
-}
-
 func main() {
 	fmt.Println(" \n[ СТРОКИ ]\n ")
 
@@ -128,7 +103,7 @@ func main() {
 
 	// Длина и символ
 	fmt.Println("Длина:", len(str))
-	fmt.Println("Первый символ:", str[0])
+	fmt.Printf("Первый символ: %d (%c)\n", str[0], str[0])
 	fmt.Println()
 
 	// Подстрока, поиск и позиция
@@ -155,7 +130,7 @@ func main() {
 	fmt.Println("Верхний регистр:", strings.ToUpper(str))
 	fmt.Println()
 
-	// Байты, руны и строки
+	// Байты и строки
 	bytes := []byte(str)
 	firstBytes := make([]byte, 5)
 	copy(firstBytes, bytes)
@@ -164,6 +139,7 @@ func main() {
 	fmt.Println("Снова строка:", strAgain)
 	fmt.Println()
 
+	// Руны и строки
 	jap := "椒, hello, 椒!"
 	fmt.Printf("Длина %q в строке: %d\n", jap, len(jap))
 	fmt.Printf("Длина %q в байтах: %d\n", jap, len([]byte(jap)))
@@ -173,25 +149,31 @@ func main() {
 		japCount++
 	}
 	fmt.Printf("Длина %q в range: %d\n", jap, japCount)
-	fmt.Println("Перевернутая строка:", reverseString(jap))
+	fmt.Println("Перевернутая строка:", ReverseString(jap))
 	fmt.Println()
 
-	// Счетчики букв и слов
+	// Счетчики букв
 	str = "АБВГДБА!"
 	fmt.Printf("Счетчик букв для %q:\n", str)
-	fmt.Println(lettersCount(str))
+	fmt.Println(LettersCount(str))
 	fmt.Println()
 
+	// Счетчики слов
 	str = "Мир, Труд, Май, мир!"
 	fmt.Printf("Счетчик слов для %q:\n", str)
-	fmt.Println(wordsCount(str))
+	fmt.Println(WordsCount(str))
+	fmt.Println()
+
+	// Обрезка строки
+	str = "   Пусто по краям   "
+	fmt.Printf("Обрезка строки: %q\n", Trim(str))
 	fmt.Println()
 
 	// Конкатенация
 	fmt.Println("Конкатенация:")
-	fmt.Println("Обычная:", concat("Hello", "Cruel", "World"))
-	fmt.Println("Билдер:", concatBuilder("Hello", "Appending", "Builder"))
-	fmt.Println("Билдер с ростом:", concatBuilderGrow("Hello", "Builder", "Grow"))
+	fmt.Println("Обычная:", Concat("Hello", "Cruel", "World"))
+	fmt.Println("Билдер:", ConcatBuilder("Hello", "Appending", "Builder"))
+	fmt.Println("Билдер с ростом:", ConcatBuilderGrow("Hello", "Builder", "Grow"))
 	fmt.Println()
 
 	// IP-адреса
