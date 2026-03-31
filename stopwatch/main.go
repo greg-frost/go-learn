@@ -33,12 +33,13 @@ func (s Stopwatch) GetResults() (results []time.Duration) {
 func main() {
 	fmt.Println(" \n[ СЕКУНДОМЕР ]\n ")
 
+	// Запуск
 	var sw Stopwatch
 	sw.Start()
 	fmt.Println("Нажимайте Enter, чтобы делать замеры времени...")
 
+	// Замеры
 	times := 3
-
 	for i := 0; i < times; i++ {
 		fmt.Scanln()
 		fmt.Printf("Замер сделан, осталось: %d", times-i-1)
@@ -47,5 +48,6 @@ func main() {
 	fmt.Println()
 	fmt.Println()
 
+	// Результаты
 	fmt.Println("Замеры времени:", sw.GetResults())
 }
