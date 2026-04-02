@@ -28,9 +28,8 @@ func GenerateArray(size, min, max int) (a Array, duration time.Duration) {
 
 	// Генерация массива
 	a = make(Array, size)
-	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < size; i++ {
-		a[i] = rand.Int()%(max+1-min) + min
+		a[i] = min + rand.Intn(max-min+1)
 	}
 
 	return a, duration
@@ -51,7 +50,7 @@ func arrSizes(a Array) (min, max int) {
 }
 
 // Проверка отсортированности массива
-func isSorted(a Array) bool {
+func IsSorted(a Array) bool {
 	for i := 1; i < len(a); i++ {
 		if a[i] < a[i-1] {
 			return false
@@ -78,7 +77,7 @@ func Sort(fSort SortFunc, arr Array) (a Array, iterations, depth int, duration t
 }
 
 // Сортировка пузырьком (продолжающаяся, пока есть перестановки)
-func bubbleRunSort(a Array) (_ Array, iterations, depth int) {
+func BubbleRunSort(a Array) (_ Array, iterations, depth int) {
 	isRunning := true
 
 	for isRunning {
@@ -96,7 +95,7 @@ func bubbleRunSort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Сортировка пузырьком (с вытеснением большего значения вверх)
-func bubblePopSort(a Array) (_ Array, iterations, depth int) {
+func BubblePopSort(a Array) (_ Array, iterations, depth int) {
 	for j := len(a) - 1; j > 0; j-- {
 		for i := 0; i < j; i++ {
 			if a[i] > a[i+1] {
@@ -110,7 +109,7 @@ func bubblePopSort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Сортировка выбором
-func selectSort(a Array) (_ Array, iterations, depth int) {
+func SelectSort(a Array) (_ Array, iterations, depth int) {
 	for i := 0; i < len(a)-1; i++ {
 		k := i
 		for j := i + 1; j < len(a); j++ {
@@ -126,7 +125,7 @@ func selectSort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Сортировка вставками (с копированием)
-func insertCopySort(a Array) (_ Array, iterations, depth int) {
+func InsertCopySort(a Array) (_ Array, iterations, depth int) {
 	var t int
 	for i := 1; i < len(a); i++ {
 		j := i
@@ -144,7 +143,7 @@ func insertCopySort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Сортировка вставками (с перестановками)
-func insertSwapSort(a Array) (_ Array, iterations, depth int) {
+func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
 	for i := 1; i < len(a); i++ {
 		j := i
 		for j > 0 && a[j] < a[j-1] {
@@ -159,7 +158,7 @@ func insertSwapSort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Сортировка расческой
-func combSort(a Array) (_ Array, iterations, depth int) {
+func CombSort(a Array) (_ Array, iterations, depth int) {
 	const factor = 1.247
 	stepFactor := float64(len(a)) / factor
 
@@ -178,7 +177,7 @@ func combSort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Сортировка кучей
-func heapSort(a Array) (_ Array, iterations, depth int) {
+func HeapSort(a Array) (_ Array, iterations, depth int) {
 	n := len(a)
 
 	for i := (n - 1) / 2; i >= 0; i-- {
@@ -220,7 +219,7 @@ func sink(i int, a Array) int {
 }
 
 // Сортировка слиянием (с копированием)
-func mergeCopySort(a Array) (_ Array, iterations, depth int) {
+func MergeCopySort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
@@ -234,8 +233,8 @@ func mergeCopySort(a Array) (_ Array, iterations, depth int) {
 	iterations += middle + len(a)
 	depth++
 
-	leftA, leftI, leftD := mergeCopySort(a)
-	rightA, rightI, rightD := mergeCopySort(b)
+	leftA, leftI, leftD := MergeCopySort(a)
+	rightA, rightI, rightD := MergeCopySort(b)
 
 	iterations += leftI + rightI
 	depth += (leftD + rightD) / 2
@@ -264,7 +263,7 @@ func mergeCopy(left, right Array) Array {
 }
 
 // Сортировка слиянием (с перестановками)
-func mergeSwapSort(a Array) (_ Array, iterations, depth int) {
+func MergeSwapSort(a Array) (_ Array, iterations, depth int) {
 	iterations, depth = mergeSortRecourse(a, 0, len(a)-1)
 	return a, iterations, depth
 }
@@ -318,7 +317,7 @@ func mergeSwap(a Array, l, m, h int) {
 }
 
 // Быстрая сортировка (с копированием)
-func quickCopySort(a Array) (_ Array, iterations, depth int) {
+func QuickCopySort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
@@ -342,8 +341,8 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 	}
 	depth++
 
-	leftA, leftI, leftD := quickCopySort(left)
-	rightA, rightI, rightD := quickCopySort(right)
+	leftA, leftI, leftD := QuickCopySort(left)
+	rightA, rightI, rightD := QuickCopySort(right)
 
 	a = make(Array, 0, len(a))
 	a = append(a, leftA...)
@@ -357,7 +356,7 @@ func quickCopySort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Быстрая сортировка (с перестановками)
-func quickSwapSort(a Array) (_ Array, iterations, depth int) {
+func QuickSwapSort(a Array) (_ Array, iterations, depth int) {
 	iterations, depth = quickSortRecourse(a, 0, len(a)-1)
 	return a, iterations, depth
 }
@@ -414,7 +413,7 @@ func pivot(l, h int) int {
 }
 
 // Сортировка подсчетом
-func countSort(a Array) (_ Array, iterations, depth int) {
+func CountSort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
@@ -443,7 +442,7 @@ func countSort(a Array) (_ Array, iterations, depth int) {
 }
 
 // Блочная сортировка (многопоточная)
-func blockSort(a Array) (_ Array, iterations, depth int) {
+func BlockSort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
@@ -472,7 +471,7 @@ func blockSort(a Array) (_ Array, iterations, depth int) {
 			wg.Add(1)
 			go func(b Array) {
 				defer wg.Done()
-				_, bIterations, bDepth := combSort(b)
+				_, bIterations, bDepth := CombSort(b)
 				iterations += bIterations
 				depth += bDepth
 			}(block)
@@ -508,61 +507,53 @@ func PrintArrayReport(size, min, max int, arr Array, printSize int) {
 }
 
 // Печать отчета по сортировке
-func PrintSortReport(name string, iterations, depth int, duration time.Duration, arr Array, printSize int) {
+func PrintSortReport(name string, iterations, depth int, duration time.Duration, arr Array, size int) {
 	fmt.Printf("%s\nИтераций: %d\nГлубина: %d\nВремя: %v\n", name, iterations, depth, duration)
-	printArray(arr, printSize)
+	printArray(arr, size)
 }
 
 func main() {
 	fmt.Println(" \n[ СОРТИРОВКИ ]\n ")
 
-	size := 10
-	min := 0
-	max := 1000
+	size := 10  // Число элементов
+	min := 0    // Минимальное значение
+	max := 1000 // Максимальное значение
 
-	const printSize = 10      // размер фрагмента массива для печати
-	const slowCap = 10_000    // лимит на размер для медленных сортировок
-	const midCap = 10_000_000 // лимит на размер для средних сортировок
+	const printSize = 10      // Размер фрагмента массива для печати
+	const slowCap = 10_000    // Лимит на размер для медленных сортировок
+	const midCap = 10_000_000 // Лимит на размер для средних сортировок
 
-	var duration time.Duration
-
-	/* Генерация массива */
-
+	// Генерация массива
 	fmt.Print("Введите размер массива (и минимум, максимум): ")
 	fmt.Scanf("%d %d %d", &size, &min, &max)
-
 	arr, duration := GenerateArray(size, min, max)
-
 	fmt.Println()
 	PrintArrayReport(size, min, max, arr, printSize)
 	fmt.Println("Время генерации:", duration)
 
-	/* Сортировки */
-
+	// Сортировки
 	arrSort := make(Array, size)
 	var iterations, depth int
-
 	sorts := []struct {
 		caption string
 		fSort   SortFunc
 		isSlow  bool
 		isMid   bool
 	}{
-		{"Сортировка пузырьком, продолжающаяся", bubbleRunSort, true, false},
-		{"Сортировка пузырьком, с вытеснением", bubblePopSort, true, false},
-		{"Сортировка выбором", selectSort, true, false},
-		{"Сортировка вставками, с копированием", insertCopySort, true, false},
-		{"Сортировка вставками, с перестановками", insertSwapSort, true, false},
-		{"Сортировка расческой", combSort, false, true},
-		{"Сортировка кучей", heapSort, false, true},
-		{"Сортировка слиянием, с копированием", mergeCopySort, false, true},
-		{"Сортировка слиянием, с перестановками", mergeSwapSort, false, true},
-		{"Быстрая сортировка, с копированием", quickCopySort, false, true},
-		{"Быстрая сортировка, с перестановками", quickSwapSort, false, true},
-		{"Сортировка подсчетом", countSort, false, false},
-		{"Блочная сортировка", blockSort, false, true},
+		{"Сортировка пузырьком, продолжающаяся", BubbleRunSort, true, false},
+		{"Сортировка пузырьком, с вытеснением", BubblePopSort, true, false},
+		{"Сортировка выбором", SelectSort, true, false},
+		{"Сортировка вставками, с копированием", InsertCopySort, true, false},
+		{"Сортировка вставками, с перестановками", InsertSwapSort, true, false},
+		{"Сортировка расческой", CombSort, false, true},
+		{"Сортировка кучей", HeapSort, false, true},
+		{"Сортировка слиянием, с копированием", MergeCopySort, false, true},
+		{"Сортировка слиянием, с перестановками", MergeSwapSort, false, true},
+		{"Быстрая сортировка, с копированием", QuickCopySort, false, true},
+		{"Быстрая сортировка, с перестановками", QuickSwapSort, false, true},
+		{"Сортировка подсчетом", CountSort, false, false},
+		{"Блочная сортировка", BlockSort, false, true},
 	}
-
 	for _, sort := range sorts {
 		if sort.isSlow && size > slowCap {
 			continue
@@ -570,11 +561,10 @@ func main() {
 		if sort.isMid && size > midCap {
 			continue
 		}
-
 		fmt.Println()
 		arrSort, iterations, depth, duration = Sort(sort.fSort, arr)
 		PrintSortReport(sort.caption, iterations, depth, duration, arrSort, printSize)
-		if !isSorted(arrSort) {
+		if !IsSorted(arrSort) {
 			fmt.Println("(массив не отсортирован)")
 		}
 	}
