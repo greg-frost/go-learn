@@ -51,8 +51,8 @@ func arrSizes(a Array) (min, max int) {
 
 // Проверка отсортированности массива
 func IsSorted(a Array) bool {
-	for i := 1; i < len(a); i++ {
-		if a[i] < a[i-1] {
+	for i := 0; i < len(a)-1; i++ {
+		if a[i] > a[i+1] {
 			return false
 		}
 	}
@@ -60,7 +60,7 @@ func IsSorted(a Array) bool {
 }
 
 // Абстрактная сортировка
-func Sort(fSort SortFunc, arr Array) (a Array, iterations, depth int, duration time.Duration) {
+func Sort(sort SortFunc, arr Array) (a Array, iterations, depth int, duration time.Duration) {
 	// Копирование массива
 	a = make(Array, len(arr))
 	copy(a, arr)
@@ -71,15 +71,13 @@ func Sort(fSort SortFunc, arr Array) (a Array, iterations, depth int, duration t
 	}(time.Now())
 
 	// Сортировка
-	a, iterations, depth = fSort(a)
-
+	a, iterations, depth = sort(a)
 	return a, iterations, depth, duration
 }
 
 // Сортировка пузырьком (продолжающаяся, пока есть перестановки)
 func BubbleRunSort(a Array) (_ Array, iterations, depth int) {
 	isRunning := true
-
 	for isRunning {
 		isRunning = false
 		for i := 0; i < len(a)-1; i++ {
@@ -90,7 +88,6 @@ func BubbleRunSort(a Array) (_ Array, iterations, depth int) {
 			iterations++
 		}
 	}
-
 	return a, iterations, depth
 }
 
@@ -104,7 +101,6 @@ func BubblePopSort(a Array) (_ Array, iterations, depth int) {
 			iterations++
 		}
 	}
-
 	return a, iterations, depth
 }
 
@@ -120,7 +116,6 @@ func SelectSort(a Array) (_ Array, iterations, depth int) {
 		}
 		a[i], a[k] = a[k], a[i]
 	}
-
 	return a, iterations, depth
 }
 
@@ -129,7 +124,7 @@ func InsertCopySort(a Array) (_ Array, iterations, depth int) {
 	var t int
 	for i := 1; i < len(a); i++ {
 		j := i
-		for j > 0 && a[i] < a[j-1] {
+		for j > 0 && a[i] <= a[j-1] {
 			j--
 			iterations++
 		}
@@ -153,7 +148,6 @@ func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
 		}
 		iterations++
 	}
-
 	return a, iterations, depth
 }
 
@@ -172,14 +166,12 @@ func CombSort(a Array) (_ Array, iterations, depth int) {
 		}
 		stepFactor /= factor
 	}
-
 	return a, iterations, depth
 }
 
-// Сортировка кучей
+// Сортировка кучей (пирамидальная)
 func HeapSort(a Array) (_ Array, iterations, depth int) {
 	n := len(a)
-
 	for i := (n - 1) / 2; i >= 0; i-- {
 		iterations += sink(i, a)
 	}
@@ -189,7 +181,6 @@ func HeapSort(a Array) (_ Array, iterations, depth int) {
 		iterations += sink(0, a[:n-1])
 		n--
 	}
-
 	return a, iterations, depth
 }
 
@@ -197,22 +188,20 @@ func HeapSort(a Array) (_ Array, iterations, depth int) {
 func sink(i int, a Array) int {
 	var iterations int
 	n := len(a)
-	k := i
-	j := 2*k + 1
+	j := 2*i + 1
 
 	for j < n {
 		if j < n-1 && a[j] < a[j+1] {
 			j++
 		}
-		if a[k] >= a[j] {
+		if a[i] >= a[j] {
 			break
 		}
 
-		a[k], a[j] = a[j], a[k]
+		a[i], a[j] = a[j], a[i]
+		i = j
+		j = 2*i + 1
 		iterations++
-
-		k = j
-		j = 2*k + 1
 	}
 
 	return iterations
