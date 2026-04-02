@@ -25,13 +25,13 @@ type (
 
 // Строковое представление карты полей структуры
 func (f FieldsInfo) String() string {
-	bz, _ := json.MarshalIndent(f, "", "   ")
-	return string(bz)
+	b, _ := json.MarshalIndent(f, "", "   ")
+	return string(b)
 }
 
 // Информация о поле структуры
-func GetStructTags(obj interface{}) (retInfos FieldsInfo) {
-	retInfos = make(FieldsInfo)
+func GetStructTags(obj interface{}) (info FieldsInfo) {
+	info = make(FieldsInfo)
 
 	// Уточнение типа
 	var objType reflect.Type
@@ -52,63 +52,63 @@ func GetStructTags(obj interface{}) (retInfos FieldsInfo) {
 	}
 
 	// Обход полей
-	for fieldIdx := 0; fieldIdx < objType.NumField(); fieldIdx++ {
-		field := objType.Field(fieldIdx)
-		retInfos[field.Name] = FieldInfo{
-			Type:     field.Type.String(),
-			Tags:     parseTagString(string(field.Tag)),
-			Embedded: GetStructTags(field.Type), // рекурсия для встроенных структур
+	for i := 0; i < objType.NumField(); i++ {
+		field := objType.Field(i)
+		info[field.Name] = FieldInfo{
+			Type:     field.Type.String(),               // Тип
+			Tags:     parseTagString(string(field.Tag)), // Теги
+			Embedded: GetStructTags(field.Type),         // Подструктура
 		}
 	}
-
 	return
 }
 
 // Разбор строки тегов
-func parseTagString(tagRaw string) (retInfos TagsInfo) {
-	retInfos = make(TagsInfo)
+func parseTagString(tagRaw string) (info TagsInfo) {
+	info = make(TagsInfo)
 
-	// пример: json:"name" pg:"nullable,sortable"
+	// Пример: json:"name" pg:"nullable,sortable"
 	for _, tag := range strings.Split(tagRaw, " ") {
 		if tag = strings.TrimSpace(tag); tag == "" {
 			continue
 		}
 
+		// Разделение тега на части
 		tagParts := strings.Split(tag, ":")
 		if len(tagParts) != 2 {
 			continue
 		}
 
+		// Имя тега
 		tagName := strings.TrimSpace(tagParts[0])
-		if _, found := retInfos[tagName]; found {
+		if _, ok := info[tagName]; ok {
 			continue
 		}
 
+		// Значения тега
 		tagValuesRaw, _ := strconv.Unquote(tagParts[1])
-		tagValues := make([]string, 0)
+		var tagValues []string
 		for _, value := range strings.Split(tagValuesRaw, ",") {
 			if value := strings.TrimSpace(value); value != "" {
 				tagValues = append(tagValues, value)
 			}
 		}
 
-		retInfos[tagName] = tagValues
+		info[tagName] = tagValues
 	}
-
 	return
 }
 
 // Тестовая структура
 type (
 	TestStruct struct {
-		Id        string `json:"id" format:"uuid" example:"68b69bd2-8db6-4b7f-b7f0-7c78739046c6"`
+		ID        string `json:"id" format:"uuid" example:"68b69bd2-8db6-4b7f-b7f0-7c78739046c6"`
 		Name      string `json:"name" example:"Bob"`
 		Group     Group  `json:"group"`
 		CreatedAt int64  `json:"created_at" format:"unix" example:"1622647813"`
 	}
-
 	Group struct {
-		Id             uint64   `json:"id"`
+		ID             uint64   `json:"id"`
 		PermsOverrides []string `json:"overrides" example:"USERS_RW,COMPANY_RWC"`
 	}
 )
