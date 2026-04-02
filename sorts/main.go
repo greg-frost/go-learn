@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -77,13 +78,13 @@ func Sort(sort SortFunc, arr Array) (a Array, iterations, depth int, duration ti
 
 // Сортировка пузырьком (продолжающаяся, пока есть перестановки)
 func BubbleRunSort(a Array) (_ Array, iterations, depth int) {
-	isRunning := true
-	for isRunning {
-		isRunning = false
+	var sorted bool
+	for !sorted {
+		sorted = true
 		for i := 0; i < len(a)-1; i++ {
 			if a[i] > a[i+1] {
 				a[i], a[i+1] = a[i+1], a[i]
-				isRunning = true
+				sorted = false
 			}
 			iterations++
 		}
@@ -213,66 +214,60 @@ func MergeCopySort(a Array) (_ Array, iterations, depth int) {
 		return a, iterations, depth
 	}
 
-	middle := len(a) / 2
-
-	b := make(Array, len(a)-middle)
-	copy(b, a[middle:])
-	a = a[0:middle]
-
-	iterations += middle + len(a)
+	mid := len(a) / 2
+	b := make(Array, len(a)-mid)
+	copy(b, a[mid:])
+	a = a[0:mid]
+	iterations += len(a) + 2*len(b)
 	depth++
 
-	leftA, leftI, leftD := MergeCopySort(a)
-	rightA, rightI, rightD := MergeCopySort(b)
+	la, li, ld := MergeCopySort(a)
+	ra, ri, rd := MergeCopySort(b)
+	iterations += li + ri
+	depth += (ld + rd) / 2
 
-	iterations += leftI + rightI
-	depth += (leftD + rightD) / 2
-
-	return mergeCopy(leftA, rightA), iterations, depth
+	return mergeCopy(la, ra), iterations, depth
 }
 
 // Слияние массивов (с копированием)
-func mergeCopy(left, right Array) Array {
-	merged := make(Array, 0, len(left)+len(right))
+func mergeCopy(l, r Array) Array {
+	m := make(Array, 0, len(l)+len(r))
 
-	for len(left) > 0 && len(right) > 0 {
-		if left[0] < right[0] {
-			merged = append(merged, left[0])
-			left = left[1:]
+	for len(l) > 0 && len(r) > 0 {
+		if l[0] < r[0] {
+			m = append(m, l[0])
+			l = l[1:]
 		} else {
-			merged = append(merged, right[0])
-			right = right[1:]
+			m = append(m, r[0])
+			r = r[1:]
 		}
 	}
+	m = append(m, l...)
+	m = append(m, r...)
 
-	merged = append(merged, left...)
-	merged = append(merged, right...)
-
-	return merged
+	return m
 }
 
 // Сортировка слиянием (с перестановками)
 func MergeSwapSort(a Array) (_ Array, iterations, depth int) {
-	iterations, depth = mergeSortRecourse(a, 0, len(a)-1)
+	iterations, depth = mergeSwapSort(a, 0, len(a)-1)
 	return a, iterations, depth
 }
 
 // Рекурсия сортировки слиянием
-func mergeSortRecourse(a Array, l, h int) (iterations, depth int) {
-	var leftI, rightI, leftD, rightD int
+func mergeSwapSort(a Array, l, h int) (iterations, depth int) {
+	var li, ri, ld, rd int
 
 	if l < h {
 		m := l + (h-l)/2
-		leftI, leftD = mergeSortRecourse(a, l, m)
-		rightI, rightD = mergeSortRecourse(a, m+1, h)
+		li, ld = mergeSwapSort(a, l, m)
+		ri, rd = mergeSwapSort(a, m+1, h)
 		mergeSwap(a, l, m, h)
-
 		iterations += h - l
 		depth++
 	}
-
-	iterations += leftI + rightI
-	depth += (leftD + rightD) / 2
+	iterations += li + ri
+	depth += (ld + rd) / 2
 
 	return iterations, depth
 }
@@ -287,7 +282,6 @@ func mergeSwap(a Array, l, m, h int) {
 	cm := m - l + 1
 	ch := h - l + 1
 	i, j := 0, cm
-
 	for k := l; k <= h; k++ {
 		if i >= cm {
 			a[k] = c[j]
@@ -312,17 +306,15 @@ func QuickCopySort(a Array) (_ Array, iterations, depth int) {
 	}
 
 	p := pivot(0, len(a)-1)
-
 	left := make(Array, 0, len(a)/2)
-	middle := make(Array, 0, len(a)/100)
+	mid := make(Array, 0, len(a)/100)
 	right := make(Array, 0, len(a)/2)
-
 	for _, v := range a {
 		switch {
 		case v < a[p]:
 			left = append(left, v)
 		case v == a[p]:
-			middle = append(middle, v)
+			mid = append(mid, v)
 		case v > a[p]:
 			right = append(right, v)
 		}
@@ -330,47 +322,43 @@ func QuickCopySort(a Array) (_ Array, iterations, depth int) {
 	}
 	depth++
 
-	leftA, leftI, leftD := QuickCopySort(left)
-	rightA, rightI, rightD := QuickCopySort(right)
-
+	la, li, ld := QuickCopySort(left)
+	ra, ri, rd := QuickCopySort(right)
 	a = make(Array, 0, len(a))
-	a = append(a, leftA...)
-	a = append(a, middle...)
-	a = append(a, rightA...)
-
-	iterations += leftI + rightI
-	depth += (leftD + rightD) / 2
+	a = append(a, la...)
+	a = append(a, mid...)
+	a = append(a, ra...)
+	iterations += li + ri
+	depth += (ld + rd) / 2
 
 	return a, iterations, depth
 }
 
 // Быстрая сортировка (с перестановками)
 func QuickSwapSort(a Array) (_ Array, iterations, depth int) {
-	iterations, depth = quickSortRecourse(a, 0, len(a)-1)
+	iterations, depth = quickSwapSort(a, 0, len(a)-1)
 	return a, iterations, depth
 }
 
 // Рекурсия быстрой сортировки
-func quickSortRecourse(a Array, l, h int) (iterations, depth int) {
-	var leftI, rightI, leftD, rightD int
+func quickSwapSort(a Array, l, h int) (iterations, depth int) {
+	var li, ri, ld, rd int
 
 	if l < h {
-		_, pl, ph := quickSortPartition(a, l, h)
-		leftI, leftD = quickSortRecourse(a, l, pl)
-		rightI, rightD = quickSortRecourse(a, ph, h)
-
+		_, pl, ph := quickSwapPartition(a, l, h)
+		li, ld = quickSwapSort(a, l, pl)
+		ri, rd = quickSwapSort(a, ph, h)
 		iterations += (h - ph) + (pl - l)
 		depth++
 	}
-
-	iterations += leftI + rightI
-	depth += (leftD + rightD) / 2
+	iterations += li + ri
+	depth += (ld + rd) / 2
 
 	return iterations, depth
 }
 
 // Разбиение быстрой сортировки
-func quickSortPartition(a Array, l, h int) (int, int, int) {
+func quickSwapPartition(a Array, l, h int) (int, int, int) {
 	p := pivot(l, h)
 	a[p], a[h] = a[h], a[p]
 
@@ -409,18 +397,17 @@ func CountSort(a Array) (_ Array, iterations, depth int) {
 
 	min, max := arrSizes(a)
 	iterations += len(a)
-
 	count := make([]int, max-min+1)
 	for _, v := range a {
 		count[v-min]++
 		iterations++
 	}
 
-	a = make(Array, 0)
+	a = make(Array, 0, len(a))
 	for v, c := range count {
 		if c > 0 {
-			for i := 0; i < c; i++ {
-				a = append(a, v+min)
+			for k := 0; k < c; k++ {
+				a = append(a, min+v)
 				iterations++
 			}
 			depth++
@@ -430,46 +417,52 @@ func CountSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Число блоков
+var blocksCount = runtime.NumCPU()
+
+// Предел блочной сортировки
+const blockSortThreshold = 2048
+
 // Блочная сортировка (многопоточная)
 func BlockSort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
 
-	const blocksCount = 10
-	var wg sync.WaitGroup
-
 	min, max := arrSizes(a)
 	iterations += len(a)
-
-	blockSize := (max - min) / blocksCount
-	if blockSize == 0 {
-		blockSize = 1
+	if min == max {
+		return a, iterations, depth
 	}
-	blocks := make([]Array, max/blockSize+1)
 
-	var id int
+	blockSize := (max-min)/blocksCount + 1
+	blocks := make([]Array, blocksCount)
 	for _, v := range a {
-		id = v / blockSize
-		blocks[id] = append(blocks[id], v)
+		i := (v - min) / blockSize
+		blocks[i] = append(blocks[i], v)
 		iterations++
 	}
 
-	for _, block := range blocks {
+	var wg sync.WaitGroup
+	for i, block := range blocks {
 		if len(block) > 1 {
 			wg.Add(1)
-			go func(b Array) {
+			func(i int, b Array) {
 				defer wg.Done()
-				_, bIterations, bDepth := CombSort(b)
+				var bIterations, bDepth int
+				if len(a) > blockSortThreshold {
+					blocks[i], bIterations, bDepth = BlockSort(b)
+				} else {
+					_, bIterations, bDepth = CombSort(b)
+				}
 				iterations += bIterations
 				depth += bDepth
-			}(block)
+			}(i, block)
 		}
 	}
-
 	wg.Wait()
 
-	a = make(Array, 0)
+	a = make(Array, 0, len(a))
 	for _, block := range blocks {
 		if len(block) > 0 {
 			a = append(a, block...)
