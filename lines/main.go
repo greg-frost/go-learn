@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"go-learn/base"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -21,7 +22,14 @@ func ScanLinesInFile(filename string) {
 	defer file.Close()
 
 	// Сканирование
-	scanner := bufio.NewScanner(file)
+	ScanLines(file)
+}
+
+// Сканирование строк
+// (лучше передавать io.Reader, чем os.File)
+func ScanLines(reader io.Reader) {
+	// Сканер и сканирование
+	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		upper := strings.ToUpper(scanner.Text())
 		fmt.Printf("%q\n", upper)
@@ -48,14 +56,5 @@ func main() {
 	fmt.Println("Вводите строки:")
 	fmt.Println("(или нажмите Ctrl+C)")
 	fmt.Println()
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		upper := strings.ToUpper(scanner.Text())
-		fmt.Printf("%q\n", upper)
-	}
-
-	// Обработка ошибок
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	ScanLines(os.Stdin)
 }
