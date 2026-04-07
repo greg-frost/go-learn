@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 // Структура "структура"
@@ -21,6 +22,16 @@ func (s *Struct) PrintByPointer() {
 
 func main() {
 	fmt.Println(" \n[ DEFER ]\n ")
+
+	// Обработка закрытия
+	file, _ := os.Open("nonexisted")
+	defer func() {
+		fmt.Println()
+		fmt.Println("Обработка закрытия")
+		if err := file.Close(); err != nil {
+			fmt.Println("Ошибка:", err, file)
+		}
+	}()
 
 	// Вычисление аргументов
 	var variable, closure bool
