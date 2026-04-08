@@ -423,6 +423,46 @@ func quickSwapPartition(a Array, l, h int) (int, int, int) {
 	return j, jl, jh
 }
 
+// Предел быстрой сортировки
+const quickSortThreshold = 2048
+
+// Быстрая сортировка (параллельная)
+func QuickParallelSort(a Array) (_ Array, iterations, depth int) {
+	iterations, depth = quickParallelSort(a, 0, len(a)-1)
+	return a, iterations, depth
+}
+
+// Рекурсия быстрой сортировки (параллельная)
+func quickParallelSort(a Array, l, h int) (iterations, depth int) {
+	var li, ri, ld, rd int
+
+	if l < h {
+		_, pl, ph := quickSwapPartition(a, l, h)
+		if h-l > quickSortThreshold {
+			var wg sync.WaitGroup
+			wg.Add(2)
+			go func() {
+				defer wg.Done()
+				li, ld = quickParallelSort(a, l, pl)
+			}()
+			go func() {
+				defer wg.Done()
+				ri, rd = quickParallelSort(a, ph, h)
+			}()
+			wg.Wait()
+		} else {
+			li, ld = quickSwapSort(a, l, pl)
+			ri, rd = quickSwapSort(a, ph, h)
+		}
+		iterations += (h - ph) + (pl - l)
+		depth++
+	}
+	iterations += li + ri
+	depth += (ld + rd) / 2
+
+	return iterations, depth
+}
+
 // Выбор опорного элемента
 func pivot(l, h int) int {
 	return l // Первый
@@ -575,6 +615,7 @@ func main() {
 		{"Сортировка слиянием, параллельная", MergeParallelSort, false, true},
 		{"Быстрая сортировка, с копированием", QuickCopySort, false, true},
 		{"Быстрая сортировка, с перестановками", QuickSwapSort, false, true},
+		{"Быстрая сортировка, параллельная", QuickParallelSort, false, true},
 		{"Сортировка подсчетом", CountSort, false, false},
 		{"Блочная сортировка", BlockSort, false, true},
 	}
