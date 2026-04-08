@@ -254,7 +254,7 @@ func MergeSwapSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Рекурсия сортировки слиянием
+// Рекурсия сортировки слиянием (с перестановками)
 func mergeSwapSort(a Array, l, h int) (iterations, depth int) {
 	var li, ri, ld, rd int
 
@@ -299,6 +299,47 @@ func mergeSwap(a Array, l, m, h int) {
 	}
 }
 
+// Предел сортировки слиянием
+const mergeSortThreshold = 2048
+
+// Сортировка слиянием (параллельная)
+func MergeParallelSort(a Array) (_ Array, iterations, depth int) {
+	iterations, depth = mergeParallelSort(a, 0, len(a)-1)
+	return a, iterations, depth
+}
+
+// Рекурсия сортировки слиянием (параллельная)
+func mergeParallelSort(a Array, l, h int) (iterations, depth int) {
+	var li, ri, ld, rd int
+
+	if l < h {
+		m := l + (h-l)/2
+		if h-l > mergeSortThreshold {
+			var wg sync.WaitGroup
+			wg.Add(2)
+			go func() {
+				defer wg.Done()
+				li, ld = mergeParallelSort(a, l, m)
+			}()
+			go func() {
+				defer wg.Done()
+				ri, rd = mergeParallelSort(a, m+1, h)
+			}()
+			wg.Wait()
+		} else {
+			li, ld = mergeSwapSort(a, l, m)
+			ri, rd = mergeSwapSort(a, m+1, h)
+		}
+		mergeSwap(a, l, m, h)
+		iterations += h - l
+		depth++
+	}
+	iterations += li + ri
+	depth += (ld + rd) / 2
+
+	return iterations, depth
+}
+
 // Быстрая сортировка (с копированием)
 func QuickCopySort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
@@ -340,7 +381,7 @@ func QuickSwapSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Рекурсия быстрой сортировки
+// Рекурсия быстрой сортировки (с перестановками)
 func quickSwapSort(a Array, l, h int) (iterations, depth int) {
 	var li, ri, ld, rd int
 
@@ -531,6 +572,7 @@ func main() {
 		{"Сортировка кучей", HeapSort, false, true},
 		{"Сортировка слиянием, с копированием", MergeCopySort, false, true},
 		{"Сортировка слиянием, с перестановками", MergeSwapSort, false, true},
+		{"Сортировка слиянием, параллельная", MergeParallelSort, false, true},
 		{"Быстрая сортировка, с копированием", QuickCopySort, false, true},
 		{"Быстрая сортировка, с перестановками", QuickSwapSort, false, true},
 		{"Сортировка подсчетом", CountSort, false, false},
