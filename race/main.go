@@ -16,12 +16,12 @@ func increment() {
 }
 
 // Мьютекс
-var mtx sync.Mutex
+var mu sync.Mutex
 
 // Инкремент с мьютексом
 func mutexIncrement() {
-	mtx.Lock()
-	defer mtx.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 	counter++
 }
 
@@ -44,8 +44,10 @@ func atomicIncrement() {
 }
 
 func main() {
-	fmt.Println(" \n[ ГОНКА ДАННЫХ ]\n ")
+	fmt.Println(" \n[ ГОНКА ]\n ")
 
+	// Гонка данных
+	fmt.Println("Гонка данных")
 	times := 1000
 
 	// Без синхронизации
@@ -53,7 +55,7 @@ func main() {
 		go increment()
 	}
 	time.Sleep(50 * time.Millisecond)
-	fmt.Println("Гонка:  ", counter)
+	fmt.Println("Счетчик: ", counter)
 
 	// Мьютекс
 	counter = 0
@@ -77,4 +79,25 @@ func main() {
 	}
 	time.Sleep(50 * time.Millisecond)
 	fmt.Println("Channel:", counter)
+	fmt.Println()
+
+	// Состояние гонки
+	fmt.Println("Состояние гонки")
+	var state string
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		mu.Lock()
+		defer mu.Unlock()
+		defer wg.Done()
+		state = "День"
+	}()
+	go func() {
+		mu.Lock()
+		defer mu.Unlock()
+		defer wg.Done()
+		state = "Ночь"
+	}()
+	wg.Wait()
+	fmt.Println("Значение:", state)
 }
