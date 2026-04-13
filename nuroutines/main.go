@@ -34,8 +34,15 @@ func ReadToTheEnd(messages chan int, disconnect chan struct{}) {
 		case m := <-messages:
 			fmt.Print(m, " ")
 		case <-disconnect:
-			fmt.Print("(разъединение)")
-			return
+			for {
+				select {
+				case m := <-messages:
+					fmt.Print(m, " ")
+				default:
+					fmt.Print("(разъединение)")
+					return
+				}
+			}
 		}
 	}
 }
