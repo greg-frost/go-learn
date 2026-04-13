@@ -5,7 +5,7 @@ import (
 )
 
 // Генерация значений в канал
-func countTo(max int) (<-chan int, func()) {
+func CountTo(max int) (<-chan int, func()) {
 	ch := make(chan int)
 	done := make(chan struct{})
 	cancel := func() {
@@ -70,7 +70,7 @@ func main() {
 
 	// Отмена
 	fmt.Println("Отмена:")
-	ch4, cancel := countTo(10)
+	ch4, cancel := CountTo(10)
 	for i := range ch4 {
 		if i > 5 {
 			break
