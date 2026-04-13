@@ -27,24 +27,55 @@ func CountTo(max int) (<-chan int, func()) {
 	return ch, cancel
 }
 
+// Дочитывание канала до разъединения
+func ReadToDisconnect() {
+	messages := make(chan int, 5)
+	disconnect := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case m := <-messages:
+				fmt.Print(m, " ")
+			case <-disconnect:
+				fmt.Print("(разъединение)")
+				return
+			}
+		}
+	}()
+	for i := 1; i <= 10; i++ {
+		messages <- i
+	}
+	disconnect <- struct{}{}
+	fmt.Println()
+}
+
 // Дочитывание канала до конца
-func ReadToTheEnd(messages chan int, disconnect chan struct{}) {
-	for {
-		select {
-		case m := <-messages:
-			fmt.Print(m, " ")
-		case <-disconnect:
-			for {
-				select {
-				case m := <-messages:
-					fmt.Print(m, " ")
-				default:
-					fmt.Print("(разъединение)")
-					return
+func ReadToTheEnd() {
+	messages := make(chan int, 5)
+	disconnect := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case m := <-messages:
+				fmt.Print(m, " ")
+			case <-disconnect:
+				for {
+					select {
+					case m := <-messages:
+						fmt.Print(m, " ")
+					default:
+						fmt.Print("(разъединение)")
+						return
+					}
 				}
 			}
 		}
+	}()
+	for i := 1; i <= 10; i++ {
+		messages <- i
 	}
+	disconnect <- struct{}{}
+	fmt.Println()
 }
 
 func main() {
@@ -129,14 +160,10 @@ func main() {
 	fmt.Println()
 	fmt.Println()
 
-	// Дочитывание
-	fmt.Println("Дочитывание:")
-	messages := make(chan int, 5)
-	disconnect := make(chan struct{})
-	go ReadToTheEnd(messages, disconnect)
-	for i := 1; i <= 10; i++ {
-		messages <- i
-	}
-	disconnect <- struct{}{}
+	// Разъединение и дочитывание
+	fmt.Println("Чтение до разъединения:")
+	ReadToDisconnect()
 	fmt.Println()
+	fmt.Println("Дочитывание до конца:")
+	ReadToTheEnd()
 }
