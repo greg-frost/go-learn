@@ -27,6 +27,19 @@ func CountTo(max int) (<-chan int, func()) {
 	return ch, cancel
 }
 
+// Дочитывание канала до конца
+func ReadToTheEnd(messages chan int, disconnect chan struct{}) {
+	for {
+		select {
+		case m := <-messages:
+			fmt.Print(m, " ")
+		case <-disconnect:
+			fmt.Print("(разъединение)")
+			return
+		}
+	}
+}
+
 func main() {
 	fmt.Println(" \n[ НЮАНСЫ ГОРУТИН ]\n ")
 
@@ -106,5 +119,17 @@ func main() {
 		}
 		fmt.Print(i, ok, " ")
 	}
+	fmt.Println()
+	fmt.Println()
+
+	// Дочитывание
+	fmt.Println("Дочитывание:")
+	messages := make(chan int, 5)
+	disconnect := make(chan struct{})
+	go ReadToTheEnd(messages, disconnect)
+	for i := 1; i <= 10; i++ {
+		messages <- i
+	}
+	disconnect <- struct{}{}
 	fmt.Println()
 }
