@@ -29,7 +29,7 @@ type Album struct {
 }
 
 // Получение списка альбомов по артисту
-func albumsByArtist(name string) ([]Album, error) {
+func AlbumsByArtist(name string) ([]Album, error) {
 	rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
 	if err != nil {
 		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
@@ -52,7 +52,7 @@ func albumsByArtist(name string) ([]Album, error) {
 }
 
 // Получение списка альбомов по артисту (с контекстом и таймаутом)
-func albumsByArtistContext(ctx context.Context, timeout time.Duration, name string) ([]Album, error) {
+func AlbumsByArtistContext(ctx context.Context, timeout time.Duration, name string) ([]Album, error) {
 	queryCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
@@ -78,7 +78,7 @@ func albumsByArtistContext(ctx context.Context, timeout time.Duration, name stri
 }
 
 // Получение альбома по ID
-func albumByID(id int64) (Album, error) {
+func AlbumByID(id int64) (Album, error) {
 	var a Album
 	row := db.QueryRow("SELECT * FROM album WHERE id = ?", id)
 	if err := row.Scan(&a.ID, &a.Title, &a.Artist, &a.Price); err != nil {
@@ -91,7 +91,7 @@ func albumByID(id int64) (Album, error) {
 }
 
 // Получение альбома по ID (подготовленный запрос)
-func albumByIDPrepared(id int64) (Album, error) {
+func AlbumByIDPrepared(id int64) (Album, error) {
 	if stmt == nil {
 		var err error
 		stmt, err = db.Prepare("SELECT * FROM album WHERE id = ?")
@@ -111,7 +111,7 @@ func albumByIDPrepared(id int64) (Album, error) {
 }
 
 // Добавление альбома
-func addAlbum(a Album) (int64, error) {
+func AddAlbum(a Album) (int64, error) {
 	result, err := db.Exec(
 		"INSERT INTO album (title, artist, price) VALUES (?, ?, ?)",
 		a.Title, a.Artist, a.Price,
@@ -127,7 +127,7 @@ func addAlbum(a Album) (int64, error) {
 }
 
 // Добавление альбома (с транзакцией)
-func addAlbumTx(ctx context.Context, a Album) (int64, error) {
+func AddAlbumTx(ctx context.Context, a Album) (int64, error) {
 	// Начало транзакции
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
@@ -280,7 +280,7 @@ func main() {
 	fmt.Println()
 	artists := []string{"John Coltrane", "Jack Cocktail"}
 	for _, artist := range artists {
-		albums, err := albumsByArtist(artist)
+		albums, err := AlbumsByArtist(artist)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -299,7 +299,7 @@ func main() {
 	fmt.Println()
 	ids := []int64{3, 6}
 	for _, id := range ids {
-		a, err := albumByID(id)
+		a, err := AlbumByID(id)
 		fmt.Printf("Альбом c ID = %d:\n", id)
 		if err != nil {
 			fmt.Println(sep + "(не найдено)")
@@ -311,7 +311,7 @@ func main() {
 
 	// Отмена запросов
 	fmt.Println("Контекст и таймаут:")
-	_, err = albumsByArtistContext(
+	_, err = AlbumsByArtistContext(
 		context.Background(),
 		100*time.Microsecond,
 		"Gerry Mulligan",
@@ -328,12 +328,12 @@ func main() {
 	times := 1000
 	start := time.Now()
 	for i := 0; i < times; i++ {
-		albumByID(int64(i%5 + 1))
+		AlbumByID(int64(i%5 + 1))
 	}
 	fmt.Printf("Обычные - %v\n", time.Since(start))
 	start = time.Now()
 	for i := 0; i < times; i++ {
-		albumByIDPrepared(int64(i%5 + 1))
+		AlbumByIDPrepared(int64(i%5 + 1))
 	}
 	fmt.Printf("Подготовленные - %v\n\n", time.Since(start))
 
@@ -344,7 +344,7 @@ func main() {
 		{Title: "Cold Face, Your Grace", Artist: "Greg Frost"},
 	}
 	for _, a := range albums {
-		id, err := addAlbum(a)
+		id, err := AddAlbum(a)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -360,7 +360,7 @@ func main() {
 		7*time.Millisecond,
 	)
 	defer cancel()
-	_, err = addAlbumTx(ctx, album)
+	_, err = AddAlbumTx(ctx, album)
 	if err != nil {
 		fmt.Println("Транзакция отменена...")
 	} else {
