@@ -13,7 +13,7 @@ import (
 )
 
 // Хэш содержимого файла
-func getFileHash(filename string) (uint32, error) {
+func FileHash(filename string) (uint32, error) {
 	bs, err := os.ReadFile(filename)
 	if err != nil {
 		return 0, err
@@ -42,8 +42,8 @@ func main() {
 	// Adler32
 	fmt.Println("Adler32:")
 	path := base.Dir("crypt/..")
-	adlerHash1, _ := getFileHash(filepath.Join(path, "crypt", "main.go"))
-	adlerHash2, _ := getFileHash(filepath.Join(path, "hello", "main.go"))
+	adlerHash1, _ := FileHash(filepath.Join(path, "crypt", "main.go"))
+	adlerHash2, _ := FileHash(filepath.Join(path, "hello", "main.go"))
 	fmt.Println(adlerHash1, adlerHash2, adlerHash1 == adlerHash2)
 	fmt.Println()
 
