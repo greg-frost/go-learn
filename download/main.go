@@ -21,7 +21,7 @@ var path = base.Dir("download")
 var timeout = time.Second
 
 // Скачивание
-func download(location string, file *os.File, retries int64) error {
+func Download(location string, file *os.File, retries int64) error {
 	req, err := http.NewRequest("GET", location, nil)
 	if err != nil {
 		return err
@@ -40,9 +40,9 @@ func download(location string, file *os.File, retries int64) error {
 	client := &http.Client{Timeout: timeout}
 	res, err := client.Do(req)
 	if err != nil {
-		if hasTimeout(err) && retries > 0 {
+		if HasTimeout(err) && retries > 0 {
 			fmt.Println("Еще одна попытка...")
-			return download(location, file, retries-1)
+			return Download(location, file, retries-1)
 		}
 		return err
 	}
@@ -56,9 +56,9 @@ func download(location string, file *os.File, retries int64) error {
 
 	_, err = io.Copy(file, res.Body)
 	if err != nil {
-		if hasTimeout(err) && retries > 0 {
+		if HasTimeout(err) && retries > 0 {
 			fmt.Println("Еще одна попытка...")
-			return download(location, file, retries-1)
+			return Download(location, file, retries-1)
 		}
 		return err
 	}
@@ -67,7 +67,7 @@ func download(location string, file *os.File, retries int64) error {
 }
 
 // Был ли таймаут
-func hasTimeout(err error) bool {
+func HasTimeout(err error) bool {
 	switch err := err.(type) {
 	case *url.Error:
 		if err, ok := err.Err.(net.Error); ok && err.Timeout() {
@@ -106,7 +106,7 @@ func main() {
 	// Скачивание удаленного файла
 	location := "https://www.learningcontainer.com/" +
 		"wp-content/uploads/2020/05/sample-large-zip-file.zip"
-	err = download(location, file, 100)
+	err = Download(location, file, 100)
 	if err != nil {
 		log.Fatal(err)
 	}
