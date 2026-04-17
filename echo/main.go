@@ -15,19 +15,19 @@ func main() {
 	fmt.Println("Вводите строки, пока не истечет время:")
 
 	// Без каналов
-	// go echo(os.Stdin, os.Stdout)
+	// go Echo(os.Stdin, os.Stdout)
 	// time.Sleep(timeout)
 	// fmt.Println("Время истекло...")
 
 	// С каналами
 	done := time.After(timeout)
 	pipe := make(chan []byte)
-	go read(pipe)
-	write(pipe, done)
+	go Read(pipe)
+	Write(pipe, done)
 }
 
 // Эхо-функция
-func echo(from io.Reader, to io.Writer) {
+func Echo(from io.Reader, to io.Writer) {
 	for {
 		data := make([]byte, 1024)
 		n, _ := from.Read(data)
@@ -37,7 +37,7 @@ func echo(from io.Reader, to io.Writer) {
 }
 
 // Чтение источника
-func read(pipe chan<- []byte) {
+func Read(pipe chan<- []byte) {
 	for {
 		data := make([]byte, 1024)
 		if n, _ := os.Stdin.Read(data); n > 0 {
@@ -47,7 +47,7 @@ func read(pipe chan<- []byte) {
 }
 
 // Запись в источник
-func write(pipe <-chan []byte, done <-chan time.Time) {
+func Write(pipe <-chan []byte, done <-chan time.Time) {
 	for {
 		select {
 		case data := <-pipe:
