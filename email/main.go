@@ -78,10 +78,7 @@ func main() {
 	// Отправка письма
 	if err := smtp.SendMail(
 		credentials.Server+":"+strconv.Itoa(credentials.Port),
-		auth,
-		message.From,
-		message.To,
-		body.Bytes(),
+		auth, message.From, message.To, body.Bytes(),
 	); err != nil {
 		log.Fatal(err)
 	}
