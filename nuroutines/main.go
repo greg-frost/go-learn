@@ -45,7 +45,7 @@ func ReadToDisconnect() {
 	for i := 1; i <= 10; i++ {
 		messages <- i
 	}
-	disconnect <- struct{}{}
+	close(disconnect)
 	fmt.Println()
 }
 
@@ -74,7 +74,7 @@ func ReadToTheEnd() {
 	for i := 1; i <= 10; i++ {
 		messages <- i
 	}
-	disconnect <- struct{}{}
+	close(disconnect)
 	fmt.Println()
 }
 
