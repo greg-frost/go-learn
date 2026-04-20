@@ -32,7 +32,7 @@ func (e *MyError) Error() string {
 }
 
 // Генерация ошибки
-func run() error {
+func Run() error {
 	return &MyError{
 		time.Now(),
 		"Фиаско, братан!",
@@ -40,7 +40,7 @@ func run() error {
 }
 
 // Генерация своей ошибки
-func myRun() error {
+func MyRun() error {
 	var e error
 	e = errors.New("НИЧИВО-НИ-ВЫШЛА!") // Можно так ...
 	e = fmt.Errorf("НИЧИВО-НИ-ВЫШЛА!") // ... или так
@@ -48,7 +48,7 @@ func myRun() error {
 }
 
 // Мультиобработка ошибок
-func multiErrors(val1, val2 int) (_ int, err error) {
+func MultiErrors(val1, val2 int) (_ int, err error) {
 	defer func() {
 		if err != nil {
 			err = fmt.Errorf("в multiErrors: %w", err)
@@ -84,7 +84,7 @@ func multiErrors(val1, val2 int) (_ int, err error) {
 }
 
 // Проверка наличия файла
-func fileChecker(name string) error {
+func FileChecker(name string) error {
 	f, err := os.Open(name)
 	if err != nil {
 		return fmt.Errorf("в fileChecker: %w", err)
@@ -107,7 +107,7 @@ func (errs SliceError) Error() string {
 }
 
 // Проверка строки
-func stringChecker(input string) error {
+func StringChecker(input string) error {
 	var (
 		err      SliceError
 		spaces   int
@@ -136,14 +136,14 @@ func stringChecker(input string) error {
 }
 
 // Обработчик паники
-func saveFromPanic() {
+func SaveFromPanic() {
 	err := recover()
 	fmt.Println("Обычная функция:", err)
 	panic(err)
 }
 
 // Продолжение выполнения с паникой
-func continueWithPanic(i int) {
+func ContinueWithPanic(i int) {
 	defer func() {
 		if p := recover(); p != nil {
 			fmt.Println("ПАНИКА:", p)
@@ -158,7 +158,7 @@ func main() {
 	// Ошибки
 	fmt.Println("Кастомные ошибки:")
 	fmt.Println()
-	if err := run(); err != nil {
+	if err := Run(); err != nil {
 		switch e := err.(type) {
 		case *MyError:
 			fmt.Println(e)
@@ -166,14 +166,14 @@ func main() {
 			fmt.Println("Неизвестная ошибка:", e)
 		}
 	}
-	if myErr := myRun(); myErr != nil {
+	if myErr := MyRun(); myErr != nil {
 		fmt.Println(myErr)
 	}
 	fmt.Println()
 
 	// Мультиобработка
 	fmt.Println("Мультиобработка:")
-	multi, err := multiErrors(2, 0)
+	multi, err := MultiErrors(2, 0)
 	if err != nil {
 		if wrappedErr := errors.Unwrap(err); wrappedErr != nil {
 			err = wrappedErr
@@ -183,13 +183,13 @@ func main() {
 	fmt.Println()
 
 	// IS и AS
-	err = fileChecker("dont_exist.txt")
+	err = FileChecker("dont_exist.txt")
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			fmt.Println("ОШИБКА IS: файла не существует")
 		}
 	}
-	err = run()
+	err = Run()
 	var MyErr MyErrorI
 	if errors.As(err, &MyErr) {
 		fmt.Println("ОШИБКА AS: совпадение типов ошибок")
@@ -203,7 +203,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	if err = stringChecker(ret); err != nil {
+	if err = StringChecker(ret); err != nil {
 		fmt.Println("Ошибки:", err)
 	} else {
 		fmt.Println("Все ОК!")
@@ -213,7 +213,7 @@ func main() {
 	// Паника
 	fmt.Println("Обработка паники:")
 	for _, val := range []int{1, 2, 0, 6} {
-		continueWithPanic(val)
+		ContinueWithPanic(val)
 	}
 	fmt.Println()
 	fmt.Println("Вызов паники:")
@@ -221,6 +221,6 @@ func main() {
 		err := recover()
 		fmt.Println("Анонимная функция:", err)
 	}()
-	defer saveFromPanic()
+	defer SaveFromPanic()
 	panic("Паника!")
 }
