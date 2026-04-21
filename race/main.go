@@ -100,4 +100,36 @@ func main() {
 	}()
 	wg.Wait()
 	fmt.Println("Значение:", state)
+	fmt.Println()
+
+	// Гонка в append
+	fmt.Println("Append")
+	fmt.Print("Нет гонки: ")
+	s := make([]int, 0)
+	go func() {
+		s1 := append(s, 1)
+		fmt.Print(s1, " ")
+	}()
+	go func() {
+		s2 := append(s, 2)
+		fmt.Print(s2, " ")
+	}()
+	time.Sleep(50 * time.Millisecond)
+	fmt.Println()
+	fmt.Print("Есть гонка: ")
+	s = make([]int, 0, 1)
+	go func() {
+		// c := make([]int, len(s), cap(s))
+		// copy(c, s)
+		s1 := append(s, 1)
+		fmt.Print(s1, " ")
+	}()
+	go func() {
+		// c := make([]int, len(s), cap(s))
+		// copy(c, s)
+		s2 := append(s, 2)
+		fmt.Print(s2, " ")
+	}()
+	time.Sleep(50 * time.Millisecond)
+	fmt.Println()
 }
