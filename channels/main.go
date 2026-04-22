@@ -77,6 +77,33 @@ func Triple(val int) int {
 	return val * 3
 }
 
+// Нулевые каналы
+func ChanNil(ch1, ch2 <-chan int) <-chan int {
+	ch := make(chan int, 1)
+
+	go func() {
+		for ch1 != nil || ch2 != nil {
+			select {
+			case v, open := <-ch1:
+				if !open {
+					ch1 = nil
+					break
+				}
+				ch <- v
+			case v, open := <-ch2:
+				if !open {
+					ch2 = nil
+					break
+				}
+				ch <- v
+			}
+		}
+		close(ch)
+	}()
+
+	return ch
+}
+
 // Пинг
 func Ping(c chan string) {
 	for {
@@ -161,6 +188,29 @@ func main() {
 		case v := <-out:
 			fmt.Print(v, " ")
 		}
+	}
+	fmt.Println()
+	fmt.Println()
+
+	// Нулевые каналы
+	ch1 := make(chan int)
+	ch2 := make(chan int)
+	ch := ChanNil(ch1, ch2)
+	fmt.Println("Нулевые каналы:")
+	go func() {
+		for i := 1; i <= 5; i++ {
+			ch1 <- i
+		}
+		close(ch1)
+	}()
+	go func() {
+		for i := 6; i <= 10; i++ {
+			ch2 <- i
+		}
+		close(ch2)
+	}()
+	for v := range ch {
+		fmt.Print(v, " ")
 	}
 	fmt.Println()
 	fmt.Println()
