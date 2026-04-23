@@ -66,11 +66,41 @@ func handleSignals(cancel context.CancelFunc) {
 	}
 }
 
+// Структура "кастомный контекст"
+type CustomContext struct {
+	ctx context.Context
+}
+
+// Крайний срок
+func (cc CustomContext) Deadline() (time.Time, bool) {
+	// return time.Time{}, false
+	return cc.ctx.Deadline()
+}
+
+// Отменен ли
+func (cc CustomContext) Done() <-chan struct{} {
+	// return nil
+	return cc.ctx.Done()
+}
+
+// Ошибка
+func (cc CustomContext) Err() error {
+	// return nil
+	return cc.ctx.Err()
+}
+
+// Значение
+func (cc CustomContext) Value(key any) any {
+	return cc.ctx.Value(key)
+}
+
 func main() {
 	fmt.Println(" \n[ КОНТЕКСТ ]\n ")
 
 	// Контекст
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(
+		CustomContext{ctx: context.Background()},
+	)
 	go handleSignals(cancel)
 
 	// Запуск сервера
