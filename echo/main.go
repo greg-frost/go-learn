@@ -8,24 +8,6 @@ import (
 	"time"
 )
 
-func main() {
-	fmt.Println(" \n[ ЭХО-СЕРВИС ]\n ")
-
-	timeout := 10 * time.Second
-	fmt.Println("Вводите строки, пока не истечет время:")
-
-	// Без каналов
-	// go Echo(os.Stdin, os.Stdout)
-	// time.Sleep(timeout)
-	// fmt.Println("Время истекло...")
-
-	// С каналами
-	done := time.After(timeout)
-	pipe := make(chan []byte)
-	go Read(pipe)
-	Write(pipe, done)
-}
-
 // Эхо-функция
 func Echo(from io.Reader, to io.Writer) {
 	for {
@@ -57,4 +39,22 @@ func Write(pipe <-chan []byte, done <-chan time.Time) {
 			return
 		}
 	}
+}
+
+func main() {
+	fmt.Println(" \n[ ЭХО-СЕРВИС ]\n ")
+
+	timeout := 10 * time.Second
+	fmt.Println("Вводите строки, пока не истечет время:")
+
+	// Без каналов
+	// go Echo(os.Stdin, os.Stdout)
+	// time.Sleep(timeout)
+	// fmt.Println("Время истекло...")
+
+	// С каналами
+	done := time.After(timeout)
+	pipe := make(chan []byte)
+	go Read(pipe)
+	Write(pipe, done)
 }
