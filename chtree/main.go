@@ -90,7 +90,8 @@ func main() {
 
 	// Сравнение деревьев
 	t3 := t1
-	fmt.Println("Третье дерево:\n(такое же, как первое)")
+	fmt.Println("Третье дерево:")
+	fmt.Println("(такое же, как первое)")
 	fmt.Println()
 	fmt.Println("Равенство деревьев:")
 	fmt.Println("1 и 2:", IsSame(t1, t2))
