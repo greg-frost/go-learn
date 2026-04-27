@@ -2,28 +2,34 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
 // Структура "пожертвования"
 type Donation struct {
 	balance int
-	ch      chan int
+	cond    *sync.Cond
 }
 
 func main() {
 	fmt.Println(" \n[ SYNC-COND ]\n ")
 
-	donation := &Donation{ch: make(chan int)}
+	// Пожертвования
+	donation := &Donation{
+		cond: sync.NewCond(&sync.Mutex{}),
+	}
 
 	// Горутина-слушатель
 	listener := func(goal int) {
-		for balance := range donation.ch {
-			if balance >= goal {
-				fmt.Printf("$%d цель достигнута\n", donation.balance)
-				return
-			}
+		donation.cond.L.Lock()
+		for donation.balance < goal {
+			// Ожидание выполнения условия
+			// (уведомления broadcast)
+			donation.cond.Wait()
 		}
+		fmt.Printf("$%d цель достигнута\n", donation.balance)
+		donation.cond.L.Unlock()
 	}
 
 	// Прослушивание пожертвований
@@ -35,8 +41,14 @@ func main() {
 		fmt.Println("Осуществление пожертвований...")
 		for {
 			time.Sleep(250 * time.Millisecond)
+
+			// Обновление баланса
+			donation.cond.L.Lock()
 			donation.balance++
-			donation.ch <- donation.balance
+			donation.cond.L.Unlock()
+
+			// Уведомление всех ожидающих горутин
+			donation.cond.Broadcast()
 		}
 	}()
 
