@@ -2,31 +2,28 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
 // Структура "пожертвования"
 type Donation struct {
 	balance int
-	mu      sync.RWMutex
+	ch      chan int
 }
 
 func main() {
 	fmt.Println(" \n[ SYNC-COND ]\n ")
 
-	donation := new(Donation)
+	donation := &Donation{ch: make(chan int)}
 
 	// Горутина-слушатель
 	listener := func(goal int) {
-		donation.mu.RLock()
-		// Освобождение и захват мьютекса
-		for donation.balance < goal {
-			donation.mu.RUnlock()
-			donation.mu.RLock()
+		for balance := range donation.ch {
+			if balance >= goal {
+				fmt.Printf("$%d цель достигнута\n", donation.balance)
+				return
+			}
 		}
-		fmt.Printf("$%d цель достигнута\n", donation.balance)
-		donation.mu.RUnlock()
 	}
 
 	// Прослушивание пожертвований
@@ -38,9 +35,8 @@ func main() {
 		fmt.Println("Осуществление пожертвований...")
 		for {
 			time.Sleep(250 * time.Millisecond)
-			donation.mu.Lock()
 			donation.balance++
-			donation.mu.Unlock()
+			donation.ch <- donation.balance
 		}
 	}()
 
