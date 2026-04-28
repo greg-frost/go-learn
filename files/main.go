@@ -24,7 +24,7 @@ func check(err error) {
 }
 
 // Копирование файла
-func copyFile(src, dst string) error {
+func CopyFile(src, dst string) error {
 	srcF, err := os.Open(src)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func copyFile(src, dst string) error {
 }
 
 // Печать содержимого каталога
-func printDir(path string, predicate func(string) bool) {
+func PrintDir(path string, predicate func(string) bool) {
 	var walk func(string)
 	walk = func(path string) {
 		files, err := os.ReadDir(path)
@@ -67,12 +67,12 @@ func printDir(path string, predicate func(string) bool) {
 }
 
 // Поиск "." в строке
-func containsDot(s string) bool {
+func ContainsDot(s string) bool {
 	return strings.Contains(s, ".")
 }
 
 // Поиск "_test" в строке
-func containsTest(s string) bool {
+func ContainsTest(s string) bool {
 	return strings.Contains(s, "_test")
 }
 
@@ -153,7 +153,7 @@ func main() {
 	w.Flush()
 
 	// Копирование файла
-	copyFile(filename, filenameOld)
+	CopyFile(filename, filenameOld)
 	fmt.Println()
 
 	// Очистка
@@ -187,7 +187,7 @@ func main() {
 
 	// Фильтрация
 	fmt.Printf("Только тесты каталога \"%s\":\n", recPath)
-	printDir(recPath, containsTest)
+	PrintDir(recPath, ContainsTest)
 
 	// Создание каталога
 	fmt.Println()
