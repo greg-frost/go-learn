@@ -7,7 +7,7 @@ import (
 )
 
 // Сумма
-func sum(vals ...int) (res int) {
+func Sum(vals ...int) (res int) {
 	for _, v := range vals {
 		res += v
 	}
@@ -15,7 +15,7 @@ func sum(vals ...int) (res int) {
 }
 
 // Максимум
-func max(vals ...int) (max int) {
+func Max(vals ...int) (max int) {
 	max = math.MinInt
 	for _, v := range vals {
 		if v > max {
@@ -26,7 +26,7 @@ func max(vals ...int) (max int) {
 }
 
 // Половина
-func half(val int) (res int, isEven bool) {
+func Half(val int) (res int, isEven bool) {
 	res = val / 2
 	if res%2 == 0 {
 		isEven = true
@@ -35,15 +35,15 @@ func half(val int) (res int, isEven bool) {
 }
 
 // Факториал
-func fact(n int) int {
+func Fact(n int) int {
 	if n == 0 {
 		return 1
 	}
-	return n * fact(n-1)
+	return n * Fact(n-1)
 }
 
 // Ряд Фибоначчи
-func fibRow(n int) []int {
+func FibRow(n int) []int {
 	res := make([]int, n+1)
 
 	res[0], res[1] = 0, 1
@@ -55,18 +55,18 @@ func fibRow(n int) []int {
 }
 
 // Значение Фибоначчи
-func fibValue(n int) int {
+func FibValue(n int) int {
 	if n <= 1 {
 		return n
 	}
-	return fibValue(n-1) + fibValue(n-2)
+	return FibValue(n-1) + FibValue(n-2)
 }
 
 // Кэш для значений Фибоначчи
 var memo = make(map[int]int)
 
 // Значение Фибоначчи (с мемоизацией)
-func fibValueMemo(n int) int {
+func FibValueMemo(n int) int {
 	if n <= 1 {
 		return n
 	}
@@ -74,13 +74,13 @@ func fibValueMemo(n int) int {
 		return v
 	}
 
-	res := fibValueMemo(n-1) + fibValueMemo(n-2)
+	res := FibValueMemo(n-1) + FibValueMemo(n-2)
 	memo[n] = res
 	return res
 }
 
 // Замыкание Фибоначчи
-func fibClosure() func() int {
+func FibClosure() func() int {
 	prev, next := 0, 1
 
 	return func() int {
@@ -91,7 +91,7 @@ func fibClosure() func() int {
 }
 
 // Генератор нечетных чисел
-func makeOddGenerator() func() uint {
+func MakeOddGenerator() func() uint {
 	var i uint = 1
 	return func() (ret uint) {
 		ret = i
@@ -101,7 +101,7 @@ func makeOddGenerator() func() uint {
 }
 
 // Генератор четных чисел
-func makeEvenGenerator() func() uint {
+func MakeEvenGenerator() func() uint {
 	var i uint = 0
 	return func() (ret uint) {
 		ret = i
@@ -111,30 +111,30 @@ func makeEvenGenerator() func() uint {
 }
 
 // Тип "функция"
-type function func(a, b int) int
+type Function func(a, b int) int
 
 // Выполнение
-func typeFunc(f function) int {
+func TypeFunc(f Function) int {
 	return f(3, 25)
 }
 
 // Структура "вычитатель"
-type subber struct {
+type Subber struct {
 	val int
 }
 
 // Вычитание
-func (s subber) subFrom(val int) int {
+func (s Subber) SubFrom(val int) int {
 	return val - s.val
 }
 
 // Абстрактная функция
-func compute(fn func(float64, float64) float64) float64 {
+func Compute(fn func(float64, float64) float64) float64 {
 	return fn(2, 3)
 }
 
 // Замыкание
-func adder() func(int) int {
+func Adder() func(int) int {
 	var sum int
 	return func(x int) int {
 		sum += x
@@ -143,17 +143,17 @@ func adder() func(int) int {
 }
 
 // Тип "фигура"
-type figures int
+type Figures int
 
 const (
-	square figures = iota
+	square Figures = iota
 	circle
 	triangle
 	hexagon
 )
 
 // Выбор функции для вычисления площади фигуры
-func area(f figures) (func(float64) float64, bool) {
+func area(f Figures) (func(float64) float64, bool) {
 	switch f {
 	case square:
 		return func(x float64) float64 { return x * x }, true
@@ -167,7 +167,7 @@ func area(f figures) (func(float64) float64, bool) {
 }
 
 // Замыкание для подсчета количества вызовов
-func countCall(f func(string)) func(string) {
+func CountCall(f func(string)) func(string) {
 	var count int
 	return func(s string) {
 		count++
@@ -177,7 +177,7 @@ func countCall(f func(string)) func(string) {
 }
 
 // Замыкание для подсчета времени выполнения
-func metricCall(f func(string)) func(string) {
+func MetricCall(f func(string)) func(string) {
 	return func(s string) {
 		start := time.Now()
 		f(s)
@@ -186,25 +186,25 @@ func metricCall(f func(string)) func(string) {
 }
 
 // Простая функция печати
-func myPrinter(s string) {
+func MyPrinter(s string) {
 	time.Sleep(10 * time.Millisecond)
 	fmt.Println(s)
 }
 
 // Отложенная функция
-func deferrer(d int, dp *int) {
+func Deferrer(d int, dp *int) {
 	fmt.Println("Отложенная функция:", d, *dp)
 }
 
 // Очевидная функция
-func intuitive() string {
+func Intuitive() string {
 	value := "Казалось бы,"
 	defer func() { value = "На самом деле..." }()
 	return value
 }
 
 // Неочевидная функция
-func unintuitive() (value string) {
+func Unintuitive() (value string) {
 	defer func() { value = "На самом деле..." }()
 	return "Казалось бы,"
 }
@@ -218,7 +218,7 @@ func main() {
 	fmt.Println()
 
 	// Сумма через функцию
-	sum := sum(a, b, c)
+	sum := Sum(a, b, c)
 	fmt.Println("Общая сумма:", sum)
 
 	// Сумма через срез
@@ -235,18 +235,18 @@ func main() {
 	fmt.Println()
 
 	// Максимум, половина и факториал
-	fmt.Println("Наибольшее число:", max(a, b, c))
-	res, isEven := half(sum)
+	fmt.Println("Наибольшее число:", Max(a, b, c))
+	res, isEven := Half(sum)
 	fmt.Printf("Половина (четная): %d (%t)\n", res, isEven)
-	fmt.Println("Факториал:", fact(res))
+	fmt.Println("Факториал:", Fact(res))
 	fmt.Println()
 
 	// Фибоначчи
-	fmt.Println("Ряд Фибоначчи:", fibRow(res))
-	fmt.Println("Число Фибоначчи:", fibValue(res))
-	fmt.Println("Число Фибоначчи (мемо.):", fibValueMemo(res))
+	fmt.Println("Ряд Фибоначчи:", FibRow(res))
+	fmt.Println("Число Фибоначчи:", FibValue(res))
+	fmt.Println("Число Фибоначчи (мемо.):", FibValueMemo(res))
 	fmt.Println("Замыкание Фибоначчи:")
-	f := fibClosure()
+	f := FibClosure()
 	for i := 0; i <= res; i++ {
 		fmt.Print(f(), " ")
 	}
@@ -254,21 +254,21 @@ func main() {
 	fmt.Println()
 
 	// Нечетные и четные числа
-	nextOdd := makeOddGenerator()
+	nextOdd := MakeOddGenerator()
 	fmt.Println("Нечетные числа:", nextOdd(), nextOdd(), nextOdd())
-	nextEven := makeEvenGenerator()
+	nextEven := MakeEvenGenerator()
 	fmt.Println("Четные числа:", nextEven(), nextEven(), nextEven())
 	fmt.Println()
 
 	// Тип-функция и формы методы
-	fmt.Println("Тип-функция:", typeFunc(func(a int, b int) int {
+	fmt.Println("Тип-функция:", TypeFunc(func(a int, b int) int {
 		return a * b
 	}))
-	mySubber := subber{val: 50}
-	fmt.Println("Обычный метод:", mySubber.subFrom(120))
-	fs1 := mySubber.subFrom
+	mySubber := Subber{val: 50}
+	fmt.Println("Обычный метод:", mySubber.SubFrom(120))
+	fs1 := mySubber.SubFrom
 	fmt.Println("Значение метода:", fs1(115))
-	fs2 := subber.subFrom
+	fs2 := Subber.SubFrom
 	fmt.Println("Выражение метода:", fs2(mySubber, 110))
 	fmt.Println()
 
@@ -278,14 +278,14 @@ func main() {
 		return math.Pow(2*x, 2*y)
 	}
 	fmt.Println("hypot(2, 4) =", hypot(2, 4))
-	fmt.Println("compute(hypot) =", compute(hypot))
-	fmt.Println("compute(math.Pow) =", compute(math.Pow))
+	fmt.Println("compute(hypot) =", Compute(hypot))
+	fmt.Println("compute(math.Pow) =", Compute(math.Pow))
 	fmt.Println()
 
 	// Замыкания
 	fmt.Println("Замыкания:")
-	pos, neg := adder(), adder()
-	for i := 0; i < max(a, b, c); i++ {
+	pos, neg := Adder(), Adder()
+	for i := 0; i < Max(a, b, c); i++ {
 		fmt.Println(
 			pos(i),
 			neg(-2*i),
@@ -306,22 +306,22 @@ func main() {
 
 	// Отслеживание количества вызовов
 	fmt.Println("Количество вызовов функции:")
-	countedPrint := countCall(myPrinter)
+	countedPrint := CountCall(MyPrinter)
 	countedPrint("Hello")
 	countedPrint("World")
 	fmt.Println()
 
 	// Отслеживание времени выполнения
 	fmt.Println("Время выполнения функции:")
-	metricPrint := metricCall(countedPrint)
+	metricPrint := MetricCall(countedPrint)
 	metricPrint("Привет")
 	metricPrint("Мир")
 	fmt.Println()
 
 	// Отложенные функции
 	df := 10
-	defer deferrer(df, &df)
+	defer Deferrer(df, &df)
 	df = 100
-	fmt.Println(intuitive())
-	fmt.Println(unintuitive())
+	fmt.Println(Intuitive())
+	fmt.Println(Unintuitive())
 }
