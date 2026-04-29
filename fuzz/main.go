@@ -19,7 +19,7 @@ func Reverse(s string) (string, error) {
 }
 
 func main() {
-	fmt.Println(" \n[ FUZZING ]\n ")
+	fmt.Println(" \n[ ФАЗЗИНГ ]\n ")
 
 	// Пример
 	text := "The quick brown fox jumped over the lazy dog"
