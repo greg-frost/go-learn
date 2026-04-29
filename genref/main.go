@@ -7,14 +7,14 @@ import (
 )
 
 // Обнуление среза (статический тип)
-func nullifySliceStatic(slice []int) {
+func NullifySliceStatic(slice []int) {
 	for i := 0; i < len(slice); i++ {
 		slice[i] = 0
 	}
 }
 
 // Обнуление среза (дженерики)
-func nullifySliceGenerics[T any](slice []T) {
+func NullifySliceGenerics[T any](slice []T) {
 	var nullValue T
 	for i := 0; i < len(slice); i++ {
 		slice[i] = nullValue
@@ -22,7 +22,7 @@ func nullifySliceGenerics[T any](slice []T) {
 }
 
 // Обнуление среза (рефлексия)
-func nullifySliceReflect(s interface{}) {
+func NullifySliceReflect(s interface{}) {
 	val := reflect.ValueOf(s)
 	if val.Kind() != reflect.Slice {
 		return
@@ -43,7 +43,7 @@ func main() {
 	staticSlice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 	fmt.Println("Статический:")
 	fmt.Println(staticSlice)
-	nullifySliceStatic(staticSlice)
+	NullifySliceStatic(staticSlice)
 	fmt.Println(staticSlice)
 	fmt.Println()
 
@@ -52,7 +52,7 @@ func main() {
 	// genericsSlice := []bool{true, true, false, true, false}
 	fmt.Println("Дженерики:")
 	fmt.Println(genericsSlice)
-	nullifySliceGenerics(genericsSlice)
+	NullifySliceGenerics(genericsSlice)
 	fmt.Println(genericsSlice)
 	fmt.Println()
 
@@ -61,7 +61,7 @@ func main() {
 	// reflectSlice := []rune{'a', 'b', 'c'}
 	fmt.Println("Рефлексия:")
 	fmt.Println(reflectSlice)
-	nullifySliceReflect(reflectSlice)
+	NullifySliceReflect(reflectSlice)
 	fmt.Println(reflectSlice)
 	fmt.Println()
 
@@ -76,21 +76,21 @@ func main() {
 	// Статический тип
 	start := time.Now()
 	for i := 0; i < times; i++ {
-		nullifySliceStatic(slice)
+		NullifySliceStatic(slice)
 	}
 	fmt.Println("Статический:", time.Since(start))
 
 	// Дженерики
 	start = time.Now()
 	for i := 0; i < times; i++ {
-		nullifySliceGenerics(slice)
+		NullifySliceGenerics(slice)
 	}
 	fmt.Println("Дженерики:  ", time.Since(start))
 
 	// Рефлексия
 	start = time.Now()
 	for i := 0; i < times; i++ {
-		nullifySliceReflect(slice)
+		NullifySliceReflect(slice)
 	}
 	fmt.Println("Рефлексия:  ", time.Since(start))
 }
