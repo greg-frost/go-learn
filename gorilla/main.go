@@ -10,7 +10,7 @@ import (
 )
 
 // Структура "альбом"
-type album struct {
+type Album struct {
 	ID     string  `json:"id"`
 	Title  string  `json:"title"`
 	Artist string  `json:"artist"`
@@ -18,7 +18,7 @@ type album struct {
 }
 
 // Данные альбомов
-var albums = []album{
+var albums = []Album{
 	{ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
 	{ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
 	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
@@ -52,7 +52,7 @@ func getAlbumByID(w http.ResponseWriter, r *http.Request) {
 func postAlbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var newAlbum album
+	var newAlbum Album
 	if err := json.NewDecoder(r.Body).Decode(&newAlbum); err != nil {
 		return
 	}
