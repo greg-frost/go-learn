@@ -14,12 +14,12 @@ func printAlloc(caption string) {
 }
 
 // Функция с утечкой емкости
-func leakCap(msg []byte) []byte {
+func LeakCap(msg []byte) []byte {
 	return msg[:5]
 }
 
 // Функция без утечки емкости
-func noLeakCap(msg []byte) []byte {
+func NoLeakCap(msg []byte) []byte {
 	// Вариант 1
 	five := make([]byte, 5)
 	copy(five, msg)
@@ -35,12 +35,12 @@ type Slice struct {
 }
 
 // Функция с утечкой среза
-func leakSlice(slices []Slice) []Slice {
+func LeakSlice(slices []Slice) []Slice {
 	return slices[:2]
 }
 
 // Функция без утечки среза
-func noLeakSlice(slices []Slice) []Slice {
+func NoLeakSlice(slices []Slice) []Slice {
 	// Вариант 1
 	two := make([]Slice, 2)
 	copy(two, slices)
@@ -61,7 +61,7 @@ type vMap map[int][128]byte
 type pMap map[int]*[128]byte
 
 // Функция с утечкой карты
-func leakMap(m vMap) vMap {
+func LeakMap(m vMap) vMap {
 	size := len(m)
 	for i := 1000; i < size; i++ {
 		delete(m, i)
@@ -70,7 +70,7 @@ func leakMap(m vMap) vMap {
 }
 
 // Функция без утечки карты
-func noLeakMap(m vMap) vMap {
+func NoLeakMap(m vMap) vMap {
 	size := len(m)
 	for i := 1000; i < size; i++ {
 		delete(m, i)
@@ -84,12 +84,12 @@ func noLeakMap(m vMap) vMap {
 }
 
 // Функция с утечкой строки
-func leakString(s string) string {
+func LeakString(s string) string {
 	return s[:100]
 }
 
 // Функция без утечки строки
-func noLeakString(s string) string {
+func NoLeakString(s string) string {
 	// Вариант 1
 	return strings.Clone(s[:100])
 
@@ -107,7 +107,7 @@ func main() {
 	fmt.Println("Утечка емкости:")
 	printAlloc("Память до")
 	msg := make([]byte, count*size)
-	five := leakCap(msg)
+	five := LeakCap(msg)
 	runtime.GC()
 	runtime.KeepAlive(five)
 	printAlloc("Память после")
@@ -121,7 +121,7 @@ func main() {
 	fmt.Println("(без утечки)")
 	printAlloc("Память до")
 	msg = make([]byte, size)
-	five = noLeakCap(msg)
+	five = NoLeakCap(msg)
 	runtime.GC()
 	runtime.KeepAlive(five)
 	printAlloc("Память после")
@@ -140,7 +140,7 @@ func main() {
 			v: make([]byte, size),
 		}
 	}
-	two := leakSlice(slices)
+	two := LeakSlice(slices)
 	runtime.GC()
 	runtime.KeepAlive(two)
 	printAlloc("Память после")
@@ -158,7 +158,7 @@ func main() {
 			v: make([]byte, size),
 		}
 	}
-	two = noLeakSlice(slices)
+	two = NoLeakSlice(slices)
 	runtime.GC()
 	runtime.KeepAlive(two)
 	printAlloc("Память после")
@@ -174,7 +174,7 @@ func main() {
 	for i := 0; i < size; i++ {
 		m[i] = [128]byte{}
 	}
-	m = leakMap(m)
+	m = LeakMap(m)
 	runtime.GC()
 	runtime.KeepAlive(m)
 	printAlloc("Память после")
@@ -190,7 +190,7 @@ func main() {
 	for i := 0; i < size; i++ {
 		m[i] = [128]byte{}
 	}
-	nm := noLeakMap(m)
+	nm := NoLeakMap(m)
 	runtime.GC()
 	runtime.KeepAlive(nm)
 	printAlloc("Память после")
@@ -203,7 +203,7 @@ func main() {
 	fmt.Println("Утечка строки:")
 	printAlloc("Память до")
 	s := strings.Repeat("#", count*size)
-	ns := leakString(s)
+	ns := LeakString(s)
 	runtime.GC()
 	runtime.KeepAlive(ns)
 	printAlloc("Память после")
@@ -216,7 +216,7 @@ func main() {
 	fmt.Println("(без утечки)")
 	printAlloc("Память до")
 	s = strings.Repeat("#", count*size)
-	ns = noLeakString(s)
+	ns = NoLeakString(s)
 	runtime.GC()
 	runtime.KeepAlive(ns)
 	printAlloc("Память после")
