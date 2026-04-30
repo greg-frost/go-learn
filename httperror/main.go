@@ -53,7 +53,7 @@ func (e Error) Error() string {
 }
 
 // Получение страницы
-func get(url string) (*http.Response, error) {
+func Get(url string) (*http.Response, error) {
 	res, err := http.Get(url)
 	if err != nil {
 		return res, err
@@ -98,7 +98,7 @@ func main() {
 
 	// Клиент
 	fmt.Println("Клиент:")
-	res, err := get("http://localhost:8080")
+	res, err := Get("http://localhost:8080")
 	if err != nil {
 		fmt.Println(err)
 		return
