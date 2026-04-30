@@ -41,7 +41,7 @@ type (
 )
 
 // Чтение JSON
-func readJSON(respJson string) (Response, error) {
+func ReadJSON(respJson string) (Response, error) {
 	var resp Response
 	if err := json.Unmarshal([]byte(respJson), &resp); err != nil {
 		return Response{}, fmt.Errorf("JSON десериализация: %w", err)
@@ -50,7 +50,7 @@ func readJSON(respJson string) (Response, error) {
 }
 
 // Печать JSON
-func printJSON(v interface{}, caption string, depth int) {
+func PrintJSON(v interface{}, caption string, depth int) {
 	fmt.Print(strings.Repeat("  ", depth))
 	if caption != "" {
 		fmt.Print(caption, " ")
@@ -66,12 +66,12 @@ func printJSON(v interface{}, caption string, depth int) {
 	case []interface{}:
 		fmt.Println("массив:")
 		for _, data := range v {
-			printJSON(data, "-", depth+1)
+			PrintJSON(data, "-", depth+1)
 		}
 	case map[string]interface{}:
 		fmt.Println("объект:")
 		for field, data := range v {
-			printJSON(data, fmt.Sprintf("%q", field), depth+1)
+			PrintJSON(data, fmt.Sprintf("%q", field), depth+1)
 		}
 	default:
 		fmt.Println("неизвестный тип")
@@ -142,7 +142,7 @@ func main() {
 	    }]
 	}
 	`
-	resp2, _ := readJSON(respJson)
+	resp2, _ := ReadJSON(respJson)
 	jsonResp2, _ := json.Marshal(resp2)
 	fmt.Printf("Структура ответа (десериализация):\n%+v\n%v\n\n", resp2, string(jsonResp2))
 
@@ -199,5 +199,5 @@ func main() {
 	}
 	fmt.Println(custom)
 	fmt.Println()
-	printJSON(custom, "", 0)
+	PrintJSON(custom, "", 0)
 }
