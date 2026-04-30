@@ -10,6 +10,27 @@ import (
 	"go-learn/base"
 )
 
+// Сжатие файла
+func Compress(filename string) error {
+	in, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(filename + ".gz")
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	gzout := gzip.NewWriter(out)
+	_, err = io.Copy(gzout, in)
+	defer gzout.Close()
+
+	return err
+}
+
 func main() {
 	fmt.Println(" \n[ GZIP-КОМПРЕССИЯ ]\n ")
 
@@ -31,7 +52,7 @@ func main() {
 		wg.Add(1)
 		go func(filename string) {
 			defer wg.Done()
-			if err := compress(filename); err != nil {
+			if err := Compress(filename); err != nil {
 				fmt.Println("Ошибка:", err)
 				return
 			}
@@ -41,25 +62,4 @@ func main() {
 	wg.Wait()
 
 	fmt.Printf("Обработано файлов: %d\n", count)
-}
-
-// Сжатие файла
-func compress(filename string) error {
-	in, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	out, err := os.Create(filename + ".gz")
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	gzout := gzip.NewWriter(out)
-	_, err = io.Copy(gzout, in)
-	defer gzout.Close()
-
-	return err
 }
