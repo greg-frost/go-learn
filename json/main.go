@@ -78,6 +78,13 @@ func PrintJSON(v interface{}, caption string, depth int) {
 	}
 }
 
+// Кастомная структура
+type Custom struct {
+	ID int
+	// time.Time // При анонимном встраивании переопределяются методы сериализации/десериализации,
+	Time time.Time // поэтому можно использовать именованное встраивание, чтобы решить проблему
+}
+
 func main() {
 	fmt.Println(" \n[ JSON ]\n ")
 
@@ -156,9 +163,9 @@ func main() {
 		Name string `json:"name"`
 		Age  int    `json:"age"`
 	}
-	var b bytes.Buffer
+	var bf bytes.Buffer
 	dec := json.NewDecoder(strings.NewReader(data))
-	enc := json.NewEncoder(&b)
+	enc := json.NewEncoder(&bf)
 	for dec.More() {
 		err := dec.Decode(&p)
 		if err != nil {
@@ -171,11 +178,11 @@ func main() {
 		}
 	}
 	fmt.Println("Encode и Decode:")
-	fmt.Println(b.String())
+	fmt.Println(bf.String())
 
 	// Произвольный формат
 	fmt.Println("Произвольный формат:")
-	jsonCustom := `
+	jsonUnknown := `
 	{
 		"first_name": "Greg",
 		"last_name": "Frost",
@@ -192,12 +199,25 @@ func main() {
 		}
 	}
 	`
-	var custom interface{}
-	err = json.Unmarshal([]byte(jsonCustom), &custom)
+	var unknown interface{}
+	err = json.Unmarshal([]byte(jsonUnknown), &unknown)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(custom)
+	fmt.Println(unknown)
 	fmt.Println()
-	PrintJSON(custom, "", 0)
+	PrintJSON(unknown, "", 0)
+	fmt.Println()
+
+	// Кастомная структура
+	fmt.Println("Кастомная структура:")
+	custom := Custom{
+		ID:   1234,
+		Time: time.Now(),
+	}
+	b, err := json.Marshal(custom)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(b))
 }
