@@ -81,8 +81,21 @@ func PrintJSON(v interface{}, caption string, depth int) {
 // Кастомная структура
 type Custom struct {
 	ID int
-	// time.Time // При анонимном встраивании переопределяются методы сериализации/десериализации,
-	Time time.Time // поэтому можно использовать именованное встраивание, чтобы решить проблему
+	// time.Time   // При анонимном встраивании переопределяются методы сериализации/десериализации,
+	Time time.Time // поэтому можно использовать именованное встраивание, или ...
+}
+
+// Сериализация (переопределение для анонимного встраивания)
+func (c Custom) MarshalJSON() ([]byte, error) {
+	return json.Marshal(
+		struct {
+			ID   int
+			Time time.Time
+		}{
+			ID:   c.ID,
+			Time: c.Time,
+		},
+	)
 }
 
 func main() {
