@@ -78,7 +78,7 @@ func PrintJSON(v interface{}, caption string, depth int) {
 	}
 }
 
-// Кастомная структура
+// Структура "кастомная"
 type Custom struct {
 	ID int
 	// time.Time   // При анонимном встраивании переопределяются методы сериализации/десериализации,
