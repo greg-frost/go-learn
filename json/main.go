@@ -98,6 +98,11 @@ func (c Custom) MarshalJSON() ([]byte, error) {
 	)
 }
 
+// Структура "временная"
+type Time struct {
+	Time time.Time
+}
+
 func main() {
 	fmt.Println(" \n[ JSON ]\n ")
 
@@ -233,4 +238,33 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(string(b))
+	fmt.Println()
+
+	// Временная структура
+	fmt.Println("Временная структура:")
+	now := time.Now()
+	time1 := Time{
+		Time: now,
+		// Первый вариант решения -
+		// отбросить монотонные часы
+		// Time: now.Truncate(0),
+	}
+	b, err = json.Marshal(time1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var time2 Time
+	err = json.Unmarshal(b, &time2)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Время 1:", time1.Time)
+	fmt.Println("Время 2:", time2.Time)
+
+	// Временные метки отличаются из-за монотонных часов
+	fmt.Println("Временные метки идентичны:", time1 == time2)
+
+	// Второй вариант решения -
+	// использовать метод проверки на равенство
+	fmt.Println("Временные метки равны:", time1.Time.Equal(time2.Time))
 }
