@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -85,7 +86,20 @@ func main() {
 
 	// Свой клиент
 	fmt.Println("HEAD:", addr)
-	client := &http.Client{Timeout: 200 * time.Millisecond}
+	client := &http.Client{
+		// Глобальный таймаут запроса
+		Timeout: 250 * time.Millisecond,
+		Transport: &http.Transport{
+			DialContext: (&net.Dialer{
+				// Таймаут запроса и ожидания соединения
+				Timeout: 50 * time.Millisecond,
+			}).DialContext,
+			// Таймаут TLS-рукопожатия
+			TLSHandshakeTimeout: 100 * time.Millisecond,
+			// Таймаут ожидания получения заголовков
+			ResponseHeaderTimeout: 200 * time.Millisecond,
+		},
+	}
 	res, err = client.Head(addr)
 	if err != nil {
 		fmt.Println("Ошибка: таймаут!")
