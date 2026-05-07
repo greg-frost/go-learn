@@ -58,4 +58,22 @@ func main() {
 	fmt.Println("Ожидаю соединений...")
 	fmt.Println("(на http://localhost:8080)")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+
+	// Свой сервер
+	// addr := "localhost:8080"
+	// s := &http.Server{
+	// 	Addr: addr,
+	// 	// Таймаут чтения заголовков запроса
+	// 	ReadHeaderTimeout: 500 * time.Millisecond,
+	// 	// Таймаут чтения всего запроса
+	// 	ReadTimeout: 500 * time.Millisecond,
+	// 	// Общий таймаут
+	// 	Handler: http.TimeoutHandler(
+	// 		http.HandlerFunc(textHandler), time.Second, "timeout"),
+	// }
+	// listener, err := net.Listen("tcp", addr)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Fatal(s.Serve(listener))
 }
