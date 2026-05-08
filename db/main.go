@@ -214,6 +214,12 @@ func main() {
 
 	defer db.Close()
 
+	// Параметры
+	db.SetMaxOpenConns(100)                 // Максимальное количество соединений
+	db.SetMaxIdleConns(5)                   // Масимальное количество неактивных соединений
+	db.SetConnMaxIdleTime(30 * time.Second) // Максимальное время бездействия соединения
+	db.SetConnMaxIdleTime(5 * time.Minute)  // Максимальное время жизни соединения до закрытия
+
 	// Пинг
 	if err := db.Ping(); err != nil {
 		log.Fatal(err)
