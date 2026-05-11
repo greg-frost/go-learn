@@ -25,7 +25,7 @@ type Album struct {
 	ID     int64
 	Title  string
 	Artist string
-	Price  float32
+	Price  sql.NullFloat64
 }
 
 // Получение списка альбомов по артисту
@@ -153,7 +153,7 @@ func AddAlbumTx(ctx context.Context, a Album) (int64, error) {
 		ctx, "INSERT INTO log (event) VALUES (?)",
 		fmt.Sprintf(
 			"Добавлен альбом: %d - %s, %s ($%.2f)",
-			id, a.Title, a.Artist, a.Price,
+			id, a.Title, a.Artist, a.Price.Float64,
 		),
 	)
 	if err != nil {
@@ -244,7 +244,7 @@ func main() {
 			id INT AUTO_INCREMENT NOT NULL,
 			title VARCHAR(128) NOT NULL,
 			artist VARCHAR(255) NOT NULL,
-			price DECIMAL(5,2) NOT NULL,
+			price DECIMAL(5,2),
 			PRIMARY KEY (id)
 		) ENGINE = InnoDB
 		`)
@@ -295,7 +295,11 @@ func main() {
 			fmt.Println(sep + "(не найдено)")
 		}
 		for _, a := range albums {
-			fmt.Printf("%s%d - %s ($%.2f)\n", sep, a.ID, a.Title, a.Price)
+			if a.Price.Valid {
+				fmt.Printf("%s%d - %s ($%.2f)\n", sep, a.ID, a.Title, a.Price.Float64)
+			} else {
+				fmt.Printf("%s%d - %s\n", sep, a.ID, a.Title)
+			}
 		}
 	}
 	fmt.Println()
@@ -310,7 +314,11 @@ func main() {
 		if err != nil {
 			fmt.Println(sep + "(не найдено)")
 		} else {
-			fmt.Printf("%s%s, %s ($%.2f)\n", sep, a.Title, a.Artist, a.Price)
+			if a.Price.Valid {
+				fmt.Printf("%s%s, %s ($%.2f)\n", sep, a.Title, a.Artist, a.Price.Float64)
+			} else {
+				fmt.Printf("%s%s, %s\n", sep, a.Title, a.Artist)
+			}
 		}
 	}
 	fmt.Println()
@@ -346,7 +354,8 @@ func main() {
 	// Добавление альбома
 	fmt.Println("Новые альбомы:")
 	albums := []Album{
-		{Title: "Ariadna's Clue", Artist: "Greg Frost"},
+		{Title: "Ariadna's Clue", Artist: "Greg Frost",
+			Price: sql.NullFloat64{Float64: 1.99, Valid: true}},
 		{Title: "Cold Face, Your Grace", Artist: "Greg Frost"},
 	}
 	for _, a := range albums {
@@ -354,7 +363,11 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s%d - %s, %s ($%.2f)\n", sep, id, a.Title, a.Artist, a.Price)
+		if a.Price.Valid {
+			fmt.Printf("%s%d - %s, %s ($%.2f)\n", sep, id, a.Title, a.Artist, a.Price.Float64)
+		} else {
+			fmt.Printf("%s%d - %s, %s\n", sep, id, a.Title, a.Artist)
+		}
 	}
 	fmt.Println()
 
