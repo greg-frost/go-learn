@@ -28,6 +28,29 @@ type Album struct {
 	Price  sql.NullFloat64
 }
 
+// Печать с ID
+func (a *Album) PrintWithID() {
+	if a.Price.Valid {
+		fmt.Printf("%s%d - %s ($%.2f)\n", sep, a.ID, a.Title, a.Price.Float64)
+	} else {
+		fmt.Printf("%s%d - %s\n", sep, a.ID, a.Title)
+	}
+}
+
+// Печать с исполнителем
+func (a *Album) PrintWithArtist() {
+	if a.Price.Valid {
+		fmt.Printf("%s%s, %s ($%.2f)\n", sep, a.Title, a.Artist, a.Price.Float64)
+	} else {
+		fmt.Printf("%s%s, %s\n", sep, a.Title, a.Artist)
+	}
+}
+
+// Установка цены
+func setPrice(price float64) sql.NullFloat64 {
+	return sql.NullFloat64{Float64: price, Valid: true}
+}
+
 // Получение списка альбомов по артисту
 func AlbumsByArtist(name string) ([]Album, error) {
 	rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
@@ -295,11 +318,7 @@ func main() {
 			fmt.Println(sep + "(не найдено)")
 		}
 		for _, a := range albums {
-			if a.Price.Valid {
-				fmt.Printf("%s%d - %s ($%.2f)\n", sep, a.ID, a.Title, a.Price.Float64)
-			} else {
-				fmt.Printf("%s%d - %s\n", sep, a.ID, a.Title)
-			}
+			a.PrintWithID()
 		}
 	}
 	fmt.Println()
@@ -314,11 +333,7 @@ func main() {
 		if err != nil {
 			fmt.Println(sep + "(не найдено)")
 		} else {
-			if a.Price.Valid {
-				fmt.Printf("%s%s, %s ($%.2f)\n", sep, a.Title, a.Artist, a.Price.Float64)
-			} else {
-				fmt.Printf("%s%s, %s\n", sep, a.Title, a.Artist)
-			}
+			a.PrintWithArtist()
 		}
 	}
 	fmt.Println()
@@ -354,8 +369,7 @@ func main() {
 	// Добавление альбома
 	fmt.Println("Новые альбомы:")
 	albums := []Album{
-		{Title: "Ariadna's Clue", Artist: "Greg Frost",
-			Price: sql.NullFloat64{Float64: 1.99, Valid: true}},
+		{Title: "Ariadna's Clue", Artist: "Greg Frost", Price: setPrice(1.99)},
 		{Title: "Cold Face, Your Grace", Artist: "Greg Frost"},
 	}
 	for _, a := range albums {
@@ -363,11 +377,8 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if a.Price.Valid {
-			fmt.Printf("%s%d - %s, %s ($%.2f)\n", sep, id, a.Title, a.Artist, a.Price.Float64)
-		} else {
-			fmt.Printf("%s%d - %s, %s\n", sep, id, a.Title, a.Artist)
-		}
+		a.ID = id
+		a.PrintWithID()
 	}
 	fmt.Println()
 
