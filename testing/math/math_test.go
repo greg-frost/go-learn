@@ -31,8 +31,6 @@ var prodTests = []testPair{
 	{[2]int{-10, 10}, -100},
 }
 
-/* Тесты */
-
 // Тест суммы
 func TestSum(t *testing.T) {
 	for _, pair := range sumTests {
@@ -68,8 +66,6 @@ func TestProdBySum(t *testing.T) {
 		}
 	}
 }
-
-/* Testify и Gotests */
 
 // Тест деления
 func TestDivide(t *testing.T) {

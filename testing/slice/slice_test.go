@@ -28,16 +28,16 @@ type testPairMap struct {
 }
 
 // Тестовые данные для мэппинга
-var op_inc = func(v Element) Element { return v + 1 }
-var op_twice = func(v Element) Element { return v * 2 }
-var op_third = func(v Element) Element { return v * 3 }
+var opInc = func(v Element) Element { return v + 1 }
+var opTwice = func(v Element) Element { return v * 2 }
+var opThird = func(v Element) Element { return v * 3 }
 
 var mapTests = []testPairMap{
-	{Slice{1, 2, 3}, op_inc, Slice{2, 3, 4}},
-	{Slice{2, 7, 0}, op_twice, Slice{4, 14, 0}},
-	{Slice{1, -1, 3}, op_third, Slice{3, -3, 9}},
-	{Slice{-5, -3, 10}, op_twice, Slice{-10, -6, 20}},
-	{Slice{-2, -1, 0}, op_inc, Slice{-1, 0, 1}},
+	{Slice{1, 2, 3}, opInc, Slice{2, 3, 4}},
+	{Slice{2, 7, 0}, opTwice, Slice{4, 14, 0}},
+	{Slice{1, -1, 3}, opThird, Slice{3, -3, 9}},
+	{Slice{-5, -3, 10}, opTwice, Slice{-10, -6, 20}},
+	{Slice{-2, -1, 0}, opInc, Slice{-1, 0, 1}},
 }
 
 // Стурктура "тестовая пара свертки"
@@ -49,18 +49,16 @@ type testPairFold struct {
 }
 
 // Тестовые данные для свертки
-var op_sum = func(v1, v2 Element) Element { return v1 + v2 }
-var op_prod = func(v1, v2 Element) Element { return v1 * v2 }
+var opSum = func(v1, v2 Element) Element { return v1 + v2 }
+var opProd = func(v1, v2 Element) Element { return v1 * v2 }
 
 var foldTests = []testPairFold{
-	{Slice{1, 2, 3}, op_sum, 0, 6},
-	{Slice{4, 6, 2}, op_prod, 1, 48},
-	{Slice{1, -1, 5}, op_sum, 10, 15},
-	{Slice{2, 1, 5}, op_prod, 10, 100},
-	{Slice{-10, -22, -2}, op_sum, -10, -44},
+	{Slice{1, 2, 3}, opSum, 0, 6},
+	{Slice{4, 6, 2}, opProd, 1, 48},
+	{Slice{1, -1, 5}, opSum, 10, 15},
+	{Slice{2, 1, 5}, opProd, 10, 100},
+	{Slice{-10, -22, -2}, opSum, -10, -44},
 }
-
-/* Тесты */
 
 // Тест суммы
 func TestSumSlice(t *testing.T) {
