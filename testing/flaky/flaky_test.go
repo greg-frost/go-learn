@@ -78,3 +78,41 @@ func TestGetBestValueRetries(t *testing.T) {
 		return mock.Get()[0] == value
 	}, 30, time.Millisecond, "Неверное значение")
 }
+
+// Структура "заглушка публикатора (с каналом)"
+type publisherChanMock struct {
+	ch chan []Value
+}
+
+// Публикация
+func (p *publisherChanMock) Publish(values []Value) {
+	p.ch <- values
+}
+
+// Получение
+func (p *publisherChanMock) Get() []Value {
+	return <-p.ch
+}
+
+// Тест с каналом
+func TestGetBestValueChan(t *testing.T) {
+	mock := publisherChanMock{
+		ch: make(chan []Value),
+	}
+	defer close(mock.ch)
+	n, m := 3, 5
+	h := Handler{
+		publisher: &mock,
+		n:         n,
+	}
+
+	value := h.GetBestValue(m)
+	published := mock.Get()
+
+	if len(published) != n {
+		t.Fatal("Количество: опубликовано:", len(published), "ожидается", n)
+	}
+	if value != published[0] {
+		t.Error("Значение: получено", value, ", опубликовано", published[0])
+	}
+}
