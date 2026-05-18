@@ -48,14 +48,15 @@ func TestGetBestValueFlaky(t *testing.T) {
 }
 
 // Функция проверки утверждения
-func assert(t *testing.T, assertion func() bool, maxRetry int, waitTime time.Duration) {
+func assert(t *testing.T, assertion func() bool,
+	maxRetry int, waitTime time.Duration, errorMsg string) {
 	for i := 0; i < maxRetry; i++ {
 		if assertion() {
 			return
 		}
 		time.Sleep(waitTime)
 	}
-	t.Fail()
+	t.Fatal(errorMsg)
 }
 
 // Тест с повторами
@@ -68,17 +69,12 @@ func TestGetBestValueRetries(t *testing.T) {
 	}
 
 	value := h.GetBestValue(m)
-	published := mock.Get()
 
 	assert(t, func() bool {
-		published = mock.Get()
-		return len(published) == n
-	}, 30, time.Millisecond)
+		return len(mock.Get()) == n
+	}, 30, time.Millisecond, "Неверное количество")
 
-	if len(published) != n {
-		t.Fatal("Количество: опубликовано:", len(published), "ожидается", n)
-	}
-	if value != published[0] {
-		t.Error("Значение: получено", value, ", опубликовано", published[0])
-	}
+	assert(t, func() bool {
+		return mock.Get()[0] == value
+	}, 30, time.Millisecond, "Неверное значение")
 }
