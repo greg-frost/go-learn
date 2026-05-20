@@ -29,3 +29,17 @@ func (c *Cache) TrimOlderThan(since time.Duration) {
 		}
 	}
 }
+
+// Добавление событий
+func (c *Cache) Add(events []Event) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.events = append(c.events, events...)
+}
+
+// Получение всех событий
+func (c *Cache) Events() []Event {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.events
+}
