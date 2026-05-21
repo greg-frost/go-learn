@@ -45,9 +45,31 @@ func TestTrimOlderThanDep(t *testing.T) {
 	}
 }
 
+// Тест с параметром
+func TestTrimOlderThanParam(t *testing.T) {
+	events := []Event{
+		{Timestamp: parseTime(t, "2026-05-21T06:00:00.04Z")},
+		{Timestamp: parseTime(t, "2026-05-21T06:00:00.05Z")},
+		{Timestamp: parseTime(t, "2026-05-21T06:00:00.06Z")},
+	}
+	cache := new(Cache)
+	cache.Add(events)
+
+	cache.TrimOlderThanParam(
+		parseTime(t, "2026-05-21T06:00:00.06Z"),
+		15*time.Millisecond,
+	)
+	trimmed := cache.Events()
+	n := 2
+
+	if len(trimmed) != n {
+		t.Fatal("Количество: опубликовано:", len(trimmed), "ожидается", n)
+	}
+}
+
 // Парсинг времени
 func parseTime(t *testing.T, timestamp string) time.Time {
-	res, err := time.Parse(time.RFC3339Nano, timestamp)
+	res, err := time.Parse(time.RFC3339, timestamp)
 	if err != nil {
 		t.Fail()
 	}
