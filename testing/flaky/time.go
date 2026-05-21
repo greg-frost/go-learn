@@ -55,6 +55,19 @@ func (c *Cache) TrimOlderThanDep(since time.Duration) {
 	}
 }
 
+// Обрезка старых событий (с параметром)
+func (c *Cache) TrimOlderThanParam(now time.Time, since time.Duration) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	t := now.Add(-since)
+	for i := 0; i < len(c.events); i++ {
+		if c.events[i].Timestamp.After(t) {
+			c.events = c.events[i:]
+			return
+		}
+	}
+}
+
 // Добавление событий
 func (c *Cache) Add(events []Event) {
 	c.mu.Lock()
