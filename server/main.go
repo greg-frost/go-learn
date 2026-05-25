@@ -2,40 +2,11 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"log"
+	"net"
 	"net/http"
+	"time"
 )
-
-// Текст и HTML-разметка
-const (
-	text = "Go, Baby, Go!"
-	html = `
-		<doctype html>
-		<html>
-			<head>
-				<title>Go Server</title>
-			</head>
-			<body>
-				<h1>Go Server</h1>
-				<p>Go, Baby, Go!</p>
-			</body>
-		</html>
-	`
-)
-
-// TXT-обработчик
-func textHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, text)
-}
-
-// HTML-обработчик
-func htmlHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusOK)
-	io.WriteString(w, html)
-}
 
 // Список заголовков
 func headersHandler(w http.ResponseWriter, r *http.Request) {
@@ -49,31 +20,31 @@ func headersHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println(" \n[ HTTP-СЕРВЕР ]\n ")
 
-	// Обработчики
-	http.HandleFunc("/", textHandler)
-	http.HandleFunc("/html/", htmlHandler)
-	http.HandleFunc("/headers/", headersHandler)
+	// Роутер
+	router := http.NewServeMux()
+
+	// Обработчик
+	router.HandleFunc("/", headersHandler)
+
+	// Свой сервер
+	addr := "localhost:8080"
+	s := &http.Server{
+		Addr: addr,
+		// Таймаут чтения заголовков запроса
+		ReadHeaderTimeout: 500 * time.Millisecond,
+		// Таймаут чтения всего запроса
+		ReadTimeout: 500 * time.Millisecond,
+		// Общий таймаут
+		Handler: http.TimeoutHandler(
+			router, time.Second, "timeout"),
+	}
+	listener, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Запуск сервера
 	fmt.Println("Ожидаю соединений...")
-	fmt.Println("(на http://localhost:8080)")
-	log.Fatal(http.ListenAndServe("localhost:8080", nil))
-
-	// Свой сервер
-	// addr := "localhost:8080"
-	// s := &http.Server{
-	// 	Addr: addr,
-	// 	// Таймаут чтения заголовков запроса
-	// 	ReadHeaderTimeout: 500 * time.Millisecond,
-	// 	// Таймаут чтения всего запроса
-	// 	ReadTimeout: 500 * time.Millisecond,
-	// 	// Общий таймаут
-	// 	Handler: http.TimeoutHandler(
-	// 		http.HandlerFunc(textHandler), time.Second, "timeout"),
-	// }
-	// listener, err := net.Listen("tcp", addr)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Fatal(s.Serve(listener))
+	fmt.Printf("(на http://%s)\n", addr)
+	log.Fatal(s.Serve(listener))
 }
