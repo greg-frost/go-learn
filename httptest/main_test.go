@@ -8,11 +8,10 @@ import (
 )
 
 func TestTextHandler(t *testing.T) {
-	handler := http.HandlerFunc(textHandler)
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil)
 
-	handler.ServeHTTP(rec, req)
+	textHandler(rec, req)
 	wantCode, wantRes := http.StatusOK, text
 	gotCode, gotRes := rec.Code, rec.Body.String()
 
@@ -27,7 +26,7 @@ func TestTextHandler(t *testing.T) {
 func TestHtmlHandler(t *testing.T) {
 	handler := http.HandlerFunc(htmlHandler)
 	rec := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/html", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/html", nil)
 
 	handler.ServeHTTP(rec, req)
 	wantCode, wantRes := http.StatusOK, []byte(html)
