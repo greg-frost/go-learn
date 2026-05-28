@@ -39,3 +39,33 @@ func TestHtmlHandler(t *testing.T) {
 		t.Errorf("Ожидается: %v Получено: %v", string(wantRes), string(gotRes))
 	}
 }
+
+func TestTextClient(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(textHandler))
+	defer srv.Close()
+
+	wantCode, wantRes := http.StatusOK, text
+	gotCode, gotRes := Client(srv.URL)
+
+	if wantCode != gotCode {
+		t.Errorf("Ожидается код = %d, получен код = %d", wantCode, gotCode)
+	}
+	if !reflect.DeepEqual(wantRes, gotRes) {
+		t.Errorf("Ожидается: %v Получено: %v", string(wantRes), string(gotRes))
+	}
+}
+
+func TestHtmlClient(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(htmlHandler))
+	defer srv.Close()
+
+	wantCode, wantRes := http.StatusOK, html
+	gotCode, gotRes := Client(srv.URL)
+
+	if wantCode != gotCode {
+		t.Errorf("Ожидается код = %d, получен код = %d", wantCode, gotCode)
+	}
+	if !reflect.DeepEqual(wantRes, gotRes) {
+		t.Errorf("Ожидается: %v Получено: %v", string(wantRes), string(gotRes))
+	}
+}
