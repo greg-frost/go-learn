@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 	"text/template"
+	"time"
 
 	"go-learn/base"
 )
@@ -90,4 +91,32 @@ func BenchmarkParallelTemplates(b *testing.B) {
 			buf.Reset()
 		}
 	})
+}
+
+// Некая длительная работа
+func expensiveSetup() {
+	time.Sleep(1000 * time.Millisecond)
+}
+
+func BenchmarkWithoutReset(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		result, err := FileLen(filename, 100)
+		if err != nil {
+			b.Fatal(err)
+		}
+		blackhole = result
+	}
+}
+
+func BenchmarkWithReset(b *testing.B) {
+	expensiveSetup()
+	b.ResetTimer() // Сброс таймера
+
+	for i := 0; i < b.N; i++ {
+		result, err := FileLen(filename, 100)
+		if err != nil {
+			b.Fatal(err)
+		}
+		blackhole = result
+	}
 }
