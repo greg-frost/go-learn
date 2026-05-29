@@ -106,7 +106,6 @@ func longSetup() {
 func BenchmarkWithReset(b *testing.B) {
 	longSetup()    // Некая длительная работа
 	b.ResetTimer() // Сброс таймера
-
 	for i := 0; i < b.N; i++ {
 		result, err := FileLen(filename, 100)
 		if err != nil {
@@ -122,7 +121,6 @@ func BenchmarkWithPause(b *testing.B) {
 		// b.StopTimer()  // Остановка таймера
 		// shortSetup()   // Некая короткая работа
 		// b.StartTimer() // Запуск таймера
-
 		result, err := FileLen(filename, 100)
 		if err != nil {
 			b.Fatal(err)
