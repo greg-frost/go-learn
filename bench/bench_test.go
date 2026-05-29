@@ -95,22 +95,12 @@ func BenchmarkParallelTemplates(b *testing.B) {
 
 // Некая короткая работа
 func shortSetup() {
-	time.Sleep(time.Nanosecond)
+	time.Sleep(time.Millisecond)
 }
 
 // Некая длительная работа
 func longSetup() {
 	time.Sleep(time.Second)
-}
-
-func BenchmarkWithoutReset(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		result, err := FileLen(filename, 100)
-		if err != nil {
-			b.Fatal(err)
-		}
-		blackhole = result
-	}
 }
 
 func BenchmarkWithReset(b *testing.B) {
@@ -129,9 +119,9 @@ func BenchmarkWithReset(b *testing.B) {
 func BenchmarkWithPause(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		// ОСТОРОЖНО: зависает без таймаута
-		b.StopTimer()  // Остановка таймера
-		shortSetup()   // Некая короткая работа
-		b.StartTimer() // Запуск таймера
+		// b.StopTimer()  // Остановка таймера
+		// shortSetup()   // Некая короткая работа
+		// b.StartTimer() // Запуск таймера
 
 		result, err := FileLen(filename, 100)
 		if err != nil {
