@@ -25,6 +25,16 @@ func (lcr *LowerCaseReader) Read(buf []byte) (n int, err error) {
 	return count, err
 }
 
+// Печать содержимого ридера
+func Print(r io.Reader) error {
+	b, err := io.ReadAll(r)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(b))
+	return nil
+}
+
 func main() {
 	fmt.Println(" \n[ ТЕСТИРОВАНИЕ IO ]\n ")
 

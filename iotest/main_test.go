@@ -17,3 +17,12 @@ func TestLowerCaseReader(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestPrint(t *testing.T) {
+	err := Print(iotest.TimeoutReader(
+		strings.NewReader("Timeout reader"),
+	))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
