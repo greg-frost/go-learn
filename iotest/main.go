@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"strings"
 )
 
@@ -27,12 +26,33 @@ func (lcr *LowerCaseReader) Read(buf []byte) (n int, err error) {
 
 // Печать содержимого ридера
 func Print(r io.Reader) error {
-	b, err := io.ReadAll(r)
+	b, err := readAll(r, 3)
 	if err != nil {
 		return err
 	}
 	fmt.Println(string(b))
 	return nil
+}
+
+// Чтение всего ридера (с повторами при ошибке)
+func readAll(r io.Reader, retries int) ([]byte, error) {
+	b := make([]byte, 0, 512)
+	for {
+		if len(b) == cap(b) {
+			b = append(b, 0)[:len(b)]
+		}
+		n, err := r.Read(b[len(b):cap(b)])
+		b = b[:len(b)+n]
+		if err != nil {
+			if err == io.EOF {
+				return b, nil
+			}
+			retries--
+			if retries < 0 {
+				return b, err
+			}
+		}
+	}
 }
 
 func main() {
@@ -45,12 +65,8 @@ func main() {
 		reader: strings.NewReader(str),
 	}
 
-	// Чтение содержимого
-	lower, err := io.ReadAll(lcr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	// Использование ридера
 	fmt.Println("Все символы:", str)
-	fmt.Println("Только нижний регистр:", string(lower))
+	fmt.Print("Только нижний регистр: ")
+	Print(lcr)
 }

@@ -20,7 +20,7 @@ func TestLowerCaseReader(t *testing.T) {
 
 func TestPrint(t *testing.T) {
 	err := Print(iotest.TimeoutReader(
-		strings.NewReader("Timeout reader"),
+		strings.NewReader("Hello World"),
 	))
 	if err != nil {
 		t.Fatal(err)
