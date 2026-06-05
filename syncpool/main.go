@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// Пул объектов
 var pool = sync.Pool{
 	New: func() any {
 		fmt.Println("(Инициализация буфера)")
@@ -14,6 +15,7 @@ var pool = sync.Pool{
 	},
 }
 
+// Заполнение случайными значениями
 func FillRandom(buf *[]byte) {
 	start := 20
 	n := start + rand.Intn(cap(*buf)-start)
