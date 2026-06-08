@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"time"
 )
 
 // Пул объектов
 var pool = sync.Pool{
 	New: func() any {
-		fmt.Println("(Инициализация буфера)")
-		fmt.Println()
+		fmt.Println("(инициализация буфера)")
 		return make([]byte, 50)
 	},
 }
@@ -33,15 +33,22 @@ func main() {
 	fmt.Println(" \n[ SYNC-POOL ]\n ")
 
 	times := 25
+	var wg sync.WaitGroup
+
 	for i := 0; i < times; i++ {
-		func() {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
 			buf := pool.Get().([]byte) // Получение буфера из пула
 			buf = buf[:0]              // Очистка буфера
 			defer pool.Put(buf)        // Возврат буфера в пул
-
-			// Использование буфера
-			FillRandom(&buf)
+			FillRandom(&buf)           // Использование буфера
 			fmt.Println(string(buf))
 		}()
+		if i%5 == 0 {
+			time.Sleep(50 * time.Millisecond)
+		}
 	}
+
+	wg.Wait()
 }
