@@ -26,3 +26,19 @@ func Sum8(s []int64) int64 {
 	}
 	return total
 }
+
+// Структура "пара"
+type Pair struct {
+	a int64
+	b int64
+}
+
+// Сумма среза пар
+func SumPair(pairs []Pair) int64 {
+	var total int64
+	for i := 0; i < len(pairs); i++ {
+		total += pairs[i].a
+		_ = pairs[i].b
+	}
+	return total
+}
