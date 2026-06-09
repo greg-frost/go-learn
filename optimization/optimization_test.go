@@ -50,7 +50,7 @@ func BenchmarkSum8(b *testing.B) {
 }
 
 // Создание среза пар
-func makePairSlice(n int) []Pair {
+func makeSliceOfPair(n int) []Pair {
 	res := make([]Pair, n)
 	for i := 0; i < n; i++ {
 		res[i] = Pair{
@@ -63,10 +63,33 @@ func makePairSlice(n int) []Pair {
 
 // Бенчмарк суммы среза пар
 func BenchmarkSumPair(b *testing.B) {
-	pairs := makePairSlice(size)
+	pairs := makeSliceOfPair(size)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total := SumPair(pairs)
+		blackhole = total
+	}
+}
+
+// Создание пар срезов
+func makePairsOfSlices(n int) Pairs {
+	res := Pairs{
+		make([]int64, n),
+		make([]int64, n),
+	}
+	for i := 0; i < n; i++ {
+		res.a[i] = int64(i + 1)
+		res.b[i] = int64(n - i + 1)
+	}
+	return res
+}
+
+// Бенчмарк суммы пар срезов
+func BenchmarkSumPairs(b *testing.B) {
+	pairs := makePairsOfSlices(size)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total := SumPairs(pairs)
 		blackhole = total
 	}
 }

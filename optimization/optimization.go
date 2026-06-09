@@ -42,3 +42,19 @@ func SumPair(pairs []Pair) int64 {
 	}
 	return total
 }
+
+// Структура "пары"
+type Pairs struct {
+	a []int64
+	b []int64
+}
+
+// Сумма пар срезов
+func SumPairs(pairs Pairs) int64 {
+	var total int64
+	for i := 0; i < len(pairs.a); i++ {
+		total += pairs.a[i]
+		_ = pairs.b[i]
+	}
+	return total
+}
