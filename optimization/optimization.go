@@ -27,6 +27,22 @@ func Sum8(s []int64) int64 {
 	return total
 }
 
+// Структура "узел"
+type Node struct {
+	Value int64
+	Next  *Node
+}
+
+// Сумма значений связного списка
+func SumLinkedList(curr *Node) int64 {
+	var total int64
+	for curr != nil {
+		total += curr.Value
+		curr = curr.Next
+	}
+	return total
+}
+
 // Структура "пара"
 type Pair struct {
 	a int64

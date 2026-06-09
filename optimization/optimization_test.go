@@ -49,6 +49,29 @@ func BenchmarkSum8(b *testing.B) {
 	}
 }
 
+// Создание связного списка
+func makeLinkedList(n int) *Node {
+	root := new(Node)
+	curr := root
+	for i := 0; i < n; i++ {
+		curr.Next = &Node{
+			Value: int64(i + 1),
+		}
+		curr = curr.Next
+	}
+	return root.Next
+}
+
+// Бенчмарк суммы значений связного списка
+func BenchmarkSumLinkedList(b *testing.B) {
+	node := makeLinkedList(size)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total := SumLinkedList(node)
+		blackhole = total
+	}
+}
+
 // Создание среза пар
 func makeSliceOfPair(n int) []Pair {
 	res := make([]Pair, n)
