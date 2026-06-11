@@ -116,3 +116,45 @@ func BenchmarkSumPairs(b *testing.B) {
 		blackhole = total
 	}
 }
+
+// Создание двумерного среза (512 столбцов)
+func makeSlice512(n int) [][512]int64 {
+	res := make([][512]int64, n)
+	for i := 0; i < n; i++ {
+		for j := 0; i < 512; i++ {
+			res[i][j] = int64(i + j + 1)
+		}
+	}
+	return res
+}
+
+// Бенчмарк суммы первых значений рядов (512 столбцов)
+func BenchmarkSumRows512(b *testing.B) {
+	s := makeSlice512(size / 100)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total := SumRows512(s)
+		blackhole = total
+	}
+}
+
+// Создание двумерного среза (513 столбцов)
+func makeSlice513(n int) [][513]int64 {
+	res := make([][513]int64, n)
+	for i := 0; i < n; i++ {
+		for j := 0; i < 513; i++ {
+			res[i][j] = int64(i + j + 1)
+		}
+	}
+	return res
+}
+
+// Бенчмарк суммы первых значений рядов (513 столбцов)
+func BenchmarkSumRows513(b *testing.B) {
+	s := makeSlice513(size / 100)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total := SumRows513(s)
+		blackhole = total
+	}
+}
