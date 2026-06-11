@@ -74,3 +74,25 @@ func SumPairs(pairs Pairs) int64 {
 	}
 	return total
 }
+
+// Сумма первых значений рядов (512 столбцов)
+func SumRows512(s [][512]int64) int64 {
+	var total int64
+	for i := 0; i < len(s); i++ {
+		for j := 0; j < 8; j++ {
+			total += s[i][j]
+		}
+	}
+	return total
+}
+
+// Сумма первых значений рядов (513 столбцов)
+func SumRows513(s [][513]int64) int64 {
+	var total int64
+	for i := 0; i < len(s); i++ {
+		for j := 0; j < 8; j++ {
+			total += s[i][j]
+		}
+	}
+	return total
+}
