@@ -158,3 +158,37 @@ func BenchmarkSumRows513(b *testing.B) {
 		blackhole = total
 	}
 }
+
+// Создание среза входных данных
+func makeSliceOfInput(n int) []Input {
+	res := make([]Input, n)
+	for i := 0; i < n; i++ {
+		res[i] = Input{
+			int64(i + 1),
+			int64(n - i + 1),
+		}
+	}
+	return res
+}
+
+// Бенчмарк подсчета сумм
+func BenchmarkCount(b *testing.B) {
+	inputs := makeSliceOfInput(size / 100)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		result := Count(inputs)
+		blackhole = result.sumA
+		blackhole = result.sumB
+	}
+}
+
+// Бенчмарк подсчета сумм (оптимизированного)
+func BenchmarkCountOptimized(b *testing.B) {
+	inputs := makeSliceOfInput(size / 100)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		result := CountOptimized(inputs)
+		blackhole = result.sumA
+		blackhole = result.sumB
+	}
+}

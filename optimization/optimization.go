@@ -1,5 +1,7 @@
 package optimization
 
+import "sync"
+
 // Сумма всех значений
 func Sum(s []int64) int64 {
 	var total int64
@@ -95,4 +97,65 @@ func SumRows513(s [][513]int64) int64 {
 		}
 	}
 	return total
+}
+
+// Структура "входные данные"
+type Input struct {
+	a int64
+	b int64
+}
+
+// Структура "результат"
+type Result struct {
+	sumA int64
+	sumB int64
+}
+
+// Структура "результат (с выравниванием)"
+type ResultAligned struct {
+	sumA int64
+	_    [56]byte // Выравнивание
+	sumB int64
+}
+
+// Подсчет сумм
+func Count(inputs []Input) Result {
+	var result Result
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < len(inputs); i++ {
+			result.sumA += inputs[i].a
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		for i := 0; i < len(inputs); i++ {
+			result.sumB += inputs[i].b
+		}
+	}()
+	wg.Wait()
+	return result
+}
+
+// Подсчет сумм (оптимизированный)
+func CountOptimized(inputs []Input) ResultAligned {
+	var result ResultAligned
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < len(inputs); i++ {
+			result.sumA += inputs[i].a
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		for i := 0; i < len(inputs); i++ {
+			result.sumB += inputs[i].b
+		}
+	}()
+	wg.Wait()
+	return result
 }
