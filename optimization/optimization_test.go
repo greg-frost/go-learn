@@ -192,3 +192,23 @@ func BenchmarkCountOptimized(b *testing.B) {
 		blackhole = result.sumB
 	}
 }
+
+// Бенчмарк инкремента
+func BenchmarkIncrement(b *testing.B) {
+	var s [2]int64
+	for i := 0; i < b.N; i++ {
+		s = Increment(s, size/10)
+		blackhole = s[0]
+		blackhole = s[1]
+	}
+}
+
+// Бенчмарк инкремента (оптимизированного)
+func BenchmarkIncrementOptimized(b *testing.B) {
+	var s [2]int64
+	for i := 0; i < b.N; i++ {
+		s = IncrementOptimized(s, size/10)
+		blackhole = s[0]
+		blackhole = s[1]
+	}
+}

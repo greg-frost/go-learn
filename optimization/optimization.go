@@ -159,3 +159,26 @@ func CountOptimized(inputs []Input) ResultAligned {
 	wg.Wait()
 	return result
 }
+
+// Инкремент
+func Increment(s [2]int64, n int) [2]int64 {
+	for i := 0; i < n; i++ {
+		s[0]++
+		if s[0]%2 == 0 {
+			s[1]++
+		}
+	}
+	return s
+}
+
+// Инкремент (оптимизированный)
+func IncrementOptimized(s [2]int64, n int) [2]int64 {
+	for i := 0; i < n; i++ {
+		v := s[0]
+		s[0] = v + 1
+		if v%2 != 0 {
+			s[1]++
+		}
+	}
+	return s
+}
