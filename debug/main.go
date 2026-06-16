@@ -26,7 +26,7 @@ func inner() {
 }
 
 func main() {
-	fmt.Println(" \n[ ТРАССИРОВКА ]\n ")
+	fmt.Println(" \n[ ДЕБАГГИНГ ]\n ")
 
 	// Вход
 	outer()
