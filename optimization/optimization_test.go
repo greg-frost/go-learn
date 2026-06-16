@@ -212,3 +212,45 @@ func BenchmarkIncrementOptimized(b *testing.B) {
 		blackhole = s[1]
 	}
 }
+
+// Создание среза полей
+func makeSliceOfField(n int) []Field {
+	res := make([]Field, n)
+	for i := 0; i < n; i++ {
+		res[i] = Field{
+			i: int64(i + 1),
+		}
+	}
+	return res
+}
+
+// Бенчмарк суммы полей
+func BenchmarkSumFields(b *testing.B) {
+	fields := makeSliceOfField(size)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total := SumFields(fields)
+		blackhole = total
+	}
+}
+
+// Создание среза полей (выровненного)
+func makeSliceOfFieldAligned(n int) []FieldAligned {
+	res := make([]FieldAligned, n)
+	for i := 0; i < n; i++ {
+		res[i] = FieldAligned{
+			i: int64(i + 1),
+		}
+	}
+	return res
+}
+
+// Бенчмарк суммы полей (оптимизированной)
+func BenchmarkSumFieldsOptimized(b *testing.B) {
+	fields := makeSliceOfFieldAligned(size)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total := SumFieldsOptimized(fields)
+		blackhole = total
+	}
+}

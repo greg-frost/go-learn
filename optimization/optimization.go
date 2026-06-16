@@ -182,3 +182,37 @@ func IncrementOptimized(s [2]int64, n int) [2]int64 {
 	}
 	return s
 }
+
+// Структура "поле"
+type Field struct {
+	b1 byte  // 1 байт используется, 7 осталось
+	i  int64 // 8 байт используется
+	b2 byte  // 1 байт используется, 7 осталось
+	// Итого: 24 байта
+}
+
+// Структура "поле (с выравниванием)"
+type FieldAligned struct {
+	i  int64 // 8 байт используется
+	b1 byte  // 1 байт используется, 7 осталось
+	b2 byte  // 1 байт используется, 6 осталось
+	// Итого: 16 байт
+}
+
+// Сумма полей
+func SumFields(fields []Field) int64 {
+	var total int64
+	for i := 0; i < len(fields); i++ {
+		total += fields[i].i
+	}
+	return total
+}
+
+// Сумма полей (оптимизированная)
+func SumFieldsOptimized(fields []FieldAligned) int64 {
+	var total int64
+	for i := 0; i < len(fields); i++ {
+		total += fields[i].i
+	}
+	return total
+}
