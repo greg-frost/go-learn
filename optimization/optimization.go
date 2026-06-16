@@ -216,3 +216,17 @@ func SumFieldsOptimized(fields []FieldAligned) int64 {
 	}
 	return total
 }
+
+// Сумма по значению
+//go:noinline
+func SumByValue(x, y int) int {
+	z := x + y
+	return z
+}
+
+// Сумма по ссылке
+//go:noinline
+func SumByPtr(x, y int) *int {
+	z := x + y
+	return &z
+}

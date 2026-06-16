@@ -254,3 +254,23 @@ func BenchmarkSumFieldsOptimized(b *testing.B) {
 		blackhole = total
 	}
 }
+
+// Еще пара "черных дыр"
+var globalValue int
+var globalPtr *int
+
+func BenchmarkSumByValue(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		local := SumByValue(i, i)
+		globalValue = local
+	}
+}
+
+func BenchmarkSumByPtr(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		local := SumByPtr(i, i)
+		globalPtr = local
+	}
+}
