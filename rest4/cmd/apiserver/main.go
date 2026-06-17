@@ -28,12 +28,14 @@ func main() {
 
 	flag.Parse()
 
+	// Конфигурация
 	config := apiserver.NewConfig()
 	_, err := toml.DecodeFile(filepath.Join(path, configPath), config)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Запуск сервера
 	if err := apiserver.Start(config); err != nil {
 		log.Fatal(err)
 	}

@@ -16,6 +16,6 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodPost, "/users", nil)
 
 	s.ServeHTTP(rec, req)
-	assert.Equal(t, rec.Code, http.StatusOK)
-	assert.Equal(t, rec.Body.String(), "Привет, пользователи!")
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Equal(t, "Привет, пользователи!", rec.Body.String())
 }
