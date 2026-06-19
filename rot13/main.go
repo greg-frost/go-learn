@@ -8,12 +8,12 @@ import (
 )
 
 // Структура "ридер шифра ROT13"
-type rot13Reader struct {
+type ROT13Reader struct {
 	r io.Reader
 }
 
 // Чтение шифра
-func (r rot13Reader) Read(b []byte) (int, error) {
+func (r ROT13Reader) Read(b []byte) (int, error) {
 	const (
 		From, To = 65, 91
 		from, to = 97, 123
@@ -50,7 +50,7 @@ func main() {
 	// Расшифровка
 	fmt.Println("Расшифровка:")
 	s := strings.NewReader(sipher)
-	r := rot13Reader{s}
+	r := ROT13Reader{s}
 	io.Copy(os.Stdout, &r)
 	fmt.Println()
 }
