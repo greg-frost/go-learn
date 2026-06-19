@@ -16,7 +16,7 @@ var path = base.Dir("socket")
 var socket = filepath.Join(path, "unix.socket")
 
 // Сервер
-func server() {
+func Server() {
 	// Проверка существования файла сокета
 	if _, err := os.Stat(socket); os.IsExist(err) {
 		fmt.Println("Удаление старого файла сокета")
@@ -61,7 +61,7 @@ func connection(c net.Conn) {
 }
 
 // Клиент
-func client() {
+func Client() {
 	// Соединение по сокету
 	c, err := net.Dial("unix", socket)
 	if err != nil {
@@ -84,8 +84,8 @@ func main() {
 	fmt.Println(" \n[ СОКЕТ ]\n ")
 
 	// Локальный сервер
-	go server()
-	go client()
+	go Server()
+	go Client()
 
 	// Ожидание
 	time.Sleep(time.Second)
