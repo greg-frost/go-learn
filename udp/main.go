@@ -8,7 +8,7 @@ import (
 )
 
 // Сервер
-func server() {
+func Server() {
 	// Прослушивание UDP
 	c, err := net.ListenPacket("udp", ":9999")
 	if err != nil {
@@ -45,7 +45,7 @@ func connection(c net.PacketConn) {
 }
 
 // Клиент
-func client() {
+func Client() {
 	// Соединение по UDP
 	c, err := net.Dial("udp", "localhost:9999")
 	if err != nil {
@@ -68,8 +68,8 @@ func main() {
 	fmt.Println(" \n[ UDP ]\n ")
 
 	// Локальный сервер
-	go server()
-	go client()
+	go Server()
+	go Client()
 
 	// Ожидание
 	time.Sleep(time.Second)
