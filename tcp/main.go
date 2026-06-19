@@ -9,7 +9,7 @@ import (
 )
 
 // Сервер
-func server() {
+func Server() {
 	// Прослушивание TCP
 	l, err := net.Listen("tcp", "localhost:9999")
 	if err != nil {
@@ -45,7 +45,7 @@ func connection(c net.Conn) {
 }
 
 // Клиент
-func client() {
+func Client() {
 	// Соединение по TCP
 	c, err := net.Dial("tcp", "localhost:9999")
 	if err != nil {
@@ -74,8 +74,8 @@ func main() {
 	fmt.Print(status)
 
 	// Локальный сервер
-	go server()
-	go client()
+	go Server()
+	go Client()
 
 	// Ожидание
 	time.Sleep(time.Second)
