@@ -8,24 +8,24 @@ import (
 )
 
 // Структура "сервер"
-type Server struct{}
+type server struct{}
 
 // Смена знака
-func (*Server) Negate(i int64, reply *int64) error {
+func (*server) Negate(i int64, reply *int64) error {
 	*reply = -i
 	return nil
 }
 
 // Удвоение
-func (*Server) Double(i int64, reply *int64) error {
+func (*server) Double(i int64, reply *int64) error {
 	*reply = i * 2
 	return nil
 }
 
 // Сервер
-func server() {
+func Server() {
 	// Регистрация RPC-сервера
-	rpc.Register(new(Server))
+	rpc.Register(new(server))
 
 	// Прослушивание TCP
 	l, err := net.Listen("tcp", ":9999")
@@ -48,7 +48,7 @@ func server() {
 }
 
 // Клиент
-func client() {
+func Client() {
 	// Инициализация RPC-клиента
 	c, err := rpc.Dial("tcp", "localhost:9999")
 	if err != nil {
@@ -83,8 +83,8 @@ func main() {
 	fmt.Println("Server:")
 
 	// Запуск клиента и сервера
-	go server()
-	go client()
+	go Server()
+	go Client()
 
 	// Ожидание
 	time.Sleep(time.Second)
