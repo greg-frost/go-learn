@@ -8,10 +8,10 @@ import (
 )
 
 // Тип "функция"
-type function func()
+type Function func()
 
 // Безопасное выполнение
-func safelyGo(do function) {
+func SafelyGo(do Function) {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
@@ -23,7 +23,7 @@ func safelyGo(do function) {
 }
 
 // Обработка сообщения
-func processMessage() {
+func ProcessMessage() {
 	fmt.Println("Подготовка сообщения...")
 	panic(errors.New("Сообщение испорчено!"))
 }
@@ -35,7 +35,7 @@ func main() {
 	// go processMessage()
 
 	// Безопасный вызов горутины
-	safelyGo(processMessage)
+	SafelyGo(ProcessMessage)
 
 	// Ожидание завершения
 	time.Sleep(100 * time.Millisecond)
