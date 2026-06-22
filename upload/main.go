@@ -42,9 +42,9 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	defer out.Close()
 	io.Copy(out, in)
 
-	contentType := typeByHeader(h)
-	// contentType := typeByExt(h.Filename)
-	// contentType := typeByContent(in)
+	contentType := TypeByHeader(h)
+	// contentType := TypeByExt(h.Filename)
+	// contentType := TypeByContent(in)
 
 	w.Header().Set("Content-Type", contentType)
 	b, err := os.ReadFile(filename)
@@ -53,7 +53,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(b)
 
-	go deleteFile(filename, 3*time.Second)
+	go DeleteFile(filename, 3*time.Second)
 }
 
 // Обработчик множественной загрузки
@@ -87,7 +87,7 @@ func handleMultipleUpload(w http.ResponseWriter, r *http.Request) {
 		defer out.Close()
 		io.Copy(out, in)
 
-		go deleteFile(filename, 3*time.Second)
+		go DeleteFile(filename, 3*time.Second)
 		uploaded++
 	}
 
@@ -155,7 +155,7 @@ func handleStreamUpload(w http.ResponseWriter, r *http.Request) {
 			parts++
 		}
 
-		go deleteFile(filename, 3*time.Second)
+		go DeleteFile(filename, 3*time.Second)
 	}
 
 	fmt.Fprintln(w, "Загружено фрагментов:", parts)
@@ -167,24 +167,24 @@ func handleStreamUpload(w http.ResponseWriter, r *http.Request) {
 }
 
 // Отложенное удаление файла
-func deleteFile(filename string, delay time.Duration) {
+func DeleteFile(filename string, delay time.Duration) {
 	time.Sleep(delay)
 	os.Remove(filename)
 }
 
 // Определение типа файла по заголовку
-func typeByHeader(header *multipart.FileHeader) string {
+func TypeByHeader(header *multipart.FileHeader) string {
 	return header.Header["Content-Type"][0]
 }
 
 // Определение типа файла по расширению
-func typeByExt(filename string) string {
+func TypeByExt(filename string) string {
 	ext := filepath.Ext(filename)
 	return mime.TypeByExtension(ext)
 }
 
 // Определение типа файла по содержимому
-func typeByContent(file multipart.File) string {
+func TypeByContent(file multipart.File) string {
 	buffer := make([]byte, 512)
 	file.Read(buffer)
 	return http.DetectContentType(buffer)
