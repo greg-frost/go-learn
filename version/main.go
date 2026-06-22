@@ -82,7 +82,7 @@ func handleByContentType(w http.ResponseWriter, r *http.Request) {
 }
 
 // Получение страницы
-func getPage(url, acceptType string) (string, error) {
+func GetPage(url, acceptType string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err
@@ -122,14 +122,14 @@ func main() {
 
 	// Клиенты
 	fmt.Println("Клиенты:")
-	res, _ := getPage("http://localhost:8080/api/v1/endpoint", "")
+	res, _ := GetPage("http://localhost:8080/api/v1/endpoint", "")
 	fmt.Println("V1 по URL:", res)
-	res, _ = getPage("http://localhost:8080/api/v2/endpoint", "")
+	res, _ = GetPage("http://localhost:8080/api/v2/endpoint", "")
 	fmt.Println("V2 по URL:", res)
-	res, _ = getPage("http://localhost:8080/endpoint", "")
+	res, _ = GetPage("http://localhost:8080/endpoint", "")
 	fmt.Println("V? по Content-Type:", res)
-	res, _ = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=1.0")
+	res, _ = GetPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=1.0")
 	fmt.Println("V1 по Content-Type:", res)
-	res, _ = getPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=2.0")
+	res, _ = GetPage("http://localhost:8080/endpoint", "application/vnd.myapi.json; version=2.0")
 	fmt.Println("V2 по Content-Type:", res)
 }
