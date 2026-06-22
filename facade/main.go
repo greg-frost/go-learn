@@ -93,11 +93,13 @@ func (c *Player) TurnOff() {
 	fmt.Printf("Плеер %s: включение\n", c.Name)
 }
 
+// Структура "фасад"
 type Facade struct {
 	Computer *Computer
 	Player   *Player
 }
 
+// Конструктор фасада
 func NewFacade(computer *Computer, player *Player) *Facade {
 	return &Facade{
 		Computer: computer,
