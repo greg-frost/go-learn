@@ -11,7 +11,7 @@ import (
 )
 
 // Преобразование узла в карту
-func nodeToMap(node yaml.Node) yaml.Map {
+func NodeToMap(node yaml.Node) yaml.Map {
 	m, ok := node.(yaml.Map)
 	if !ok {
 		log.Fatalf("%v не карта", node)
@@ -20,7 +20,7 @@ func nodeToMap(node yaml.Node) yaml.Map {
 }
 
 // Преобразование узла в список
-func nodeToList(node yaml.Node) yaml.List {
+func NodeToList(node yaml.Node) yaml.List {
 	m, ok := node.(yaml.List)
 	if !ok {
 		log.Fatalf("%v не список", node)
@@ -74,18 +74,18 @@ func main() {
 
 	// Секция "Списки"
 	fmt.Println("[ Списки ]")
-	list := nodeToMap(config.Root)["list"]
+	list := NodeToMap(config.Root)["list"]
 	listCount, _ := config.Count("list")
 	fmt.Printf("Элементы: %v (%T)\n", list, list)
 	fmt.Printf("Количество: %d\n", listCount)
-	fmt.Printf("Первый: %v\n", nodeToList(list)[0])
+	fmt.Printf("Первый: %v\n", NodeToList(list)[0])
 	fmt.Println()
 
 	// Секция "Объекты"
 	fmt.Println("[ Объекты ]")
-	object := nodeToMap(nodeToMap(config.Root)["object"])
-	objectUser := nodeToMap(object["user"])
-	objectStatus := nodeToMap(object["status"])
+	object := NodeToMap(NodeToMap(config.Root)["object"])
+	objectUser := NodeToMap(object["user"])
+	objectStatus := NodeToMap(object["status"])
 	fmt.Println("User:")
 	fmt.Printf("   Login: %v (%T)\n", objectUser["login"], objectUser["login"])
 	fmt.Printf("   Password: %v (%T)\n", objectUser["password"], objectUser["password"])
