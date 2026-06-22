@@ -38,19 +38,19 @@ type Quote struct {
 
 // Список функций шаблона
 var funcMap = template.FuncMap{
-	"dateFormat": dateFormat,
+	"dateFormat": DateFormat,
 }
 
 // Инициализация
 func init() {
-	t["simple"] = parseTemplate("simple.html")
-	t["page"] = parseTemplate("base.html", "page.html", "quote.html")
-	t["user"] = parseTemplate("base.html", "user.html")
-	prepareQuote()
+	t["simple"] = ParseTemplate("simple.html")
+	t["page"] = ParseTemplate("base.html", "page.html", "quote.html")
+	t["user"] = ParseTemplate("base.html", "user.html")
+	PrepareQuote()
 }
 
 // Парсинг шаблона
-func parseTemplate(filenames ...string) *template.Template {
+func ParseTemplate(filenames ...string) *template.Template {
 	if len(filenames) == 0 {
 		return nil
 	}
@@ -64,7 +64,7 @@ func parseTemplate(filenames ...string) *template.Template {
 }
 
 // Подготовка цитаты
-func prepareQuote() {
+func PrepareQuote() {
 	quote := &Quote{
 		Quote:  "Данная страница была собрана из разных шаблонов, прямо как Франкенштейн...",
 		Person: "Морозов Григорий",
@@ -75,7 +75,7 @@ func prepareQuote() {
 }
 
 // Форматирование даты
-func dateFormat(layout string, d time.Time) string {
+func DateFormat(layout string, d time.Time) string {
 	return d.Format(layout)
 }
 
