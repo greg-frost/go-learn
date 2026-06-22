@@ -13,7 +13,7 @@ import (
 type handler struct{}
 
 // Получение нового обработчика
-func newHandler() *handler {
+func NewHandler() *handler {
 	return &handler{}
 }
 
@@ -37,7 +37,7 @@ func main() {
 	fmt.Println(" \n[ MANNERS ]\n ")
 
 	// Обработчик
-	handler := newHandler()
+	handler := NewHandler()
 
 	// Планирование мягкого завершения
 	ch := make(chan os.Signal)
