@@ -66,7 +66,7 @@ func NewOrderProcessor(payment Payment) *orderProcessor {
 }
 
 // Обработка заказа
-func (op *orderProcessor) processOrder(product string, amount int) error {
+func (op *orderProcessor) ProcessOrder(product string, amount int) error {
 	fmt.Println("Обработка заказа:", product)
 	err := op.payment.Pay(amount)
 	if err != nil {
@@ -97,7 +97,7 @@ func main() {
 
 	// Обработка заказа
 	op := NewOrderProcessor(payment)
-	err := op.processOrder(product, amount)
+	err := op.ProcessOrder(product, amount)
 	if err != nil {
 		log.Fatal(err)
 	}
