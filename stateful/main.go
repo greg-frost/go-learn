@@ -8,13 +8,13 @@ import (
 )
 
 // Структура "операция чтения"
-type readOp struct {
+type ReadOp struct {
 	key  int
 	resp chan int
 }
 
 // Структура "операция записи"
-type writeOp struct {
+type WriteOp struct {
 	key  int
 	val  int
 	resp chan bool
@@ -25,8 +25,8 @@ func main() {
 
 	// Счетчики и каналы
 	var readOps, writeOps uint64
-	reads := make(chan readOp)
-	writes := make(chan writeOp)
+	reads := make(chan ReadOp)
+	writes := make(chan WriteOp)
 
 	// Чтение или запись
 	go func() {
@@ -46,7 +46,7 @@ func main() {
 	for r := 0; r < 100; r++ {
 		go func() {
 			for {
-				read := readOp{
+				read := ReadOp{
 					key:  rand.Intn(5),
 					resp: make(chan int),
 				}
@@ -62,7 +62,7 @@ func main() {
 	for w := 0; w < 10; w++ {
 		go func() {
 			for {
-				write := writeOp{
+				write := WriteOp{
 					key:  rand.Intn(5),
 					val:  rand.Intn(100),
 					resp: make(chan bool),
