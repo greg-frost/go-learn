@@ -31,13 +31,13 @@ type Page struct {
 }
 
 // Сохранение страницы
-func savePage(p *Page) error {
+func SavePage(p *Page) error {
 	filename := filepath.Join(path, "data", p.Title+".txt")
 	return os.WriteFile(filename, p.Body, 0600)
 }
 
 // Загрузка страницы
-func loadPage(title string) (*Page, error) {
+func LoadPage(title string) (*Page, error) {
 	filename := filepath.Join(path, "data", title+".txt")
 	body, err := os.ReadFile(filename)
 	if err != nil {
@@ -60,28 +60,28 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 
 // Обработчик просмотра
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
+	p, err := LoadPage(title)
 	if err != nil {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
-	renderTemplate(w, "view", p)
+	RenderTemplate(w, "view", p)
 }
 
 // Обработчик редактирования
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
+	p, err := LoadPage(title)
 	if err != nil {
 		p = &Page{Title: title}
 	}
-	renderTemplate(w, "edit", p)
+	RenderTemplate(w, "edit", p)
 }
 
 // Обработчик сохранения
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	body := r.FormValue("body")
 	p := &Page{Title: title, Body: []byte(body)}
-	err := savePage(p)
+	err := SavePage(p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -90,7 +90,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 // Рендеринг шаблона
-func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
