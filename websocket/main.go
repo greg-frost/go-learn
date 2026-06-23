@@ -59,7 +59,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Сервер
-func server() {
+func Server() {
 	// Роутер
 	mux := http.NewServeMux()
 
@@ -84,7 +84,7 @@ func server() {
 }
 
 // Клиент
-func client() {
+func Client() {
 	// Соединение по WebSocket
 	URL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "ws"}
 	c, _, err := websocket.DefaultDialer.Dial(URL.String(), nil)
@@ -131,8 +131,8 @@ func main() {
 	fmt.Println(" \n[ WEBSOCKET ]\n ")
 
 	// Локальный сервер
-	go server()
-	go client()
+	go Server()
+	go Client()
 
 	// Ожидание
 	time.Sleep(time.Second)
