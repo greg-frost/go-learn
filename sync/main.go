@@ -7,19 +7,19 @@ import (
 )
 
 // Привет
-func doHello() {
+func DoHello() {
 	time.Sleep(time.Second)
 	fmt.Print("Hello ")
 }
 
 // Жестокий
-func doCruel() {
+func DoCruel() {
 	time.Sleep(2 * time.Second)
 	fmt.Print("Cruel ")
 }
 
 // Мир
-func doWorld() {
+func DoWorld() {
 	time.Sleep(3 * time.Second)
 	fmt.Print("World ")
 }
@@ -66,15 +66,15 @@ func main() {
 	wg.Add(3)
 	go func() {
 		defer wg.Done()
-		doHello()
+		DoHello()
 	}()
 	go func() {
 		defer wg.Done()
-		doCruel()
+		DoCruel()
 	}()
 	go func() {
 		defer wg.Done()
-		doWorld()
+		DoWorld()
 	}()
 	wg.Wait()
 	fmt.Println(" \n ")
