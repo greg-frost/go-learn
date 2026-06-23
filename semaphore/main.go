@@ -16,7 +16,7 @@ var workers = 3
 var sem = semaphore.NewWeighted(int64(workers))
 
 // Обработка значения
-func process(n int) int {
+func Process(n int) int {
 	time.Sleep(250 * time.Millisecond)
 	return n * n
 }
@@ -40,7 +40,7 @@ func main() {
 		// Выполнение работы
 		go func(i int) {
 			defer sem.Release(1)
-			res[i] = process(i)
+			res[i] = Process(i)
 		}(i)
 	}
 
