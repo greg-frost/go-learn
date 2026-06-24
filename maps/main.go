@@ -5,12 +5,12 @@ import (
 )
 
 // Удаление дубликатов
-func removeDuplicates(s []string) []string {
-	return uniqueStrings(s)
+func RemoveDuplicates(s []string) []string {
+	return UniqueStrings(s)
 }
 
 // Определение уникальных чисел
-func uniqueInts(values []int) []int {
+func UniqueInts(values []int) []int {
 	if len(values) == 0 {
 		return values
 	}
@@ -26,7 +26,7 @@ func uniqueInts(values []int) []int {
 }
 
 // Определение уникальных строк
-func uniqueStrings(values []string) []string {
+func UniqueStrings(values []string) []string {
 	if len(values) == 0 {
 		return values
 	}
@@ -72,7 +72,7 @@ func main() {
 	// Уникальные значения
 	animals := []string{"кошка", "собака", "птица", "собака", "попугай", "кошка"}
 	fmt.Println("Животные:", animals)
-	fmt.Println("Без повторений:", removeDuplicates(animals))
+	fmt.Println("Без повторений:", RemoveDuplicates(animals))
 	fmt.Println()
 
 	// Непредсказуемость карт
