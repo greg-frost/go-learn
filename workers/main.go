@@ -17,7 +17,7 @@ type Result struct {
 }
 
 // Получение HTTP-статуса ответа
-func crawl(worker int, jobs <-chan Site, results chan<- Result) {
+func Crawl(worker int, jobs <-chan Site, results chan<- Result) {
 	for site := range jobs {
 		fmt.Printf("Воркер #%d: %s\n", worker, site.URL)
 
@@ -43,7 +43,7 @@ func main() {
 
 	// Запуск воркеров
 	for w := 1; w <= workers; w++ {
-		go crawl(w, jobs, results)
+		go Crawl(w, jobs, results)
 	}
 
 	// Список заданий
