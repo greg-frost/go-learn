@@ -6,17 +6,17 @@ import (
 )
 
 // Сумма
-func sum(a int, b int) int {
+func Sum(a int, b int) int {
 	return a + b
 }
 
 // Произведение
-func prod(a int, b int) int {
+func Prod(a int, b int) int {
 	return a * b
 }
 
 // Произведение через сумму
-func prodBySum(val int, times int) (res int) {
+func ProdBySum(val int, times int) (res int) {
 	if times >= 0 {
 		for i := 0; i < times; i++ {
 			res += val
@@ -30,7 +30,7 @@ func prodBySum(val int, times int) (res int) {
 }
 
 // Пропорция
-func split(sum int, prop float64) (x, y int) {
+func Split(sum int, prop float64) (x, y int) {
 	x = int(float64(sum) * prop)
 	y = sum - x
 	return
@@ -45,7 +45,7 @@ func (e ErrNegativeSqrt) Error() string {
 }
 
 // Квадратный корень
-func sqrt(x float64) (float64, error) {
+func Sqrt(x float64) (float64, error) {
 	if x < 0 {
 		return 0, ErrNegativeSqrt(x)
 	}
@@ -77,28 +77,28 @@ func main() {
 	fmt.Println()
 
 	// Сумма и произведение
-	fmt.Println("Сумма", a, "и", b, "равна", sum(a, b))
-	fmt.Println("Произведение", a, "и", b, "равно", prod(a, b))
-	fmt.Println("Произведение через сумму", a, "и", b, "равно", prodBySum(a, b))
+	fmt.Println("Сумма", a, "и", b, "равна", Sum(a, b))
+	fmt.Println("Произведение", a, "и", b, "равно", Prod(a, b))
+	fmt.Println("Произведение через сумму", a, "и", b, "равно", ProdBySum(a, b))
 	fmt.Println()
 
 	var (
-		x float64 = float64(prod(a, b))
-		y int     = sum(a, b)
+		x float64 = float64(Prod(a, b))
+		y int     = Sum(a, b)
 		p float64 = 0.75
 	)
 
 	// Пропорция
-	c, d := split(y, p)
+	c, d := Split(y, p)
 	fmt.Println("Разделение числа", y, "в пропорции", p, "равно", c, "и", d)
 	fmt.Printf("Само число %d принадлежит к типу %T\n", y, y)
 	fmt.Println()
 
 	// Квадратный корень
-	sr, _ := sqrt(x)
+	sr, _ := Sqrt(x)
 	fmt.Println("mySQRT   (", x, ") =", sr)
 	fmt.Println("mathSQRT (", x, ") =", math.Sqrt(x))
-	fmt.Println(sqrt(-x))
+	fmt.Println(Sqrt(-x))
 	fmt.Println()
 
 	// Побитовый сдвиг
