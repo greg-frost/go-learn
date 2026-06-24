@@ -8,7 +8,7 @@ import (
 )
 
 // TCP-сервер
-func tcpServer(protocol, address string, print bool) {
+func TcpServer(protocol, address string, print bool) {
 	// Прослушивание TCP
 	conn, err := net.Listen(protocol, address)
 	if err != nil {
@@ -48,7 +48,7 @@ func tcpConnection(c net.Conn, print bool) {
 }
 
 // UDP-сервер
-func udpServer(protocol, address string, print bool) {
+func UdpServer(protocol, address string, print bool) {
 	// Прослушивание UDP
 	conn, err := net.ListenPacket(protocol, address)
 	if err != nil {
@@ -85,8 +85,8 @@ func main() {
 	flags := log.LstdFlags | log.Lshortfile
 
 	// Запуск серверов
-	go tcpServer("tcp", "localhost:8080", true)
-	go udpServer("udp", "localhost:9090", true)
+	go TcpServer("tcp", "localhost:8080", true)
+	go UdpServer("udp", "localhost:9090", true)
 	time.Sleep(250 * time.Millisecond)
 
 	// Логирование по TCP
@@ -120,8 +120,8 @@ func main() {
 	times := 100000
 
 	// Запуск серверов
-	go tcpServer("tcp", "localhost:8085", false)
-	go udpServer("udp", "localhost:9095", false)
+	go TcpServer("tcp", "localhost:8085", false)
+	go UdpServer("udp", "localhost:9095", false)
 	time.Sleep(250 * time.Millisecond)
 	fmt.Println()
 	fmt.Println("Сравнение скорости")
