@@ -7,8 +7,8 @@ import (
 
 // Интерфейс "фигура"
 type Shape interface {
-	area() float64
-	perimeter() float64
+	Area() float64
+	Perimeter() float64
 }
 
 // Структура "мультифигура"
@@ -17,19 +17,19 @@ type MultiShape struct {
 }
 
 // Площадь мультифигуры
-func (m MultiShape) area() float64 {
+func (m MultiShape) Area() float64 {
 	var area float64
 	for _, s := range m.shapes {
-		area += s.area()
+		area += s.Area()
 	}
 	return area
 }
 
 // Общая площадь фигур
-func totalArea(shapes ...Shape) float64 {
+func TotalArea(shapes ...Shape) float64 {
 	var area float64
 	for _, s := range shapes {
-		area += s.area()
+		area += s.Area()
 	}
 	return area
 }
@@ -40,12 +40,12 @@ type Circle struct {
 }
 
 // Площадь круга
-func (c Circle) area() float64 {
+func (c Circle) Area() float64 {
 	return math.Pi * math.Pow(c.r, 2)
 }
 
 // Периметр круга
-func (c Circle) perimeter() float64 {
+func (c Circle) Perimeter() float64 {
 	return math.Pi * c.r * 2
 }
 
@@ -55,14 +55,14 @@ type Rectangle struct {
 }
 
 // Площадь прямоугольника
-func (r Rectangle) area() float64 {
+func (r Rectangle) Area() float64 {
 	l := distance(r.x1, r.y1, r.x1, r.y2)
 	w := distance(r.x1, r.y1, r.x2, r.y1)
 	return l * w
 }
 
 // Периметр прямоугольника
-func (r Rectangle) perimeter() float64 {
+func (r Rectangle) Perimeter() float64 {
 	l := distance(r.x1, r.y1, r.x1, r.y2)
 	w := distance(r.x1, r.y1, r.x2, r.y1)
 	return (l + w) * 2
@@ -86,7 +86,7 @@ type Person struct {
 }
 
 // Убить человека
-func (p Person) kill() {
+func (p Person) Kill() {
 	var who, what string
 	if p.isMen {
 		who = "Мужик"
@@ -112,22 +112,22 @@ func main() {
 	c.y = 5
 	c.r = 7
 	fmt.Println("Круг:", *c)
-	fmt.Println("Площадь:", math.Round(c.area()))
-	fmt.Println("Периметр:", math.Round(c.perimeter()))
+	fmt.Println("Площадь:", math.Round(c.Area()))
+	fmt.Println("Периметр:", math.Round(c.Perimeter()))
 	fmt.Println()
 
 	// Прямоугольник
 	r := Rectangle{x1: 1, y1: 3, x2: 10, y2: 12}
 	fmt.Println("Прямоугольник:", r)
-	fmt.Println("Площадь:", r.area())
-	fmt.Println("Периметр:", r.perimeter())
+	fmt.Println("Площадь:", r.Area())
+	fmt.Println("Периметр:", r.Perimeter())
 	fmt.Println()
 
 	// Мультифигура
 	s := new(MultiShape)
 	fmt.Println("Фигуры:", *s)
-	fmt.Println("Общая площадь (метод):", math.Round((*s).area()))
-	fmt.Println("Общая площадь (функция):", math.Round(totalArea(c, &r)))
+	fmt.Println("Общая площадь (метод):", math.Round((*s).Area()))
+	fmt.Println("Общая площадь (функция):", math.Round(TotalArea(c, &r)))
 	fmt.Println()
 
 	// Человек
@@ -135,5 +135,5 @@ func main() {
 	fmt.Printf("%#+v\n", p)
 	fmt.Printf("Имя: %s, возраст: %d, пол (мужик): %t\n", p.name, p.age, p.Men.isMen)
 	ChangeAge(p, 35)
-	(&p).kill()
+	(&p).Kill()
 }
