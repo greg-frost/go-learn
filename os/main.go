@@ -13,7 +13,7 @@ import (
 )
 
 // Проверка зависимости
-func checkDependency(name string) (bool, string) {
+func CheckDependency(name string) (bool, string) {
 	if _, err := exec.LookPath(name); err != nil {
 		return false, "недоступно"
 	}
@@ -21,7 +21,7 @@ func checkDependency(name string) (bool, string) {
 }
 
 // Мониторинг среды выполнения
-func monitorRuntime(d time.Duration) {
+func MonitorRuntime(d time.Duration) {
 	m := &runtime.MemStats{}
 	for {
 		goroutines := runtime.NumGoroutine()
@@ -92,15 +92,15 @@ func main() {
 
 	// Зависимости
 	fmt.Println("Зависимости:")
-	_, ping := checkDependency("ping")
+	_, ping := CheckDependency("ping")
 	fmt.Println("ping -", ping)
-	_, pong := checkDependency("pong")
+	_, pong := CheckDependency("pong")
 	fmt.Println("pong -", pong)
 	fmt.Println()
 
 	// Мониторинг
 	fmt.Println("Мониторинг:")
-	go monitorRuntime(time.Second)
+	go MonitorRuntime(time.Second)
 	for i := 0; i < 5; i++ {
 		go func() {
 			time.Sleep(5 * time.Second)
