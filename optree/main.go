@@ -6,34 +6,34 @@ import (
 )
 
 // Структура "узел дерева"
-type treeNode struct {
-	val   treeVal
-	left  *treeNode
-	right *treeNode
+type TreeNode struct {
+	val   TreeVal
+	left  *TreeNode
+	right *TreeNode
 }
 
 // Интерфейс "значение узла дерева"
-type treeVal interface {
-	isToken()
+type TreeVal interface {
+	IsToken()
 }
 
 // Тип "число"
-type number int
+type Number int
 
-func (number) isToken() {}
+func (Number) IsToken() {}
 
 // Тип "оператор"
-type operator func(int, int) int
+type Operator func(int, int) int
 
-func (operator) isToken() {}
+func (Operator) IsToken() {}
 
 // Выполнение операции
-func (o operator) process(n1, n2 int) int {
+func (o Operator) process(n1, n2 int) int {
 	return o(n1, n2)
 }
 
 // Карта операций
-var operators = map[string]operator{
+var operators = map[string]Operator{
 	"+": func(n1, n2 int) int {
 		return n1 + n2
 	},
@@ -49,18 +49,18 @@ var operators = map[string]operator{
 }
 
 // Обход дерева
-func walkTree(t *treeNode) (int, error) {
+func WalkTree(t *TreeNode) (int, error) {
 	switch val := t.val.(type) {
 	case nil:
 		return 0, errors.New("Неправильное выражение")
-	case number:
+	case Number:
 		return int(val), nil
-	case operator:
-		left, err := walkTree(t.left)
+	case Operator:
+		left, err := WalkTree(t.left)
 		if err != nil {
 			return 0, err
 		}
-		right, err := walkTree(t.right)
+		right, err := WalkTree(t.right)
 		if err != nil {
 			return 0, err
 		}
@@ -71,7 +71,7 @@ func walkTree(t *treeNode) (int, error) {
 }
 
 // Печать дерева
-func (t *treeNode) String() string {
+func (t *TreeNode) String() string {
 	if t == nil {
 		return "()"
 	}
@@ -90,14 +90,14 @@ func main() {
 	fmt.Println(" \n[ ДЕРЕВО ОПЕРАЦИЙ ]\n ")
 
 	// Дерево
-	tree := &treeNode{
+	tree := &TreeNode{
 		val: operators["+"],
-		left: &treeNode{
+		left: &TreeNode{
 			val:   operators["*"],
-			left:  &treeNode{val: number(5)},
-			right: &treeNode{val: number(10)},
+			left:  &TreeNode{val: Number(5)},
+			right: &TreeNode{val: Number(10)},
 		},
-		right: &treeNode{val: number(20)},
+		right: &TreeNode{val: Number(20)},
 	}
 
 	// Печать
@@ -107,6 +107,6 @@ func main() {
 
 	// Обход
 	fmt.Println("Выражение:")
-	result, _ := walkTree(tree)
+	result, _ := WalkTree(tree)
 	fmt.Println("5 * 10 + 20 =", result)
 }
