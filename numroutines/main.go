@@ -18,7 +18,7 @@ var ch = make(chan byte)
 var n = flag.Int("n", 1e5, "Количество горутин, которые нужно создать")
 
 // Горутина
-func f() {
+func Goroutine() {
 	counter++
 	<-ch // Блокировка
 }
@@ -40,7 +40,7 @@ func main() {
 
 	t0 := time.Now().UnixNano()
 	for i := 0; i < *n; i++ {
-		go f()
+		go Goroutine()
 	}
 	runtime.Gosched() // Вызов планировщика
 	t1 := time.Now().UnixNano()
