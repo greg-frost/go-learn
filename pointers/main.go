@@ -5,32 +5,32 @@ import (
 )
 
 // Обнуление
-func zero(xPtr *int) {
+func Zero(xPtr *int) {
 	*xPtr = 0
 }
 
 // Копирование
-func copy(ptr1, ptr2 *int) {
+func Copy(ptr1, ptr2 *int) {
 	*ptr1 = *ptr2
 }
 
 // Привязка
-func bind(ptr1, ptr2 *int) {
+func Bind(ptr1, ptr2 *int) {
 	ptr1 = ptr2
 }
 
 // Установка значения
-func set(ptr *int, val int) {
+func Set(ptr *int, val int) {
 	*ptr = val
 }
 
 // Квадратный корень
-func square(x *float64) {
+func Square(x *float64) {
 	*x = *x * *x
 }
 
 // Замена переменных местами
-func swap(ptr1, ptr2 *int) {
+func Swap(ptr1, ptr2 *int) {
 	ptr3 := new(int)
 	*ptr3 = *ptr1
 	*ptr1 = *ptr2
@@ -38,7 +38,7 @@ func swap(ptr1, ptr2 *int) {
 }
 
 // Замена переменных местами (более элегантная)
-func swappy(ptr1, ptr2 *int) {
+func Swappy(ptr1, ptr2 *int) {
 	*ptr1, *ptr2 = *ptr2, *ptr1
 }
 
@@ -66,25 +66,25 @@ func main() {
 
 	// Обнуление, копирование, привязка
 	fmt.Println("Было:", x, y)
-	zero(&x)
-	copy(&x, &y)
-	bind(&x, &y) // Не сработает
+	Zero(&x)
+	Copy(&x, &y)
+	Bind(&x, &y) // Не сработает
 
 	// Установка значения
 	y = 5
-	set(ptr, 7)
+	Set(ptr, 7)
 	fmt.Println("Стало:", x, y, *ptr)
 	fmt.Println()
 
 	// Квадратный корень
 	s := 1.5
-	square(&s)
+	Square(&s)
 	fmt.Println("Квадрат:", s)
 
 	// Замена переменных
-	swappy(&x, &y)
-	swap(&x, &y)
-	swappy(&x, &y)
+	Swappy(&x, &y)
+	Swap(&x, &y)
+	Swappy(&x, &y)
 	fmt.Println("Замена:", x, y)
 	fmt.Println()
 
