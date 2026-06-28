@@ -11,17 +11,17 @@ var read = make(chan int)
 var write = make(chan int)
 
 // Запись значения
-func setValue(value int) {
+func SetValue(value int) {
 	write <- value
 }
 
 // Чтение значения
-func getValue() int {
+func GetValue() int {
 	return <-read
 }
 
 // Конвейер
-func pipeline() {
+func Pipeline() {
 	var value int
 	for {
 		select {
@@ -39,14 +39,14 @@ func main() {
 	n := 10
 	fmt.Printf("Генерация %d случайных чисел:\n", n)
 	var wg sync.WaitGroup
-	go pipeline()
+	go Pipeline()
 	for i := 0; i < n; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			setValue(rand.Intn(10 * n))
+			SetValue(rand.Intn(10 * n))
 		}()
 	}
 	wg.Wait()
-	fmt.Printf("\nПоследнее значение: %d\n", getValue())
+	fmt.Printf("\nПоследнее значение: %d\n", GetValue())
 }
