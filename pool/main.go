@@ -16,16 +16,16 @@ type Job struct {
 }
 
 // Структура "результат"
-type Res struct {
+type Result struct {
 	job    Job
 	worker int
 	res    string
 }
 
 // Обработка задач
-func process(worker int, jobs chan Job, done chan Res, wg *sync.WaitGroup) {
+func Process(worker int, jobs chan Job, done chan Result, wg *sync.WaitGroup) {
 	for j := range jobs {
-		done <- Res{
+		done <- Result{
 			job:    j,
 			worker: worker,
 			res:    strings.ToUpper(j.word),
@@ -45,7 +45,7 @@ func main() {
 
 	// Каналы для задач, результатов и завершения
 	jobs := make(chan Job, workers)
-	ress := make(chan Res, workers)
+	ress := make(chan Result, workers)
 	done := make(chan bool)
 
 	// Постановка задач в очередь
@@ -74,7 +74,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < workers; i++ {
 		wg.Add(1)
-		go process(i+1, jobs, ress, &wg)
+		go Process(i+1, jobs, ress, &wg)
 	}
 	wg.Wait()
 	fmt.Println("Обработчики запущены")
