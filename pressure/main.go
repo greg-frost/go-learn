@@ -37,7 +37,7 @@ func (pg *PressureGauge) Process(f func()) error {
 }
 
 // Медленная функция
-func doSlowThings() string {
+func DoSlowThings() string {
 	time.Sleep(3 * time.Second)
 	return "Done"
 }
@@ -51,7 +51,7 @@ func main() {
 	// Настройка обработчика
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		err := pg.Process(func() {
-			w.Write([]byte(doSlowThings()))
+			w.Write([]byte(DoSlowThings()))
 		})
 		if err != nil {
 			w.WriteHeader(http.StatusTooManyRequests)
