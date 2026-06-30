@@ -11,7 +11,7 @@ import (
 )
 
 // Чтение io.Reader
-func process(r io.Reader) error {
+func Process(r io.Reader) error {
 	data := make([]byte, 100)
 	for {
 		count, err := r.Read(data)
@@ -29,18 +29,18 @@ func process(r io.Reader) error {
 }
 
 // Открытие файла
-func openFile(filename string) error {
+func OpenFile(filename string) error {
 	r, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 
-	return process(r)
+	return Process(r)
 }
 
 // Открытие архива
-func openGzipFile(filename string) error {
+func OpenGzipFile(filename string) error {
 	r, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func openGzipFile(filename string) error {
 	}
 	defer gz.Close()
 
-	return process(gz)
+	return Process(gz)
 }
 
 func main() {
@@ -63,7 +63,7 @@ func main() {
 
 	// Файл
 	fmt.Println("Чтение файла:")
-	err := openFile(filepath.Join(path, "hello", "main.go"))
+	err := OpenFile(filepath.Join(path, "hello", "main.go"))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -71,7 +71,7 @@ func main() {
 
 	// Архив
 	fmt.Println("Чтение архива:")
-	err = openGzipFile(filepath.Join(path, "reader", "data", "main.tar.gz"))
+	err = OpenGzipFile(filepath.Join(path, "reader", "data", "main.tar.gz"))
 	if err != nil {
 		fmt.Println(err)
 	}
