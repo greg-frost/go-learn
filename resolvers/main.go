@@ -16,7 +16,7 @@ type pathResolver struct {
 }
 
 // Получение нового обработчика пути
-func newPathResolver() *pathResolver {
+func NewPathResolver() *pathResolver {
 	return &pathResolver{
 		handlers: make(map[string]http.HandlerFunc),
 	}
@@ -48,7 +48,7 @@ type regexpResolver struct {
 }
 
 // Получение нового обработчика выражения
-func newRegexpResolver() *regexpResolver {
+func NewRegexpResolver() *regexpResolver {
 	return &regexpResolver{
 		handlers: make(map[string]http.HandlerFunc),
 		cache:    make(map[string]*regexp.Regexp),
@@ -75,7 +75,7 @@ func (rr *regexpResolver) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // Приветствие
-func hello(w http.ResponseWriter, r *http.Request) {
+func handleHello(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	name := query.Get("name")
 	if name == "" {
@@ -85,7 +85,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 // Прощание
-func goodbye(w http.ResponseWriter, r *http.Request) {
+func handleGoodbye(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	parts := strings.Split(path, "/")
 	var name string
@@ -102,14 +102,14 @@ func main() {
 	fmt.Println(" \n[ HTTP-ОБРАБОТЧИКИ ]\n ")
 
 	// Обработчик пути
-	pr := newPathResolver()
-	pr.Add("GET /hello", hello)
-	pr.Add("* /goodbye/*", goodbye)
+	pr := NewPathResolver()
+	pr.Add("GET /hello", handleHello)
+	pr.Add("* /goodbye/*", handleGoodbye)
 
 	// Обработчик выражений
-	rr := newRegexpResolver()
-	rr.Add("GET /hello/?", hello)
-	rr.Add("(GET|HEAD) /goodbye(/[A-Za-zА-Яа-яё0-9]*)?", goodbye)
+	rr := NewRegexpResolver()
+	rr.Add("GET /hello/?", handleHello)
+	rr.Add("(GET|HEAD) /goodbye(/[A-Za-zА-Яа-яё0-9]*)?", handleGoodbye)
 
 	// Выбор типа обработчика
 	useRegexpResolver := flag.Bool("regexp", false, "использовать обработчик регулярных выражений")
