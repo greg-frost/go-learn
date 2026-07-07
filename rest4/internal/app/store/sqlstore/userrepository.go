@@ -37,6 +37,7 @@ func (r *UserRepository) Create(user *model.User) error {
 // Поиск пользователя по Email
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	user := new(model.User)
+
 	if err := r.store.db.QueryRow(
 		"SELECT id, email, encrypted_password FROM users WHERE email = $1",
 		email,

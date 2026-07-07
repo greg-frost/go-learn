@@ -26,7 +26,6 @@ func (r *UserRepository) Create(user *model.User) error {
 	// Сохранение
 	r.users[user.Email] = user
 	user.ID = len(r.users)
-
 	return nil
 }
 
@@ -36,6 +35,5 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	if !ok {
 		return nil, store.ErrRecordNotFound
 	}
-
 	return user, nil
 }
