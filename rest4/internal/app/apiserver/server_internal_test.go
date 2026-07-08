@@ -11,7 +11,7 @@ import (
 )
 
 func TestServer_HandleUsersCreate(t *testing.T) {
-	s := NewServer(teststore.New())
+	s := newServer(teststore.New())
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodPost, "/users", nil)
 

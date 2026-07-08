@@ -18,7 +18,7 @@ func Start(config *Config) error {
 
 	// Хранилище и сервер
 	store := sqlstore.New(db)
-	s := NewServer(store)
+	s := newServer(store)
 
 	// Логгер
 	if err := s.configureLogger(config.LogLevel); err != nil {

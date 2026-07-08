@@ -17,7 +17,7 @@ type server struct {
 }
 
 // Конструктор сервера
-func NewServer(store store.Store) *server {
+func newServer(store store.Store) *server {
 	// Сервер
 	s := &server{
 		router: mux.NewRouter(),
