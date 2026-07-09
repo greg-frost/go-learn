@@ -1,9 +1,11 @@
 package apiserver
 
 import (
-	"go-learn/rest4/internal/app/store"
-	"io"
+	"encoding/json"
 	"net/http"
+
+	"go-learn/rest4/internal/app/model"
+	"go-learn/rest4/internal/app/store"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -55,7 +57,43 @@ func (s *server) configureRouter() {
 
 // Обработчик создания пользователя
 func (s *server) handleUsersCreate() http.HandlerFunc {
+	// Структура "запрос"
+	type request struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	// Обработка запроса
 	return func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Привет, пользователи!")
+		req := new(request)
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		u := &model.User{
+			Email:    req.Email,
+			Password: req.Password,
+		}
+		if err := s.store.User().Create(u); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		u.Sanitize()
+		s.respond(w, r, http.StatusCreated, u)
+	}
+}
+
+// Обработка ошибки
+func (s *server) error(w http.ResponseWriter, r *http.Request, code int, err error) {
+	s.respond(w, r, code, map[string]string{"error": err.Error()})
+}
+
+// Обработка ответа
+func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data interface{}) {
+	w.WriteHeader(code)
+	if data != nil {
+		json.NewEncoder(w).Encode(data)
 	}
 }

@@ -12,7 +12,7 @@ type Store struct {
 
 // Конструктор хранилища
 func New() *Store {
-	return &Store{}
+	return new(Store)
 }
 
 // Получение хранилища пользователей
