@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"go-learn/rest4/internal/app/model"
@@ -9,6 +10,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+)
+
+var (
+	errIncorrectEmailOrPassword = errors.New("неверный email или пароль")
 )
 
 // Структура "сервер"
@@ -53,17 +58,17 @@ func (s *server) configureLogger(logLevel string) error {
 func (s *server) configureRouter() {
 	s.router.HandleFunc("/users", s.handleUsersCreate()).
 		Methods(http.MethodPost)
+	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).
+		Methods(http.MethodPost)
 }
 
 // Обработчик создания пользователя
 func (s *server) handleUsersCreate() http.HandlerFunc {
-	// Структура "запрос"
 	type request struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
-	// Обработка запроса
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := new(request)
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
@@ -82,6 +87,30 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 
 		u.Sanitize()
 		s.respond(w, r, http.StatusCreated, u)
+	}
+}
+
+// Обработчик создания сессии
+func (s *server) handleSessionsCreate() http.HandlerFunc {
+	type request struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := new(request)
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+
+		u, err := s.store.User().FindByEmail(req.Email)
+		if err != nil || !u.ComparePassword(req.Password) {
+			s.error(w, r, http.StatusUnauthorized, errIncorrectEmailOrPassword)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, nil)
 	}
 }
 
