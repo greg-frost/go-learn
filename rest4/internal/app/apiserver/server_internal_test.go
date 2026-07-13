@@ -10,11 +10,15 @@ import (
 	"go-learn/rest4/internal/app/model"
 	"go-learn/rest4/internal/app/store/teststore"
 
+	"github.com/gorilla/sessions"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestServer_HandleUsersCreate(t *testing.T) {
-	s := newServer(teststore.New())
+	s := newServer(
+		teststore.New(),
+		sessions.NewCookieStore([]byte("secret")),
+	)
 
 	testCases := []struct {
 		name         string
@@ -57,7 +61,10 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 }
 
 func TestServer_HandleSessionsCreate(t *testing.T) {
-	s := newServer(teststore.New())
+	s := newServer(
+		teststore.New(),
+		sessions.NewCookieStore([]byte("secret")),
+	)
 	u := model.TestUser(t)
 	s.store.User().Create(u)
 

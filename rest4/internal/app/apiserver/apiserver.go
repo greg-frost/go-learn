@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"go-learn/rest4/internal/app/store/sqlstore"
+
+	"github.com/gorilla/sessions"
 )
 
 // Запуск сервера
@@ -16,9 +18,10 @@ func Start(config *Config) error {
 	}
 	defer db.Close()
 
-	// Хранилище и сервер
+	// Хранилище, сессии и сервер
 	store := sqlstore.New(db)
-	s := newServer(store)
+	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
+	s := newServer(store, sessionStore)
 
 	// Логгер
 	if err := s.configureLogger(config.LogLevel); err != nil {
