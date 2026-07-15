@@ -59,6 +59,12 @@ func FastPowMod(x, n, p int) int {
 	return res
 }
 
+// Минимальный и максимальный пороги
+const (
+	min = 1e6
+	max = 1e9
+)
+
 func main() {
 	fmt.Println(" \n[ DIFFIE-HELLMAN ]\n ")
 
@@ -66,7 +72,7 @@ func main() {
 	fmt.Println("Выбор двух открытых чисел:")
 	var p int
 	for !IsPrime(p) {
-		p = Random(1e6, 1e9) // Простое число p
+		p = Random(min, max) // Простое число p
 	}
 	fmt.Printf("p = %d\n", p)
 
