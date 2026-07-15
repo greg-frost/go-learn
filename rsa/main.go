@@ -26,12 +26,7 @@ func IsPrime(n int) bool {
 
 // Взаимно простые ли числа
 func IsCoprime(n, m int) bool {
-	for i := 2; i*i <= n && i*i <= m; i++ {
-		if n%i == 0 && m%i == 0 {
-			return false
-		}
-	}
-	return true
+	return Euclid(n, m) == 1
 }
 
 // Алгоритм Евклида (наибольший общий делитель)
