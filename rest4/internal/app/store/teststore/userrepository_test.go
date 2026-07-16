@@ -19,17 +19,32 @@ func TestUserRepository_Create(t *testing.T) {
 	assert.NotNil(t, u)
 }
 
-func TestUserRepository_FindByEmail(t *testing.T) {
+func TestUserRepository_Find(t *testing.T) {
 	s := teststore.New()
-	email := "user@example.com"
+	u1 := model.TestUser(t)
 
 	// Пользователь не найден
-	_, err := s.User().FindByEmail(email)
+	_, err := s.User().Find(u1.ID)
 	assert.EqualError(t, err, store.ErrRecordNotFound.Error())
 
 	// Пользователь найден
-	s.User().Create(model.TestUser(t))
-	u, err := s.User().FindByEmail(email)
+	s.User().Create(u1)
+	u2, err := s.User().Find(u1.ID)
 	assert.NoError(t, err)
-	assert.NotNil(t, u)
+	assert.NotNil(t, u2)
+}
+
+func TestUserRepository_FindByEmail(t *testing.T) {
+	s := teststore.New()
+	u1 := model.TestUser(t)
+
+	// Пользователь не найден
+	_, err := s.User().FindByEmail(u1.Email)
+	assert.EqualError(t, err, store.ErrRecordNotFound.Error())
+
+	// Пользователь найден
+	s.User().Create(u1)
+	u2, err := s.User().FindByEmail(u1.Email)
+	assert.NoError(t, err)
+	assert.NotNil(t, u2)
 }

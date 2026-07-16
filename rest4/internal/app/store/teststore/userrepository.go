@@ -8,7 +8,7 @@ import (
 // Структура "хранилище пользователей"
 type UserRepository struct {
 	store *Store
-	users map[string]*model.User
+	users map[int]*model.User
 }
 
 // Создание пользователя
@@ -24,16 +24,27 @@ func (r *UserRepository) Create(user *model.User) error {
 	}
 
 	// Сохранение
-	r.users[user.Email] = user
-	user.ID = len(r.users)
+	user.ID = len(r.users) + 1
+	r.users[user.ID] = user
 	return nil
 }
 
-// Поиск пользователя по Email
-func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
-	user, ok := r.users[email]
+// Поиск пользователя по ID
+func (r *UserRepository) Find(id int) (*model.User, error) {
+	user, ok := r.users[id]
 	if !ok {
 		return nil, store.ErrRecordNotFound
 	}
 	return user, nil
+
+}
+
+// Поиск пользователя по Email
+func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
+	for _, user := range r.users {
+		if user.Email == email {
+			return user, nil
+		}
+	}
+	return nil, store.ErrRecordNotFound
 }

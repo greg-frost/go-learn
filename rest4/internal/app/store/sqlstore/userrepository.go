@@ -34,6 +34,27 @@ func (r *UserRepository) Create(user *model.User) error {
 	)
 }
 
+// Поиск пользователя по ID
+func (r *UserRepository) Find(id int) (*model.User, error) {
+	user := new(model.User)
+
+	if err := r.store.db.QueryRow(
+		"SELECT id, email, encrypted_password FROM users WHERE id = $1",
+		id,
+	).Scan(
+		&user.ID,
+		&user.Email,
+		&user.EncryptedPassword,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	return user, nil
+}
+
 // Поиск пользователя по Email
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	user := new(model.User)
