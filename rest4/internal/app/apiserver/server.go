@@ -1,6 +1,7 @@
 package apiserver
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -13,14 +14,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Имя сессии
-const sessionName = "gopherschool"
+const (
+	sessionName        = "gopherschool" // Имя сессии
+	ctxKeyUser  ctxKey = iota           // Ключ контекста
+)
 
 // Ошибки
 var (
 	errIncorrectEmailOrPassword = errors.New("неверный email или пароль")
 	errNotAuthenticated         = errors.New("пользователь не аутентифицирован")
 )
+
+// Тип "ключ контекста"
+type ctxKey int8
 
 // Структура "сервер"
 type server struct {
@@ -64,51 +70,59 @@ func (s *server) configureLogger(logLevel string) error {
 
 // Конфигурирование роутера
 func (s *server) configureRouter() {
-	s.router.HandleFunc("/users", s.handleUsersCreate()).
-		Methods(http.MethodPost)
-	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).
-		Methods(http.MethodPost)
+	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods(http.MethodPost)
+	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods(http.MethodPost)
 }
 
 // Аутентификация пользователя
 func (s *server) authenticateUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Получение сессии
 		session, err := s.sessionStore.Get(r, sessionName)
 		if err != nil {
 			s.error(w, r, http.StatusInternalServerError, err)
 			return
 		}
 
+		// Извлечение ID пользователя
 		id, ok := session.Values["user_id"]
 		if !ok {
 			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
 			return
 		}
 
-		_, err = s.store.User().Find(id.(int))
+		// Поиск пользователя
+		u, err := s.store.User().Find(id.(int))
 		if err != nil {
 			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		// Сохранение пользователя в контексте
+		ctx := context.WithValue(r.Context(), ctxKeyUser, u)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r) // Вызов следующего обработчика
 	})
 }
 
 // Обработчик создания пользователя
 func (s *server) handleUsersCreate() http.HandlerFunc {
+	// Структура "запрос"
 	type request struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Парсинг запроса
 		req := new(request)
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			s.error(w, r, http.StatusBadRequest, err)
 			return
 		}
 
+		// Создание пользователя
 		u := &model.User{
 			Email:    req.Email,
 			Password: req.Password,
@@ -118,37 +132,43 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 			return
 		}
 
-		u.Sanitize()
+		u.Sanitize() // Очистка данных
+
 		s.respond(w, r, http.StatusCreated, u)
 	}
 }
 
 // Обработчик создания сессии
 func (s *server) handleSessionsCreate() http.HandlerFunc {
+	// Структура "запрос"
 	type request struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Парсинг запроса
 		req := new(request)
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			s.error(w, r, http.StatusBadRequest, err)
 			return
 		}
 
+		// Аутентификация пользователя
 		u, err := s.store.User().FindByEmail(req.Email)
 		if err != nil || !u.ComparePassword(req.Password) {
 			s.error(w, r, http.StatusUnauthorized, errIncorrectEmailOrPassword)
 			return
 		}
 
+		// Создание сессии
 		session, err := s.sessionStore.Get(r, sessionName)
 		if err != nil {
 			s.error(w, r, http.StatusInternalServerError, err)
 			return
 		}
 
+		// Созранение ID пользователя в сессии
 		session.Values["user_id"] = u.ID
 		if err := s.sessionStore.Save(r, w, session); err != nil {
 			s.error(w, r, http.StatusInternalServerError, err)
