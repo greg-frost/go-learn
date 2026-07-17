@@ -3,6 +3,7 @@ package apiserver
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,16 +11,58 @@ import (
 	"go-learn/rest4/internal/app/model"
 	"go-learn/rest4/internal/app/store/teststore"
 
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestServer_HandleUsersCreate(t *testing.T) {
-	s := newServer(
-		teststore.New(),
-		sessions.NewCookieStore([]byte("secret")),
-	)
+// Секретный ключ cookie
+var secretKey = []byte("secret")
 
+func TestServer_AuthenticateUser(t *testing.T) {
+	store := teststore.New()
+	u := model.TestUser(t)
+	store.User().Create(u)
+
+	testCases := []struct {
+		name         string
+		cookieValue  map[interface{}]interface{}
+		expectedCode int
+	}{
+		{
+			name: "Authenticated",
+			cookieValue: map[interface{}]interface{}{
+				"user_id": u.ID,
+			},
+			expectedCode: http.StatusOK,
+		},
+		{
+			name:         "NotAuthenticated",
+			cookieValue:  nil,
+			expectedCode: http.StatusUnauthorized,
+		},
+	}
+
+	s := newServer(store, sessions.NewCookieStore(secretKey))
+	sc := securecookie.New(secretKey, nil)
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req, _ := http.NewRequest(http.MethodGet, "/", nil)
+			cookieStr, _ := sc.Encode(sessionName, tc.cookieValue)
+			req.Header.Set("Cookie", fmt.Sprintf("%s=%s", sessionName, cookieStr))
+
+			s.authenticateUser(handler).ServeHTTP(rec, req)
+			assert.Equal(t, tc.expectedCode, rec.Code)
+		})
+	}
+}
+
+func TestServer_HandleUsersCreate(t *testing.T) {
 	testCases := []struct {
 		name         string
 		payload      interface{}
@@ -47,6 +90,9 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 		},
 	}
 
+	s := newServer(teststore.New(),
+		sessions.NewCookieStore(secretKey))
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rec := httptest.NewRecorder()
@@ -61,12 +107,9 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 }
 
 func TestServer_HandleSessionsCreate(t *testing.T) {
-	s := newServer(
-		teststore.New(),
-		sessions.NewCookieStore([]byte("secret")),
-	)
+	store := teststore.New()
 	u := model.TestUser(t)
-	s.store.User().Create(u)
+	store.User().Create(u)
 
 	testCases := []struct {
 		name         string
@@ -103,6 +146,8 @@ func TestServer_HandleSessionsCreate(t *testing.T) {
 			expectedCode: http.StatusBadRequest,
 		},
 	}
+
+	s := newServer(store, sessions.NewCookieStore(secretKey))
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
