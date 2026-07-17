@@ -17,7 +17,10 @@ import (
 const sessionName = "gopherschool"
 
 // Ошибки
-var errIncorrectEmailOrPassword = errors.New("неверный email или пароль")
+var (
+	errIncorrectEmailOrPassword = errors.New("неверный email или пароль")
+	errNotAuthenticated         = errors.New("пользователь не аутентифицирован")
+)
 
 // Структура "сервер"
 type server struct {
@@ -65,6 +68,31 @@ func (s *server) configureRouter() {
 		Methods(http.MethodPost)
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).
 		Methods(http.MethodPost)
+}
+
+// Аутентификация пользователя
+func (s *server) authenticateUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := s.sessionStore.Get(r, sessionName)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+
+		id, ok := session.Values["user_id"]
+		if !ok {
+			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			return
+		}
+
+		_, err = s.store.User().Find(id.(int))
+		if err != nil {
+			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 // Обработчик создания пользователя
