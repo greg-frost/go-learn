@@ -72,6 +72,11 @@ func (s *server) configureLogger(logLevel string) error {
 func (s *server) configureRouter() {
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods(http.MethodPost)
+
+	// Только для /private/***
+	private := s.router.PathPrefix("/private").Subrouter()
+	private.Use(s.authenticateUser)
+	private.HandleFunc("/whoami", s.handleWhoami()).Methods(http.MethodGet)
 }
 
 // Аутентификация пользователя
@@ -104,6 +109,14 @@ func (s *server) authenticateUser(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r) // Вызов следующего обработчика
 	})
+}
+
+// Обработчик показа пользователя
+func (s *server) handleWhoami() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.respond(w, r, http.StatusOK,
+			r.Context().Value(ctxKeyUser).(*model.User))
+	}
 }
 
 // Обработчик создания пользователя
