@@ -73,9 +73,9 @@ func (s *server) configureRouter() {
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods(http.MethodPost)
 
-	// Только для /private/***
+	// Саброутер для "private/***"
 	private := s.router.PathPrefix("/private").Subrouter()
-	private.Use(s.authenticateUser)
+	private.Use(s.authenticateUser) // Middleware для аутентификации
 	private.HandleFunc("/whoami", s.handleWhoami()).Methods(http.MethodGet)
 }
 
