@@ -9,6 +9,7 @@ import (
 	"go-learn/rest4/internal/app/model"
 	"go-learn/rest4/internal/app/store"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -16,8 +17,9 @@ import (
 )
 
 const (
-	sessionName        = "gopherschool" // Имя сессии
-	ctxKeyUser  ctxKey = iota           // Ключ контекста
+	sessionName            = "gopherschool" // Имя сессии
+	ctxKeyUser      ctxKey = iota           // Ключ контекста для пользователя
+	ctxKeyRequestID                         // Ключ контекста для ID запроса
 )
 
 // Ошибки
@@ -71,6 +73,9 @@ func (s *server) configureLogger(logLevel string) error {
 
 // Конфигурирование роутера
 func (s *server) configureRouter() {
+	// Middleware установки ID запроса
+	s.router.Use(s.setRequestID)
+
 	// CORS-политики
 	s.router.Use(handlers.CORS(
 		handlers.AllowedOrigins([]string{"*"}),
@@ -80,10 +85,25 @@ func (s *server) configureRouter() {
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods(http.MethodPost)
 
-	// Саброутер для "private/***"
+	// Саброутер для приватного раздела
 	private := s.router.PathPrefix("/private").Subrouter()
-	private.Use(s.authenticateUser) // Middleware для аутентификации
+	private.Use(s.authenticateUser) // Middleware аутентификации
 	private.HandleFunc("/whoami", s.handleWhoami()).Methods(http.MethodGet)
+}
+
+// Установка идентификатора запроса
+func (s *server) setRequestID(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Генерация и установка ID
+		id := uuid.New().String()
+		w.Header().Set("X-Request-ID", id)
+
+		// Сохранение ID в контексте
+		ctx := context.WithValue(r.Context(), ctxKeyRequestID, id)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r) // Вызов следующего обработчика
+	})
 }
 
 // Аутентификация пользователя
