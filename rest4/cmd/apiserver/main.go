@@ -24,7 +24,7 @@ func init() {
 }
 
 func main() {
-	fmt.Println(" \n[ REST (GOPHER SCHOOL) ]\n ")
+	fmt.Println(" \n[ REST 4 (GOPHER SCHOOL) ]\n ")
 
 	flag.Parse()
 

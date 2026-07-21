@@ -9,6 +9,7 @@ import (
 	"go-learn/rest4/internal/app/model"
 	"go-learn/rest4/internal/app/store"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
@@ -70,6 +71,12 @@ func (s *server) configureLogger(logLevel string) error {
 
 // Конфигурирование роутера
 func (s *server) configureRouter() {
+	// CORS-политики
+	s.router.Use(handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+	))
+
+	// Главный роутер
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods(http.MethodPost)
 
