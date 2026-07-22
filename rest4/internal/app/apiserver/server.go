@@ -104,13 +104,14 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), ctxKeyRequestID, id)
 		r = r.WithContext(ctx)
 
-		next.ServeHTTP(w, r) // Вызов следующего обработчика
+		next.ServeHTTP(w, r)
 	})
 }
 
 // Логгирование запроса
 func (s *server) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Локальная настройка логгера
 		logger := s.logger.WithFields(logrus.Fields{
 			"remote_addr": r.RemoteAddr,
 			"request_id":  r.Context().Value(ctxKeyRequestID),
@@ -119,9 +120,11 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 		logger.Infof("Запрос %s %s", r.Method, r.RequestURI)
 
 		start := time.Now()
-		next.ServeHTTP(w, r) // Вызов следующего обработчика
+		rw := &responseWriter{w, http.StatusOK}
+		next.ServeHTTP(rw, r)
 
-		logger.Infof("Время выполнения: %v", time.Since(start))
+		logger.Infof("Код ответа: %d %s, время выполнения: %v",
+			rw.code, http.StatusText(rw.code), time.Since(start))
 	})
 }
 
@@ -153,7 +156,7 @@ func (s *server) authenticateUser(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), ctxKeyUser, u)
 		r = r.WithContext(ctx)
 
-		next.ServeHTTP(w, r) // Вызов следующего обработчика
+		next.ServeHTTP(w, r)
 	})
 }
 
