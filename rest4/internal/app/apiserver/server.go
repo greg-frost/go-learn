@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"time"
 
 	"go-learn/rest4/internal/app/model"
 	"go-learn/rest4/internal/app/store"
@@ -73,8 +74,9 @@ func (s *server) configureLogger(logLevel string) error {
 
 // Конфигурирование роутера
 func (s *server) configureRouter() {
-	// Middleware установки ID запроса
-	s.router.Use(s.setRequestID)
+	// Middleware
+	s.router.Use(s.setRequestID) // Установка ID запроса
+	s.router.Use(s.logRequest)   // Логгирования запроса
 
 	// CORS-политики
 	s.router.Use(handlers.CORS(
@@ -103,6 +105,23 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r) // Вызов следующего обработчика
+	})
+}
+
+// Логгирование запроса
+func (s *server) logRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := s.logger.WithFields(logrus.Fields{
+			"remote_addr": r.RemoteAddr,
+			"request_id":  r.Context().Value(ctxKeyRequestID),
+		})
+
+		logger.Infof("Запрос %s %s", r.Method, r.RequestURI)
+
+		start := time.Now()
+		next.ServeHTTP(w, r) // Вызов следующего обработчика
+
+		logger.Infof("Время выполнения: %v", time.Since(start))
 	})
 }
 
