@@ -189,7 +189,7 @@ func serialize(point *pb.Point) string {
 }
 
 func main() {
-	fmt.Println(" \n[ GRPC3 (СЕРВЕР) ]\n ")
+	fmt.Println(" \n[ GRPC 3 (СЕРВЕР) ]\n ")
 
 	// Парсинг флагов
 	flag.Parse()

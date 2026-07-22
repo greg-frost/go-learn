@@ -159,7 +159,7 @@ func randomPoint(r *rand.Rand) *pb.Point {
 }
 
 func main() {
-	fmt.Println(" \n[ GRPC3 (КЛИЕНТ) ]\n ")
+	fmt.Println(" \n[ GRPC 3 (КЛИЕНТ) ]\n ")
 
 	// Парсинг флагов
 	flag.Parse()
