@@ -117,12 +117,15 @@ func (s *server) logRequest(next http.Handler) http.Handler {
 			"request_id":  r.Context().Value(ctxKeyRequestID),
 		})
 
+		// До следующего запроса
 		logger.Infof("Запрос %s %s", r.Method, r.RequestURI)
 
 		start := time.Now()
+		// Кастомный ResponseWriter с кодом ответа
 		rw := &responseWriter{w, http.StatusOK}
 		next.ServeHTTP(rw, r)
 
+		// После следующего запроса
 		logger.Infof("Код ответа: %d %s, время выполнения: %v",
 			rw.code, http.StatusText(rw.code), time.Since(start))
 	})
