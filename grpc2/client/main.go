@@ -21,7 +21,7 @@ var (
 )
 
 func main() {
-	fmt.Println(" \n[ GRPC2 (КЛИЕНТ) ]\n ")
+	fmt.Println(" \n[ GRPC 2 (КЛИЕНТ) ]\n ")
 
 	// Парсинг флагов
 	flag.Parse()

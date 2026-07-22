@@ -34,7 +34,7 @@ func (s *server) Congrats(ctx context.Context, in *pb.CongratRequest) (*pb.Hello
 }
 
 func main() {
-	fmt.Println(" \n[ GRPC2 (СЕРВЕР) ]\n ")
+	fmt.Println(" \n[ GRPC 2 (СЕРВЕР) ]\n ")
 
 	// Парсинг флагов
 	flag.Parse()
