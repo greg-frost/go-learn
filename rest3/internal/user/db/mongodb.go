@@ -79,46 +79,47 @@ func (d *db) FindAll(ctx context.Context) ([]user.User, error) {
 }
 
 // Создание пользователя
-func (d *db) Create(ctx context.Context, user user.User) (string, error) {
+func (d *db) Create(ctx context.Context, u user.User) (user.User, error) {
 	d.logger.Debug("Создание пользователя")
-	result, err := d.collection.InsertOne(ctx, user)
+	result, err := d.collection.InsertOne(ctx, u)
 	if err != nil {
-		return "", fmt.Errorf("не удалось создать пользователя: %w", err)
+		return user.User{}, fmt.Errorf("не удалось создать пользователя: %w", err)
 	}
 
 	d.logger.Debug("Получение ObjectID пользователя")
 	oid, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
-		d.logger.Trace(user)
-		return "", fmt.Errorf("не удалось получить ObjectID пользователя: %w, oid: %v", err, oid)
+		d.logger.Trace(u)
+		return user.User{}, fmt.Errorf("не удалось получить ObjectID пользователя: %w, oid: %v", err, oid)
 	}
-	return oid.Hex(), nil
+	u.ID = oid.Hex()
+	return u, nil
 }
 
 // Обновление пользователя
-func (d *db) Update(ctx context.Context, user user.User) error {
+func (d *db) Update(ctx context.Context, u user.User) error {
 	d.logger.Debug("Получение ObjectID пользователя")
-	oid, err := primitive.ObjectIDFromHex(user.ID)
+	oid, err := primitive.ObjectIDFromHex(u.ID)
 	if err != nil {
-		return fmt.Errorf("не удалось получить ObjectID пользователя: %w, hex: %s", err, user.ID)
+		return fmt.Errorf("не удалось получить ObjectID пользователя: %w, hex: %s", err, u.ID)
 	}
 
 	d.logger.Debug("Обновление пользователя")
 	filter := bson.M{"_id": oid}
-	userBytes, err := bson.Marshal(user)
+	userBytes, err := bson.Marshal(u)
 	if err != nil {
-		return fmt.Errorf("не удалось сериализовать пользователя: %w, id: %s", err, user.ID)
+		return fmt.Errorf("не удалось сериализовать пользователя: %w, id: %s", err, u.ID)
 	}
 	var updateUserObj bson.M
 	err = bson.Unmarshal(userBytes, &updateUserObj)
 	if err != nil {
-		return fmt.Errorf("не удалось десериализовать пользователя: %w, id: %s", err, user.ID)
+		return fmt.Errorf("не удалось десериализовать пользователя: %w, id: %s", err, u.ID)
 	}
 	delete(updateUserObj, "_id")
 	update := bson.M{"set": updateUserObj}
 	result, err := d.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		return fmt.Errorf("не удалось обновить пользователя: %w, id: %s", err, user.ID)
+		return fmt.Errorf("не удалось обновить пользователя: %w, id: %s", err, u.ID)
 	}
 	if result.MatchedCount == 0 {
 		return apperror.ErrNotFound
