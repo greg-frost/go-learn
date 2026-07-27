@@ -44,7 +44,6 @@ func (d *db) FindOne(ctx context.Context, id string) (user.User, error) {
 	if err := result.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return u, apperror.ErrNotFound
-			// return u, fmt.Errorf("пользователь не найден: %w, id: %s", err, id)
 		}
 		return u, fmt.Errorf("не удалось получить пользователя: %w, id: %s", err, id)
 	}
@@ -123,7 +122,6 @@ func (d *db) Update(ctx context.Context, user user.User) error {
 	}
 	if result.MatchedCount == 0 {
 		return apperror.ErrNotFound
-		// return fmt.Errorf("пользователь не найден: %w, id: %s", err, user.ID)
 	}
 	d.logger.Tracef("matched: %d, modified: %d", result.MatchedCount, result.ModifiedCount)
 
@@ -146,7 +144,6 @@ func (d *db) Delete(ctx context.Context, id string) error {
 	}
 	if result.DeletedCount == 0 {
 		return apperror.ErrNotFound
-		// return fmt.Errorf("пользователь не найден: %w, id: %s", err, id)
 	}
 	d.logger.Tracef("deleted: %d", result.DeletedCount)
 

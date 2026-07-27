@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 	"go-learn/base"
 	"go-learn/rest3/internal/config"
 	"go-learn/rest3/internal/user"
+	"go-learn/rest3/internal/user/db"
+	"go-learn/rest3/pkg/client/mongodb"
 	"go-learn/rest3/pkg/logger"
 
 	"github.com/julienschmidt/httprouter"
@@ -28,16 +31,21 @@ func main() {
 	cfg := config.New()
 
 	// БД (MongoDB)
-	// mongodbClient, err := mongodb.NewClient(
-	// 	context.Background(),
-	// 	cfg.MongoDB.Host, cfg.MongoDB.Port,
-	// 	cfg.MongoDB.Username, cfg.MongoDB.Password,
-	// 	cfg.MongoDB.Database, cfg.MongoDB.AuthDB,
-	// )
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// storage := db.NewStorage(mongodbClient, cfg.MongoDB.Collection, log)
+	mongodbClient, err := mongodb.NewClient(
+		context.Background(),
+		cfg.MongoDB.Host, cfg.MongoDB.Port,
+		cfg.MongoDB.Username, cfg.MongoDB.Password,
+		cfg.MongoDB.Database, cfg.MongoDB.AuthDB,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	// Хранилище
+	storage := db.NewStorage(mongodbClient, cfg.MongoDB.Collection, log)
+
+	// Сервис
+	service := user.NewService(storage, log)
 
 	// u := user.User{
 	// 	Username:     "greg_frost",
@@ -94,7 +102,7 @@ func main() {
 
 	// Регистрация обработчиков
 	log.Info("Регистрация обработчиков")
-	handler := user.NewHandler(log)
+	handler := user.NewHandler(service, log)
 	handler.Register(router)
 
 	// Запуск сервера

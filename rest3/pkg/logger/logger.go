@@ -86,14 +86,14 @@ func init() {
 	// 	panic(err)
 	// }
 
-	// Отключение дефолтного вывода
+	// Отключение вывода по умолчанию
 	l.SetOutput(io.Discard)
 
-	// Мультирайтер ...
+	// Мультирайтер
 	// multi := io.MultiWriter(os.Stdout, file)
 	// l.SetOutput(multi)
 
-	// ... или хуки
+	// Хуки
 	l.AddHook(&WriterHook{
 		Writer: []io.Writer{
 			os.Stdout,
