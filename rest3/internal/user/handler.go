@@ -17,12 +17,12 @@ const (
 
 // Структура "обработчик"
 type handler struct {
-	service *Service
+	service Service
 	logger  *logger.Logger
 }
 
 // Конструктор обработчика
-func NewHandler(service *Service, logger *logger.Logger) handlers.Handler {
+func NewHandler(service Service, logger *logger.Logger) handlers.Handler {
 	return &handler{
 		service: service,
 		logger:  logger,
