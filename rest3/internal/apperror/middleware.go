@@ -3,16 +3,18 @@ package apperror
 import (
 	"errors"
 	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 // Функция "обработчик приложения"
-type appHandler func(w http.ResponseWriter, r *http.Request) error
+type appHandler func(w http.ResponseWriter, r *http.Request, p httprouter.Params) error
 
 // Промежуточный слой
-func Middleware(next appHandler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func Middleware(next appHandler) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		var appErr *AppError
-		err := next(w, r)
+		err := next(w, r, p)
 		if err != nil {
 			w.Header().Set("Content-Type", "application/json")
 
