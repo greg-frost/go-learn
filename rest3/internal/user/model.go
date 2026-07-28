@@ -20,6 +20,14 @@ func (u User) encryptPassword(s string) error {
 	return nil
 }
 
+// Сравнение пароля
+func (u *User) comparePassword(password string) bool {
+	return bcrypt.CompareHashAndPassword(
+		[]byte(u.PasswordHash),
+		[]byte(password),
+	) == nil
+}
+
 // Структура "создаваемый пользователь"
 type CreateUserDTO struct {
 	Email    string `json:"email"`

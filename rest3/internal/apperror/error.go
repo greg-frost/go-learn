@@ -4,8 +4,9 @@ import "encoding/json"
 
 // Ошибки
 var (
-	ErrNotAuth  = NewAppError(nil, "не авторизовано", "user not authorized", "US-000002")
-	ErrNotFound = NewAppError(nil, "не найдено", "entity not found", "US-000003")
+	ErrNotAuth    = NewAppError(nil, "не авторизовано", "user not authorized", "US-000002")
+	ErrNotFound   = NewAppError(nil, "не найдено", "entity not found", "US-000003")
+	ErrBadRequest = NewAppError(nil, "неправильный запрос", "bad request", "US-000004")
 )
 
 // Структура "ошибка приложения"

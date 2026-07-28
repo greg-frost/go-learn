@@ -71,20 +71,42 @@ func (h *handler) GetUserByID(w http.ResponseWriter, r *http.Request, p httprout
 
 // Создание пользователя
 func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) error {
-	w.WriteHeader(http.StatusCreated)
 	h.logger.Info("Создание пользователя")
-	w.Write([]byte("Создание пользователя"))
+	var userDTO CreateUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&userDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return apperror.ErrBadRequest
+	}
+
+	user, err := h.service.CreateUser(r.Context(), userDTO)
+	if err != nil {
+		return err
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(user)
 	return nil
-	// return fmt.Errorf("API error")
 }
 
 // Полное обновление пользователя
 func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) error {
-	w.WriteHeader(http.StatusNoContent)
 	h.logger.Info("Полное обновление пользователя")
-	w.Write([]byte("Полное обновление пользователя"))
+	var userDTO UpdateUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&userDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return apperror.ErrBadRequest
+	}
+	userDTO.ID = p.ByName("uuid")
+
+	err := h.service.UpdateUser(r.Context(), userDTO)
+	if err != nil {
+		return err
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
 	return nil
-	// return apperror.NewAppError(nil, "внутренняя ошибка API", "user is immutable", "US-000004")
 }
 
 // Частичное обновление пользователя
@@ -97,8 +119,14 @@ func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request, p httproute
 
 // Удаление пользователя
 func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) error {
-	w.WriteHeader(http.StatusNoContent)
 	h.logger.Info("Удаление пользователя")
-	w.Write([]byte("Удаление пользователя"))
+	uuid := p.ByName("uuid")
+
+	err := h.service.DeleteUser(r.Context(), uuid)
+	if err != nil {
+		return err
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 	return nil
 }
