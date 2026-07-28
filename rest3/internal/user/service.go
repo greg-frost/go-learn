@@ -45,17 +45,36 @@ func (s *service) FindAll(ctx context.Context) ([]User, error) {
 // Создание пользователя
 func (s *service) Create(ctx context.Context, dto CreateUserDTO) (User, error) {
 	s.logger.Debug("Создание пользователя")
+	user := User{
+		Email:    dto.Email,
+		Username: dto.Username,
+	}
+	err := user.encryptPassword(dto.Password)
+	if err != nil {
+		return User{}, err
+	}
+	dto.Password = ""
 	s.logger.Trace(dto)
-	panic("не реализовано")
-	// return s.storage.Create(ctx, dto)
+
+	return s.storage.Create(ctx, user)
 }
 
 // Обновление пользователя
 func (s *service) Update(ctx context.Context, dto UpdateUserDTO) error {
 	s.logger.Debug("Обновление пользователя")
+	user := User{
+		ID:       dto.ID,
+		Email:    dto.Email,
+		Username: dto.Username,
+	}
+	err := user.encryptPassword(dto.Password)
+	if err != nil {
+		return err
+	}
+	dto.Password = ""
 	s.logger.Trace(dto)
-	panic("не реализовано")
-	// return s.storage.Update(ctx, dto)
+
+	return s.storage.Update(ctx, user)
 }
 
 // Удаление пользователя
