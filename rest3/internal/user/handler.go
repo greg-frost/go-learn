@@ -36,7 +36,6 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.GET(userURL, apperror.Middleware(h.GetUserByID))
 	router.POST(usersURL, apperror.Middleware(h.CreateUser))
 	router.PUT(userURL, apperror.Middleware(h.UpdateUser))
-	router.PATCH(userURL, apperror.Middleware(h.EditUser))
 	router.DELETE(userURL, apperror.Middleware(h.DeleteUser))
 }
 
@@ -100,41 +99,6 @@ func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request, p httproute
 	userDTO.ID = p.ByName("uuid")
 
 	err := h.service.UpdateUser(r.Context(), userDTO)
-	if err != nil {
-		return err
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusNoContent)
-	return nil
-}
-
-// Частичное обновление пользователя
-func (h *handler) EditUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) error {
-	h.logger.Info("Частичное обновление пользователя")
-	var userDTO UpdateUserDTO
-	if err := json.NewDecoder(r.Body).Decode(&userDTO); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return apperror.ErrBadRequest
-	}
-	userDTO.ID = p.ByName("uuid")
-
-	user, err := h.service.GetUserByID(r.Context(), userDTO.ID)
-	if err != nil {
-		return err
-	}
-
-	if userDTO.Email == "" {
-		userDTO.Email = user.Email
-	}
-	if userDTO.Username == "" {
-		userDTO.Username = user.Username
-	}
-	// if userDTO.Password == "" {
-	// 	userDTO.Password = user.Password
-	// }
-
-	err = h.service.UpdateUser(r.Context(), userDTO)
 	if err != nil {
 		return err
 	}
