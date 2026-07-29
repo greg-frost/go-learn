@@ -47,55 +47,6 @@ func main() {
 	// Сервис
 	service := user.NewService(storage, log)
 
-	// u := user.User{
-	// 	Username:     "greg_frost",
-	// 	Email:        "noreply@example.com",
-	// 	PasswordHash: "1234567890abcdef",
-	// }
-
-	// uID, err := storage.Create(context.Background(), u)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Info("Создание пользователя:", uID)
-
-	// one, err := storage.FindOne(context.Background(), uID)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Info("Поиск пользователя:", one)
-
-	// one.Email = "reply@example.com"
-	// err = storage.Update(context.Background(), one)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Info("Обновление пользователя:", one)
-
-	// err = storage.Delete(context.Background(), uID)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Info("Удаление пользователя:", uID)
-
-	// one, err = storage.FindOne(context.Background(), uID)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Info("Поиск пользователя:", one)
-
-	// count := 3
-	// for i := 0; i < count; i++ {
-	// 	storage.Create(context.Background(), u)
-	// }
-	// log.Info("Создание пользователей:", count)
-
-	// all, err := storage.FindAll(context.Background())
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Info("Поиск всех пользователей:", all)
-
 	// Создание роутера
 	log.Info("Создание роутера")
 	router := httprouter.New()
