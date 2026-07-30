@@ -120,7 +120,6 @@ func (h *handler) UpdateBook(w http.ResponseWriter, r *http.Request, params http
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(book)
-
 }
 
 // Удаление книги

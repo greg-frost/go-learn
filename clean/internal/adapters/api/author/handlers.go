@@ -120,7 +120,6 @@ func (h *handler) UpdateAuthor(w http.ResponseWriter, r *http.Request, params ht
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(author)
-
 }
 
 // Удаление автора
