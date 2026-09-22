@@ -61,14 +61,14 @@ func PrintStruct(v interface{}) {
 	switch val.Kind() {
 	case reflect.Ptr:
 		if val.Elem().Kind() != reflect.Struct {
-			fmt.Printf("Pointer to %v : %v", val.Elem().Type(), val.Elem())
+			fmt.Printf("Указатель на %v: %v", val.Elem().Type(), val.Elem())
 			return
 		}
 		val = val.Elem() // Если указатель на структуру, берем ее
 
 	case reflect.Struct: // Работаем со структурой
 	default:
-		fmt.Printf("%v : %v", val.Type(), val)
+		fmt.Printf("%v: %v", val.Type(), val)
 		return
 	}
 
