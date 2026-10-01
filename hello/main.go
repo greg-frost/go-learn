@@ -6,5 +6,4 @@ import (
 
 func main() {
 	fmt.Println(" \n[ ПРИВЕТСТВИЕ ]\n ")
-	fmt.Println("Sick")
 }
