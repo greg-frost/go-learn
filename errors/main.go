@@ -217,6 +217,16 @@ func main() {
 	}
 	fmt.Println()
 	fmt.Println("Вызов паники:")
+	go func() {
+		defer func() {
+			// Если не перехватить здесь,
+			// вся программа рухнет
+			if r := recover(); r != nil {
+				fmt.Println("Без паники:", r)
+			}
+		}()
+		panic("Паника внутри!")
+	}()
 	defer func() {
 		err := recover()
 		fmt.Println("Анонимная функция:", err)
