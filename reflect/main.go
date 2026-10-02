@@ -137,7 +137,6 @@ func main() {
 
 	// Перебор полей структуры
 	fmt.Println("Печать структур:")
-	fmt.Println()
 	s := &MyStruct{
 		A: 3,
 		B: "some",
