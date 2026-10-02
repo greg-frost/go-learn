@@ -31,6 +31,13 @@ type MyStruct struct {
 	C bool
 }
 
+// Обновление структуры
+func (m *MyStruct) Update(a int, b string, c bool) {
+	m.A = a
+	m.B = b
+	m.C = c
+}
+
 // Изменение поля структуры
 func ChangeFieldByName(v interface{}, fname string, newval int) {
 	val := reflect.ValueOf(v)
@@ -142,6 +149,19 @@ func main() {
 		E int
 		C string
 	}{10, "text"})
+	fmt.Println()
+
+	// Вызов метода
+	fmt.Println("Вызов метода:")
+	fmt.Println("Оригинальная структура:", *s)
+	v := reflect.ValueOf(s)
+	method := v.MethodByName("Update")
+	method.Call([]reflect.Value{
+		reflect.ValueOf(10),
+		reflect.ValueOf("something"),
+		reflect.ValueOf(true),
+	})
+	fmt.Println("Обновленная структура:", *s)
 	fmt.Println()
 
 	// Разное
