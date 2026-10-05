@@ -156,6 +156,16 @@ func main() {
 	TestType(true)
 	fmt.Println()
 
+	// Псевдонимы типов
+	fmt.Println("Псевдонимы типов:")
+	// type myInt int // Будет ошибка
+	type myInt = int // Псевдонимы - ок
+	var cnt myInt = 3
+	for i := 0; i < cnt; i++ {
+		fmt.Println("Hello, World War", i+1)
+	}
+	fmt.Println()
+
 	// Интерфейсы и nil
 	fmt.Println("Интерфейсы и nil:")
 	var str *string
