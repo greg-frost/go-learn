@@ -86,6 +86,13 @@ func PrintStruct(v interface{}) {
 	}
 }
 
+// Проверка существования метода
+func IsMethodExist(obj interface{}, methodName string) bool {
+	t := reflect.TypeOf(obj)
+	_, ok := t.MethodByName(methodName)
+	return ok
+}
+
 // Структура "нулевой пользовательский тип"
 type MyNilType struct{}
 
@@ -152,6 +159,8 @@ func main() {
 
 	// Вызов метода
 	fmt.Println("Вызов метода:")
+	fmt.Println("Есть ли метод Update:", IsMethodExist(s, "Update"))
+	fmt.Println("Есть ли метод Change:", IsMethodExist(s, "Change"))
 	fmt.Println("Оригинальная структура:", *s)
 	v := reflect.ValueOf(s)
 	method := v.MethodByName("Update")
@@ -160,7 +169,7 @@ func main() {
 		reflect.ValueOf("something"),
 		reflect.ValueOf(true),
 	})
-	fmt.Println("Обновленная структура:", *s)
+	fmt.Println("Структура после Update:", *s)
 	fmt.Println()
 
 	// Разное
