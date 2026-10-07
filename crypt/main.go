@@ -61,4 +61,14 @@ func main() {
 	sha256Hash.Write(msg)
 	sha256Val := sha256Hash.Sum(nil)
 	fmt.Println(sha256Val)
+	fmt.Println()
+
+	// SHA256 (N раз)
+	n := 1000
+	fmt.Printf("SHA256 (%d раз):\n", n)
+	hash := sha256.Sum256(msg)
+	for i := 1; i < n; i++ {
+		hash = sha256.Sum256(hash[:])
+	}
+	fmt.Println(hash[:])
 }
