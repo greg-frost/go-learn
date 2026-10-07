@@ -87,7 +87,7 @@ func PrintStruct(v interface{}) {
 }
 
 // Проверка существования метода
-func IsMethodExist(obj interface{}, methodName string) bool {
+func IsMethodExists(obj interface{}, methodName string) bool {
 	t := reflect.TypeOf(obj)
 	_, ok := t.MethodByName(methodName)
 	return ok
@@ -159,8 +159,8 @@ func main() {
 
 	// Вызов метода
 	fmt.Println("Вызов метода:")
-	fmt.Println("Есть ли метод Update:", IsMethodExist(s, "Update"))
-	fmt.Println("Есть ли метод Change:", IsMethodExist(s, "Change"))
+	fmt.Println("Есть ли метод Update:", IsMethodExists(s, "Update"))
+	fmt.Println("Есть ли метод Change:", IsMethodExists(s, "Change"))
 	fmt.Println("Оригинальная структура:", *s)
 	v := reflect.ValueOf(s)
 	method := v.MethodByName("Update")
