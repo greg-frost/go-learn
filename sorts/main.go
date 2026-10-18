@@ -470,8 +470,8 @@ func pivot(l, h int) int {
 	// return l + rand.Intn(h-l+1) // Случайный
 }
 
-// Сортировка подсчетом
-func CountSort(a Array) (_ Array, iterations, depth int) {
+// Сортировка подсчетом (с заполнением)
+func CountFillSort(a Array) (_ Array, iterations, depth int) {
 	if len(a) <= 1 {
 		return a, iterations, depth
 	}
@@ -496,6 +496,34 @@ func CountSort(a Array) (_ Array, iterations, depth int) {
 	}
 
 	return a, iterations, depth
+}
+
+// Сортировка подсчетом (с маршрутизацией)
+func CountIndexSort(a Array) (_ Array, iterations, depth int) {
+	if len(a) <= 1 {
+		return a, iterations, depth
+	}
+
+	min, max := arrSizes(a)
+	iterations += len(a)
+	count := make([]int, max-min+1)
+	for _, v := range a {
+		count[v-min]++
+		iterations++
+	}
+
+	for i := 1; i < len(count); i++ {
+		count[i] += count[i-1]
+	}
+
+	b := make(Array, len(a))
+	for _, v := range a {
+		b[count[v-min]-1] = v
+		count[v-min]--
+		iterations++
+	}
+
+	return b, iterations, depth
 }
 
 // Число блоков
@@ -582,13 +610,17 @@ func main() {
 	min := 0    // Минимальное значение
 	max := 1000 // Максимальное значение
 
-	const printSize = 10      // Размер фрагмента массива для печати
-	const slowCap = 10_000    // Лимит на размер для медленных сортировок
-	const midCap = 10_000_000 // Лимит на размер для средних сортировок
+	const printSize = 10        // Размер фрагмента массива для печати
+	const slowCap = 10_000      // Лимит на размер для медленных сортировок
+	const midCap = 10_000_000   // Лимит на размер для средних сортировок
+	const sizeCap = 100_000_000 // Общий лимит на размер массива
 
 	// Генерация массива
 	fmt.Print("Введите размер массива (и минимум, максимум): ")
 	fmt.Scanf("%d %d %d", &size, &min, &max)
+	if size > sizeCap {
+		size = sizeCap
+	}
 	arr, duration := GenerateArray(size, min, max)
 	fmt.Println()
 	PrintArrayReport(size, min, max, arr, printSize)
@@ -616,7 +648,8 @@ func main() {
 		{"Быстрая сортировка, с копированием", QuickCopySort, false, true},
 		{"Быстрая сортировка, с перестановками", QuickSwapSort, false, true},
 		{"Быстрая сортировка, параллельная", QuickParallelSort, false, true},
-		{"Сортировка подсчетом", CountSort, false, false},
+		{"Сортировка подсчетом, с заполнением", CountFillSort, false, false},
+		{"Сортировка подсчетом, с маршрутизацией", CountIndexSort, false, false},
 		{"Блочная сортировка", BlockSort, false, true},
 	}
 	for _, sort := range sorts {
