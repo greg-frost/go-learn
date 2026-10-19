@@ -514,6 +514,7 @@ func CountIndexSort(a Array) (_ Array, iterations, depth int) {
 
 	for i := 1; i < len(count); i++ {
 		count[i] += count[i-1]
+		iterations++
 	}
 
 	b := make(Array, len(a))
@@ -524,6 +525,36 @@ func CountIndexSort(a Array) (_ Array, iterations, depth int) {
 	}
 
 	return b, iterations, depth
+}
+
+// Поразрядная сортировка
+func RadixSort(a Array) (_ Array, iterations, depth int) {
+	if len(a) <= 1 {
+		return a, iterations, depth
+	}
+
+	_, max := arrSizes(a)
+	iterations += len(a)
+	var digits [10][]int
+	mod := 1
+	for mod <= max {
+		for _, v := range a {
+			d := (v % (mod * 10)) / mod
+			digits[d] = append(digits[d], v)
+			iterations++
+		}
+		for i, j := 0, 0; i < 10; i++ {
+			for _, v := range digits[i] {
+				a[j] = v
+				j++
+				iterations++
+			}
+			digits[i] = digits[i][:0]
+		}
+		mod *= 10
+	}
+
+	return a, iterations, depth
 }
 
 // Число блоков
@@ -650,6 +681,7 @@ func main() {
 		{"Быстрая сортировка, параллельная", QuickParallelSort, false, true},
 		{"Сортировка подсчетом, с заполнением", CountFillSort, false, false},
 		{"Сортировка подсчетом, с маршрутизацией", CountIndexSort, false, false},
+		{"Поразрядная сортировка", RadixSort, false, true},
 		{"Блочная сортировка", BlockSort, false, true},
 	}
 	for _, sort := range sorts {
