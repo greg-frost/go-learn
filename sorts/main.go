@@ -551,6 +551,7 @@ func RadixSort(a Array) (_ Array, iterations, depth int) {
 			}
 			digits[i] = digits[i][:0]
 		}
+		depth++
 		mod *= 10
 	}
 
