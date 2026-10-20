@@ -536,10 +536,10 @@ func RadixSort(a Array) (_ Array, iterations, depth int) {
 	_, max := arrSizes(a)
 	iterations += len(a)
 	var digits [10][]int
-	mod := 1
-	for mod <= max {
+	exp := 1
+	for exp <= max {
 		for _, v := range a {
-			d := (v % (mod * 10)) / mod
+			d := (v % (exp * 10)) / exp
 			digits[d] = append(digits[d], v)
 			iterations++
 		}
@@ -549,10 +549,10 @@ func RadixSort(a Array) (_ Array, iterations, depth int) {
 				j++
 				iterations++
 			}
-			digits[i] = digits[i][:0]
+			digits[i] = digits[i][: 0 : len(digits[i])/10]
 		}
 		depth++
-		mod *= 10
+		exp *= 10
 	}
 
 	return a, iterations, depth
