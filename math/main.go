@@ -109,4 +109,11 @@ func main() {
 		fmt.Printf("%d ", pow[i])
 	}
 	fmt.Println()
+	fmt.Println()
+
+	// Деление на ноль
+	fmt.Println("Деление на ноль:")
+	fmt.Println("Int: (паника)")
+	f := 500.0
+	fmt.Println("Float:", f/0)
 }
