@@ -72,6 +72,43 @@ func RunLamportClocks(id int, send, recv chan LamportMessage, wg *sync.WaitGroup
 	wg.Done()
 }
 
+// Тип "векторные часы"
+type VectorClock []int
+
+func (vc VectorClock) Clone() VectorClock {
+	res := make(VectorClock, len(vc))
+	copy(res, vc)
+	return res
+}
+
+// Локальное событие
+func (vc VectorClock) Tick(idx int) {
+	vc[idx]++
+}
+
+// Слияние часов
+func (vc VectorClock) Merge(other VectorClock) {
+	for i := range vc {
+		if other[i] > vc[i] {
+			vc[i] = other[i]
+		}
+	}
+}
+
+// Сравнение часов
+func (vc1 VectorClock) Before(vc2 VectorClock) bool {
+	var less bool
+	for i := range vc1 {
+		if vc1[i] > vc2[i] {
+			return false
+		}
+		if vc1[i] < vc2[i] {
+			less = true
+		}
+	}
+	return less
+}
+
 func main() {
 	fmt.Println(" \n[ ЛОГИЧЕСКИЕ ЧАСЫ ]\n ")
 
