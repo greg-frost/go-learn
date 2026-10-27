@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Часы Лэмпорта
+// Структура "часы Лэмпорта"
 type LamportClock struct {
 	value int
 	mu    sync.Mutex
@@ -31,35 +31,36 @@ func (c *LamportClock) Update(received int) int {
 	return c.value
 }
 
-// Структура "сообщение"
-type Message struct {
+// Структура "сообщение Лэмпорта"
+type LamportMessage struct {
 	SenderID int
 	Clock    int
 	Payload  string
 }
 
-func runProcess(id int, sendCh, recvCh chan Message, wg *sync.WaitGroup, delay time.Duration) {
+// Запуск общения часов Лэмпорта
+func RunLamportClocks(id int, send, recv chan LamportMessage, wg *sync.WaitGroup, d time.Duration) {
 	clock := new(LamportClock)
 
 	// Локальное событие
 	t1 := clock.Tick()
 	fmt.Printf("[P%d] локальное событие #1, время=%d\n", id, t1)
 
-	time.Sleep(delay)
+	time.Sleep(d)
 
 	// Отправляем сообщение
 	// (перед отправкой увеличиваем счетчик)
 	t2 := clock.Tick()
-	msg := Message{
+	msg := LamportMessage{
 		SenderID: id,
 		Clock:    t2,
-		Payload:  "Hello",
+		Payload:  "Lamport",
 	}
-	sendCh <- msg
+	send <- msg
 	fmt.Printf("[P%d] отправил сообщение, время=%d\n", id, t2)
 
 	// Ждем входящее сообщение
-	incoming := <-recvCh
+	incoming := <-recv
 	t3 := clock.Update(incoming.Clock)
 	fmt.Printf("[P%d] получил сообщение от P%d (время=%d), новое время=%d, payload=%s\n",
 		id, incoming.SenderID, incoming.Clock, t3, incoming.Payload)
@@ -76,10 +77,10 @@ func main() {
 
 	fmt.Println("Часы Лэмпорта:")
 	var wg sync.WaitGroup
-	chAtoB := make(chan Message, 1)
-	chBtoA := make(chan Message, 1)
+	p1 := make(chan LamportMessage, 1)
+	p2 := make(chan LamportMessage, 1)
 	wg.Add(2)
-	go runProcess(0, chAtoB, chBtoA, &wg, 200*time.Millisecond)
-	go runProcess(1, chBtoA, chAtoB, &wg, 300*time.Millisecond)
+	go RunLamportClocks(0, p1, p2, &wg, 200*time.Millisecond)
+	go RunLamportClocks(1, p2, p1, &wg, 300*time.Millisecond)
 	wg.Wait()
 }
