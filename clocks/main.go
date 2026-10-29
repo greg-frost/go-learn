@@ -80,7 +80,7 @@ func RunLamportClocks(id int, send, recv chan LamportMessage, wg *sync.WaitGroup
 // Структура "векторные часы"
 type VectorClock struct {
 	values []int
-	mu     sync.Mutex
+	mu     sync.RWMutex
 }
 
 // Конструктор
@@ -92,6 +92,8 @@ func NewVectorClock(size int) *VectorClock {
 
 // Клонирование часов
 func (vc *VectorClock) Clone() *VectorClock {
+	vc.mu.RLock()
+	defer vc.mu.RUnlock()
 	res := make([]int, len(vc.values))
 	copy(res, vc.values)
 	return &VectorClock{
@@ -101,11 +103,15 @@ func (vc *VectorClock) Clone() *VectorClock {
 
 // Локальное событие
 func (vc *VectorClock) Tick(id int) {
+	vc.mu.Lock()
+	defer vc.mu.Unlock()
 	vc.values[id]++
 }
 
 // Слияние часов
 func (vc *VectorClock) Merge(other *VectorClock) {
+	vc.mu.Lock()
+	defer vc.mu.Unlock()
 	for id := range vc.values {
 		if other.values[id] > vc.values[id] {
 			vc.values[id] = other.values[id]
@@ -114,13 +120,15 @@ func (vc *VectorClock) Merge(other *VectorClock) {
 }
 
 // Сравнение часов
-func (vc1 *VectorClock) Before(vc2 *VectorClock) bool {
+func (vc *VectorClock) Before(other *VectorClock) bool {
+	vc.mu.RLock()
+	defer vc.mu.RUnlock()
 	var less bool
-	for id := range vc1.values {
-		if vc1.values[id] > vc2.values[id] {
+	for id := range vc.values {
+		if vc.values[id] > other.values[id] {
 			return false
 		}
-		if vc1.values[id] < vc2.values[id] {
+		if vc.values[id] < other.values[id] {
 			less = true
 		}
 	}
