@@ -12,23 +12,28 @@ type LamportClock struct {
 	mu    sync.Mutex
 }
 
+// Конструктор
+func NewLamportClock() *LamportClock {
+	return new(LamportClock)
+}
+
 // Локальное событие
-func (c *LamportClock) Tick() int {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	c.value++
-	return c.value
+func (lc *LamportClock) Tick() int {
+	lc.mu.Lock()
+	defer lc.mu.Unlock()
+	lc.value++
+	return lc.value
 }
 
 // Получение события
-func (c *LamportClock) Update(received int) int {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	if received > c.value {
-		c.value = received
+func (lc *LamportClock) Update(received int) int {
+	lc.mu.Lock()
+	defer lc.mu.Unlock()
+	if received > lc.value {
+		lc.value = received
 	}
-	c.value++
-	return c.value
+	lc.value++
+	return lc.value
 }
 
 // Структура "сообщение Лэмпорта"
@@ -40,7 +45,7 @@ type LamportMessage struct {
 
 // Запуск общения часов Лэмпорта
 func RunLamportClocks(id int, send, recv chan LamportMessage, wg *sync.WaitGroup, d time.Duration) {
-	clock := new(LamportClock)
+	clock := NewLamportClock()
 
 	// Локальное событие
 	t1 := clock.Tick()
@@ -72,37 +77,50 @@ func RunLamportClocks(id int, send, recv chan LamportMessage, wg *sync.WaitGroup
 	wg.Done()
 }
 
-// Тип "векторные часы"
-type VectorClock []int
+// Структура "векторные часы"
+type VectorClock struct {
+	values []int
+	mu     sync.Mutex
+}
 
-func (vc VectorClock) Clone() VectorClock {
-	res := make(VectorClock, len(vc))
-	copy(res, vc)
-	return res
+// Конструктор
+func NewVectorClock(size int) *VectorClock {
+	return &VectorClock{
+		values: make([]int, size),
+	}
+}
+
+// Клонирование часов
+func (vc *VectorClock) Clone() *VectorClock {
+	res := make([]int, len(vc.values))
+	copy(res, vc.values)
+	return &VectorClock{
+		values: res,
+	}
 }
 
 // Локальное событие
-func (vc VectorClock) Tick(idx int) {
-	vc[idx]++
+func (vc *VectorClock) Tick(id int) {
+	vc.values[id]++
 }
 
 // Слияние часов
-func (vc VectorClock) Merge(other VectorClock) {
-	for i := range vc {
-		if other[i] > vc[i] {
-			vc[i] = other[i]
+func (vc *VectorClock) Merge(other *VectorClock) {
+	for id := range vc.values {
+		if other.values[id] > vc.values[id] {
+			vc.values[id] = other.values[id]
 		}
 	}
 }
 
 // Сравнение часов
-func (vc1 VectorClock) Before(vc2 VectorClock) bool {
+func (vc1 *VectorClock) Before(vc2 *VectorClock) bool {
 	var less bool
-	for i := range vc1 {
-		if vc1[i] > vc2[i] {
+	for id := range vc1.values {
+		if vc1.values[id] > vc2.values[id] {
 			return false
 		}
-		if vc1[i] < vc2[i] {
+		if vc1.values[id] < vc2.values[id] {
 			less = true
 		}
 	}
