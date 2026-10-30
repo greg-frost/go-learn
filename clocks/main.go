@@ -138,6 +138,7 @@ func (vc *VectorClock) Before(other *VectorClock) bool {
 func main() {
 	fmt.Println(" \n[ ЛОГИЧЕСКИЕ ЧАСЫ ]\n ")
 
+	// Часы Лэмпорта
 	fmt.Println("Часы Лэмпорта:")
 	var wg sync.WaitGroup
 	p1 := make(chan LamportMessage, 1)
@@ -146,4 +147,11 @@ func main() {
 	go RunLamportClocks(0, p1, p2, &wg, 200*time.Millisecond)
 	go RunLamportClocks(1, p2, p1, &wg, 300*time.Millisecond)
 	wg.Wait()
+	fmt.Println()
+
+	// Векторные часы
+	fmt.Println("Векторные часы:")
+	// на каждое локальное событие: clock.Increment(myID);
+	// при отправке сообщения: прикрепляем clock.Clone();
+	// при получении: clock.Increment(myID), затем clock.Merge(receivedClock).
 }
