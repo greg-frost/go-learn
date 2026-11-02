@@ -135,6 +135,17 @@ func (vc *VectorClock) Before(other *VectorClock) bool {
 	return less
 }
 
+// Структура "векторное сообщение"
+type VectorMessage struct {
+	SenderID int
+	Clock    *VectorClock
+	Payload  string
+}
+
+// Запуск общения векторных часов
+func RunVectorClocks(id int, a, b, c chan VectorMessage, wg *sync.WaitGroup, d time.Duration) {
+}
+
 func main() {
 	fmt.Println(" \n[ ЛОГИЧЕСКИЕ ЧАСЫ ]\n ")
 
