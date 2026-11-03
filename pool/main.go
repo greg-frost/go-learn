@@ -7,7 +7,7 @@ import (
 )
 
 // Число воркеров
-const workers = 3
+const workersCount = 3
 
 // Структура "задача"
 type Job struct {
@@ -23,9 +23,9 @@ type Result struct {
 }
 
 // Обработка задач
-func Process(worker int, jobs chan Job, done chan Result, wg *sync.WaitGroup) {
+func Process(worker int, jobs chan Job, ress chan Result, wg *sync.WaitGroup) {
 	for j := range jobs {
-		done <- Result{
+		ress <- Result{
 			job:    j,
 			worker: worker,
 			res:    strings.ToUpper(j.word),
@@ -35,7 +35,7 @@ func Process(worker int, jobs chan Job, done chan Result, wg *sync.WaitGroup) {
 }
 
 func main() {
-	fmt.Println(" \n[ ПУЛ ]\n ")
+	fmt.Println(" \n[ ПУЛ 1 ]\n ")
 
 	// Исходные данные
 	words := []string{"Hello", "Cruel", "World", "Goodbye", "My", "Darling", "Seniorita"}
@@ -44,8 +44,8 @@ func main() {
 	fmt.Println()
 
 	// Каналы для задач, результатов и завершения
-	jobs := make(chan Job, workers)
-	ress := make(chan Result, workers)
+	jobs := make(chan Job, workersCount)
+	ress := make(chan Result, workersCount)
 	done := make(chan bool)
 
 	// Постановка задач в очередь
@@ -56,8 +56,8 @@ func main() {
 				word: w,
 			}
 		}
-		close(jobs)
 		fmt.Println("Задачи добавлены")
+		close(jobs)
 	}()
 
 	// Получение результатов
@@ -66,18 +66,19 @@ func main() {
 		for r := range ress {
 			res[r.job.id] = r.res
 		}
-		done <- true
 		fmt.Println("Результаты получены")
+		done <- true
 	}()
 
 	// Запуск воркеров для обработки задач
 	var wg sync.WaitGroup
-	for i := 0; i < workers; i++ {
+	for i := 0; i < workersCount; i++ {
 		wg.Add(1)
 		go Process(i+1, jobs, ress, &wg)
 	}
+	fmt.Println("Воркеры запущены")
 	wg.Wait()
-	fmt.Println("Обработчики запущены")
+	fmt.Println("Воркеры завершены")
 	close(ress)
 
 	<-done
