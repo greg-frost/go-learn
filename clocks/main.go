@@ -46,6 +46,7 @@ type LamportMessage struct {
 // Запуск общения часов Лэмпорта
 func RunLamportClocks(id int, send, recv chan LamportMessage, wg *sync.WaitGroup, d time.Duration) {
 	clock := NewLamportClock()
+	defer wg.Done()
 
 	// Локальное событие
 	t1 := clock.Tick()
@@ -67,14 +68,12 @@ func RunLamportClocks(id int, send, recv chan LamportMessage, wg *sync.WaitGroup
 	// Ждем входящее сообщение
 	incoming := <-recv
 	t3 := clock.Update(incoming.Clock)
-	fmt.Printf("[P%d] получил сообщение от P%d (время=%d), новое время=%d, payload=%s\n",
-		id, incoming.SenderID, incoming.Clock, t3, incoming.Payload)
+	fmt.Printf("[P%d] получил сообщение от P%d (время=%d), новое время=%d\n",
+		id, incoming.SenderID, incoming.Clock, t3)
 
 	// Еще одно локальное событие
 	t4 := clock.Tick()
 	fmt.Printf("[P%d] локальное событие #2, время=%d\n", id, t4)
-
-	wg.Done()
 }
 
 // Структура "векторные часы"
@@ -142,12 +141,10 @@ type VectorMessage struct {
 	Payload  string
 }
 
-// Размер векторных часов
-const vectorSize = 3
-
 // Запуск общения векторных часов
 func RunVectorClocks(id int, r, s1, s2 chan VectorMessage, wg *sync.WaitGroup, d time.Duration) {
-	clock := NewVectorClock(vectorSize)
+	clock := NewVectorClock(3)
+	defer wg.Done()
 
 	// Локальное событие
 	clock.Tick(id)
@@ -167,17 +164,21 @@ func RunVectorClocks(id int, r, s1, s2 chan VectorMessage, wg *sync.WaitGroup, d
 	s2 <- msg
 	fmt.Printf("[P%d] отправил сообщение, время=%v\n", id, clock.values)
 
-	// Ждем входящее сообщение
+	// Ждем первое входящее сообщение
 	incoming := <-r
 	clock.Merge(incoming.Clock)
-	fmt.Printf("[P%d] получил сообщение от P%d (время=%v), новое время=%v, payload=%s\n",
-		id, incoming.SenderID, incoming.Clock.values, clock.values, incoming.Payload)
+	fmt.Printf("[P%d] получил сообщение от P%d (время=%v), новое время=%v\n",
+		id, incoming.SenderID, incoming.Clock.values, clock.values)
+
+	// Ждем второе входящее сообщение
+	incoming = <-r
+	clock.Merge(incoming.Clock)
+	fmt.Printf("[P%d] получил сообщение от P%d (время=%v), новое время=%v\n",
+		id, incoming.SenderID, incoming.Clock.values, clock.values)
 
 	// Еще одно локальное событие
 	clock.Tick(id)
 	fmt.Printf("[P%d] локальное событие #2, время=%d\n", id, clock.values)
-
-	wg.Done()
 }
 
 func main() {
