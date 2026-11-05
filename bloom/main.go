@@ -11,6 +11,37 @@ const groupsCount = 3
 // Размер фильтра
 const filterSize = 10
 
+// Структура "фильтр Блума"
+type BloomFilter struct {
+	bits []bool
+}
+
+// Конструктор
+func NewBloomFilter() *BloomFilter {
+	return &BloomFilter{
+		bits: make([]bool, filterSize),
+	}
+}
+
+// Вставка значения
+func (bf *BloomFilter) Insert(key string) {
+	bits := groups(key, groupsCount, filterSize)
+	for _, i := range bits {
+		bf.bits[i] = true
+	}
+}
+
+// Проверка наличия значения
+func (bf *BloomFilter) Contains(key string) bool {
+	bits := groups(key, groupsCount, filterSize)
+	for _, i := range bits {
+		if bf.bits[i] == false {
+			return false
+		}
+	}
+	return true
+}
+
 // Хэш строки
 func hash(str string) []byte {
 	sha256Hash := sha256.New()
@@ -36,14 +67,22 @@ func groups(str string, n, m int) []int {
 func main() {
 	fmt.Println(" \n[ ФИЛЬТР БЛУМА ]\n ")
 
-	insert := []string{"Apple", "Banana", "Peach", "Mango", "Kiwi"}
-	check := []string{"Applebee", "Bananan", "Peach", "Mongo", "Kill"}
+	bloom := NewBloomFilter()
 
+	// Вставка
+	insert := []string{"Apple", "Banana", "Peach", "Mango", "Kiwi"}
+	fmt.Println("Вставка значений")
 	for _, s := range insert {
-		fmt.Println(s, groups(s, groupsCount, filterSize))
+		bloom.Insert(s)
+		fmt.Println(s)
 	}
 	fmt.Println()
+
+	// Проверка
+	fmt.Println("Проверка значений")
+	check := []string{"Applebee", "Bananan", "Peach", "Mongo", "Kill"}
 	for _, s := range check {
-		fmt.Println(s, groups(s, groupsCount, filterSize))
+		res := bloom.Contains(s)
+		fmt.Printf("%s: %t\n", s, res)
 	}
 }
