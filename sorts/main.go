@@ -614,6 +614,12 @@ func BlockSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Сортировка Тима
+func TimSort(a Array) (_ Array, iterations, depth int) {
+	a, iterations, depth = InsertSwapSort(a)
+	return a, iterations, depth
+}
+
 // Печать массива
 func printArray(arr Array, printSize int) {
 	if len(arr) > printSize {
@@ -684,6 +690,7 @@ func main() {
 		{"Сортировка подсчетом, с маршрутизацией", CountIndexSort, false, false},
 		{"Поразрядная сортировка", RadixSort, false, true},
 		{"Блочная сортировка", BlockSort, false, true},
+		{"Сортировка Тима", TimSort, true, false},
 	}
 	for _, sort := range sorts {
 		if sort.isSlow && size > slowCap {
