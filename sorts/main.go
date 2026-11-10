@@ -152,6 +152,18 @@ func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+func insertionSort(arr []int, left, right int) {
+	for i := left + 1; i <= right; i++ {
+		key := arr[i]
+		j := i - 1
+		for j >= left && arr[j] > key {
+			arr[j+1] = arr[j]
+			j--
+		}
+		arr[j+1] = key
+	}
+}
+
 // Сортировка расческой
 func CombSort(a Array) (_ Array, iterations, depth int) {
 	const factor = 1.247
@@ -614,9 +626,44 @@ func BlockSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Размер "ранна" (блока, группы)
+const runSize = 32
+
 // Сортировка Тима
 func TimSort(a Array) (_ Array, iterations, depth int) {
-	a, iterations, depth = InsertSwapSort(a)
+	n := len(a)
+	if n <= 1 {
+		return a, iterations, depth
+	}
+
+	for l := 0; l < n; l += runSize {
+		h := l + runSize - 1
+		if h >= n {
+			h = n - 1
+		}
+		_, iIterations, iDepth := InsertSwapSort(a[l : h+1])
+		iterations += iIterations
+		depth += iDepth
+	}
+
+	size := runSize
+	for size < n {
+		for l := 0; l < n; l += 2 * size {
+			m := l + size - 1
+			h := l + 2*size - 1
+			if m >= n-1 {
+				continue
+			}
+			if h >= n {
+				h = n - 1
+			}
+			mergeSwap(a, l, m, h)
+			iterations += h - l
+			depth++
+		}
+		size *= 2
+	}
+
 	return a, iterations, depth
 }
 
@@ -690,7 +737,7 @@ func main() {
 		{"Сортировка подсчетом, с маршрутизацией", CountIndexSort, false, false},
 		{"Поразрядная сортировка", RadixSort, false, true},
 		{"Блочная сортировка", BlockSort, false, true},
-		{"Сортировка Тима", TimSort, true, false},
+		{"Сортировка Тима", TimSort, false, true},
 	}
 	for _, sort := range sorts {
 		if sort.isSlow && size > slowCap {
