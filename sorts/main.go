@@ -626,7 +626,7 @@ func BlockSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Размер "ранна" (блока, группы)
+// Размер "ранна" (блока)
 const runSize = 32
 
 // Сортировка Тима
@@ -641,9 +641,8 @@ func TimSort(a Array) (_ Array, iterations, depth int) {
 		if h >= n {
 			h = n - 1
 		}
-		_, iIterations, iDepth := InsertSwapSort(a[l : h+1])
+		_, iIterations, _ := InsertSwapSort(a[l : h+1])
 		iterations += iIterations
-		depth += iDepth
 	}
 
 	size := runSize
