@@ -168,18 +168,6 @@ func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// func insertionSort(arr []int, left, right int) {
-// 	for i := left + 1; i <= right; i++ {
-// 		key := arr[i]
-// 		j := i - 1
-// 		for j >= left && arr[j] > key {
-// 			arr[j+1] = arr[j]
-// 			j--
-// 		}
-// 		arr[j+1] = key
-// 	}
-// }
-
 // Сортировка расческой
 func CombSort(a Array) (_ Array, iterations, depth int) {
 	const factor = 1.247
