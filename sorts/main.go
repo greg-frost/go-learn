@@ -138,6 +138,22 @@ func InsertCopySort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
+// Сортировка вставками (с перемещением)
+func InsertMoveSort(a Array) (_ Array, iterations, depth int) {
+	for i := 1; i < len(a); i++ {
+		key := a[i]
+		j := i - 1
+		for j >= 0 && a[j] > key {
+			a[j+1] = a[j]
+			j--
+			iterations++
+		}
+		a[j+1] = key
+		iterations++
+	}
+	return a, iterations, depth
+}
+
 // Сортировка вставками (с перестановками)
 func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
 	for i := 1; i < len(a); i++ {
@@ -152,17 +168,17 @@ func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-func insertionSort(arr []int, left, right int) {
-	for i := left + 1; i <= right; i++ {
-		key := arr[i]
-		j := i - 1
-		for j >= left && arr[j] > key {
-			arr[j+1] = arr[j]
-			j--
-		}
-		arr[j+1] = key
-	}
-}
+// func insertionSort(arr []int, left, right int) {
+// 	for i := left + 1; i <= right; i++ {
+// 		key := arr[i]
+// 		j := i - 1
+// 		for j >= left && arr[j] > key {
+// 			arr[j+1] = arr[j]
+// 			j--
+// 		}
+// 		arr[j+1] = key
+// 	}
+// }
 
 // Сортировка расческой
 func CombSort(a Array) (_ Array, iterations, depth int) {
@@ -641,7 +657,7 @@ func TimSort(a Array) (_ Array, iterations, depth int) {
 		if h >= n {
 			h = n - 1
 		}
-		_, iIterations, _ := InsertSwapSort(a[l : h+1])
+		_, iIterations, _ := InsertMoveSort(a[l : h+1])
 		iterations += iIterations
 	}
 
@@ -723,6 +739,7 @@ func main() {
 		{"Сортировка пузырьком, с вытеснением", BubblePopSort, true, false},
 		{"Сортировка выбором", SelectSort, true, false},
 		{"Сортировка вставками, с копированием", InsertCopySort, true, false},
+		{"Сортировка вставками, с перемещением", InsertMoveSort, true, false},
 		{"Сортировка вставками, с перестановками", InsertSwapSort, true, false},
 		{"Сортировка расческой", CombSort, false, true},
 		{"Сортировка кучей", HeapSort, false, true},
