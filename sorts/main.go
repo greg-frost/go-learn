@@ -76,6 +76,19 @@ func Sort(sort SortFunc, arr Array) (a Array, iterations, depth int, duration ti
 	return a, iterations, depth, duration
 }
 
+// Сортировка пузырьком (с вытеснением большего значения вверх)
+func BubblePopSort(a Array) (_ Array, iterations, depth int) {
+	for j := len(a) - 1; j > 0; j-- {
+		for i := 0; i < j; i++ {
+			if a[i] > a[i+1] {
+				a[i], a[i+1] = a[i+1], a[i]
+			}
+			iterations++
+		}
+	}
+	return a, iterations, depth
+}
+
 // Сортировка пузырьком (продолжающаяся, пока есть перестановки)
 func BubbleRunSort(a Array) (_ Array, iterations, depth int) {
 	var sorted bool
@@ -85,19 +98,6 @@ func BubbleRunSort(a Array) (_ Array, iterations, depth int) {
 			if a[i] > a[i+1] {
 				a[i], a[i+1] = a[i+1], a[i]
 				sorted = false
-			}
-			iterations++
-		}
-	}
-	return a, iterations, depth
-}
-
-// Сортировка пузырьком (с вытеснением большего значения вверх)
-func BubblePopSort(a Array) (_ Array, iterations, depth int) {
-	for j := len(a) - 1; j > 0; j-- {
-		for i := 0; i < j; i++ {
-			if a[i] > a[i+1] {
-				a[i], a[i+1] = a[i+1], a[i]
 			}
 			iterations++
 		}
@@ -138,8 +138,8 @@ func InsertCopySort(a Array) (_ Array, iterations, depth int) {
 	return a, iterations, depth
 }
 
-// Сортировка вставками (с перемещением)
-func InsertMoveSort(a Array) (_ Array, iterations, depth int) {
+// Сортировка вставками (с перестановками)
+func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
 	for i := 1; i < len(a); i++ {
 		key := a[i]
 		j := i - 1
@@ -148,21 +148,8 @@ func InsertMoveSort(a Array) (_ Array, iterations, depth int) {
 			j--
 			iterations++
 		}
-		a[j+1] = key
-		iterations++
-	}
-	return a, iterations, depth
-}
 
-// Сортировка вставками (с перестановками)
-func InsertSwapSort(a Array) (_ Array, iterations, depth int) {
-	for i := 1; i < len(a); i++ {
-		j := i
-		for j > 0 && a[j] < a[j-1] {
-			a[j], a[j-1] = a[j-1], a[j]
-			j--
-			iterations++
-		}
+		a[j+1] = key
 		iterations++
 	}
 	return a, iterations, depth
@@ -645,7 +632,7 @@ func TimSort(a Array) (_ Array, iterations, depth int) {
 		if h >= n {
 			h = n - 1
 		}
-		_, iIterations, _ := InsertMoveSort(a[l : h+1])
+		_, iIterations, _ := InsertSwapSort(a[l : h+1])
 		iterations += iIterations
 	}
 
@@ -727,7 +714,6 @@ func main() {
 		{"Сортировка пузырьком, с вытеснением", BubblePopSort, true, false},
 		{"Сортировка выбором", SelectSort, true, false},
 		{"Сортировка вставками, с копированием", InsertCopySort, true, false},
-		{"Сортировка вставками, с перемещением", InsertMoveSort, true, false},
 		{"Сортировка вставками, с перестановками", InsertSwapSort, true, false},
 		{"Сортировка расческой", CombSort, false, true},
 		{"Сортировка кучей", HeapSort, false, true},
