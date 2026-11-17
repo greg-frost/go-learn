@@ -9,9 +9,6 @@ import (
 // Число воркеров
 const workersCount = 3
 
-// Размер буфера
-const bufferSize = 5
-
 // Структура "задача"
 type Job struct {
 	id   int
@@ -37,17 +34,16 @@ func Process(worker int, jobs chan Job, ress chan Result) {
 }
 
 func main() {
-	fmt.Println(" \n[ ПУЛ 2 ]\n ")
+	fmt.Println(" \n[ ПУЛ ВОРКЕРОВ ]\n ")
 
 	// Исходные данные
 	words := []string{"Hello", "My", "Darling", "Seniorita", "Goodbye", "Cruel", "World"}
-	n := len(words)
 	fmt.Println(words)
 	fmt.Println()
 
 	// Каналы для задач и результатов
-	jobs := make(chan Job, bufferSize)
-	ress := make(chan Result, bufferSize)
+	jobs := make(chan Job, workersCount)
+	ress := make(chan Result, workersCount)
 
 	// Постановка задач в очередь
 	go func() {
@@ -66,8 +62,8 @@ func main() {
 	for i := 0; i < workersCount; i++ {
 		wg.Add(1)
 		go func(i int) {
+			defer wg.Done()
 			Process(i+1, jobs, ress)
-			wg.Done()
 		}(i)
 	}
 	fmt.Println("Воркеры запущены")
@@ -80,7 +76,7 @@ func main() {
 	}()
 
 	// Получение результатов
-	res := make([]string, n)
+	res := make([]string, len(words))
 	for r := range ress {
 		res[r.job.id] = r.res
 	}
